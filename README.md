@@ -13,6 +13,8 @@ Pour les statistiques, je me sers de sqlite3 et donc du langage SQL pour stocker
 
 Pour le moment, il reste des choses à spécifier, ce sera fait sous peu.
 
+Beaucoup de choses peuvent être brouillon, car jusque là je programmais pour moi-même, je vais corriger pas mal de choses !
+
 Merci d'avance pour votre aide !
 
 ## Faire fonctionner le programme
