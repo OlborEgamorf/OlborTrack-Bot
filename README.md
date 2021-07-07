@@ -19,7 +19,7 @@ Merci d'avance pour votre aide !
 
 ## Faire fonctionner le programme
 
-Vous avez à disposition un petit fichier avec des évèvenements et des commandes, où vous pouvez tester des choses.
+Vous avez à disposition un petit fichier nommé "Exemple.py" avec des évèvenements et des commandes, où vous pouvez tester des choses.
 
 Pour que les importations fonctionnent, il faut ajouter le répertoire dans le PYTHONPATH.
 
