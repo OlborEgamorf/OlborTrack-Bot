@@ -1,0 +1,113 @@
+from Stats.SQL.ConnectSQL import connectSQL
+from Stats.Graphiques.BarRanks import graphRank
+from Stats.Graphiques.Scatter.ScatterPerso import graphScatterPerso
+from Stats.Graphiques.Scatter.ScatterPositions import graphScatter
+from Stats.Graphiques.Scatter.ScatterUsers import graphScatterUsers
+from Stats.Graphiques.Heat.HeatMois import graphHeat
+from Stats.Graphiques.Heat.HeatAnnee import graphHeatAnnee
+from Stats.Graphiques.Heat.HeatGlobal import graphHeatGlobal
+from Stats.Graphiques.Pie import graphPie
+from Stats.Graphiques.Line import graphLine
+from Stats.Graphiques.Circle import graphCircle
+from Stats.Graphiques.Perso import graphPerso
+from Stats.Graphiques.Grouped import graphGroupedMois
+import discord
+from discord.ext import commands
+from Stats.Graphiques.Evol import graphEvol, graphEvolAA, graphEvolAutour, graphEvolBest, graphEvolBestUser, graphEvolRank
+from Core.Fonctions.AuteurIcon import auteur
+from Core.OTGuild import OTGuild
+
+async def reactGraph(message:discord.Message,bot:commands.Bot,guildOT:OTGuild):
+    """Génère et envoie les graphiques pour toutes les commandes du bot.
+    
+    Regarde dans la base de données des commandes du serveur si le message est valide et regarde les informations enregistrées.
+    
+    Ensuite, appelle les graphiques adaptés à la commande.
+    
+    Envoie tous les graphiques dans un salon privé et récupère les liens de images, afin de les utiliser lors des changements de page."""
+    connexionCMD,curseurCMD=connectSQL(message.guild.id,"Commandes","Guild",None,None)
+    ligne=curseurCMD.execute("SELECT * FROM commandes WHERE MessageID={0}".format(message.id)).fetchone()
+    listeG=[]
+    if ligne!=None:
+        ctx=await bot.get_context(message)            
+        if ligne["Commande"] in ("periods","periodsInter"):
+            ligne["Args3"]=ligne["AuthorID"]
+
+            graphPerso(ligne,ctx,ligne["Option"],bot,"mois",guildOT,"Compteur")
+            messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
+            embedM,embed=await embedGraph([1,2,3,4,5],messageGraph,ctx,message)
+            listeG.append(messageGraph.attachments[0].url)
+
+            graphGroupedMois(ligne,ctx,ligne["Option"],bot,guildOT)
+            messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
+            listeG.append(messageGraph.attachments[0].url)
+
+            graphPerso(ligne,ctx,ligne["Option"],bot,"annee",guildOT,"Compteur")
+            messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
+            listeG.append(messageGraph.attachments[0].url)
+
+            graphPerso(ligne,ctx,ligne["Option"],bot,"mois",guildOT,"Rang")
+            messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
+            listeG.append(messageGraph.attachments[0].url)
+
+            await graphHeatGlobal(ligne,ctx,bot,ligne["Option"],guildOT)
+            messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
+            listeG.append(messageGraph.attachments[0].url)
+
+        else:
+            if ligne["Commande"]=="rank":
+                if ligne["Args1"]=="glob":
+                    listeFonc=[graphRank,graphHeatGlobal,graphCircle]
+                elif ligne["Args1"]=="to":
+                    listeFonc=[graphRank,graphScatter,graphScatterUsers,graphHeatAnnee,graphCircle]
+                else:
+                    listeFonc=[graphRank,graphScatter,graphScatterUsers,graphHeat,graphCircle,graphLine]
+            
+            elif ligne["Commande"]=="roles":
+                if ligne["Args1"]=="glob":
+                    listeFonc=[graphRank,graphHeatGlobal,graphCircle]
+                elif ligne["Args1"]=="to":
+                    listeFonc=[graphRank,graphHeatAnnee,graphCircle]
+                else:
+                    listeFonc=[graphRank,graphHeat,graphCircle]
+        
+            elif ligne["Commande"]=="perso":
+                if ligne["Args2"]=="GL":
+                    listeFonc=[graphRank,graphCircle]
+                else:
+                    listeFonc=[graphRank,graphScatterPerso,graphCircle]
+        
+            elif ligne["Commande"]=="evol":
+                if ligne["Args1"]=="glob":
+                    listeFonc=[graphEvol,graphEvolAutour,graphEvolBestUser,graphEvolRank]
+                else:
+                    listeFonc=[graphEvol,graphEvolAA,graphEvolBest,graphEvolAutour,graphEvolBestUser,graphEvolRank]
+            
+            for fonc in range(len(listeFonc)):
+                await listeFonc[fonc](ligne,ctx,bot,ligne["Option"],guildOT)
+                messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
+                listeG.append(messageGraph.attachments[0].url)
+                if fonc==0:
+                    embedM,embed=await embedGraph(listeFonc,messageGraph,ctx,message)
+
+        descip=""
+        for i in listeG:
+            descip+="'{0}',".format(i)
+        for i in range(len(listeG),7):
+            descip+="'None',"
+        curseurCMD.execute("INSERT INTO graphs VALUES({0},{1}1,{2})".format(embedM.id,descip,len(listeG)))
+        connexionCMD.commit()
+        embed.description=""
+        await embedM.add_reaction("<:otGAUCHE:772766034335236127>")
+        await embedM.add_reaction("<:otDROITE:772766034376523776>")
+        await embedM.edit(embed=embed)
+        
+
+async def embedGraph(listeFonc:list,messageGraph:discord.Message,ctx:commands.Context,message:discord.Message) -> (discord.Message, discord.Embed):
+    """Crée et envoie l'embed qui affichera les graphiques"""
+    embed=discord.Embed(title="Graphiques",description="Tous vos graphiques sont en cours de préparation...",color=0x3498db)
+    embed.set_footer(text="Page 1/{0}".format(len(listeFonc)))
+    embed.set_image(url=messageGraph.attachments[0].url)
+    embed=auteur(ctx.guild.id,ctx.guild.name,ctx.guild.icon,embed,"guild")
+    embedM=await message.reply(embed=embed)
+    return embedM,embed
