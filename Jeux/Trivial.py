@@ -9,27 +9,25 @@
 
 ############################################################################
 
-from time import strftime
-import discord
-import sys
 import asyncio
 import html
 import sqlite3
-from Stats.SQL.ConnectSQL import connectSQL
-from random import randint, choice
-from Core.Fonctions.DichoTri import triID
-from Stats.SQL.Compteur import compteurSQL, compteurTrivialS
+import sys
+from random import choice, randint
+from time import strftime
+
+import discord
 from Core.Fonctions.AuteurIcon import auteur
+from Core.Fonctions.DichoTri import triID
 from Core.Fonctions.Embeds import embedAssert, exeErrorExcept
+from Stats.SQL.Compteur import compteurSQL, compteurTrivialS
+from Stats.SQL.ConnectSQL import connectSQL
 from Stats.SQL.Execution import exeJeuxSQL
+
 emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>"]
-emotesID=[705766186909958185,705766186989912154,705766186930929685,705766186947706934]
-dictEmotesID={705766186909958185:0,705766186989912154:1,705766186930929685:2,705766186947706934:3}
 emotesTrue=["<:ot1VRAI:773993429130149909>", "<:ot2VRAI:773993429050195979>", "<:ot3VRAI:773993429331738624>", "<:ot4VRAI:773993429423095859>"]
 emotesFalse=["<:ot1FAUX:773993429315092490>", "<:ot2FAUX:773993429172486145>", "<:ot3FAUX:773993429402779698>", "<:ot4FAUX:773993429373026354>"]
 listeNoms=["Culture","Divertissement","Sciences","Mythologie","Sport","Géographie","Histoire","Politique","Art","Célébrités","Animaux","Véhicules","Global"]
-dictNoms={"culture":0,"divertissement":1,"sciences":2,"mythologie":3,"sport":4,"géographie":5,"histoire":6,"politique":7,"art":8,"célébrités":9,"animaux":10,"véhicules":11,"br":420}
-listeNomsLow=["culture","divertissement","sciences","mythologie","sport","géographie","histoire","politique","art","célébrités","animaux","véhicules","br"]
 dictCateg={9:0,10:1,11:1,12:1,13:1,14:1,15:1,16:1,17:2,18:2,19:2,20:3,21:4,22:5,23:6,24:7,25:8,26:9,27:10,28:11,29:1,30:2,31:1,32:1}
 dictDiff={"easy":"Facile (+10)","medium":"Moyenne (+15)","hard":"Difficile (+25)"}
 gamesTrivial={}
@@ -150,7 +148,7 @@ class Question:
     def gestionMulti(self,victoire):
         categ,multi,diff,author=self.categ,self.multi,self.diff,self.author.id
         points={"easy":10,"medium":15,"hard":25}
-        niveaux=[30, 60, 100, 150, 200, 400, 600, 1000, 1500, 2000, 3000, 4000, 5000, 7500, 10000, 20000, 30000, 40000, 50000]
+        niveaux=[30, 60, 100, 150, 200, 400, 600, 1000, 1500, 2000, 3000, 4000, 5000, 7500, 10000, 20000, 30000, 40000, 50000, 100000, 1000000]
         connexion,curseur=connectSQL("OT",author,"Trivial",None,None)
         table=curseur.execute("SELECT * FROM trivial{0}".format(author)).fetchall()
         if victoire:
