@@ -20,6 +20,7 @@ import discord
 from discord.ext import commands
 from Core.OTGuild import OTGuild
 from Stats.Commandes.Trivial import statsTrivial
+from Outils.Tableaux.EmbedsTab import commandeSB
 
 async def reactStats(message:discord.Message,reaction:discord.Reaction,user:discord.Member,bot:commands.Bot,guildOT:OTGuild):
     """Effectue le changement de page pour toutes les commandes du Bot.
@@ -57,6 +58,8 @@ async def reactStats(message:discord.Message,reaction:discord.Reaction,user:disc
             await statsJeux(ctx,getTurn(reaction),True,ligne,guildOT,bot,ligne["Args3"])
         elif ligne["Commande"]=="trivial":
             await statsTrivial(ctx,getTurn(reaction),True,ligne,guildOT,bot,ligne["Option"])
+        elif ligne["Commande"]=="tableau":
+            await commandeSB(ctx,getTurn(reaction),True,ligne,bot,guildOT,None)
         elif ligne["Commande"]=="rapport":
             if reaction.id in (835930140571729941,835928773718835260,835928773740199936,835928773705990154,835928773726699520,835929144579326003,836947337808314389):
                 await switchRapport(ctx,reaction.id,ligne,guildOT,bot)
