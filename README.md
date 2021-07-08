@@ -33,3 +33,10 @@ Il y a encore des fichiers et fonctions qui sont obsolètes et qui bientot ne se
 * Zip
 * Compare
 
+## Liens
+
+ * [Inviter OlborTrack sur votre serveur Discord](https://discord.com/api/oauth2/authorize?client_id=699728606493933650&permissions=912582&scope=bot)
+ * [Page Twitter](https://twitter.com/OlborTrack)
+ * [Page Instagram](https://instagram.com/OlborTrack)
+ * [Soutenir le projet financièrement](https://www.paypal.com/paypalme/OlborTrack)
+ * [Rejoindre le serveur Discord de tests](https://discord.gg/AVVAbP4)
