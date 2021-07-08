@@ -1,4 +1,4 @@
-from Core.Reactions.DroiteGauche import reactStats
+from Core.Reactions.ChangePage import reactStats
 from Core.Reactions.Compare import reactCompare
 from Core.Reactions.Plus import reactPlus
 from Core.Reactions.Tri import changeTri

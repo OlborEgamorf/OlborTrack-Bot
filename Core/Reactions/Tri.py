@@ -1,5 +1,5 @@
 from Stats.SQL.ConnectSQL import connectSQL
-from Core.Reactions.DroiteGauche import reactStats
+from Core.Reactions.ChangePage import reactStats
 import discord
 from discord.ext import commands
 from Core.OTGuild import OTGuild
@@ -25,4 +25,4 @@ async def changeTri(message:discord.Message,reaction:discord.Reaction,user:disco
             dictNext={"countDesc":"winDesc","winDesc":"loseDesc","loseDesc":"countAsc","countAsc":"winAsc","winAsc":"loseAsc","loseAsc":"countDesc"}
         curseurCMD.execute("UPDATE commandes SET Tri='{0}' WHERE MessageID={1}".format(dictNext[ligne["Tri"]],message.id))
         connexionCMD.commit()
-        await reactStats(message,reaction,user,bot,guildOT)
+        await reactStats(message,reaction,user,bot,guildOT)        await reactStats(message,reaction,user,bot,guildOT)

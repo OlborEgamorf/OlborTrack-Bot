@@ -1,5 +1,5 @@
 from Stats.SQL.ConnectSQL import connectSQL
-from Core.Reactions.DroiteGauche import reactStats
+from Core.Reactions.ChangePage import reactStats
 import discord
 from discord.ext import commands
 from Core.OTGuild import OTGuild
