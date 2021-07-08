@@ -376,7 +376,7 @@ async def startGameTortues(ctx,bot):
             await message.edit(embed=game.embedGame(game.joueurs[turn].user))
             game.action={game.joueurs[turn].userid:None}
             await attente(game,40,None)
-            if game.action[game.joueurs[turn].userid]==None:
+            if game.action[game.joueurs[turn].userid] in (None,"bleue","jaune","rouge","verte","violette"):
                 carte=game.joueurs[turn].jeu[randint(0,4)]
                 couleur,valeur=carte.couleur,carte.valeur
                 if couleur=="multi":
@@ -455,7 +455,7 @@ async def startGameTortuesDuo(ctx,bot):
         game.playing=True
         await message.clear_reactions()
         if len(game.ids)<4:
-            await message.edit(embed=createEmbed("Course des tortues","Une minute s'est écoulée et pas assez de personnes n'ont répondu à l'invitation. ({0}/4)".format(len(game.joueurs)),0xad917b,ctx.invoked_with.lower(),ctx.guild))
+            await message.edit(embed=createEmbed("Course des tortues","Une minute s'est écoulée et pas assez de personnes n'ont répondu à l'invitation. ({0}/4)".format(len(game.ids)),0xad917b,ctx.invoked_with.lower(),ctx.guild))
             for i in game.ids:
                 inGameTortues.remove(i)
             return
@@ -496,7 +496,7 @@ async def startGameTortuesDuo(ctx,bot):
             await message.edit(embed=game.embedGame(game.joueurs[turn].user))
             game.action={game.joueurs[turn].userid:None}
             await attente(game,40,None)
-            if game.action[game.joueurs[turn].userid]==None:
+            if game.action[game.joueurs[turn].userid] in (None,"bleue","jaune","rouge","verte","violette"):
                 carte=game.joueurs[turn].jeu[randint(0,4)]
                 couleur,valeur=carte.couleur,carte.valeur
                 if couleur=="multi":
