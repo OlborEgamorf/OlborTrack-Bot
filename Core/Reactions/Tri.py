@@ -23,6 +23,12 @@ async def changeTri(message:discord.Message,reaction:discord.Reaction,user:disco
             dictNext={"moyDesc":"periodDesc","periodDesc":"periodAsc","periodAsc":"countDesc","countDesc":"nombreDesc","nombreDesc":"moyDesc"}
         elif ligne["Commande"]=="jeux":
             dictNext={"countDesc":"winDesc","winDesc":"loseDesc","loseDesc":"countAsc","countAsc":"winAsc","winAsc":"loseAsc","loseAsc":"countDesc"}
+        elif ligne["Commande"]=="trivial" and ligne["Option"]=="trivial":
+            dictNext={"countDesc":"countAsc","countAsc":"countDesc"}
+        elif ligne["Commande"]=="trivial" and ligne["Option"]=="trivialperso":
+            dictNext={"expDesc":"expAsc","expAsc":"expDesc"}
         curseurCMD.execute("UPDATE commandes SET Tri='{0}' WHERE MessageID={1}".format(dictNext[ligne["Tri"]],message.id))
         connexionCMD.commit()
-        await reactStats(message,reaction,user,bot,guildOT)        await reactStats(message,reaction,user,bot,guildOT)
+        await reactStats(message,reaction,user,bot,guildOT)
+
+

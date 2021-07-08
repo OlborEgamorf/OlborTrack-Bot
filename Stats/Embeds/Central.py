@@ -1,15 +1,17 @@
 from Core.Fonctions.DichoTri import triPeriod
-from Stats.Embeds.Salons import embedSalon
-from Stats.Embeds.Freq import embedFreq
-from Stats.Embeds.Emotes import embedEmote
 from Stats.Embeds.Divers import embedDivers
-from Stats.Embeds.Moyennes import embedMoy
+from Stats.Embeds.Emotes import embedEmote
+from Stats.Embeds.Evol import embedEvol
+from Stats.Embeds.Freq import embedFreq
+from Stats.Embeds.Jeux import embedJeux
 from Stats.Embeds.Membres import embedMembre
 from Stats.Embeds.Mois import embedMois
-from Stats.Embeds.Evol import embedEvol
-from Stats.Embeds.Jeux import embedJeux
-dictTriArg={"countAsc":"Count","rankAsc":"Rank","countDesc":"Count","rankDesc":"Rank","dateAsc":"DateID","dateDesc":"DateID","periodAsc":"None","periodDesc":"None","moyDesc":"Moyenne","nombreDesc":"Nombre","winAsc":"W","winDesc":"W","loseAsc":"L","loseDesc":"L"}
-dictTriSens={"countAsc":"ASC","rankAsc":"ASC","countDesc":"DESC","rankDesc":"DESC","dateAsc":"ASC","dateDesc":"DESC","periodAsc":"None","periodDesc":"None","moyDesc":"DESC","nombreDesc":"DESC","winAsc":"ASC","winDesc":"DESC","loseAsc":"ASC","loseDesc":"DESC"}
+from Stats.Embeds.Moyennes import embedMoy
+from Stats.Embeds.Salons import embedSalon
+from Stats.Embeds.Trivialperso import embedTrivialPerso
+
+dictTriArg={"countAsc":"Count","rankAsc":"Rank","countDesc":"Count","rankDesc":"Rank","dateAsc":"DateID","dateDesc":"DateID","periodAsc":"None","periodDesc":"None","moyDesc":"Moyenne","nombreDesc":"Nombre","winAsc":"W","winDesc":"W","loseAsc":"L","loseDesc":"L","expDesc":"Exp","expAsc":"Exp"}
+dictTriSens={"countAsc":"ASC","rankAsc":"ASC","countDesc":"DESC","rankDesc":"DESC","dateAsc":"ASC","dateDesc":"DESC","periodAsc":"None","periodDesc":"None","moyDesc":"DESC","nombreDesc":"DESC","winAsc":"ASC","winDesc":"DESC","loseAsc":"ASC","loseDesc":"DESC","expDesc":"DESC","expAsc":"ASC"}
 
 async def statsEmbed(nom,ligne,page,pagemax,option,guildOT,bot,evol,collapse,curseur):
     author=ligne["AuthorID"]
@@ -37,8 +39,10 @@ async def statsEmbed(nom,ligne,page,pagemax,option,guildOT,bot,evol,collapse,cur
         embed=embedEvol(table,page,mobile,collapse,evol,ligne["Option"])
     elif option=="Moy":
         embed=embedMoy(table,page,mobile)
-    elif option in ("tortues","tortuesduo","p4","bn","trivialversus","trivialbr","trivialparty"):
+    elif option in ("tortues","tortuesduo","p4","bn","trivialversus","trivialbr","trivialparty","trivial"):
         embed=embedJeux(table,guildOT,page,mobile,author,evol,option)
+    elif option=="trivialperso":
+        embed=embedTrivialPerso(table,page,mobile)
     
     embed.set_footer(text="Page {0}/{1}".format(page,pagemax))
     return embed
