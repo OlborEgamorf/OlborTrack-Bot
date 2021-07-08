@@ -30,7 +30,7 @@ async def statsJours(ctx,option,turn,react,ligne,guildOT,bot):
         else:
             mois,annee=ligne["Args1"],ligne["Args2"]
 
-        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[mois],annee)
+        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
 
         table=getTableDay(curseur,mois,annee,ligne["Tri"])
         pagemax=setMax(len(table))
