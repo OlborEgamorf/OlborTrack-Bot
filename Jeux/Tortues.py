@@ -327,7 +327,7 @@ class TortueDuo(Tortue):
 
 async def startGameTortues(ctx,bot):
     try:
-        assert ctx.author.id not in inGameTortues, "Terminez votre question en cours avant de lancer ou rejoindre une partie."
+        assert ctx.author.id not in inGameTortues, "Terminez votre partie en cours avant de lancer ou rejoindre une partie."
         game=JeuTortues(ctx.guild,ctx.author.id)
         game.ids.append(ctx.author.id)
         inGameTortues.append(ctx.author.id)
@@ -435,7 +435,7 @@ async def startGameTortues(ctx,bot):
 
 async def startGameTortuesDuo(ctx,bot):
     try:
-        assert ctx.author.id not in inGameTortues, "Terminez votre question en cours avant de lancer ou rejoindre une partie."
+        assert ctx.author.id not in inGameTortues, "Terminez votre partie en cours avant de lancer ou rejoindre une partie."
         game=JeuTortuesDuo(ctx.guild,ctx.author.id)
         game.ids.append(ctx.author.id)
         inGameTortues.append(ctx.author.id)
