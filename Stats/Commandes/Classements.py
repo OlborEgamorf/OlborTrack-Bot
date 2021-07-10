@@ -12,7 +12,7 @@ from Core.Fonctions.Embeds import embedAssert, newDescip, sendEmbed
 tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai","06":"Juin","07":"Juillet","08":"Aout","09":"Septembre","10":"Octobre","11":"Novembre","12":"Décembre","TO":"Année","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
 
 async def statsRank(ctx,option,turn,react,ligne,guildOT,bot):
-    try:
+    if True:
         connexionCMD,curseurCMD=connectSQL(ctx.guild.id,"Commandes","Guild",None,None)
         if not react:
             if len(ctx.args)==2 or ctx.args[2].lower() not in ("mois","annee"):
@@ -71,5 +71,5 @@ async def statsRank(ctx,option,turn,react,ligne,guildOT,bot):
             embed.description=newDescip(embed.description,tempOption,obj,guildOT,bot)
         await sendEmbed(ctx,embed,react,True,curseurCMD,connexionCMD,page,pagemax)
     
-    except:
+    else:
         await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez."))

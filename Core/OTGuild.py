@@ -20,6 +20,7 @@ class OTGuild:
         self.mcmd=None
         self.mstats=None
         self.wikinsfw=None
+        self.twitch=[]
         self.snipe=OTSnipe()
         self.starlist={}
         self.stardict={}
@@ -29,6 +30,7 @@ class OTGuild:
         self.getPerms()
         self.getAuto()
         self.getWikiNSFW()
+        self.getTwitch()
     
     def getStar(self):
         connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
@@ -61,6 +63,11 @@ class OTGuild:
     def getWikiNSFW(self):
         connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
         self.wikinsfw=curseur.execute("SELECT * FROM wikinsfw").fetchone()["Active"]
+    
+    def getTwitch(self):
+        connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+        for i in curseur.execute("SELECT * FROM twitch").fetchall():
+            self.twitch.append(OTTwitch(i))
 
 class OTTableau:
     def __init__(self,star):
@@ -80,3 +87,11 @@ class OTSnipe:
         self.texte=texte
         self.date=date
         self.id=id
+
+class OTTwitch:
+    def __init__(self,infos):
+        self.stream=infos["Stream"]
+        self.salon=infos["Salon"]
+        self.descip=infos["Descip"]
+        self.sent=infos["Sent"]
+        self.numero=infos["Nombre"]
