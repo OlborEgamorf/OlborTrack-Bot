@@ -1,7 +1,7 @@
 from time import strftime
-from Wikipedia.Events import embedWikiEvents
-from Wikipedia.Quote import embedWikiQOTD, embedWikiQuote
-from Wikipedia.Search import embedWikiSearch
+from Wiki.Events import embedWikiEvents
+from Wiki.Quote import embedWikiQOTD, embedWikiQuote
+from Wiki.Search import embedWikiSearch
 import asyncio
 from Stats.SQL.ConnectSQL import connectSQL
 from Core.Fonctions.Phrase import createPhrase
