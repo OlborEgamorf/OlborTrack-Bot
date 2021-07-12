@@ -17,6 +17,9 @@ async def exeTableau(ctx,bot,args,guildOT):
             embed=await delTableau(ctx,bot,args,curseur,guildOT)
         elif args[0].lower()=="nb":
             embed=await nbTableau(ctx,args,curseur)
+        else:
+            await commandeSB(ctx,None,False,None,bot,guildOT,curseur)
+            return 
         connexion.commit()
         guildOT.getStar()
     except AssertionError as er:
