@@ -40,4 +40,5 @@ class Test(commands.Cog):
     async def test2(self,ctx,*args):
         pass
 
+bot.add_cog(Test)
 bot.run(token)
