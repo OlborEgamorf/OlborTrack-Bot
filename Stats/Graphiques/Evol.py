@@ -50,7 +50,7 @@ async def graphEvol(ligne,ctx,bot,option,guildOT):
     plt.xlabel("Date")
     plt.plot("Date", "Count", data=df, linestyle='-', marker='o',color=color,markevery=listeM)
     plt.xticks(listeL,listeTX,rotation=45)
-    plt.title("Évolution {0} 20{1} - {2}".format(mois,annee,nom),fontsize=10)
+    titreEvol(mois,annee,nom,"")
     plt.tight_layout()
     plt.savefig("Graphs/otGraph")
     plt.clf()
@@ -116,7 +116,7 @@ async def graphEvolAA(ligne,ctx,bot,option,guildOT):
     if tableDemain!=None:
         plt.plot("Date", "Count", data=df2, linestyle='--', marker='',color="mediumpurple",label="{0} 20{1}".format(tableauMois[tableDemain["Mois"]],tableDemain["Annee"]))
     
-    plt.title("Évolution {0} 20{1} comparée avec périodes avant et après\n{2}".format(mois,annee,nom),fontsize=10)
+    titreEvol(mois,annee,nom,"comparée avec périodes avant et après")
 
     if mois=="to":
         listeDates,listeXD,temp=[],[],0
@@ -178,7 +178,7 @@ async def graphEvolBest(ligne,ctx,bot,option,guildOT):
     if tableMeilleur!=None:
         plt.plot("Date", "Count", data=df2, linestyle='--', marker='',color="mediumpurple",label="{0} 20{1}".format(tableauMois[tableMeilleur["Mois"]],tableMeilleur["Annee"]))
     
-    plt.title("Évolution {0} 20{1} comparée avec meilleure période personnelle\n{2}".format(mois,annee,nom),fontsize=10)
+    titreEvol(mois,annee,nom,"comparée avec meilleure période personnelle")
 
     if mois=="to":
         listeDates,listeXD,temp=[],[],0
@@ -250,7 +250,7 @@ async def graphEvolAutour(ligne,ctx,bot,option,guildOT):
     nom,color=getNomColor(ctx,bot,option,ligne["Args3"])
     plt.plot("Date", "Count", data=df, linestyle='-', marker='',color=color,label=nom)
     
-    plt.title("Évolution {0} 20{1} comparée avec membres autour\n{2}".format(mois,annee,nom),fontsize=10)
+    titreEvol(mois,annee,nom,"comparée avec membres autour")
 
     listeDates,listeXD,temp=[],[],0
     if mois=="to":
@@ -332,9 +332,9 @@ async def graphEvolBestUser(ligne,ctx,bot,option,guildOT):
             pass
     
     if rank==1:
-        plt.title("Évolution {0} 20{1} comparée avec deuxième meilleur membre sur la pérdiode\n{2}".format(mois,annee,nom),fontsize=10)
+        titreEvol(mois,annee,nom,"comparée avec deuxième meilleur membre sur la pérdiode")
     else:
-        plt.title("Évolution {0} 20{1} comparée avec meilleur membre sur la pérdiode\n{2}".format(mois,annee,nom),fontsize=10)
+        titreEvol(mois,annee,nom,"comparée avec meilleur membre sur la pérdiode")
 
     listeDates,listeXD,temp=[],[],0
     if mois=="to":
@@ -392,7 +392,7 @@ async def graphEvolRank(ligne,ctx,bot,option,guildOT):
     plt.ylabel("Rang") 
     plt.plot("Date", "Count", data=df, linestyle='-', marker='o',color=color,markevery=listeM)
     plt.xticks(listeL,listeTX,rotation=45)
-    plt.title("Évolution rang {0} 20{1} - {2}".format(mois,annee,nom),fontsize=10)
+    titreEvol(mois,annee,nom,"du rang")
     plt.tight_layout()
     plt.savefig("Graphs/otGraph")
     plt.clf()
@@ -435,3 +435,11 @@ def setMin(mois,listeT,mini):
     else:
         dfDate=pd.DataFrame({"Date": listeT, "Count": [mini//1.5 for i in range(len(listeT))]})
     plt.plot("Date", "Count", data=dfDate, linestyle='', label="")
+
+def titreEvol(mois,annee,nom,option):
+    if mois=="glob":
+        plt.title("Évolution globale {0}\n{1}".format(option,nom),fontsize=10)
+    elif mois=="to":
+        plt.title("Évolution 20{0} {1}\n{2}".format(annee,option,nom),fontsize=10)
+    else:
+        plt.title("Évolution {0} 20{1} {2}\n{3}".format(mois,annee,option,nom),fontsize=10)
