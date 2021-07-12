@@ -20,6 +20,9 @@ async def exeTwitch(ctx,bot,args,guildOT):
             embed=await delTwitch(ctx,bot,args,curseur,guildOT)
         elif args[0].lower()=="edit":
             embed=await descipTwitch(ctx,bot,args,curseur,guildOT)
+        else:
+            await commandeTwitch(ctx,None,False,None,bot,guildOT,curseur)
+            return
         connexion.commit()
         guildOT.getTwitch()
     except AssertionError as er:
@@ -32,7 +35,7 @@ async def exeTwitch(ctx,bot,args,guildOT):
 async def commandeTwitch(ctx,turn,react,ligne,bot,guildOT:OTGuild,curseur):
     connexionCMD,curseurCMD=connectSQL(ctx.guild.id,"Commandes","Guild",None,None)
     if not react:
-        assert guildOT.stardict!={}, "Aucun tableau n'est configuré pour votre serveur."
+        assert guildOT.twitch!=[], "Aucune alerte n'est configurée pour votre serveur."
         pagemax=setMax(len(guildOT.stardict))
         curseurCMD.execute("INSERT INTO commandes VALUES({0},{1},'twitch','None','None','None','None','None',1,{2},'countDesc',False)".format(ctx.message.id,ctx.author.id,pagemax))
         ligne=curseurCMD.execute("SELECT * FROM commandes WHERE MessageID={0}".format(ctx.message.id)).fetchone()

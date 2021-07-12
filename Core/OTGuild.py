@@ -65,6 +65,7 @@ class OTGuild:
         self.wikinsfw=curseur.execute("SELECT * FROM wikinsfw").fetchone()["Active"]
     
     def getTwitch(self):
+        self.twitch=[]
         connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
         for i in curseur.execute("SELECT * FROM twitch").fetchall():
             self.twitch.append(OTTwitch(i))

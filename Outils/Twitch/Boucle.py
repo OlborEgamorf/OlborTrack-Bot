@@ -13,6 +13,7 @@ async def boucleTwitch(bot,dictGuilds):
             for j in dictGuilds[i].twitch:
                 try:
                     data=await webRequestHD("https://api.twitch.tv/helix/streams",headersTwitch,(("user_login",j.stream),("first",1)))
+                    assert data!=False
                     if data["data"]!=[]:
                         live=True
                         if not j.sent:
