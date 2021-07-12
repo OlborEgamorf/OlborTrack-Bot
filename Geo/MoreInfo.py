@@ -6,7 +6,7 @@ async def embedMoreGeo(arg) -> discord.Embed:
     """Donne plus d'informations sur une localisation observée avec la commande iss ou geosearch.
     
     Mis en forme dans un embed qui est renvoyé."""
-    with open("JSON/"+str(arg[0])+str(arg[1])+".txt") as json_file:
+    with open("JSON/"+str(arg[0])+str(arg[1])+".json") as json_file:
         table=json.load(json_file)
     embedP=discord.Embed(title=table["results"][0]["formatted"],color=0xa83e32)
     descip=""

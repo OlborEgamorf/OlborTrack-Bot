@@ -33,13 +33,5 @@ async def reactPlus(message,user):
         lat=message.content.split(" ")[1]
         lon=message.content.split(" ")[2]
         embedP=await embedMoreGeo([lat,lon])
-        await message.channel.send(embed=embedP)
-    try:
-        for i in message.reactions:
-            if i.emoji.id==772766034163400715:
-                await i.clear()
-    except discord.errors.Forbidden:
-        await message.channel.send(embed=embedE,delete_after=8)
-    except:
-        pass
+        await message.reply(embed=embedP)
     return

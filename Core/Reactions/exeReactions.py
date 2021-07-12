@@ -20,6 +20,7 @@ async def exeReactOT(emoji:discord.Reaction, message:discord.Message, user:disco
         await reactCompare(message,user)
     elif emoji.id==772766034163400715:
         await reactPlus(message,user)
+        await message.clear_reaction(emoji)
     elif emoji.id==833666016491864114:
         await changeTri(message,emoji,user,bot,guildOT)
     elif emoji.id==833736320919797780:
