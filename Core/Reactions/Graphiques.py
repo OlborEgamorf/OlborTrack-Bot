@@ -16,6 +16,7 @@ from discord.ext import commands
 from Stats.Graphiques.Evol import graphEvol, graphEvolAA, graphEvolAutour, graphEvolBest, graphEvolBestUser, graphEvolRank
 from Core.Fonctions.AuteurIcon import auteur
 from Core.OTGuild import OTGuild
+from Stats.Graphiques.Spider import graphSpider
 
 async def reactGraph(message:discord.Message,bot:commands.Bot,guildOT:OTGuild):
     """Génère et envoie les graphiques pour toutes les commandes du bot.
@@ -83,6 +84,9 @@ async def reactGraph(message:discord.Message,bot:commands.Bot,guildOT:OTGuild):
                 else:
                     listeFonc=[graphEvol,graphEvolAA,graphEvolBest,graphEvolAutour,graphEvolBestUser,graphEvolRank]
             
+            elif ligne["Commande"]=="trivial" and ligne["Option"]=="trivialperso":
+                listeFonc=[graphSpider]
+            
             for fonc in range(len(listeFonc)):
                 await listeFonc[fonc](ligne,ctx,bot,ligne["Option"],guildOT)
                 messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
@@ -98,8 +102,9 @@ async def reactGraph(message:discord.Message,bot:commands.Bot,guildOT:OTGuild):
         curseurCMD.execute("INSERT INTO graphs VALUES({0},{1}1,{2})".format(embedM.id,descip,len(listeG)))
         connexionCMD.commit()
         embed.description=""
-        await embedM.add_reaction("<:otGAUCHE:772766034335236127>")
-        await embedM.add_reaction("<:otDROITE:772766034376523776>")
+        if len(listeFonc)!=1:
+            await embedM.add_reaction("<:otGAUCHE:772766034335236127>")
+            await embedM.add_reaction("<:otDROITE:772766034376523776>")
         await embedM.edit(embed=embed)
         
 
