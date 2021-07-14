@@ -6,6 +6,7 @@ from Core.Fonctions.GraphTheme import setThemeGraph
 
 async def graphSpider(ligne,ctx,option,bot,guildOT):
     setThemeGraph(plt)
+    plt.subplots(figsize=(6.4,4.8))
     connexion,curseur=connectSQL("OT",ligne["AuthorID"],"Trivial",None,None)
     table=curseur.execute("SELECT * FROM trivial{0} WHERE Categ<> 'Global'".format(ligne["AuthorID"])).fetchall()
     

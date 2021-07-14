@@ -52,6 +52,8 @@ async def graphLine(ligne,ctx,bot,option,guildOT):
     listeDates.sort()
     dfDate=pd.DataFrame({"Date": ["{0}/{1}".format(str(i)[2:4],str(i)[0:2]) for i in listeDates], "Count": [mini//1.5 for i in range(len(listeDates))]})
     plt.plot("Date", "Count", data=dfDate, linestyle='', label="")
+    listeColors=[]
+    dictLine={1:"-",2:"--",3:"-."}
 
     for i in range(stop):
         if option in ("Salons","Voicechan") and obj=="":
@@ -63,7 +65,8 @@ async def graphLine(ligne,ctx,bot,option,guildOT):
         df=pd.DataFrame({"Date": listeX[i], "Count": listeY[i]})
         user=ctx.guild.get_member(table[i]["ID"])
         if user!=None:
-            plt.plot("Date", "Count", data=df, linestyle='-', marker='o',color=(user.color.r/256,user.color.g/256,user.color.b/256,1),label=user.name)
+            listeColors.append((user.color.r/256,user.color.g/256,user.color.b/256,1))
+            plt.plot("Date", "Count", data=df, linestyle=dictLine[listeColors.count((user.color.r/256,user.color.g/256,user.color.b/256,1))], marker='o',color=(user.color.r/256,user.color.g/256,user.color.b/256,1),label=user.name)
         else:
             try:
                 nom=getNomGraph(ctx,bot,option,table[i]["ID"])

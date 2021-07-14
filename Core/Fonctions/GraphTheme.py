@@ -6,5 +6,7 @@ def setThemeGraph(plt):
     plt.rcdefaults()
     if int(strftime("%H"))>8 and int(strftime("%H"))<22:
         plt.style.use("seaborn-darkgrid")
+        return "light"
     else:
         plt.style.use("dark_background")
+        return "dark"

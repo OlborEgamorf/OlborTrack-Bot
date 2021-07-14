@@ -13,7 +13,7 @@ def graphPerso(ligne,ctx,option,bot,period,guildOT,categ):
     if ligne["Args1"]!="None":
         nomTable="{0}{1}".format(ligne["AuthorID"],ligne["Args1"])
     plt.subplots(figsize=(6.4,4.8))
-    setThemeGraph(plt)
+    theme=setThemeGraph(plt)
     if period=="mois":
         table=triPeriod(curseur,"persoM{0}".format(nomTable),"periodAsc")
     else:
@@ -56,8 +56,9 @@ def graphPerso(ligne,ctx,option,bot,period,guildOT,categ):
 
     for i in listeY:
         somme+=i
+    dictColor={"light":"black","dark":"white"}
     df2=pd.DataFrame({'date': listeX, 'Moyenne': [somme/len(table) for i in range(len(listeX))]})
-    plt.plot("date","Moyenne",data=df2, linestyle="--", color="black")
+    plt.plot("date","Moyenne",data=df2, linestyle="--", color=dictColor[theme],label="Moyenne ({0})".format(round(somme/len(table),2)))
     plt.legend()
     plt.xlabel("Date")
 

@@ -5,6 +5,7 @@ from Stats.Graphiques.GraphAnim.Animate import animateGraph
 from matplotlib import animation
 import discord
 from Core.Fonctions.Embeds import exeErrorExcept
+from Core.Fonctions.GraphTheme import setThemeGraph
 
 def generatePlot(graph):
     listeL,listeY,listeC=[],[],[]
@@ -18,7 +19,7 @@ def generatePlot(graph):
 async def getGraph(ctx,bot,guildOT,option):
     try:
         import matplotlib.pyplot as plt
-        plt.style.use("seaborn-darkgrid")
+        setThemeGraph(plt)
         temps=time()
         try:
             mois,annee=getMois(ctx.args[1]),getAnnee(ctx.args[2])
@@ -30,7 +31,6 @@ async def getGraph(ctx,bot,guildOT,option):
         ligne={"Args1":mois,"Args2":annee}
 
         fig=plt.figure()
-        plt.style.use("seaborn-darkgrid")
         
         data=createEvol(ctx,bot,guildOT,ligne,option)
         graphiqueOT=createDict(data,bot,ctx,option)

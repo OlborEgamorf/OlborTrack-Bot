@@ -86,6 +86,10 @@ async def reactGraph(message:discord.Message,bot:commands.Bot,guildOT:OTGuild):
             
             elif ligne["Commande"]=="trivial" and ligne["Option"]=="trivialperso":
                 listeFonc=[graphSpider]
+
+            elif ligne["Commande"]=="jeux":
+                await ctx.send("Les graphiques pour les classements de jeux ne sont pas encore disponible ! Il manque des choses à régler pour cela...")
+                return
             
             for fonc in range(len(listeFonc)):
                 await listeFonc[fonc](ligne,ctx,bot,ligne["Option"],guildOT)
@@ -102,7 +106,7 @@ async def reactGraph(message:discord.Message,bot:commands.Bot,guildOT:OTGuild):
         curseurCMD.execute("INSERT INTO graphs VALUES({0},{1}1,{2})".format(embedM.id,descip,len(listeG)))
         connexionCMD.commit()
         embed.description=""
-        if len(listeFonc)!=1:
+        if ligne["Commande"]!="trivial" and ligne["Option"]!="trivialperso":
             await embedM.add_reaction("<:otGAUCHE:772766034335236127>")
             await embedM.add_reaction("<:otDROITE:772766034376523776>")
         await embedM.edit(embed=embed)
