@@ -41,6 +41,12 @@ def createDirSQL(guild):
     except:
         pass
 
+    curseur.execute("CREATE TABLE IF NOT EXISTS stats (Active BOOL PRIMARY KEY)")
+    try:
+        curseur.execute("INSERT INTO stats VALUES(True)")
+    except:
+        pass
+
     curseur.execute("CREATE TABLE IF NOT EXISTS chans (ID BIGINT PRIMARY KEY, Hide BOOL, Blind BOOL, Mute BOOL)")
     for i in guild.text_channels:
         if curseur.execute("SELECT * FROM chans WHERE ID={0}".format(i.id)).fetchone()==None:
@@ -82,5 +88,3 @@ def createDirSQL(guild):
     curseur.execute("CREATE TABLE IF NOT EXISTS commandes (MessageID BIGINT, AuthorID BIGINT, Commande TEXT, Option TEXT, Args1 TEXT, Args2 TEXT, Args3 TEXT, Args4 TEXT, Page INT, PageMax INT, Tri TEXT, Mobile BOOL)")
     curseur.execute("CREATE TABLE IF NOT EXISTS graphs (MessageID BIGINT, Graph1 TEXT, Graph2 TEXT, Graph3 TEXT, Graph4 TEXT, Graph5 TEXT, Graph6 TEXT, Graph7 TEXT, Page INT, PageMax INT)")
     connexion.commit()
-
-    return

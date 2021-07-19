@@ -18,15 +18,20 @@ import csv
 from Core.Fonctions.DichoTri import dichotomieID, dichotomiePlage, triID
 from Core.Fonctions.TempsVoice import tempsVoice
 from Core.Fonctions.AuteurIcon import auteur
+from Core.Fonctions.Embeds import embedAssert
 
 
 async def newGetData(guild,channel,bot,guildOT):
-    messEdit=await channel.send(embed=discord.Embed(title="OlborTrack GetData - Lancement", description="Patientez... Les anciennes données de votre serveur vont être supprimées.", color=0x220cc9))
-    if os.path.exists("SQL/{0}/GETING".format(guild.id))==True:
-        embedT=discord.Embed(title="OlborTrack GetData - Erreur",description="Le processus est déjà en cours !",color=0x220cc9)
+    messEdit=await channel.send(embed=discord.Embed(title="Olbor Track GetData - Lancement", description="Patientez... Les anciennes données de votre serveur vont être supprimées.", color=0x220cc9))
+    if guild.gd:
+        embedT=embedAssert("Vous avez déjà lancé la procédure GetData !")
         await messEdit.edit(embed=embedT)
         return
-    os.makedirs("SQL/{0}/GETING".format(guild.id))
+    if not guild.stats:
+        embedT=embedAssert("Vous avez désactivé les statistiques pour votre serveur. Utilisez la commande OT!statson pour les réactiver.")
+        await messEdit.edit(embed=embedT)
+        return
+    guildOT.gd=True
     temps=time()
     try:
         await bot.get_channel(717727027465289768).send("Procédure get data enclenchée : "+guild.name+" | "+str(guild.member_count)+" | "+str(guild.id))
@@ -231,8 +236,7 @@ async def newGetData(guild,channel,bot,guildOT):
         await messEdit.channel.send(embed=embedT)
         error=str(sys.exc_info()[0])+"\n"+str(sys.exc_info()[1])+"\n"+str(sys.exc_info()[2].tb_frame)+"\n"+str(sys.exc_info()[2].tb_lineno)
         await bot.get_channel(717727027465289768).send("Procédure get data **ECHEC** : "+guild.name+" | "+str(guild.member_count)+" | "+str(guild.id)+" | "+tempsVoice(time()-tempsI)+"\n"+error)
-    shutil.rmtree("SQL/{0}/GETING".format(guild.id)) 
-    return
+    guildOT.gd=False
 
 
 def reloadVoice(bot,dictGuilds):

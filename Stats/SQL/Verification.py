@@ -1,17 +1,16 @@
 from Stats.SQL.NewSalons import addChan
 from Stats.SQL.NewMembres import leaveUser
-import os
 
 def verifExecSQL(guild,channel,author):
-    if os.path.exists("SQL/"+str(guild.id)+"/GETING")==True:
+    if guild.gd or not guild.stats:
         return False
     try:
-        if guild.users[author.id]["Blind"]==True:
+        if guild.users[author.id]["Blind"]:
             return False
     except:
         leaveUser(guild,author,False)
     try:
-        if guild.chan[channel.id]["Blind"]==True:
+        if guild.chan[channel.id]["Blind"]:
             return False
     except:
         addChan(guild,channel)
