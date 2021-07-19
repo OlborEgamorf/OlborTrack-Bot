@@ -35,6 +35,6 @@ async def embedMALsearch(genre,search,page):
         embedMAL.add_field(name="Chapitres", value=table["chapters"],inline=True)
         embedMAL.add_field(name="Genres",value=descipG, inline=True)
         embedMAL.add_field(name="Date", value=table["published"]["string"],inline=True)
-    embedMAL.set_footer(text="Page "+str(page+1)+"/"+str(10)+" | OT!malsearch "+genre+" "+search)
+    embedMAL.set_footer(text="Page "+str(page+1)+"/"+str(10))
     embedMAL=auteur(0,0,0,embedMAL,"mal")
     return embedMAL,10

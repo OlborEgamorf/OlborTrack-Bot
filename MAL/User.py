@@ -49,6 +49,6 @@ async def embedMALuser(user,page):
         pagef+=1
     if len(table["favorites"]["manga"])!=0 or len(table["favorites"]["anime"])!=0:
         pagef+=1
-    embedMAL.set_footer(text="Page "+str(page+1)+"/"+str(pagef)+" | OT!maluser")
+    embedMAL.set_footer(text="Page "+str(page+1)+"/"+str(pagef))
     embedMAL=auteur(0,0,0,embedMAL,"mal")
     return embedMAL,pagef

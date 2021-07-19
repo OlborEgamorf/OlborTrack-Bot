@@ -20,7 +20,7 @@ async def embedMALlist(user,genre,key,page):
                 descip+="("+str(table[genre.lower()][i]["read_chapters"])+" chap lus/"+str(table["manga"][i]["total_chapters"])+")\n"
         else:
             descip+="\n"
-    embedMAL=discord.Embed(title="Liste de {0} - {1}, {2}".format(user,genre.lower(),key), description=descip, color=0x7c0cb0)
-    embedMAL.set_footer(text="Page "+str(page+1)+"/"+str(pageT)+" | OT!mallist")
+    embedMAL=discord.Embed(title="Liste de {0}\n{1}, {2}".format(user,genre.lower(),key), description=descip, color=0x7c0cb0)
+    embedMAL.set_footer(text="Page "+str(page+1)+"/"+str(pageT))
     embedMAL=auteur(0,0,0,embedMAL,"mal")
     return embedMAL,pageT

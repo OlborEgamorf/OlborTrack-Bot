@@ -26,7 +26,7 @@ async def embedMALcompare(user1,user2,genre,key,page):
     debut,borne,pageT=generation[0],generation[1],generation[2]
     for i in range(debut,borne):
         descip+="["+table[0][genre.lower()][i]["title"]+"]("+table[0][genre.lower()][i]["url"]+") \n"
-    embedMAL=discord.Embed(title="Comparaison {0} et {1} - {2}, {3}".format(user1,user2,genre.lower(),key.lower()), description=descip, color=0x7c0cb0)
-    embedMAL.set_footer(text="Page "+str(page+1)+"/"+str(pageT)+" | OT!malcompare")
+    embedMAL=discord.Embed(title="Comparaison entre {0} et {1}\n{2}, {3}".format(user1,user2,genre.lower(),key.lower()), description=descip, color=0x7c0cb0)
+    embedMAL.set_footer(text="Page "+str(page+1)+"/"+str(pageT))
     embedMAL=auteur(0,0,0,embedMAL,"mal")
     return embedMAL,pageT

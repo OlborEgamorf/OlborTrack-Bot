@@ -97,8 +97,8 @@ async def exeErrorExcept(ctx:commands.Context,bot:commands.Bot,args:str) -> disc
     for i in range(1,len(ctx.args)):
         argsstr+=str(ctx.args[i])+" "
     error=str(sys.exc_info()[0])+"\n"+str(sys.exc_info()[1])+"\n"+str(sys.exc_info()[2].tb_frame)+"\n"+str(sys.exc_info()[2].tb_lineno)
-    embedE=embedError(ctx.guild,ctx.message.channel,ctx.author,str(sys.exc_info()[0]),ctx.command.name+" "+argsstr)[0]
-    embedHistorique=embedError(ctx.guild,ctx.message.channel,ctx.author,error,ctx.command.name+" "+argsstr)[1]
+    embedE=embedError(ctx.guild,ctx.message.channel,ctx.author,str(sys.exc_info()[0]),str(ctx.invoked_with)+" "+argsstr)[0]
+    embedHistorique=embedError(ctx.guild,ctx.message.channel,ctx.author,error,str(ctx.invoked_with)+" "+argsstr)[1]
     await bot.get_channel(726000546401615912).send(embed=embedHistorique)
     return embedE
 
@@ -120,22 +120,6 @@ def createEmbed(title:str,descip:str,color:int,command:str,option:(discord.Membe
     else:
         auteur(option.id,option.name,option.avatar,embed,"user")
     return embed
-
-
-async def addReact(message:discord.Message,graph:bool):
-    """Cette fonction ajoute les réactions qu'il faut pour les commandes d'aide et MyAnimeList.
-    Entrées :
-        message : le message concerné
-        graph : booléen qui indique s'il faut mettre la réaction de graphique"""
-    bas=message.embeds[0].footer.text
-    if len(bas)==3 or bas.split(" ")[0]=="Avertissement":
-        return
-    if bas.split(" ")[3]!="1":
-        await message.add_reaction("<:otGAUCHE:772766034335236127>")
-        await message.add_reaction("<:otDROITE:772766034376523776>")
-    if graph==True:
-        if message.author.guild_permissions.attach_files==True:
-            await message.add_reaction("<:otGRAPH:772766034558058506>")
 
 
 async def sendEmbed(ctx:commands.Context,embed:discord.Embed,react:bool,boutons:bool,curseurCMD:sqlite3.Cursor,connexionCMD:sqlite3.Connection,page:int,pagemax:int) -> (discord.Message or None):
