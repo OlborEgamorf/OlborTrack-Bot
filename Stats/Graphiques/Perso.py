@@ -39,10 +39,7 @@ def graphPerso(ligne,ctx,option,bot,period,guildOT,categ):
     df=pd.DataFrame({'date': listeX, categ: listeY})
     if user==None:
         plt.plot('date', categ, data=df, linestyle='-', marker='o',color=colorOT)
-        try:
-            plt.title("{0} - Périodes{1}".format(getNomGraph(ctx,bot,option,table[i]["ID"]),plus),fontsize=12)
-        except:
-            plt.title("Ancien membre - Périodes{0}".format(plus),fontsize=12)
+        plt.title("Ancien membre - Périodes{0}".format(plus),fontsize=12)
     else:
         if option in ("Messages","Mots","Voice"):
             plt.plot('date', categ, data=df, linestyle='-', marker='o',color=(user.color.r/256,user.color.g/256,user.color.b/256,1))

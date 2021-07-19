@@ -11,6 +11,7 @@ from Stats.Graphiques.Line import graphLine
 from Stats.Graphiques.Circle import graphCircle
 from Stats.Graphiques.Perso import graphPerso
 from Stats.Graphiques.Grouped import graphGroupedMois
+from Stats.Graphiques.Moyennes import graphGroupedMoy, graphHeatMoy, graphPersoMoy 
 import discord
 from discord.ext import commands
 from Stats.Graphiques.Evol import graphEvol, graphEvolAA, graphEvolAutour, graphEvolBest, graphEvolBestUser, graphEvolRank
@@ -54,6 +55,30 @@ async def reactGraph(message:discord.Message,bot:commands.Bot,guildOT:OTGuild):
             await graphHeatGlobal(ligne,ctx,bot,ligne["Option"],guildOT)
             messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
             listeG.append(messageGraph.attachments[0].url)
+        
+        elif ligne["Commande"]=="moy":
+            if ligne["Option"] in ("Jour","Heure"):
+                graphPersoMoy(ligne,ctx,ligne["Option"],bot,"mois",guildOT)
+                messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
+                embedM,embed=await embedGraph([1,2,3],messageGraph,ctx,message)
+                listeG.append(messageGraph.attachments[0].url)
+
+                graphGroupedMoy(ligne,ctx,ligne["Option"],bot,guildOT)
+                messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
+                listeG.append(messageGraph.attachments[0].url)
+
+                await graphHeatMoy(ligne,ctx,bot,ligne["Option"],guildOT)
+                messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
+                listeG.append(messageGraph.attachments[0].url)
+
+            elif ligne["Option"]=="Mois":
+                graphPersoMoy(ligne,ctx,ligne["Option"],bot,"annee",guildOT)
+                messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
+                embedM,embed=await embedGraph([1],messageGraph,ctx,message)
+                listeG.append(messageGraph.attachments[0].url)
+            else:
+                await ctx.reply("Cette commande ne dispose pas de graphiques.")
+                return
 
         else:
             if ligne["Commande"]=="rank":
@@ -88,7 +113,7 @@ async def reactGraph(message:discord.Message,bot:commands.Bot,guildOT:OTGuild):
                 listeFonc=[graphSpider]
 
             elif ligne["Commande"]=="jeux":
-                await ctx.send("Les graphiques pour les classements de jeux ne sont pas encore disponible ! Il manque des choses à régler pour cela...")
+                await ctx.reply("Les graphiques pour les classements de jeux ne sont pas encore disponible ! Il manque des choses à régler pour cela...")
                 return
             
             for fonc in range(len(listeFonc)):
@@ -98,6 +123,7 @@ async def reactGraph(message:discord.Message,bot:commands.Bot,guildOT:OTGuild):
                 if fonc==0:
                     embedM,embed=await embedGraph(listeFonc,messageGraph,ctx,message)
 
+        print(listeG)
         descip=""
         for i in listeG:
             descip+="'{0}',".format(i)
@@ -106,7 +132,7 @@ async def reactGraph(message:discord.Message,bot:commands.Bot,guildOT:OTGuild):
         curseurCMD.execute("INSERT INTO graphs VALUES({0},{1}1,{2})".format(embedM.id,descip,len(listeG)))
         connexionCMD.commit()
         embed.description=""
-        if ligne["Commande"]!="trivial" and ligne["Option"]!="trivialperso":
+        if len(listeG)>1:
             await embedM.add_reaction("<:otGAUCHE:772766034335236127>")
             await embedM.add_reaction("<:otDROITE:772766034376523776>")
         await embedM.edit(embed=embed)
