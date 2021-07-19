@@ -21,20 +21,25 @@ class OTGuild:
         self.mstats=None
         self.wikinsfw=None
         self.stats=True
+        self.gd=False
         self.twitch=[]
         self.snipe=OTSnipe()
         self.starlist={}
         self.stardict={}
         self.auto=None
-        self.getStar()
-        self.getHBM()
-        self.getPerms()
-        self.getAuto()
-        self.getWikiNSFW()
-        self.getTwitch()
-    
-    def getStar(self):
+
         connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+        self.getStar(curseur)
+        self.getHBM(curseur)
+        self.getPerms(curseur)
+        self.getAuto(curseur)
+        self.getWikiNSFW(curseur)
+        self.getTwitch(curseur)
+        self.getStats(curseur)
+    
+    def getStar(self,curseur=None):
+        if curseur==None:
+            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
         self.stardict={}
         self.starlist={}
         for i in curseur.execute("SELECT * FROM sb").fetchall():
@@ -43,8 +48,9 @@ class OTGuild:
             self.starlist[i["ID"]].append(i["Nombre"])
             self.stardict[i["Nombre"]]=OTTableau(i)
     
-    def getHBM(self):
-        connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+    def getHBM(self,curseur=None):
+        if curseur==None:
+            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
         self.chan={}
         self.users={}
         for i in curseur.execute("SELECT * FROM chans").fetchall():
@@ -52,22 +58,26 @@ class OTGuild:
         for i in curseur.execute("SELECT * FROM users").fetchall():
             self.users[i["ID"]]=i
     
-    def getPerms(self):
-        connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+    def getPerms(self,curseur=None):
+        if curseur==None:
+            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
         self.mcmd=curseur.execute("SELECT * FROM modulesCMD").fetchall()
         self.mstats=curseur.execute("SELECT * FROM modulesStats").fetchall()
     
-    def getAuto(self):
-        connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+    def getAuto(self,curseur=None):
+        if curseur==None:
+            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
         self.auto=curseur.execute("SELECT * FROM auto").fetchall()
     
-    def getWikiNSFW(self):
-        connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+    def getWikiNSFW(self,curseur=None):
+        if curseur==None:
+            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
         self.wikinsfw=curseur.execute("SELECT * FROM wikinsfw").fetchone()["Active"]
     
-    def getTwitch(self):
+    def getTwitch(self,curseur=None):
+        if curseur==None:
+            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
         self.twitch=[]
-        connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
         for i in curseur.execute("SELECT * FROM twitch").fetchall():
             self.twitch.append(OTTwitch(i))
 
