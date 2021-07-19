@@ -1,3 +1,5 @@
+from random import choice
+
 from Core.Fonctions.DichoTri import triPeriod
 from Stats.Embeds.Divers import embedDivers
 from Stats.Embeds.Emotes import embedEmote
@@ -12,6 +14,21 @@ from Stats.Embeds.Trivialperso import embedTrivialPerso
 
 dictTriArg={"countAsc":"Count","rankAsc":"Rank","countDesc":"Count","rankDesc":"Rank","dateAsc":"DateID","dateDesc":"DateID","periodAsc":"None","periodDesc":"None","moyDesc":"Moyenne","nombreDesc":"Nombre","winAsc":"W","winDesc":"W","loseAsc":"L","loseDesc":"L","expDesc":"Exp","expAsc":"Exp"}
 dictTriSens={"countAsc":"ASC","rankAsc":"ASC","countDesc":"DESC","rankDesc":"DESC","dateAsc":"ASC","dateDesc":"DESC","periodAsc":"None","periodDesc":"None","moyDesc":"DESC","nombreDesc":"DESC","winAsc":"ASC","winDesc":"DESC","loseAsc":"ASC","loseDesc":"DESC","expDesc":"DESC","expAsc":"ASC"}
+
+liste=["Créé avec amour par OlborEgamorf <3",
+"Vous pouvez consulter la liste des contributeurs avec OT!credits",
+"Invitez moi sur votre serveur avec OT!invite !",
+"Vous avez déjà essayé le OT!tortues ?",
+"Besoin d'aide : OT!help",
+"Un commentaire à faire ? Utilisez OT!feedback",
+"Vous pouvez me suivre sur Twitter et Instagram !",
+"Essayez les graphiques !",
+"Si vous aimez mes commandes, parlez de moi autour de vous !",
+"On vous a déjà parlé des graphiques animés ?",
+"Les graphiques ont un Dark Mode !",
+"Utilisez 'OT!help jeux' pour voir les nombreux jeux dont je dispose !",
+"Merci de soutenir le projet <3",
+"Regardez comment soutenir le projet avec OT!support"]
 
 async def statsEmbed(nom,ligne,page,pagemax,option,guildOT,bot,evol,collapse,curseur):
     author=ligne["AuthorID"]
@@ -44,5 +61,5 @@ async def statsEmbed(nom,ligne,page,pagemax,option,guildOT,bot,evol,collapse,cur
     elif option=="trivialperso":
         embed=embedTrivialPerso(table,page,mobile)
     
-    embed.set_footer(text="Page {0}/{1}".format(page,pagemax))
+    embed.set_footer(text="Page {0}/{1} | {2}".format(page,pagemax,choice(liste)))
     return embed
