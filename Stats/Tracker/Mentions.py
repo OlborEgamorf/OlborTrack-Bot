@@ -6,4 +6,4 @@ def exeMentionsSQL(id,dictPing,guild,option):
     for i in dictPing:
         dictPing[i]=inverse(option,dictPing[i])
         exeObj(dictPing[i],i,id,True,guild,"Mentions")
-        exeObj(dictPing[i],id,i,True,guild,"Mentionnes")
+        exeObj(dictPing[i],id,i,True,guild,"Mentionne")

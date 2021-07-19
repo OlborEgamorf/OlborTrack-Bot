@@ -5,7 +5,6 @@ listeDel={}
 
 async def deleteStats(ctx,bot):
     try:
-        print(ctx.args)
         if len(ctx.args)==2:
             stat="all"
         else:
