@@ -228,7 +228,9 @@ async def graphEvolAutour(ligne,ctx,bot,option,guildOT):
         mini=int(mini)
     listeT.sort()
     dfDate=setMin(mois,listeT,mini)
+    dictLine={1:"--",2:"-.",3:"."}
 
+    listeColor=[]
     for i in range(len(tableRank)):
         if option in ("Salons","Voicechan"):
             if guildOT.chan[tableRank[i]["ID"]]["Hide"]:
@@ -239,7 +241,8 @@ async def graphEvolAutour(ligne,ctx,bot,option,guildOT):
         df2=pd.DataFrame({"Date": listeXO[i], "Count": listeYO[i]})
         user=ctx.guild.get_member(tableRank[i]["ID"])
         if user!=None:
-            plt.plot("Date", "Count", data=df2, linestyle='--', marker='',color=(user.color.r/256,user.color.g/256,user.color.b/256,1),label=user.name)
+            listeColor.append((user.color.r/256,user.color.g/256,user.color.b/256,1))
+            plt.plot("Date", "Count", data=df2, linestyle=dictLine[listeColor.count((user.color.r/256,user.color.g/256,user.color.b/256,1))], marker="", color=(user.color.r/256,user.color.g/256,user.color.b/256,1),label=user.name)
         else:
             try:
                 nom=getNomGraph(ctx,bot,option,tableRank[i]["ID"])
