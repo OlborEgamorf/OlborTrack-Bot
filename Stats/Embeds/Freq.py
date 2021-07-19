@@ -16,5 +16,5 @@ def embedFreq(table,page,mobile,evol):
     else:
         embed.add_field(name="Rang",value=field1,inline=True)
         embed.add_field(name="Heure",value=field2,inline=True)
-        embed.add_field(name="Count",value=field3,inline=True)
+        embed.add_field(name="Messages",value=field3,inline=True)
     return embed

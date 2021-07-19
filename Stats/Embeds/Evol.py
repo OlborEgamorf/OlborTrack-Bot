@@ -3,6 +3,7 @@ from Core.Fonctions.GetTable import collapseEvol
 from Core.Fonctions.Embeds import addtoFields, defEvol
 from Core.Fonctions.TempsVoice import formatCount
 
+dictNameF3={"Messages":"Messages","Salons":"Messages","Freq":"Messages","Mots":"Mots","Emotes":"Utilisations","Reactions":"Utilisations","Voice":"Temps","Voicechan":"Temps"}
 
 def embedEvol(table,page,mobile,collapse,evol,option):
     embed=discord.Embed()
@@ -21,5 +22,5 @@ def embedEvol(table,page,mobile,collapse,evol,option):
     else:
         embed.add_field(name="Rang",value=field1,inline=True)
         embed.add_field(name="Date",value=field2,inline=True)
-        embed.add_field(name="Count",value=field3,inline=True)
+        embed.add_field(name=dictNameF3[option],value=field3,inline=True)
     return embed

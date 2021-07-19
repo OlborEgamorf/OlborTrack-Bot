@@ -3,6 +3,7 @@ from Core.Fonctions.Embeds import addtoFields, defEvol
 from Core.Fonctions.TempsVoice import formatCount
 from Core.Fonctions.DichoTri import dichotomieID, triID
 
+dictNameF3={"Messages":"Messages","Salons":"Messages","Freq":"Messages","Mots":"Mots","Emotes":"Utilisations","Reactions":"Utilisations","Voice":"Temps","Voicechan":"Temps","Mentions":"Mentions","Mentionne":"Mentions","Divers":"Nombre"}
 
 def embedMembre(table,guildOT,page,mobile,id,evol,option):
     embed=discord.Embed()
@@ -46,5 +47,5 @@ def embedMembre(table,guildOT,page,mobile,id,evol,option):
     else:
         embed.add_field(name="Rang",value=field1,inline=True)
         embed.add_field(name="Membre",value=field2,inline=True)
-        embed.add_field(name="Count",value=field3,inline=True)
+        embed.add_field(name=dictNameF3[option],value=field3,inline=True)
     return embed

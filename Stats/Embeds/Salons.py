@@ -22,5 +22,5 @@ def embedSalon(table,guildOT,page,mobile,evol,option):
     else:
         embed.add_field(name="Rang",value=field1,inline=True)
         embed.add_field(name="Salon",value=field2,inline=True)
-        embed.add_field(name="Count",value=field3,inline=True)
+        embed.add_field(name="Messages",value=field3,inline=True)
     return embed
