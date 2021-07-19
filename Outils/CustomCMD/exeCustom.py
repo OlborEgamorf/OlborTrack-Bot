@@ -2,7 +2,7 @@ from Core.Fonctions.Embeds import embedAssert, exeErrorExcept
 from discord.ext import commands
 from Stats.SQL.ConnectSQL import connectSQL
 
-from CustomCMD.ModifCustom import *
+from Outils.CustomCMD.ModifCustom import *
 
 
 async def exeSCMD(ctx:commands.Context,bot:commands.Bot,args:str,listeOS:list):
