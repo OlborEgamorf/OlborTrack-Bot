@@ -19,7 +19,7 @@ from time import strftime
 import discord
 from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.DichoTri import triID
-from Core.Fonctions.Embeds import embedAssert, exeErrorExcept
+from Core.Fonctions.Embeds import embedAssert, exeErrorExcept, createEmbed
 from Stats.SQL.Compteur import compteurSQL, compteurTrivialS
 from Stats.SQL.ConnectSQL import connectSQL
 from Stats.SQL.Execution import exeJeuxSQL
@@ -125,9 +125,9 @@ class Question:
             if self.table[i]["Reponse"]!=None:
                 trad="`({0})`".format(self.table[i]["Reponse"])
             if i==self.vrai-1:
-                descip+="{0} {1} {2}\n ".format(emotesTrue[i],self.table[i]["Trad"],trad)
+                descip+="{0} {1} {2}\n".format(emotesTrue[i],self.table[i]["Trad"],trad)
             else:
-                descip+="{0} {1} {2}\n ".format(emotes[i],self.table[i]["Trad"],trad)
+                descip+="{0} {1} {2}\n".format(emotes[i],self.table[i]["Trad"],trad)
         return descip
 
     def affichageLose(self,emoji):
@@ -138,11 +138,11 @@ class Question:
             if self.table[i]["Reponse"]!=None:
                 trad="`({0})`".format(self.table[i]["Reponse"])
             if i==choix[emoji]:
-                descip+="{0} {1} {2}\n ".format(emotesFalse[i],self.table[i]["Trad"],trad)
+                descip+="{0} {1} {2}\n".format(emotesFalse[i],self.table[i]["Trad"],trad)
             elif i==self.vrai-1:
-                descip+="{0} {1} {2}\n ".format(emotesTrue[i],self.table[i]["Trad"],trad)
+                descip+="{0} {1} {2}\n".format(emotesTrue[i],self.table[i]["Trad"],trad)
             else:
-                descip+="{0} {1} {2}\n ".format(emotes[i],self.table[i]["Trad"],trad)
+                descip+="{0} {1} {2}\n".format(emotes[i],self.table[i]["Trad"],trad)
         return descip
     
     def gestionMulti(self,victoire):
@@ -354,7 +354,7 @@ class Versus(Question):
     def addPlayer(self,joueur):
         self.joueurs.append(joueur)
         self.reponses[joueur.id]=None
-        self.scores[joueur.id]=4
+        self.scores[joueur.id]=0
         self.histo[joueur.id]=""
     
     def setDiff(self):
@@ -378,9 +378,14 @@ class Versus(Question):
         embedT.add_field(name="Catégorie", value=listeNoms[dictCateg[self.arg]], inline=True)
         embedT.add_field(name="Difficulté", value=dictDiff[self.diff], inline=True)
         embedT.add_field(name="Auteur",value="[{0}](https://forms.gle/RNTGn9tds2LGVkdU8)".format(self.auteur),inline=True)
+        embedT.add_field(name="Question n°", value=str(self.tour+1),inline=True)
         descip=""
         self.scores={k: v for k, v in sorted(self.scores.items(), key=lambda item: item[1], reverse=True)}
+        count=0
         for i in self.scores:
+            if count==8:
+                embedT.add_field(name="Scores", value=descip,inline=True)
+                descip=""
             try:
                 assert results
                 if self.reponses[i]==None or self.vrai==None:
@@ -391,7 +396,7 @@ class Versus(Question):
                     descip+="{0} <@{1}> : **{2}** - {3}\n".format(str(self.emotes[i]),i,self.scores[i],emotesFalse[self.reponses[i]])
             except:
                 descip+="{0} <@{1}> : **{2}**\n".format(str(self.emotes[i]),i,self.scores[i])
-        embedT.add_field(name="Question n°", value=str(self.tour+1),inline=True)
+            count+=1
         embedT.add_field(name="Scores", value=descip,inline=True)
         embedT.set_footer(text="OT!trivial{0}".format(self.option))
         return embedT
@@ -417,15 +422,15 @@ class Versus(Question):
                 count,state=2,"W"
             else:
                 count,state=-1,"L"
-            exeJeuxSQL(i,None,state,self.guild.id,curseurGuild,count,option)
-            exeJeuxSQL(i,None,state,"OT",curseurOT,count,option)
+            exeJeuxSQL(i,None,state,self.guild.id,curseurGuild,count,option,None)
+            exeJeuxSQL(i,None,state,"OT",curseurOT,count,option,None)
         connexionGuild.commit()
         connexionOT.commit()
 
 class Party(Versus):
     def __init__(self, guild,option):
         super().__init__(guild,option)
-        self.max=20
+        self.max=15
         self.event=["malus","double","triple","10s","solo","ratio","theme1","themeA","speed","diff1","diffA","duo","vol",None]
         self.eventTimes={i:0 for i in self.event}
         self.eventMax={"malus":3,"double":2,"triple":1,"10s":2,"solo":2,"ratio":1,"theme1":2,"themeA":1,"speed":3,"diff1":2,"diffA":1,"duo":1,"vol":2,None:4}
@@ -494,9 +499,14 @@ class BattleRoyale(Versus):
         embedT.add_field(name="Catégorie", value=listeNoms[dictCateg[self.arg]], inline=True)
         embedT.add_field(name="Difficulté", value=dictDiff[self.diff], inline=True)
         embedT.add_field(name="Auteur",value="[{0}](https://forms.gle/RNTGn9tds2LGVkdU8)".format(self.auteur),inline=True)
+        embedT.add_field(name="Question n°", value=str(self.tour+1),inline=True)
         descip=""
+        count=0
         self.scores={k: v for k, v in sorted(self.scores.items(), key=lambda item: item[1], reverse=True)}
         for i in self.scores:
+            if count==8:
+                embedT.add_field(name="Scores", value=descip,inline=True)
+                descip=""
             try:
                 assert results
                 if self.scores[i]==0:
@@ -509,7 +519,7 @@ class BattleRoyale(Versus):
                     descip+="{0} <@{1}> : **{2}** - {3}\n".format(str(self.emotes[i]),i,":blue_heart: "*self.scores[i],emotesFalse[self.reponses[i]])
             except:
                 descip+="{0} <@{1}> : **{2}**\n".format(str(self.emotes[i]),i,":blue_heart: "*self.scores[i])
-        embedT.add_field(name="Question n°", value=str(self.tour+1),inline=True)
+            count+=1
         embedT.add_field(name="Scores", value=descip,inline=True)
         embedT.set_footer(text="OT!trivial{0}".format(self.option))
         return embedT
