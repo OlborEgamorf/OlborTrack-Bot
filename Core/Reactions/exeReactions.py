@@ -4,6 +4,7 @@ from Core.Reactions.Plus import reactPlus
 from Core.Reactions.Tri import changeTri
 from Core.Reactions.Mobile import changeMobile
 from Core.Reactions.Graphiques import reactGraph
+from Admin.DeleteStats import confirmDel
 import discord
 from discord.ext import commands
 from Core.OTGuild import OTGuild
@@ -25,5 +26,8 @@ async def exeReactOT(emoji:discord.Reaction, message:discord.Message, user:disco
         await changeTri(message,emoji,user,bot,guildOT)
     elif emoji.id==833736320919797780:
         await changeMobile(message,emoji,user,bot,guildOT)
+    elif emoji.id==866705696505200691:
+        ctx=await bot.get_context(message)
+        await confirmDel(ctx,ctx.author,bot)
     else:
         return
