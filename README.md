@@ -7,7 +7,7 @@ Actuellement, je développe la version 3.0, et vous pouvez m'aider !
 
 Le code est quasiment complet, il manque que la partie "exécution" qui contient des informations sensibles et que je ne veux pas divulguer.
 
-Je me sert de ces bibliothèques : discord.py, asyncio, aiohttp, wikiquote, wikipediaapi, shutil, matplotlib, pandas, seaborn, colorthief, circlify et rule34 (lol)
+Je me sert de ces bibliothèques : discord.py, asyncio, aiohttp, wikiquote, wikipediaapi, shutil, matplotlib, pandas, seaborn, geoplot, geopandas, colorthief, circlify et rule34 (lol)
 
 Pour les statistiques, je me sers de sqlite3 et donc du langage SQL pour stocker et gérer les données. 
 
