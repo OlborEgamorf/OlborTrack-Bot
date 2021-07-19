@@ -20,6 +20,7 @@ class OTGuild:
         self.mcmd=None
         self.mstats=None
         self.wikinsfw=None
+        self.stats=True
         self.twitch=[]
         self.snipe=OTSnipe()
         self.starlist={}
@@ -69,6 +70,11 @@ class OTGuild:
         connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
         for i in curseur.execute("SELECT * FROM twitch").fetchall():
             self.twitch.append(OTTwitch(i))
+
+    def getStats(self,curseur=None):
+        if curseur==None:
+            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+        self.stats=curseur.execute("SELECT * FROM stats").fetchone()["Active"]
 
 class OTTableau:
     def __init__(self,star):

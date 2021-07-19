@@ -35,6 +35,9 @@ async def exeModules(ctx,bot,args,guild):
                     curseur.execute("UPDATE modulesStats SET Statut=False WHERE Module='Moyennes'")
                     curseur.execute("UPDATE modulesStats SET Statut=False WHERE Module='Roles'")
                     descip+="Moyennes : désactivé\nRoles : désactivé\n"
+            if ctx.command.name=="modulecmd":
+                if nom=="Stats":
+                    assert guild.stats, "Vous ne pouvez pas activer les commandes de statistiques si vous avez choisi de ne plus les traquer sur votre serveur."
             etat=curseur.execute("SELECT * FROM {0} WHERE Module='{1}'".format(dictCommande[ctx.command.name],nom)).fetchone()
             curseur.execute("UPDATE {0} SET Statut={1} WHERE Module='{2}'".format(dictCommande[ctx.command.name],bool(int(etat["Statut"])-1),nom))
             descip+="{0} : {1}".format(nom,dictBool[bool(int(etat["Statut"])-1)])
