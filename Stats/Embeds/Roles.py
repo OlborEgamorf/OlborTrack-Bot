@@ -1,6 +1,6 @@
 import discord
 from Core.Fonctions.TempsVoice import formatCount
-from Core.Fonctions.Embeds import addtoFields
+from Core.Fonctions.Embeds import addtoFields, createFields
 
 dictNameF3={"Messages":"Messages","Salons":"Messages","Freq":"Messages","Mots":"Mots","Emotes":"Utilisations","Reactions":"Utilisations","Voice":"Temps","Voicechan":"Temps","Mentions":"Mentions","Mentionne":"Mentions","Divers":"Nombre"}
 
@@ -14,10 +14,5 @@ def embedRole(table,page,mobile,option):
         nom="<@&{0}>".format(table[i]["ID"])
         field1,field2,field3=addtoFields(field1,field2,field3,mobile,rank,nom,count)
         
-    if mobile:
-        embed.description=field1
-    else:
-        embed.add_field(name="Rang",value=field1,inline=True)
-        embed.add_field(name="Rôle",value=field2,inline=True)
-        embed.add_field(name=dictNameF3[option],value=field3,inline=True)
+    embed=createFields(mobile,embed,field1,field2,field3,"Rang","Rôle",dictNameF3[option]) 
     return embed

@@ -1,5 +1,5 @@
 import discord
-from Core.Fonctions.Embeds import addtoFields, defEvol
+from Core.Fonctions.Embeds import addtoFields, createFields, defEvol
 from Core.Fonctions.TempsVoice import formatCount
 from Core.Fonctions.DichoTri import dichotomieID, triID
 
@@ -42,10 +42,5 @@ def embedMembre(table,guildOT,page,mobile,id,evol,option):
                 count="\n**__{0}__**".format(formatCount(option,table[etat[1]]["Count"]))
             field1,field2,field3=addtoFields(field1,field2,field3,mobile,rank,nom,count)
 
-    if mobile:
-        embed.description=field1
-    else:
-        embed.add_field(name="Rang",value=field1,inline=True)
-        embed.add_field(name="Membre",value=field2,inline=True)
-        embed.add_field(name=dictNameF3[option],value=field3,inline=True)
+    embed=createFields(mobile,embed,field1,field2,field3,"Rang","Membre",dictNameF3[option])
     return embed

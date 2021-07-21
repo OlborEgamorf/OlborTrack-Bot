@@ -1,5 +1,5 @@
 import discord
-from Core.Fonctions.Embeds import addtoFields, defEvol
+from Core.Fonctions.Embeds import addtoFields, createFields, defEvol
 from Core.Fonctions.DichoTri import dichotomieID, triID
 
 def embedJeux(table,guild,page,mobile,id,evol,option):
@@ -41,13 +41,10 @@ def embedJeux(table,guild,page,mobile,id,evol,option):
                 count="\n**__{0} {1}__**".format(int(table[etat[1]]["Count"]),wl)
             field1,field2,field3=addtoFields(field1,field2,field3,mobile,rank,nom,count)
 
-    if mobile:
-        embed.description=field1
+    if option!="trivial":
+        nomF3="Points (W/L)"
     else:
-        embed.add_field(name="Rang",value=field1,inline=True)
-        embed.add_field(name="Membre",value=field2,inline=True)
-        if option!="trivial":
-            embed.add_field(name="Points (W/L)",value=field3,inline=True)
-        else:
-            embed.add_field(name="Exp",value=field3,inline=True)
+        nomF3="Exp"
+    
+    embed=createFields(mobile,embed,field1,field2,field3,"Rang","Membre",nomF3)
     return embed

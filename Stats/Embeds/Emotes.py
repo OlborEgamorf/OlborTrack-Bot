@@ -1,5 +1,5 @@
 import discord
-from Core.Fonctions.Embeds import addtoFields, defEvol
+from Core.Fonctions.Embeds import addtoFields, createFields, defEvol
 
 def embedEmote(table,bot,page,mobile,evol):
     embed=discord.Embed()
@@ -18,10 +18,5 @@ def embedEmote(table,bot,page,mobile,evol):
                 nom=str(emote)
         field1,field2,field3=addtoFields(field1,field2,field3,mobile,rank,nom,count)
         
-    if mobile:
-        embed.description=field1
-    else:
-        embed.add_field(name="Rang",value=field1,inline=True)
-        embed.add_field(name="Emote",value=field2,inline=True)
-        embed.add_field(name="Utilisations",value=field3,inline=True)
+    embed=createFields(mobile,embed,field1,field2,field3,"Rang","Emote","Utilisations")
     return embed

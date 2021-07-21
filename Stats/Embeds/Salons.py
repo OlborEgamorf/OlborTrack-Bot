@@ -1,5 +1,5 @@
 import discord
-from Core.Fonctions.Embeds import addtoFields, defEvol
+from Core.Fonctions.Embeds import addtoFields, createFields, defEvol
 from Core.Fonctions.TempsVoice import formatCount
 
 
@@ -17,10 +17,5 @@ def embedSalon(table,guildOT,page,mobile,evol,option):
             nom="<#{0}>".format(table[i]["ID"])
         field1,field2,field3=addtoFields(field1,field2,field3,mobile,rank,nom,count)
         
-    if mobile:
-        embed.description=field1
-    else:
-        embed.add_field(name="Rang",value=field1,inline=True)
-        embed.add_field(name="Salon",value=field2,inline=True)
-        embed.add_field(name="Messages",value=field3,inline=True)
+    embed=createFields(mobile,embed,field1,field2,field3,"Rang","Salon","Messages") 
     return embed

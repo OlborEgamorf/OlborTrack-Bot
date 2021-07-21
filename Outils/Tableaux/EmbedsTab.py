@@ -1,6 +1,6 @@
 import discord
 from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.Embeds import addtoFields, sendEmbed
+from Core.Fonctions.Embeds import addtoFields, createFields, sendEmbed
 from Core.Fonctions.setMaxPage import setMax, setPage
 from Core.OTGuild import OTGuild
 from Stats.SQL.ConnectSQL import connectSQL
@@ -31,13 +31,7 @@ def embedSB(table,page,pagemax,mobile):
 
         field1,field2,field3=addtoFields(field1,field2,field3,mobile,nombre,emote,salon)
 
-    if mobile:
-        embed.description=field1
-    else:
-        embed.add_field(name="Numéro",value=field1,inline=True)
-        embed.add_field(name="Emote - Nombre min.",value=field2,inline=True)
-        embed.add_field(name="Salon",value=field3,inline=True)
-        
+    embed=createFields(mobile,embed,field1,field2,field3,"Numéro","Emote - Nombre min.","Salon")
     embed.set_footer(text="Page {0}/{1}".format(page,pagemax))
     return embed
         

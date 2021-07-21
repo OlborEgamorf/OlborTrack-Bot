@@ -1,5 +1,5 @@
 import discord
-from Core.Fonctions.Embeds import addtoFields, defEvol
+from Core.Fonctions.Embeds import addtoFields, createFields, defEvol
 
 def embedFreq(table,page,mobile,evol):
     embed=discord.Embed()
@@ -11,10 +11,5 @@ def embedFreq(table,page,mobile,evol):
         nom="{0}h-{1}h".format(table[i]["ID"],table[i]["ID"]+1)
         field1,field2,field3=addtoFields(field1,field2,field3,mobile,rank,nom,count)
         
-    if mobile:
-        embed.description=field1
-    else:
-        embed.add_field(name="Rang",value=field1,inline=True)
-        embed.add_field(name="Heure",value=field2,inline=True)
-        embed.add_field(name="Messages",value=field3,inline=True)
+    embed=createFields(mobile,embed,field1,field2,field3,"Rang","Heure","Messages")
     return embed

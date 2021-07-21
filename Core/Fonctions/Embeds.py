@@ -49,6 +49,15 @@ def addtoFields(field1:str,field2:str,field3:str,mobile:bool,rank:str,nom:str,co
         field3+="{0}\n".format(count)
     return field1, field2, field3
 
+def createFields(mobile,embed,f1,f2,f3,nf1,nf2,nf3):
+    if mobile:
+        embed.description="**{0} : {1} - {2}**\n{3}".format(nf1,nf2,nf3,f1)
+    else:
+        embed.add_field(name=nf1,value=f1,inline=True)
+        embed.add_field(name=nf2,value=f2,inline=True)
+        embed.add_field(name=nf3,value=f3,inline=True)
+    return embed
+
 
 def newDescip(descip:(str or discord.embeds._EmptyEmbed),option:str,obj:str,guildOT:OTGuild,bot:commands.Bot) -> str:
     """Si les statistiques affichées concernent un objet (salon, rôle, emote, ...), l'ajoute en haut de la description de l'embed. Si l'embed n'a pas de description, devient la description.
