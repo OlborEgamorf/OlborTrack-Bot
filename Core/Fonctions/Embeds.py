@@ -6,6 +6,7 @@ from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.GetNom import nomsOptions
 from Core.OTGuild import OTGuild
 from discord.ext import commands
+from Core.Fonctions.TempsVoice import formatCount
 
 
 def defEvol(ligne:dict,evol:bool) -> str: 
@@ -178,3 +179,31 @@ def embedAssert(info:str) -> discord.Embed:
         embedTable=discord.Embed(title="<:otRED:718392916061716481> Erreur", description=str(info),color=0xff0000)
     embedTable.set_footer(text="Avertissement")
     return embedTable
+
+def countRankCompare(table,table2,i,option):
+    if table2==None:
+        rang1="__{0}e__".format(table[i]["Rank"])
+        count1="__{0}__".format(formatCount(option,table[i]["Count"]))
+        rang2="//"
+        count2="//"
+    else:
+        if table[i]["Rank"]<table2["Rank"]:
+            rang1="__{0}e__".format(table[i]["Rank"])
+            rang2="{0}e".format(table2["Rank"])
+        elif table[i]["Rank"]!=table2["Rank"]:
+            rang1="{0}e".format(table[i]["Rank"])
+            rang2="__{0}e__".format(table2["Rank"])
+        else:
+            rang1="{0}e".format(table[i]["Rank"])
+            rang2="{0}e".format(table2["Rank"])
+        
+        if table[i]["Count"]>table2["Count"]:
+            count1="__{0}__".format(formatCount(option,table[i]["Count"]))
+            count2="{0}".format(formatCount(option,table2["Count"]))
+        elif table[i]["Count"]!=table2["Count"]:
+            count1="{0}".format(formatCount(option,table[i]["Count"]))
+            count2="__{0}__".format(formatCount(option,table2["Count"]))
+        else:
+            count1="{0}".format(formatCount(option,table[i]["Count"]))
+            count2="{0}".format(formatCount(option,table2["Count"]))
+    return rang1,rang2,count1,count2

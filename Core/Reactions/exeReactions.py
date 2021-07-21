@@ -1,5 +1,4 @@
 from Core.Reactions.ChangePage import reactStats
-from Core.Reactions.Compare import reactCompare
 from Core.Reactions.Plus import reactPlus
 from Core.Reactions.Tri import changeTri
 from Core.Reactions.Mobile import changeMobile
@@ -17,8 +16,6 @@ async def exeReactOT(emoji:discord.Reaction, message:discord.Message, user:disco
     elif emoji.id==772766034558058506:
         await reactGraph(message,bot,guildOT)
         await message.clear_reaction(emoji)
-    elif emoji.id==772766033996021761:
-        await reactCompare(message,user)
     elif emoji.id==772766034163400715:
         await reactPlus(message,user)
         await message.clear_reaction(emoji)
