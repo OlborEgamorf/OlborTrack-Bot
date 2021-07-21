@@ -1,4 +1,3 @@
-
 import sys
 
 import matplotlib.patches as mpatches

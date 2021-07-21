@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 from Stats.SQL.ConnectSQL import connectSQL
 from Core.Fonctions.GraphTheme import setThemeGraph
 
-async def graphSpider(ligne,ctx,option,bot,guildOT):
+async def graphSpider(ligne,ctx,bot,option,guildOT):
     setThemeGraph(plt)
     plt.subplots(figsize=(6.4,4.8))
     connexion,curseur=connectSQL("OT",ligne["AuthorID"],"Trivial",None,None)

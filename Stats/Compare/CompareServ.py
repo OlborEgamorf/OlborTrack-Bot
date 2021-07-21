@@ -23,11 +23,10 @@ async def compareServ(ctx,option,turn,react,ligne,guildOT,bot):
             assert len(liste)==2
             assert liste[0]!=liste[1]
             obj=getObj(option,ctx,len(ctx.args)-len(args))
-            curseurCMD.execute("INSERT INTO commandes VALUES({0},{1},'compareServ','{2}','{3}','{4}','None','None',1,1,'countDesc',False)".format(ctx.message.id,ctx.author.id,option,liste[0],liste[1]))
+            curseurCMD.execute("INSERT INTO commandes VALUES({0},{1},'compareServ','{2}','{3}','{4}','{5}','None',1,1,'countDesc',False)".format(ctx.message.id,ctx.author.id,option,liste[0],liste[1],obj))
             ligne=curseurCMD.execute("SELECT * FROM commandes WHERE MessageID={0}".format(ctx.message.id)).fetchone()
 
         obj=ligne["Args3"]
-        
         if obj=="None":
             obj=""
 

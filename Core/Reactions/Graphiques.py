@@ -123,7 +123,6 @@ async def reactGraph(message:discord.Message,bot:commands.Bot,guildOT:OTGuild):
                 if fonc==0:
                     embedM,embed=await embedGraph(listeFonc,messageGraph,ctx,message)
 
-        print(listeG)
         descip=""
         for i in listeG:
             descip+="'{0}',".format(i)
