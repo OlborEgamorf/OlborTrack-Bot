@@ -5,7 +5,6 @@ from Stats.RapportsUsers.HomePage2 import secondGlobal
 from Stats.RapportsUsers.Classements import ranksGlobal
 from Stats.RapportsUsers.ClassementsObj import ranksIntoSpes
 from Stats.RapportsUsers.AvantApres import avantapresSpe
-from Stats.RapportsUsers.Anecdotes import anecdotesSpe
 import discord
 from time import strftime
 from Stats.SQL.ConnectSQL import connectSQL
@@ -13,16 +12,11 @@ from Core.Fonctions.GetPeriod import getAnnee, getMois
 from Core.Fonctions.Embeds import sendEmbed
 from Core.Fonctions.setMaxPage import setPage
 
-dictFieldG={"Emotes":"Meilleures emotes","Salons":"Salons les plus actifs","Freq":"Heures les plus actives","Reactions":"Meilleures réactions","Messages":"Messages envoyés","Voice":"Temps en vocal","Mots":"Mots envoyés"}
-dictFieldS={"Emotes":"Détails emotes","Salons":"Détails salons","Freq":"Détails heures","Reactions":"Détails réactions","Messages":"Détails messages","Voice":"Détails vocal"}
-dictSEMV={"Messages":"Membres","Voice":"Membres","Emotes":"Emotes différentes","Reactions":"Réactions différentes"}
-dictTrivia={3:"Images",2:"GIFs",1:"Fichiers",4:"Liens",5:"Réponses",6:"Réactions",7:"Edits",8:"Emotes",9:"Messages",10:"Mots",11:"Vocal"}
-dictFieldNom={"Emotes":"Emote","Salons":"Salon","Freq":"Heure","Reactions":"Réaction","Messages":"Membre","Voice":"Membre","Mots":"Membre"}
-listeType=["Messages","Voice","Salons","Freq","Emotes","Reactions"]
-dictReact={"Voice":"<:otVOICE:835928773718835260>","Reactions":"<:otREACTIONS:835928773740199936>","Emotes":"<:otEMOTES:835928773705990154>","Salons":"<:otSALONS:835928773726699520>","Freq":"<:otFREQ:835929144579326003>"}
-dictEmote={835928773718835260:"Voice",835928773740199936:"Reactions",835928773705990154:"Emotes",835928773726699520:"Salons",835929144579326003:"Freq"}
+listeType=["Messages","Voicechan","Salons","Freq","Emotes","Reactions"]
+dictReact={"Voicechan":"<:otVOICE:835928773718835260>","Reactions":"<:otREACTIONS:835928773740199936>","Emotes":"<:otEMOTES:835928773705990154>","Salons":"<:otSALONS:835928773726699520>","Freq":"<:otFREQ:835929144579326003>"}
+dictEmote={835928773718835260:"Voicechan",835928773740199936:"Reactions",835928773705990154:"Emotes",835928773726699520:"Salons",835929144579326003:"Freq"}
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TOTAL","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
-dictSection={"Voice":"vocal","Reactions":"réactions","Emotes":"emotes","Salons":"salons","Freq":"heures","Messages":"salons"}
+dictSection={"Voice":"vocal","Reactions":"réactions","Emotes":"emotes","Salons":"salons","Freq":"heures","Messages":"salons","Voicechan":"vocal"}
 
 async def triggerRapportUser(ctx,guildOT,bot):
     connexionCMD,curseurCMD=connectSQL(ctx.guild.id,"Commandes","Guild",None,None)
@@ -61,6 +55,8 @@ async def triggerRapportUser(ctx,guildOT,bot):
 
     await message.add_reaction("<:otHOME:835930140571729941>")
 
+    if "Mentionnes" in listeOptions:
+        listeOptions.remove("Mentionnes")
     for i in listeOptions:
         await message.add_reaction(dictReact[i])
 
@@ -120,7 +116,7 @@ async def changePageUser(ctx,turn,ligne,guildOT,bot):
         elif page==2:
             embed=secondGlobal(date,ctx.guild,pagemax,categ,user)
         else:
-            if listeOptions[page-3]=="Voice":
+            if listeOptions[page-3]=="Voicechan":
                 page=setPage(page,pagemax,turn)
             embed=ranksGlobal(date,guildOT,bot,ctx.guild,listeOptions[page-3],page,pagemax,categ,"principale",user)
     else:

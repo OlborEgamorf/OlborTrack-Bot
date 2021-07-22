@@ -5,13 +5,12 @@ from Stats.RapportsUsers.CreateEmbed import embedRapport
 from Stats.SQL.ConnectSQL import connectSQL
 from Core.Fonctions.TempsVoice import tempsVoice
 
-listeType=["Messages","Voice","Salons","Freq","Emotes","Reactions"]
-listeTypeU=["Salons","Freq","Emotes","Reactions"]
-dictFieldG={"Emotes":"Meilleures emotes","Salons":"Salons les plus actifs","Freq":"Heures les plus actives","Reactions":"Meilleures réactions","Messages":"Messages envoyés","Voice":"Temps en vocal","Mots":"Mots envoyés"}
+listeType=["Salons","Freq","Emotes","Reactions","Voicechan"]
+dictFieldG={"Emotes":"Emotes les plus utilisées","Salons":"Salons les plus utilisés","Freq":"Heures les plus actives","Reactions":"Réactions les plus utilisées","Messages":"Messages envoyés","Voice":"Temps en vocal","Mots":"Mots envoyés","Voicechan":"Salons vocaux les plus utilisés"}
 dictFieldS={"Emotes":"Détails emotes","Salons":"Détails salons","Freq":"Détails heures","Reactions":"Détails réactions","Messages":"Détails messages","Voice":"Détails vocal"}
 dictTrivia={3:"Images",2:"GIFs",1:"Fichiers",4:"Liens",5:"Réponses",6:"Réactions",7:"Edits",8:"Emotes",9:"Messages",10:"Mots",11:"Vocal"}
-dictReact={"Voice":"<:otVOICE:835928773718835260>","Reactions":"<:otREACTIONS:835928773740199936>","Emotes":"<:otEMOTES:835928773705990154>","Salons":"<:otSALONS:835928773726699520>","Freq":"<:otFREQ:835929144579326003>"}
-dictSection={"Voice":"vocal","Reactions":"réactions","Emotes":"emotes","Salons":"salons","Freq":"heures","Messages":"salons"}
+dictReact={"Voicechan":"<:otVOICE:835928773718835260>","Reactions":"<:otREACTIONS:835928773740199936>","Emotes":"<:otEMOTES:835928773705990154>","Salons":"<:otSALONS:835928773726699520>","Freq":"<:otFREQ:835929144579326003>"}
+dictSection={"Voicechan":"vocal","Reactions":"réactions","Emotes":"emotes","Salons":"salons","Freq":"heures","Messages":"salons"}
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TOTAL","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","to":"TO","glob":"GL"}
 
 def homeGlobal(date,guildOT,bot,guild,pagemax,period,user):
@@ -19,7 +18,7 @@ def homeGlobal(date,guildOT,bot,guild,pagemax,period,user):
     embed=discord.Embed()
     if period=="jour":
         connexion,curseur=connectSQL(guild.id,"Rapports","Stats","GL","")
-        for j in listeTypeU:
+        for j in listeType:
             result=curseur.execute("SELECT *,IDComp AS ID FROM objs WHERE Jour='{0}' AND Mois='{1}' AND Annee='{2}' AND Type='{3}' AND ID={4} ORDER BY Count DESC".format(date[0],date[1],date[2],j,user)).fetchall()
             if result!=[]:
                 stop=3 if len(result)>3 else len(result)
@@ -57,7 +56,7 @@ def homeGlobal(date,guildOT,bot,guild,pagemax,period,user):
                 descip+="{0} {1}{2} utilisée{2} / ".format(i["Count"],dictTrivia[i["ID"]][0:-1].lower(),multi)
             elif i["ID"]==10:
                 descip+="{0} mot{1} écrit{1} / ".format(i["Count"],multi)
-            elif i["ID"]==1:
+            elif i["ID"]==11:
                 descip+="{0} passé en vocal / ".format(tempsVoice(i["Count"]))
         embed.add_field(name="Divers",value=descip[0:-2],inline=False)
     

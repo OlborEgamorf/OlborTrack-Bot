@@ -16,7 +16,6 @@ def pagemaxHomeJour(curseur,jour,mois,annee,period,user):
         if i["Type"]!="Divers":
             listeOptions.append(i["Type"])
     pagemax=len(listeOptions)+2
-    print(listeOptions)
     return pagemax,listeOptions
 
 def pagemaxSpeJour(curseur,jour,mois,annee,option,user):
@@ -26,7 +25,7 @@ def pagemaxSpeJour(curseur,jour,mois,annee,option,user):
     else:
         nb=nb//5+1
     pagemax=nb if nb<5 else 4
-    pagemax+=4
+    pagemax+=3
     return pagemax
 
 
@@ -37,5 +36,5 @@ def pagemaxSpeMois(curseur,mois,annee,user):
     else:
         nb=nb//5+1
     pagemax=nb if nb<5 else 4
-    pagemax+=4
+    pagemax+=3
     return pagemax

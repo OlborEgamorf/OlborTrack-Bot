@@ -4,7 +4,10 @@ tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai",
 
 def paliers(curseur,period,date,option,user):
     descip=""
-    allMile={"jour":{50:0,250:0,500:0,1000:0},"mois":{250:0,1000:0,2500:0,5000:0},"annee":{1000:0,2500:0,5000:0,10000:0},"global":{5000:0,10000:0,25000:0,50000:0}}
+    if option=="Voicechan":
+        allMile={"jour":{1800:0,3600:0,14400:0,36000:0},"mois":{7200:0,18000:0,86400:0,432000:0},"annee":{86400:0,432000:0,864000:0,2678400:0},"global":{432000:0,864000:0,2678400:0,5356800:0}}
+    else:
+        allMile={"jour":{50:0,250:0,500:0,1000:0},"mois":{250:0,1000:0,2500:0,5000:0},"annee":{1000:0,2500:0,5000:0,10000:0},"global":{5000:0,10000:0,25000:0,50000:0}}
     dictMile=allMile[period]
     for i in dictMile:
         if period=="jour":

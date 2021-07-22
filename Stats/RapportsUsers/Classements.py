@@ -15,7 +15,6 @@ def ranksGlobal(date,guildOT,bot,guild,option,page,pagemax,period,section,user):
     elif period in ("mois","annee","global"):
         connexion,curseur=connectSQL(guild.id,option,"Stats",tableauMois[date[0]],date[1])
         hier=hierMAG(date,period,guild,option,user)
-        print(hier)
         result=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY Count DESC".format(tableauMois[date[0]],date[1],user)).fetchall()
     if result==[]:
         return embed
