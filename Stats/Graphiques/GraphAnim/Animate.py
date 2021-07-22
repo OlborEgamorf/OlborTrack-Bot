@@ -1,5 +1,5 @@
 def animateGraph(i,*fargs):
-    ranks,barcollection,graphiqueOT,plt=fargs
+    ranks,barcollection,graphiqueOT,plt,option=fargs
     maxi=0
     if i>=len(graphiqueOT):
         pass
@@ -7,7 +7,7 @@ def animateGraph(i,*fargs):
         ligne=graphiqueOT[i]
         if i%30==0:
             date=str(ligne[0]["date"])
-            plt.title("Classement au {0}/{1}/{2}".format(date[4:6],date[2:4],date[0:2]))
+            plt.title("Graphique animé {1}/{2} - {3}\nClassement au {0}/{1}/{2}".format(date[4:6],date[2:4],date[0:2],option))
         if i!=0:
             if getRankList(ligne)!=getRankList(graphiqueOT[i-1]):
                 labels=setlabel(ligne,ranks)

@@ -17,7 +17,7 @@ def graphGroupedMois(ligne,ctx,option,bot,guildOT):
         table="{0}{1}".format(ligne["AuthorID"],ligne["Args1"])
     annees=curseur.execute("SELECT DISTINCT Annee FROM persoM{0} ORDER BY Annee ASC".format(table)).fetchall()
     mois=curseur.execute("SELECT DISTINCT Mois FROM persoM{0} ORDER BY Mois ASC".format(table)).fetchall()
-    listeX,listeY,listeC,listeSN,listeSX,listeA=[],[],[],[],[],[]
+    listeX,listeY,listeSN,listeSX,listeA=[],[],[],[],[]
     pos=0
     setThemeGraph(plt)
     plt.subplots(figsize=(6.4,4.8))
@@ -41,7 +41,7 @@ def graphGroupedMois(ligne,ctx,option,bot,guildOT):
     for i in range(len(listeA)):
         plt.text(x=listeX[i], y=listeY[i], s="20{0}".format(listeA[i]), size=5, fontproperties="italic", ha="center") 
 
-    plt.bar(listeX, listeY, color=[colors[i] for i in listeA], width=1, edgecolor='white') #,label='20{0}'.format(annees[i]["Annee"]))
+    plt.bar(listeX, listeY, color=[colors[i] for i in listeA], width=1, edgecolor='white')
     plt.xticks(listeSX, listeSN,rotation=45)
     plt.xlabel("Mois")
     

@@ -8,6 +8,7 @@ from Core.Fonctions.GetTable import collapseEvol
 from Core.Fonctions.GetNom import getNomGraph
 
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TO","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
+dictTitle={"Messages":"membre","Voice":"membre","Mots":"membres","Salons":"salon","Emotes":"emote","Reactions":"réaction","Voicechan":"salon","Freq":"heure"}
 colorOT=(110/256,200/256,250/256,1)
 
 async def graphEvol(ligne,ctx,bot,option,guildOT):
@@ -247,13 +248,16 @@ async def graphEvolAutour(ligne,ctx,bot,option,guildOT):
             try:
                 nom=getNomGraph(ctx,bot,option,tableRank[i]["ID"])
             except:
-                nom="Ancien membre"
+                if option in ("Messages","Mots","Voice"):
+                    nom="Ancien membre"
+                else:
+                    nom="??"
             plt.plot("Date", "Count", data=df2, linestyle='--', marker='',color=colorsBasic[i],label=nom)
     
     nom,color=getNomColor(ctx,bot,option,ligne["Args3"])
     plt.plot("Date", "Count", data=df, linestyle='-', marker='',color=color,label=nom)
     
-    titreEvol(mois,annee,nom,"comparée avec membres autour")
+    titreEvol(mois,annee,nom,"comparée avec {0}s autour".format(dictTitle[option]))
 
     listeDates,listeXD,temp=[],[],0
     if mois=="to":
@@ -327,17 +331,20 @@ async def graphEvolBestUser(ligne,ctx,bot,option,guildOT):
                 plt.plot("Date", "Count", data=df2, linestyle='--', marker='',color=(user.color.r/256,user.color.g/256,user.color.b/256,1),label=user.name)
             else:
                 try:
-                    nom=getNomGraph(ctx,bot,option,tableRank["ID"])
+                    nom2=getNomGraph(ctx,bot,option,tableRank["ID"])
                 except:
-                    nom="Ancien membre"
-                plt.plot("Date", "Count", data=df2, linestyle='--', marker='',color=colorOT,label=nom)
+                    if option in ("Messages","Mots","Voice"):
+                        nom2="Ancien membre"
+                    else:
+                        nom2="??"
+                plt.plot("Date", "Count", data=df2, linestyle='--', marker='',color=colorOT,label=nom2)
         except AssertionError:
             pass
     
     if rank==1:
-        titreEvol(mois,annee,nom,"comparée avec deuxième meilleur membre sur la pérdiode")
+        titreEvol(mois,annee,nom,"comparée avec deuxième meilleur {0} sur la période".format(dictTitle[option]))
     else:
-        titreEvol(mois,annee,nom,"comparée avec meilleur membre sur la pérdiode")
+        titreEvol(mois,annee,nom,"comparée avec meilleur {0} sur la période".format(dictTitle[option]))
 
     listeDates,listeXD,temp=[],[],0
     if mois=="to":
