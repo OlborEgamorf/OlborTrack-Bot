@@ -27,11 +27,7 @@ Pour que les importations fonctionnent, il faut ajouter le répertoire dans le P
 
 Il y a encore des fichiers et fonctions qui sont obsolètes et qui bientot ne serviront plus, en voici quelques un :
 * Divers3
-* Poll3
-* Statut
 * EcritureRecherche3
-* Zip
-* Compare
 
 ## Liens
 
