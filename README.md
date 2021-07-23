@@ -23,6 +23,8 @@ Vous avez à disposition un petit fichier nommé "Exemple.py" avec des évèvene
 
 Pour que les importations fonctionnent, il faut ajouter le répertoire dans le PYTHONPATH.
 
+Les différents schémas SQL sont exposés ici : https://github.com/OlborEgamorf/OlborTrack-Bot/blob/main/Stats/Schemas.md
+
 ## Fichiers obsolètes 
 
 Il y a encore des fichiers et fonctions qui sont obsolètes et qui bientot ne serviront plus, en voici quelques un :
