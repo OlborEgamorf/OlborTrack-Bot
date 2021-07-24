@@ -1,6 +1,6 @@
 import discord
 from Core.Fonctions.WebRequest import webRequest
-from Core.Fonctions.Divers3 import lignesEmbed
+from Core.Fonctions.Embeds import lignesEmbed
 from Core.Fonctions.AuteurIcon import auteur
 
 async def embedMALlist(user,genre,key,page):

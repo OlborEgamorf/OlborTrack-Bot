@@ -207,3 +207,17 @@ def countRankCompare(table,table2,i,option):
             count1="{0}".format(formatCount(option,table[i]["Count"]))
             count2="{0}".format(formatCount(option,table2["Count"]))
     return rang1,rang2,count1,count2
+
+
+def lignesEmbed(nb,table,page):
+    surplus=len(table)-nb
+    if surplus%nb!=0:
+        pageT=len(table)//nb+1
+    else:
+        pageT=len(table)//nb
+
+    debut=nb*page
+    borne=nb+(page*nb)
+    if borne>len(table):
+        borne=len(table)
+    return debut,borne,pageT

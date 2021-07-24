@@ -27,8 +27,7 @@ Les différents schémas SQL sont exposés ici : https://github.com/OlborEgamorf
 
 ## Fichiers obsolètes 
 
-Il y a encore des fichiers et fonctions qui sont obsolètes et qui bientot ne serviront plus, en voici quelques un :
-* Divers3
+Il y a encore des fichiers et fonctions qui sont obsolètes et qui bientot ne serviront plus, par exemple :
 * EcritureRecherche3
 
 ## Liens
