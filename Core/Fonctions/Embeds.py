@@ -88,7 +88,7 @@ def embedError(guild:discord.Guild,channel:discord.TextChannel,author:discord.Me
     Sorties :
         embedTable : l'embed pour l'utilisateur
         embedHistorique : l'embed pour le support"""
-    embedTable=discord.Embed(title="<:otRED:718392916061716481> Erreur", description="Une erreur est survenue lors de l'execution de la commande.\nUn rapport a été envoyé au support.\n"+error,color=0xff0000)
+    embedTable=discord.Embed(title="<:otROUGE:868535622237818910> Erreur", description="Une erreur est survenue lors de l'execution de la commande.\nUn rapport a été envoyé au support.\n"+error,color=0xff0000)
     embedTable.set_footer(text="Avertissement")
     embedHistorique=discord.Embed(description="**Erreur : OT!"+commande+"** "+str(channel)+" "+str(channel.id)+" | "+str(guild)+" "+str(guild.id)+" | "+str(author)+" "+str(author.id)+"\n"+error, color=0x3498db)
     embedHistorique.set_footer(text="OlborTrack Log")
@@ -174,9 +174,9 @@ def embedAssert(info:str) -> discord.Embed:
     Sortie :
         embedTable : l'embed à envoyer"""
     if info=="mp":
-        embedTable=discord.Embed(title="<:otORANGE:718396570755661884> Erreur", description="Cette commande n'est pas compatible dans les messages privés !",color=0xff9900)
+        embedTable=discord.Embed(title="<:otORANGE:868538903584456745> Erreur", description="Cette commande n'est pas compatible dans les messages privés !",color=0xff9900)
     else:
-        embedTable=discord.Embed(title="<:otRED:718392916061716481> Erreur", description=str(info),color=0xff0000)
+        embedTable=discord.Embed(title="<:otROUGE:868535622237818910> Erreur", description=str(info),color=0xff0000)
     embedTable.set_footer(text="Avertissement")
     return embedTable
 

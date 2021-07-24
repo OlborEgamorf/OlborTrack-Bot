@@ -422,9 +422,9 @@ async def joinGame(message,user,reaction,client):
         for joueur in listeJ:
             await joueur.unpinAll()
             await joueur.setMessage(game,True)
-            await joueur.user.send("<:otVERT:718396570638483538> Bienvenue dans cette partie ! Vous avez 3 minutes pour placer vos bateaux. Pour ce faire, donnez moi un diminutif de bateau (pa, cr, ct, sm, to) et les cases où vous voulez le placer. Vous avez un exemplaire de chaque bateau, et chaque bateau a son nombre de cases à respecter, visible dans la section 'placements'. Les cases doivent se suivre dans le tableau, à l'horizontale ou à la verticale.\nExemples : cr B2 B3 B4 B5 / to G2 F2 / sm A6 B6 C6 / pa J2 J6\nPour confirmer votre positionnement, vous devez avoir placé les 5 bateaux, puis cliquer sur la réaction <:otVALIDER:772766033996021761>.")
+            await joueur.user.send("<:otVERT:868535645897912330> Bienvenue dans cette partie ! Vous avez 3 minutes pour placer vos bateaux. Pour ce faire, donnez moi un diminutif de bateau (pa, cr, ct, sm, to) et les cases où vous voulez le placer. Vous avez un exemplaire de chaque bateau, et chaque bateau a son nombre de cases à respecter, visible dans la section 'placements'. Les cases doivent se suivre dans le tableau, à l'horizontale ou à la verticale.\nExemples : cr B2 B3 B4 B5 / to G2 F2 / sm A6 B6 C6 / pa J2 J6\nPour confirmer votre positionnement, vous devez avoir placé les 5 bateaux, puis cliquer sur la réaction <:otVALIDER:772766033996021761>.")
         client.loop.create_task(game.timerGame())
-        await message.channel.send("<:otVERT:718396570638483538> Le challenge de <@{0}> a été relevé !".format(game.J1.id))
+        await message.channel.send("<:otVERT:868535645897912330> Le challenge de <@{0}> a été relevé !".format(game.J1.id))
         await message.clear_reactions()
         await message.edit(embed=createEmbed("Partie en cours.","Les résultats arrivent bientôt.",0xad917b,"bataillenavale",message.guild))
     except discord.errors.Forbidden:

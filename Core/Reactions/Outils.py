@@ -1,5 +1,5 @@
 import discord
-embedE=discord.Embed(title="<:otRED:718392916061716481> Permission manquante", description="Je ne peux retirer votre réaction ! Donnez moi la permission 'gestion des messages' pour ne plus voir ce message.",color=0xff0000)
+embedE=discord.Embed(title="<:otROUGE:868535622237818910> Permission manquante", description="Je ne peux retirer votre réaction ! Donnez moi la permission 'gestion des messages' pour ne plus voir ce message.",color=0xff0000)
 embedE.set_footer(text="Permission")
 
 def getTurn(reaction:discord.Reaction) -> str:

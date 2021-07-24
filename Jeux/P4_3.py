@@ -240,7 +240,7 @@ async def joinGame(message,user,reaction,client):
     listeJeux[message.id].addPlayer(user,2)
     listeJeux[message.id].setTurn()
     client.loop.create_task(listeJeux[message.id].start())
-    await message.channel.send("<:otVERT:718396570638483538> Le challenge de <@"+str(listeJeux[message.id].J1.id)+"> a été relevé !")
+    await message.channel.send("<:otVERT:868535645897912330> Le challenge de <@{0}> a été relevé !".format(listeJeux[message.id].J1.id))
     await message.clear_reactions()
     await message.edit(embed=listeJeux[message.id].createEmbedP4(listeJeux[message.id].J1.nom+" VS "+listeJeux[message.id].J2.nom))
     for i in emotes:

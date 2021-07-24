@@ -9,7 +9,7 @@ async def exeSay(ctx,bot,args):
     
     En argument avec la commande est donnée la phrase à renvoyer."""
     if len(args)==0:
-        quote="<:otLove2:768456004991057951>"
+        quote="<:otLOVE:868537427298504765>"
     else:
         try:
             await ctx.message.delete()
