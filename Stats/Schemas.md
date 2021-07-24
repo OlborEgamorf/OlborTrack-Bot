@@ -1,3 +1,5 @@
+Olbor Track utilise le SQL pour stocker les statistiques et les différents paramètres de chaque serveur. Voici les schémas des différentes tables que vous pouvez rencontrer :
+
 # Schémas des bases de données SQL pour les stats :
 
 | Type de table  | Schéma |
@@ -16,7 +18,8 @@
 | commandes  | CREATE TABLE commandes (MessageID BIGINT, AuthorID BIGINT, Commande TEXT, Option TEXT, Args1 TEXT, Args2 TEXT, Args3 TEXT, Args4 TEXT, Page INT, PageMax INT, Tri TEXT, Mobile BOOL) |
 | graphiques  | CREATE TABLE graphs (MessageID BIGINT, Graph1 TEXT, Graph2 TEXT, Graph3 TEXT, Graph4 TEXT, Graph5 TEXT, Graph6 TEXT, Graph7 TEXT, Page INT, PageMax INT) |
 | commandes custom | CREATE TABLE custom (Nom TEXT PRIMARY KEY, Description TEXT, Embed BOOL, Title TEXT, Author TEXT, Color TEXT, Footer TEXT, Image TEXT, Miniature TEXT) |
-| giveaway | CREATE TABLE liste (Nombre INT PRIMARY KEY, IDMess BIGINT, IDChan INT) |
+| giveaway | CREATE TABLE liste (Nombre INT PRIMARY KEY, IDMess BIGINT, IDChan INT, Lot TEXT) |
+| trivialPerso | CREATE TABLE trivial (ID BIGINT, IDCateg INT, Categ TEXT, Exp INT, Niveau INT, Next INT, Multi INT)
 
 
 
@@ -30,3 +33,6 @@
 | savezvous | CREATE TABLE savezvous (Texte TEXT, ID BIGINT, Image TEXT, Count INT) |
 | tableaux | CREATE TABLE sb (Nombre INT, Salon BIGINT, Emote TEXT, ID BIGINT, Count INT, PRIMARY KEY(Salon,Emote)) |
 | membres H/B | CREATE TABLE users (ID BIGINT PRIMARY KEY, Hide BOOL, Blind BOOL, Leave BOOL) |
+| statsOnOff | CREATE TABLE stats (Active BOOL PRIMARY KEY) |
+| twitch | CREATE TABLE twitch (Nombre INT, Salon BIGINT, Stream TEXT, Descip TEXT, Sent BOOL, PRIMARY KEY(Salon,Stream)) |
+| wikiNSFW | CREATE TABLE wikinsfw (Active BOOL)
