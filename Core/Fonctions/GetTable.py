@@ -17,11 +17,11 @@ def getTableDay(curseur:sqlite3.Cursor,mois:str,annee:str,tri:str) -> list:
     Sortie :
         la liste qui répond à nos critères, renvoyée par la requête SQL"""
     if mois=="glob":
-        return curseur.execute("SELECT * FROM dayRank ORDER BY {0} {1}".format(dictTriArg[tri],dictTriSens[tri])).fetchall()
+        return curseur.execute("SELECT *, Annee || '' || Mois || '' || Jour AS DateID FROM dayRank ORDER BY {0} {1}".format(dictTriArg[tri],dictTriSens[tri])).fetchall()
     elif mois=="to":
-        return curseur.execute("SELECT * FROM dayRank WHERE Annee={0} ORDER BY {1} {2}".format(annee,dictTriArg[tri],dictTriSens[tri])).fetchall()
+        return curseur.execute("SELECT *, Annee || '' || Mois || '' || Jour AS DateID FROM dayRank WHERE Annee='{0}' ORDER BY {1} {2}".format(annee,dictTriArg[tri],dictTriSens[tri])).fetchall()
     else:
-        return curseur.execute("SELECT * FROM dayRank WHERE Mois={0} AND Annee={1} ORDER BY {2} {3}".format(mois,annee,dictTriArg[tri],dictTriSens[tri])).fetchall()
+        return curseur.execute("SELECT *, Annee || '' || Mois || '' || Jour AS DateID FROM dayRank WHERE Mois='{0}' AND Annee='{1}' ORDER BY {2} {3}".format(mois,annee,dictTriArg[tri],dictTriSens[tri])).fetchall()
 
 def getTableSV(curseur:sqlite3.Cursor,option:str,id:int) -> list:
     """Permet d'obtenir la liste des phrases SavezVous d'une personne, ou toutes, en fonction de l'option.

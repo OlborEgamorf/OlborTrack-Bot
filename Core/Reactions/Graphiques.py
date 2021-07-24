@@ -14,7 +14,7 @@ from Stats.Graphiques.Grouped import graphGroupedMois
 from Stats.Graphiques.Moyennes import graphGroupedMoy, graphHeatMoy, graphPersoMoy 
 import discord
 from discord.ext import commands
-from Stats.Graphiques.Evol import graphEvol, graphEvolAA, graphEvolAutour, graphEvolBest, graphEvolBestUser, graphEvolRank
+from Stats.Graphiques.Evol import graphEvol, graphEvolAA, graphEvolAutour, graphEvolBest, graphEvolBestUser, graphEvolJoursAA, graphEvolRank
 from Core.Fonctions.AuteurIcon import auteur
 from Core.OTGuild import OTGuild
 from Stats.Graphiques.Spider import graphSpider
@@ -136,6 +136,12 @@ async def reactGraph(message:discord.Message,bot:commands.Bot,guildOT:OTGuild):
                     listeFonc=[graphEvol,graphEvolAutour,graphEvolBestUser,graphEvolRank]
                 else:
                     listeFonc=[graphEvol,graphEvolAA,graphEvolBest,graphEvolAutour,graphEvolBestUser,graphEvolRank]
+            
+            elif ligne["Commande"]=="day":
+                if ligne["Args1"]=="glob":
+                    listeFonc=[graphEvol]
+                else:
+                    listeFonc=[graphEvol,graphEvolJoursAA]
             
             elif ligne["Commande"]=="trivial" and ligne["Option"]=="trivialperso":
                 listeFonc=[graphSpider]

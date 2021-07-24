@@ -34,6 +34,7 @@ async def statsJours(ctx,option,turn,react,ligne,guildOT,bot):
         connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
 
         table=getTableDay(curseur,mois,annee,ligne["Tri"])
+        print(table,mois,annee)
         pagemax=setMax(len(table))
         page=setPage(ligne["Page"],pagemax,turn)
         author=ligne["AuthorID"]

@@ -4,7 +4,7 @@ from Stats.SQL.ConnectSQL import connectSQL
 from math import inf
 from Core.Fonctions.VoiceAxe import voiceAxe
 from Core.Fonctions.GraphTheme import setThemeGraph
-from Core.Fonctions.GetTable import collapseEvol
+from Core.Fonctions.GetTable import collapseEvol, getTableDay
 from Core.Fonctions.GetNom import getNomGraph
 
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TO","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
@@ -16,8 +16,14 @@ async def graphEvol(ligne,ctx,bot,option,guildOT):
     listeX,listeY,listeR=[],[],[]
     setThemeGraph(plt)
     mois,annee=ligne["Args1"],ligne["Args2"]
-    connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[mois],annee)
-    table=curseur.execute("SELECT * FROM evol{0}{1}{2} ORDER BY DateID ASC".format(mois,annee,ligne["Args3"])).fetchall()
+    if ligne["Commande"]=="day":
+        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
+        table=getTableDay(curseur,mois,annee,"dateAsc")
+        for i in table:
+            i["Evol"]=0
+    else:
+        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[mois],annee)
+        table=curseur.execute("SELECT * FROM evol{0}{1}{2} ORDER BY DateID ASC".format(mois,annee,ligne["Args3"])).fetchall()
     collapse=collapseEvol(table)
     dates=[]
     for i in collapse:
@@ -35,7 +41,10 @@ async def graphEvol(ligne,ctx,bot,option,guildOT):
     
     df=pd.DataFrame({"Date": listeX, "Count": listeY})
 
-    nom,color=getNomColor(ctx,bot,option,ligne["Args3"])
+    if ligne["Commande"]=="evol":
+        nom,color=getNomColor(ctx,bot,option,ligne["Args3"])
+    else:
+        nom,color="Jours d'activité sur le serveur",colorOT
     
     listeTX,listeTY,listeL,listeTR=[],[],[],[]
     for i in range(len(listeM)):
@@ -45,8 +54,9 @@ async def graphEvol(ligne,ctx,bot,option,guildOT):
             listeTY.append(listeY[i])
             listeTR.append(listeR[i])
     
-    for i in range(len(listeL)):
-        plt.text(x=listeL[i], y=listeTY[i], s="{0}e".format(listeTR[i]), size=8)
+    if ligne["Commande"]=="evol":
+        for i in range(len(listeL)):
+            plt.text(x=listeL[i], y=listeTY[i], s="{0}e".format(listeTR[i]), size=8)
 
     plt.xlabel("Date")
     plt.plot("Date", "Count", data=df, linestyle='-', marker='o',color=color,markevery=listeM)
@@ -404,6 +414,77 @@ async def graphEvolRank(ligne,ctx,bot,option,guildOT):
     plt.xticks(listeL,listeTX,rotation=45)
     titreEvol(mois,annee,nom,"du rang")
     plt.tight_layout()
+    plt.savefig("Graphs/otGraph")
+    plt.clf()
+
+async def graphEvolJoursAA(ligne,ctx,bot,option,guildOT):
+    plt.subplots(figsize=(6.4,4.8))
+    listeX,listeY,listeT=[],[],[]
+    setThemeGraph(plt)
+    mois,annee=ligne["Args1"],ligne["Args2"]
+    connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
+    table=getTableDay(curseur,mois,annee,"dateAsc")
+    mini=curseur.execute("SELECT MIN(Count) AS Min FROM dayRank").fetchone()["Min"]
+
+    for i in range(len(table)):
+        listeY.append(table[i]["Count"])
+        absData(mois,table,i,listeX,listeT)
+    
+    div=voiceAxe(option,listeY,plt,"y")
+    mini=round(mini/div,2)
+
+    df=pd.DataFrame({"Date": listeX, "Count": listeY})
+
+    if ligne["Args1"]=="to":
+        tableDemain=curseur.execute("SELECT Mois, Annee FROM firstA WHERE Annee>'{0}' AND Annee<>'GL' ORDER BY Annee ASC".format(annee)).fetchone()
+        tableHier=curseur.execute("SELECT Mois, Annee FROM firstA WHERE Annee<'{0}' AND Annee<>'GL' ORDER BY Annee DESC".format(annee)).fetchone()
+    else:
+        tableDemain=curseur.execute("SELECT Mois, Annee, Annee || '' || Mois AS DateID FROM firstM WHERE DateID>'{0}{1}' ORDER BY DateID ASC".format(annee,mois)).fetchone()
+        tableHier=curseur.execute("SELECT Mois, Annee, Annee || '' || Mois AS DateID FROM firstM WHERE DateID<'{0}{1}' ORDER BY DateID DESC".format(annee,mois)).fetchone()
+
+    nom,color="Jours d'activité sur le serveur",colorOT
+
+    if tableDemain!=None:
+        listeX2,listeY2=[],[]
+        demain=getTableDay(curseur,tableDemain["Mois"],tableDemain["Annee"],"dateAsc")
+        for i in range(len(demain)):
+            listeY2.append(round(demain[i]["Count"]/div,2))
+            absData(mois,demain,i,listeX2,listeT)
+        df2=pd.DataFrame({"Date": listeX2, "Count": listeY2})
+    
+    if tableHier!=None:
+        listeX3,listeY3=[],[]
+        hier=getTableDay(curseur,tableHier["Mois"],tableHier["Annee"],"dateAsc")
+        for i in range(len(hier)):
+            listeY3.append(round(hier[i]["Count"]/div,2))
+            absData(mois,hier,i,listeX3,listeT)
+        df3=pd.DataFrame({"Date": listeX3, "Count": listeY3})
+    
+    if div==1:
+        mini=int(mini)
+    listeT.sort()
+    dfDate=setMin(mois,listeT,mini)
+
+    if tableHier!=None:
+        plt.plot("Date", "Count", data=df3, linestyle='--', marker='',color="indianred",label="{0} 20{1}".format(tableauMois[tableHier["Mois"]],tableHier["Annee"]))
+    plt.plot("Date", "Count", data=df, linestyle='-', marker='',color=color,label="{0} 20{1}".format(tableauMois[mois],annee))
+    if tableDemain!=None:
+        plt.plot("Date", "Count", data=df2, linestyle='--', marker='',color="mediumpurple",label="{0} 20{1}".format(tableauMois[tableDemain["Mois"]],tableDemain["Annee"]))
+    
+    titreEvol(mois,annee,nom,"comparée avec périodes avant et après")
+
+    if mois=="to":
+        listeDates,listeXD,temp=[],[],0
+        for i in range(len(listeT)):
+            if listeT[i][0:2]!=temp:
+                listeDates.append("{0}/{1}".format(listeT[i][2:4],listeT[i][0:2]))
+                listeXD.append(i)
+                temp=listeT[i][0:2]
+        plt.xticks(listeXD,listeDates,rotation=45)
+    
+    plt.xlabel("Date")
+    plt.tight_layout()
+    plt.legend()
     plt.savefig("Graphs/otGraph")
     plt.clf()
 
