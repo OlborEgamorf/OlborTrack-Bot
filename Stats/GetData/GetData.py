@@ -19,21 +19,23 @@ from Core.Fonctions.DichoTri import dichotomieID, dichotomiePlage, triID
 from Core.Fonctions.TempsVoice import tempsVoice
 from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.Embeds import embedAssert
+import asyncio
 
 
 async def newGetData(guild,channel,bot,guildOT):
     messEdit=await channel.send(embed=discord.Embed(title="Olbor Track GetData - Lancement", description="Patientez... Les anciennes données de votre serveur vont être supprimées.", color=0x220cc9))
-    if guild.gd:
+    if guildOT.gd:
         embedT=embedAssert("Vous avez déjà lancé la procédure GetData !")
         await messEdit.edit(embed=embedT)
         return
-    if not guild.stats:
+    if not guildOT.stats:
         embedT=embedAssert("Vous avez désactivé les statistiques pour votre serveur. Utilisez la commande OT!statson pour les réactiver.")
         await messEdit.edit(embed=embedT)
         return
     guildOT.gd=True
     temps=time()
-    try:
+    to=0
+    if True:
         await bot.get_channel(717727027465289768).send("Procédure get data enclenchée : "+guild.name+" | "+str(guild.member_count)+" | "+str(guild.id))
         listeDel=[15,16,17,18,19,20,21,22,23,"GL"]
         for i in listeDel:
@@ -164,6 +166,12 @@ async def newGetData(guild,channel,bot,guildOT):
                 await messEdit.edit(embed=embedCreate(messEdit.embeds[0],guildChan.name,tempsI,temps,guild))         
             except discord.errors.Forbidden:
                 pass    
+            except asyncio.TimeoutError:
+                to+=1
+                await bot.get_channel(717727027465289768).send("Timeout {0}, **{1}**".format(guild.name,to))
+                await asyncio.sleep(15)
+                assert to<28
+
         
         chanGlob,emojiGlob,reactGlob,freqGlob,diversGlob,mentionGlob,mentionneGlob=[],[],[],[],[],[],[]
         allGlob=[chanGlob,emojiGlob,reactGlob,freqGlob,diversGlob,mentionGlob,mentionneGlob]
@@ -230,12 +238,12 @@ async def newGetData(guild,channel,bot,guildOT):
         embedT=discord.Embed(title="OlborTrack GetData - Succès",description="Terminé ! Sans accroc. Temps écoulé : "+tempsVoice(int(time()-temps)),color=0x220cc9)
         embedT=auteur(guild.id,guild.name,guild.icon,embedT,"guild")
         await messEdit.channel.send(embed=embedT)
-    except:
+    """except:
         embedT=discord.Embed(title="OlborTrack GetData - Erreur",description="Une erreur innatendue est arrivée. Contactez le support. "+tempsVoice(time()-tempsI)+" "+str(sys.exc_info()[0]),color=0x220cc9)
         embedT=auteur(guild.id,guild.name,guild.icon,embedT,"guild")
         await messEdit.channel.send(embed=embedT)
         error=str(sys.exc_info()[0])+"\n"+str(sys.exc_info()[1])+"\n"+str(sys.exc_info()[2].tb_frame)+"\n"+str(sys.exc_info()[2].tb_lineno)
-        await bot.get_channel(717727027465289768).send("Procédure get data **ECHEC** : "+guild.name+" | "+str(guild.member_count)+" | "+str(guild.id)+" | "+tempsVoice(time()-tempsI)+"\n"+error)
+        await bot.get_channel(717727027465289768).send("Procédure get data **ECHEC** : "+guild.name+" | "+str(guild.member_count)+" | "+str(guild.id)+" | "+tempsVoice(time()-tempsI)+"\n"+error)"""
     guildOT.gd=False
 
 
