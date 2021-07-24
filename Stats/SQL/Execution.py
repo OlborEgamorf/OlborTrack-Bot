@@ -27,7 +27,7 @@ def exeClassic(count,id,nom,curseurGuild,guild):
     if nom in ("Emotes","Reactions"):
         countGL=curseurGL.execute("SELECT Count FROM glob WHERE ID={0}".format(id)).fetchone()["Count"]
         for i in liste:
-            if i["Rank"]<450:
+            if i["Rank"]>400:
                 curseurGL.execute("DROP TABLE IF EXISTS persoM{0}".format(i["ID"]))
                 curseurGL.execute("DROP TABLE IF EXISTS persoA{0}".format(i["ID"]))
     connexionGL.commit()
@@ -56,7 +56,7 @@ def exeObj(count,idObj,id,obj,guild,nom):
     if nom in ("Emotes","Reactions"):
         if curseurGL.execute("SELECT Count FROM glob WHERE ID={0}".format(idObj)).fetchone()["Count"]<50:
             curseurGL.execute("DROP TABLE glob{0}".format(idObj))
-        if curseurGL.execute("SELECT Rank FROM glob WHERE ID={0}".format(idObj)).fetchone()["Rank"]<450:
+        if curseurGL.execute("SELECT Rank FROM glob WHERE ID={0}".format(idObj)).fetchone()["Rank"]>400:
             for i in liste:
                 curseurGL.execute("DROP TABLE IF EXISTS persoM{0}{1}".format(i["ID"],idObj))
                 curseurGL.execute("DROP TABLE IF EXISTS persoA{0}{1}".format(i["ID"],idObj))
