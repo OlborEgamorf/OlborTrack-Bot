@@ -10,6 +10,7 @@ from Core.Fonctions.Embeds import embedAssert, newDescip, sendEmbed
 from Core.Fonctions.AuteurIcon import auteur
 
 tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai","06":"Juin","07":"Juillet","08":"Aout","09":"Septembre","10":"Octobre","11":"Novembre","12":"Décembre","TO":"Année","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
+dictTriField={"countAsc":"Compteur croissant","rankAsc":"Rang croissant","countDesc":"Compteur décroissant","rankDesc":"Rang décroissant","dateAsc":"Date croissante","dateDesc":"Date décroissante","periodAsc":"Date croissante","periodDesc":"Date décroissante","moyDesc":"Moyenne décroissante","nombreDesc":"Compteur décroissant","winAsc":"Victoires croissant","winDesc":"Victoires décroissant","loseAsc":"Défaites croissant","loseDesc":"Défaites décroissant","expDesc":"Expérience décroissant","expAsc":"Expérience croissant"}
 
 async def statsRoles(ctx,option,turn,react,ligne,guildOT,bot):
     if True:
@@ -65,7 +66,8 @@ async def statsRoles(ctx,option,turn,react,ligne,guildOT,bot):
             else:
                 embed.description="{0}, {1}".format(nomsOptions("Roles",int(role),guildOT,bot),newDescip(embed.description,option,obj,guildOT,bot))
             embed.colour=ctx.guild.get_role(int(role)).color.value
-            
+        
+        embed.add_field(name="Tri <:otTRI:833666016491864114>",value=dictTriField[ligne["Tri"]],inline=True)
         embed.set_footer(text="Page {0}/{1}".format(page,pagemax))
 
         if mois=="glob":

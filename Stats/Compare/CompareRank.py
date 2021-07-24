@@ -13,6 +13,7 @@ tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai",
 dictTriArg={"countAsc":"Count","rankAsc":"Rank","countDesc":"Count","rankDesc":"Rank","dateAsc":"DateID","dateDesc":"DateID","periodAsc":"None","periodDesc":"None","moyDesc":"Moyenne","nombreDesc":"Nombre"}
 dictTriSens={"countAsc":"ASC","rankAsc":"ASC","countDesc":"DESC","rankDesc":"DESC","dateAsc":"ASC","dateDesc":"DESC","periodAsc":"None","periodDesc":"None","moyDesc":"DESC","nombreDesc":"DESC"}
 dictNameF3={"Messages":"Messages","Salons":"Messages","Freq":"Messages","Mots":"Mots","Emotes":"Utilisations","Reactions":"Utilisations","Voice":"Temps","Voicechan":"Temps","Mentions":"Mentions","Mentionne":"Mentions","Divers":"Nombre"}
+dictTriField={"countAsc":"Compteur {0} croissant","countDesc":"Compteur {0} décroissant"}
 
 async def compareRank(ctx,option,turn,react,ligne,guildOT,bot):
     if True:
@@ -57,6 +58,7 @@ async def compareRank(ctx,option,turn,react,ligne,guildOT,bot):
             title="Comparaison rangs, classement {0} 20{1}\n{2}".format(mois,annee,option)
 
         embed.title=title
+        embed.add_field(name="Tri <:otTRI:833666016491864114>",value=dictTriField[ligne["Tri"]].format(nomsOptions(option,int(obj1),guildOT,bot)),inline=True)
         embed.set_footer(text="Page {0}/{1}".format(page,pagemax))
 
         await sendEmbed(ctx,embed,react,True,curseurCMD,connexionCMD,page,pagemax)

@@ -8,11 +8,14 @@ from Core.Fonctions.GetNom import getObj, nomsOptions
 from Core.Fonctions.GetPeriod import getAnnee, getMois
 from Core.Fonctions.setMaxPage import setMax, setPage
 from Stats.SQL.ConnectSQL import connectSQL
+from Core.Fonctions.DichoTri import triPeriod
 
 tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai","06":"Juin","07":"Juillet","08":"Aout","09":"Septembre","10":"Octobre","11":"Novembre","12":"Décembre","TO":"Année","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO","GL":"GL"}
 dictTriArg={"countAsc":"Count","rankAsc":"Rank","countDesc":"Count","rankDesc":"Rank","dateAsc":"DateID","dateDesc":"DateID","periodAsc":"None","periodDesc":"None","moyDesc":"Moyenne","nombreDesc":"Nombre"}
 dictTriSens={"countAsc":"ASC","rankAsc":"ASC","countDesc":"DESC","rankDesc":"DESC","dateAsc":"ASC","dateDesc":"DESC","periodAsc":"None","periodDesc":"None","moyDesc":"DESC","nombreDesc":"DESC"}
 dictNameF3={"Messages":"Messages","Salons":"Messages","Freq":"Messages","Mots":"Mots","Emotes":"Utilisations","Reactions":"Utilisations","Voice":"Temps","Voicechan":"Temps","Mentions":"Mentions","Mentionne":"Mentions","Divers":"Nombre"}
+dictTriField={"countAsc":"Compteur {0} croissant","rankAsc":"Rang {0} croissant","countDesc":"Compteur {0} décroissant","rankDesc":"Rang {0} décroissant","periodAsc":"Date {0} croissante","periodDesc":"Date {0} décroissante"}
+
 
 async def compareUser(ctx,option,turn,react,ligne,guildOT,bot):
     if True:
@@ -63,6 +66,7 @@ async def compareUser(ctx,option,turn,react,ligne,guildOT,bot):
         
         page=setPage(ligne["Page"],pagemax,turn)
         if ligne["Args1"] in ("user","userObj") and page==pagemax:
+            ligne["Tri"]="countDesc"
             nom="persoA"
 
         embed=embedCompare(nom,ligne["AuthorID"],mention,option,ligne["Args1"],curseur,ligne,page,guildOT,bot,obj)
@@ -73,6 +77,7 @@ async def compareUser(ctx,option,turn,react,ligne,guildOT,bot):
         embed=auteur(ctx.guild.id,ctx.guild.name,ctx.guild.icon,embed,"guild")
         embed.colour=0x3498db
         embed.title=titre
+        embed.add_field(name="Tri <:otTRI:833666016491864114>",value=dictTriField[ligne["Tri"]].format(nomsOptions("Messages",int(ligne["AuthorID"]),guildOT,bot)),inline=True)
         embed.set_footer(text="Page {0}/{1}".format(page,pagemax))
 
         await sendEmbed(ctx,embed,react,True,curseurCMD,connexionCMD,page,pagemax)
@@ -84,7 +89,10 @@ def embedCompare(nom,id1,id2,option,optionCompare,curseur,ligne,page,guildOT,bot
     tri=ligne["Tri"]
     mobile=ligne["Mobile"]
     if optionCompare in ("user","userObj"):
-        table=curseur.execute("SELECT * FROM {0}{1}{2} ORDER BY {3} {4}".format(nom,id1,obj,dictTriArg[tri],dictTriSens[tri])).fetchall()
+        if tri in ("periodAsc","periodDesc"):
+            table=triPeriod(curseur,"{0}{1}{2}".format(nom,id1,obj),tri)
+        else:
+            table=curseur.execute("SELECT * FROM {0}{1}{2} ORDER BY {3} {4}".format(nom,id1,obj,dictTriArg[tri],dictTriSens[tri])).fetchall()
         if nom=="persoA":
             page=1
         stop=15*page if 15*page<len(table) else len(table)

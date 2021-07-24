@@ -19,6 +19,8 @@ async def changeTri(message:discord.Message,reaction:discord.Reaction,user:disco
             dictNext={"countDesc":"rankAsc","rankAsc":"countAsc","countAsc":"rankDesc","rankDesc":"countDesc"}
         elif ligne["Commande"]=="evol":
             dictNext={"dateAsc":"dateDesc","dateDesc":"rankAsc","rankAsc":"dateAsc"}
+        elif ligne["Commande"]=="day":
+            dictNext={"dateAsc":"dateDesc","dateDesc":"countDesc","countDesc":"countAsc","countAsc":"dateAsc"}
         elif ligne["Commande"]=="moy":
             dictNext={"moyDesc":"periodDesc","periodDesc":"periodAsc","periodAsc":"countDesc","countDesc":"nombreDesc","nombreDesc":"moyDesc"}
         elif ligne["Commande"]=="jeux":
@@ -27,8 +29,11 @@ async def changeTri(message:discord.Message,reaction:discord.Reaction,user:disco
             dictNext={"countDesc":"countAsc","countAsc":"countDesc"}
         elif ligne["Commande"]=="trivial" and ligne["Option"]=="trivialperso":
             dictNext={"expDesc":"expAsc","expAsc":"expDesc"}
+        elif ligne["Commande"]=="compareUser" and ligne["Args1"] in ("user","userObj"):
+            dictNext={"countDesc":"periodAsc","periodAsc":"periodDesc","periodDesc":"rankAsc","rankAsc":"countDesc"}
+        elif ligne["Commande"] in ("compareUser","comparePerso","compareRank","compareServ"):
+            dictNext={"countDesc":"countAsc","countAsc":"countDesc"}
+        
         curseurCMD.execute("UPDATE commandes SET Tri='{0}' WHERE MessageID={1}".format(dictNext[ligne["Tri"]],message.id))
         connexionCMD.commit()
         await reactStats(message,reaction,user,bot,guildOT)
-
-

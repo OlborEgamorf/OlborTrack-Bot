@@ -11,6 +11,7 @@ from Stats.SQL.ConnectSQL import connectSQL
 tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai","06":"Juin","07":"Juillet","08":"Aout","09":"Septembre","10":"Octobre","11":"Novembre","12":"Décembre","TO":"Année","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO","GL":"GL"}
 dictTriArg={"countAsc":"Count","rankAsc":"Rank","countDesc":"Count","rankDesc":"Rank","dateAsc":"DateID","dateDesc":"DateID","periodAsc":"None","periodDesc":"None","moyDesc":"Moyenne","nombreDesc":"Nombre"}
 dictTriSens={"countAsc":"ASC","rankAsc":"ASC","countDesc":"DESC","rankDesc":"DESC","dateAsc":"ASC","dateDesc":"DESC","periodAsc":"None","periodDesc":"None","moyDesc":"DESC","nombreDesc":"DESC"}
+dictTriField={"countAsc":"Compteur {0}/{1} croissant","countDesc":"Compteur {0}/{1} décroissant"}
 
 async def comparePerso(ctx,option,turn,react,ligne,guildOT,bot):
     if True:
@@ -38,6 +39,7 @@ async def comparePerso(ctx,option,turn,react,ligne,guildOT,bot):
         embed=auteur(user.id,user.name,user.avatar,embed,"user")
         embed.colour=user.color.value
         embed.title="Comparaison perso, entre {0}/{1} et {2}/{3}\n{4}".format(liste1[0],liste1[1],liste2[0],liste2[1],option)
+        embed.add_field(name="Tri <:otTRI:833666016491864114>",value=dictTriField[ligne["Tri"]].format(liste1[0],liste1[1]),inline=True)
         embed.set_footer(text="Page {0}/{1}".format(page,pagemax))
 
         await sendEmbed(ctx,embed,react,True,curseurCMD,connexionCMD,page,pagemax)

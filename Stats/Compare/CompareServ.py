@@ -10,6 +10,7 @@ import discord
 tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai","06":"Juin","07":"Juillet","08":"Aout","09":"Septembre","10":"Octobre","11":"Novembre","12":"Décembre","TO":"Année","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
 dictTriArg={"countAsc":"Count","rankAsc":"Rank","countDesc":"Count","rankDesc":"Rank","dateAsc":"DateID","dateDesc":"DateID","periodAsc":"None","periodDesc":"None","moyDesc":"Moyenne","nombreDesc":"Nombre"}
 dictTriSens={"countAsc":"ASC","rankAsc":"ASC","countDesc":"DESC","rankDesc":"DESC","dateAsc":"ASC","dateDesc":"DESC","periodAsc":"None","periodDesc":"None","moyDesc":"DESC","nombreDesc":"DESC"}
+dictTriField={"countAsc":"Compteur {0} {1} croissant","countDesc":"Compteur {0} {1} décroissant"}
 
 async def compareServ(ctx,option,turn,react,ligne,guildOT,bot):
     if True:
@@ -47,7 +48,8 @@ async def compareServ(ctx,option,turn,react,ligne,guildOT,bot):
         embed=embedCompare(liste1,liste2,obj,option,curseur1,curseur2,ligne,page,guildOT,bot)
         embed=auteur(ctx.guild.id,ctx.guild.name,ctx.guild.icon,embed,"guild")
         embed.colour=0x3498db
-        embed.title="Comparaison rangs, entre {0}/{1} et {2}/{3}\n{4}".format(liste1[0],liste1[1],liste2[0],liste2[1],option)
+        embed.title="Comparaison rangs, entre {0} {1} et {2} {3}\n{4}".format(liste1[0],liste1[1],liste2[0],liste2[1],option)
+        embed.add_field(name="Tri <:otTRI:833666016491864114>",value=dictTriField[ligne["Tri"]].format(liste1[0],liste1[1]),inline=True)
         embed.set_footer(text="Page {0}/{1}".format(page,pagemax))
 
         if obj!="":
