@@ -50,9 +50,11 @@ def graphPersoComp(ligne,ctx,option,bot,period,guildOT,categ):
             listeColor.append((user.color.r/256,user.color.g/256,user.color.b/256,1))
             plt.plot('date', categ, data=df, linestyle=dictLine[listeColor.count((user.color.r/256,user.color.g/256,user.color.b/256,1))], marker='o',color=(user.color.r/256,user.color.g/256,user.color.b/256,1),label=user.name)
 
+    plt.title("Périodes comparaison\n{0}".format(option))
     plt.legend()
     plt.xlabel("Date")
-    plt.ylabel(categ)
+    if categ=="Rang":
+        plt.ylabel(categ)
     plt.xticks(rotation=90)
     plt.tight_layout()
     plt.savefig("Graphs/otGraph")

@@ -11,6 +11,7 @@ tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai",
 dictTriArg={"countAsc":"Count","rankAsc":"Rank","countDesc":"Count","rankDesc":"Rank","dateAsc":"DateID","dateDesc":"DateID","periodAsc":"None","periodDesc":"None","moyDesc":"Moyenne","nombreDesc":"Nombre"}
 dictTriSens={"countAsc":"ASC","rankAsc":"ASC","countDesc":"DESC","rankDesc":"DESC","dateAsc":"ASC","dateDesc":"DESC","periodAsc":"None","periodDesc":"None","moyDesc":"DESC","nombreDesc":"DESC"}
 dictTriField={"countAsc":"Compteur {0} {1} croissant","countDesc":"Compteur {0} {1} décroissant"}
+dictF1={"Salons":"Salons","Freq":"Heures","Emotes":"Emotes","Reactions":"Réactions","Voicechan":"Salons","Messages":"Membres","Voice":"Membres","Mots":"Membres"}
 
 async def compareServ(ctx,option,turn,react,ligne,guildOT,bot):
     if True:
@@ -92,7 +93,7 @@ def embedCompare(liste1,liste2,obj,option,curseur1,curseur2,ligne,page,guildOT,b
         field1,field2,field3=addtoFields(field1,field2,field3,mobile,nom,"{0} | {1}".format(rang1,count1),"{0} | {1}".format(rang2,count2))
     
     if obj=="":
-        nomF1=option
+        nomF1=dictF1[option]
     else:
         nomF1="Membres"
 

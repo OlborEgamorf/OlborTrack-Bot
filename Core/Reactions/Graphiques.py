@@ -19,8 +19,8 @@ from Core.Fonctions.AuteurIcon import auteur
 from Core.OTGuild import OTGuild
 from Stats.Graphiques.Spider import graphSpider
 from Stats.Graphiques.Compare.PersoCompare import graphPersoComp
-from Stats.Graphiques.Compare.SpiderCompare import graphSpiderCompare
-from Stats.Graphiques.Compare.GroupedCompare import graphGroupedCompare
+from Stats.Graphiques.Compare.SpiderCompare import graphSpiderCompare, graphSpiderComparePerso
+from Stats.Graphiques.Compare.GroupedCompare import graphGroupedCompare, graphGroupedComparePerso, graphGroupedCompareRank
 
 async def reactGraph(message:discord.Message,bot:commands.Bot,guildOT:OTGuild):
     """Génère et envoie les graphiques pour toutes les commandes du bot.
@@ -107,6 +107,22 @@ async def reactGraph(message:discord.Message,bot:commands.Bot,guildOT:OTGuild):
                 await graphSpiderCompare(ligne,ctx,bot,ligne["Option"],guildOT)
                 messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
                 listeG.append(messageGraph.attachments[0].url)
+        
+        elif ligne["Commande"] in ("comparePerso","compareServ"):
+            graphGroupedComparePerso(ligne,ctx,ligne["Option"],bot,guildOT)
+            messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
+            embedM,embed=await embedGraph([1,2],messageGraph,ctx,message)
+            listeG.append(messageGraph.attachments[0].url)
+
+            await graphSpiderComparePerso(ligne,ctx,bot,ligne["Option"],guildOT)
+            messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
+            listeG.append(messageGraph.attachments[0].url)
+        
+        elif ligne["Commande"]=="compareRank":
+            graphGroupedCompareRank(ligne,ctx,ligne["Option"],bot,guildOT)
+            messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
+            embedM,embed=await embedGraph([1],messageGraph,ctx,message)
+            listeG.append(messageGraph.attachments[0].url)
 
         else:
             if ligne["Commande"]=="rank":
