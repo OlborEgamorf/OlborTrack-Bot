@@ -23,7 +23,7 @@ def createDirSQL(guild):
 
     
     curseur.execute("CREATE TABLE IF NOT EXISTS modulesCMD (Module TEXT PRIMARY KEY, Statut BOOL)")
-    listeC=["Stats","Sondages","Custom","Savezvous","Jeux","MAL","Wiki","Spotify","Geo"]
+    listeC=["Stats","Sondages","Outils","Savezvous","Jeux","MAL","Wiki","Spotify","Geo"]
     for i in listeC:
         try:
             curseur.execute("INSERT INTO modulesCMD VALUES('{0}',{1})".format(i,True))
@@ -60,9 +60,6 @@ def createDirSQL(guild):
         if curseur.execute("SELECT * FROM users WHERE ID={0}".format(i.id)).fetchone()==None:
             curseur.execute("INSERT INTO users VALUES({0},{1},{2},{3})".format(i.id,False,False,False))
     
-    curseur.execute("CREATE TABLE IF NOT EXISTS sbmessages (IDMess BIGINT, IDStar BIGINT, Nombre INT, PRIMARY KEY(IDMess,IDStar))")
-
-    
     curseur.execute("CREATE TABLE IF NOT EXISTS auto (Commande TEXT PRIMARY KEY, Salon BIGINT, Active BOOL)")
     listeA=["savezvous","nasaphoto","jour","mois","annee"]
     for i in listeA:
@@ -71,7 +68,6 @@ def createDirSQL(guild):
         except:
             pass
 
-    
     connexion.commit()
 
     connexion,curseur = connectSQL(guild.id,"CustomCMD","Guild",None,None)
@@ -80,9 +76,8 @@ def createDirSQL(guild):
     connexion.commit()
 
     connexion,curseur = connectSQL(guild.id,"Giveaway","Guild",None,None)
-    curseur.execute("CREATE TABLE IF NOT EXISTS liste (Nombre INT PRIMARY KEY, IDMess BIGINT, IDChan INT)")
+    curseur.execute("CREATE TABLE IF NOT EXISTS liste (Nombre INT PRIMARY KEY, IDMess BIGINT, IDChan INT, Lot TEXT)")
     connexion.commit()
-
 
     connexion,curseur = connectSQL(guild.id,"Commandes","Guild",None,None)
     curseur.execute("CREATE TABLE IF NOT EXISTS commandes (MessageID BIGINT, AuthorID BIGINT, Commande TEXT, Option TEXT, Args1 TEXT, Args2 TEXT, Args3 TEXT, Args4 TEXT, Page INT, PageMax INT, Tri TEXT, Mobile BOOL)")
