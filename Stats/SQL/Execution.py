@@ -69,15 +69,15 @@ def exeJeuxSQL(id,idObj,state,guild,curseurGuild,count,option,tours):
     dictCount={"W":2,"L":-1}
     dictW={"W":1,"L":0}
     dictL={"W":0,"L":1}
-    connexionGL,curseurGL=connectSQL(guild,option,"Stats","GL","")
+    connexionGL,curseurGL=connectSQL(guild,option,"Jeux","GL","")
 
-    connexion,curseur=connectSQL(guild,option,"Stats",strftime("%m"),strftime("%y"))
+    connexion,curseur=connectSQL(guild,option,"Jeux",strftime("%m"),strftime("%y"))
     compteurJeuxSQL(curseur,tableauMois[strftime("%m")]+strftime("%y"),id,(0,id,strftime("%m"),strftime("%y"),dictW[state],dictL[state],dictCount[state],0),dictCount[state],(strftime("%d"),strftime("%m"),strftime("%y")),(strftime("%m"),strftime("%y")),"persoM",False,state,4,curseurGL)
     if idObj!=None:
         compteurJeuxSQL(curseur,tableauMois[strftime("%m")]+strftime("%y")+str(idObj),id,(0,id,idObj,strftime("%m"),strftime("%y"),dictW[state],dictL[state],dictCount[state],0),dictCount[state],(strftime("%d"),strftime("%m"),strftime("%y")),(strftime("%m"),strftime("%y")),"persoM",True,state,5,curseurGL)
     connexion.commit()
 
-    connexion,curseur=connectSQL(guild,option,"Stats","TO",strftime("%y"))
+    connexion,curseur=connectSQL(guild,option,"Jeux","TO",strftime("%y"))
     compteurJeuxSQL(curseur,"to"+strftime("%y"),id,(0,id,"TO",strftime("%y"),dictW[state],dictL[state],dictCount[state],0),dictCount[state],(strftime("%d"),strftime("%m"),strftime("%y")),("TO",strftime("%y")),"persoA",False,state,4,curseurGL)
     if idObj!=None:
         compteurJeuxSQL(curseur,"to"+strftime("%y")+str(idObj),id,(0,id,idObj,"TO",strftime("%y"),dictW[state],dictL[state],dictCount[state],0),dictCount[state],(strftime("%d"),strftime("%m"),strftime("%y")),("TO",strftime("%y")),"persoA",True,state,5,curseurGL)
