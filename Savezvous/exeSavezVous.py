@@ -9,7 +9,7 @@ async def exeSavezVous(ctx,bot,args):
     try:
         args=args.split(" ")
         connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
-        if len(args)==0 or args[0] not in ("add", "delete", "list", "modo", "edit"):
+        if len(args)==0 or ctx.invoked_with not in ("add", "del", "list", "modo", "edit"):
             liste=curseur.execute("SELECT * FROM savezvous").fetchall()
             assert liste!=[], "Vous devez commencer par ajouter une phrase avec `OT!savezvous add` !"
             ligne=choice(liste)
@@ -21,14 +21,14 @@ async def exeSavezVous(ctx,bot,args):
             if ligne["Image"]!="None":
                 embed.set_image(url=ligne["Image"])
         else:
-            if args[0].lower()=="add":
+            if ctx.invoked_with=="add":
                 embed=addSV(ctx,args,curseur)
-            elif args[0].lower()=="delete":
+            elif ctx.invoked_with=="del":
                 embed=deleteSV(ctx,args,curseur)
-            elif args[0].lower()=="edit":
+            elif ctx.invoked_with=="edit":
                 embed=editSV(ctx,args,curseur)
             else:
-                await commandeSV(ctx,args[0].lower(),None,False,None,bot)
+                await commandeSV(ctx,ctx.invoked_with,None,False,None,bot)
                 return
         connexion.commit()
     except AssertionError as er:
@@ -52,43 +52,43 @@ async def autoSV(channel,guild,bot):
     await bot.get_channel(channel).send(embed=embed)
 
 def addSV(ctx,args,curseur):
-    assert len(args)!=1, "Vous devez me donner une phrase !"
+    assert len(args)!=0, "Vous devez me donner une phrase !"
     if ctx.message.attachments!=[]:
         image=ctx.message.attachments[0].url
     else:
         image=None
-    descip=createPhrase(args[1:len(args)])
+    descip=createPhrase(args[0:len(args)])
     assert len(descip)<2000
     count=curseur.execute("SELECT COUNT() as Nb FROM savezvous").fetchone()["Nb"]
     curseur.execute("INSERT INTO savezvous VALUES('{0}',{1},'{2}',{3})".format(descip,ctx.author.id,image,count+1))
-    embed=createEmbed("Phrase ajoutée","`{0}` : {1}".format(count+1,descip),0x220cc9,ctx.invoked_with.lower(),ctx.guild)
+    embed=createEmbed("Phrase ajoutée","`{0}` : {1}".format(count+1,descip),0x220cc9,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
     if image!=None:
         embed.set_image(url=image)
     return embed
 
 
 def deleteSV(ctx,args,curseur):
-    assert len(args)!=1, "Vous devez me donner le numéro de la phrase que vous voulez supprimer !"
+    assert len(args)!=0, "Vous devez me donner le numéro de la phrase que vous voulez supprimer !"
     try:
-        descip=curseur.execute("SELECT * FROM savezvous WHERE Count={0}".format(args[1])).fetchone()
+        descip=curseur.execute("SELECT * FROM savezvous WHERE Count={0}".format(args[0])).fetchone()
     except:
         raise AssertionError("Le numéro donné n'est pas valide.")
     assert descip!=None, "Le numéro donné ne correspond à aucune phrase."
     assert ctx.author.id==descip["ID"] or ctx.author.guild_permissions.manage_messages==True, "Cette phrase ne vous appartient pas."
-    curseur.execute("DELETE FROM savezvous WHERE Count={0}".format(args[1]))
-    for i in curseur.execute("SELECT * FROM savezvous WHERE Count>{0} ORDER BY Count ASC".format(args[1])).fetchall():
+    curseur.execute("DELETE FROM savezvous WHERE Count={0}".format(args[0]))
+    for i in curseur.execute("SELECT * FROM savezvous WHERE Count>{0} ORDER BY Count ASC".format(args[0])).fetchall():
         curseur.execute("UPDATE savezvous SET Count={0} WHERE Count={1}".format(i["Count"]-1, i["Count"]))
-    return createEmbed("Phrase supprimée","`{0}` : {1}".format(args[1],descip["Texte"]),0x220cc9,ctx.invoked_with.lower(),ctx.guild)
+    return createEmbed("Phrase supprimée","`{0}` : {1}".format(args[0],descip["Texte"]),0x220cc9,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
 
 
 def editSV(ctx,args,curseur):
-    assert len(args)>2, "Vous devez me donner le numéro de la phrase que vous voulez modifier et la nouvelle phrase !"
+    assert len(args)>1, "Vous devez me donner le numéro de la phrase que vous voulez modifier et la nouvelle phrase !"
     try:
-        phrase=curseur.execute("SELECT * FROM savezvous WHERE Count={0}".format(args[1])).fetchone()
+        phrase=curseur.execute("SELECT * FROM savezvous WHERE Count={0}".format(args[0])).fetchone()
         assert phrase!=None, "Le numéro donné ne correspond à aucune phrase."
     except:
         raise AssertionError("Le numéro donné n'est pas valide.")
     assert ctx.author.id==phrase["ID"], "Cette phrase ne vous appartient pas."
-    descip=createPhrase(args[2:len(args)])
-    curseur.execute("UPDATE savezvous SET Texte='{0}' WHERE Count={1}".format(descip,args[1]))
-    return createEmbed("Phrase modifiée","`{0}` : {1}".format(args[1],descip),0x220cc9,ctx.invoked_with.lower(),ctx.guild)
+    descip=createPhrase(args[1:len(args)])
+    curseur.execute("UPDATE savezvous SET Texte='{0}' WHERE Count={1}".format(descip,args[0]))
+    return createEmbed("Phrase modifiée","`{0}` : {1}".format(args[0],descip),0x220cc9,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)

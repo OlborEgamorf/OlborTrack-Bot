@@ -164,7 +164,7 @@ async def sendEmbed(ctx:commands.Context,embed:discord.Embed,react:bool,boutons:
 
 def embedHisto(ctx:commands.Context,bot) -> discord.Embed:
     """Fonction qui génère l'embed à envoyer dans l'historique des commandes invoquées sur le serveur de tests."""
-    return createEmbed("Commande exécutée","Commande : OT!{0}\nServeur : {1} - {2}\nSalon : {3} - {4}\nAuteur : {5} - {6}\n{7}".format(ctx.command.name,ctx.guild.name,ctx.guild.id,ctx.channel.name,ctx.channel.id,ctx.author.name,ctx.author.id,ctx.args[2:len(ctx.args)]),0x6ec8fa,"OT Log",bot.user)
+    return createEmbed("Commande exécutée","Commande : OT!{0}\nServeur : {1} - {2}\nSalon : {3} - {4}\nAuteur : {5} - {6}\n{7}".format(ctx.command.qualified_name,ctx.guild.name,ctx.guild.id,ctx.channel.name,ctx.channel.id,ctx.author.name,ctx.author.id,ctx.args[2:len(ctx.args)]),0x6ec8fa,"OT Log",bot.user)
 
 
 def embedAssert(info:str) -> discord.Embed:

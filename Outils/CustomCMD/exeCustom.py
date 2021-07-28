@@ -14,9 +14,8 @@ async def exeSCMD(ctx:commands.Context,bot:commands.Bot,args:str,listeOS:list):
     try:
         connexion,curseur=connectSQL(ctx.guild.id,"CustomCMD","Guild",None,None)
         args=args.split(" ")
-        assert len(args)!=0, "Il faut le nom de la commande et ce que vous voulez en faire !"
-        assert len(args)!=1, "Il faut le nom de la commande !"
-        nom=args[1].lower().split(" ")
+        assert len(args)!=0, "Il faut le nom de la commande !"
+        nom=args[0].lower().split(" ")
         if nom[0].startswith("ot!"):
             nom=nom[0][3:len(nom[0])]
         else:
@@ -25,39 +24,39 @@ async def exeSCMD(ctx:commands.Context,bot:commands.Bot,args:str,listeOS:list):
         assert nom not in listeOS, "Cette commande est une commande système !"
         command=curseur.execute("SELECT * FROM custom WHERE Nom='{0}'".format(nom)).fetchone()
 
-        if args[0].lower()!="add":
+        if ctx.invoked_with not in ("add","+"):
             assert command!=None, "Cette commande perso n'existe pas !"
-        if args[0].lower() in ("image","miniature"):
-            assert len(args)!=2 or len(ctx.message.attachments)>0 , "Pour définir une image ou une miniature :\nMettez un lien vers une image à la suite de cette commande ou alors ajoutez une image en pièce jointe (avec la commande).\nPour la supprimer, mettez *del* à la suite de la commande."
-        elif args[0].lower() not in ("del","embed","len"):
-            assert len(args)!=2, "Il manque le contenu que vous voulez ajouter/modifier !"
-        if args[0].lower() in ("auteur","titre","description","bas","image","miniature","couleur") and bool(command["Embed"])==False:
+        if ctx.invoked_with in ("image","miniature"):
+            assert len(args)!=1 or len(ctx.message.attachments)>0 , "Pour définir une image ou une miniature :\nMettez un lien vers une image à la suite de cette commande ou alors ajoutez une image en pièce jointe (avec la commande).\nPour la supprimer, mettez *del* à la suite de la commande."
+        elif ctx.invoked_with not in ("del","embed","len","delete","-"):
+            assert len(args)!=1, "Il manque le contenu que vous voulez ajouter/modifier !"
+        if ctx.invoked_with in ("auteur","titre","description","bas","image","miniature","couleur") and bool(command["Embed"])==False:
             await ctx.send(embed=await embedCCMD(ctx,nom,command,curseur))
         
-        if args[0].lower()=="add" or args[0].lower()=="+":
+        if ctx.invoked_with in ("add","+"):
             embed=await addCCMD(ctx,args,nom,command,curseur)
-        elif args[0].lower()=="del" or args[0].lower()=="delete" or args[0].lower()=="-":
+        elif ctx.invoked_with in ("del","delete","-"):
             embed=await delCCMD(ctx,nom,curseur)
-        elif args[0].lower()=="edit" or args[0].lower()=="description":
+        elif ctx.invoked_with in ("edit","description"):
             embed=await editCCMD(ctx,args,nom,curseur)
-        elif args[0].lower()=="help":
+        elif ctx.invoked_with=="help":
             embed=await helpCCMD(ctx,args,nom,curseur)
-        elif args[0].lower()=="embed":
+        elif ctx.invoked_with=="embed":
             embed=await embedCCMD(ctx,nom,command,curseur)
-        elif args[0].lower()=="auteur":
+        elif ctx.invoked_with=="auteur":
             embed=await authorCCMD(ctx,args,nom,curseur)
-        elif args[0].lower()=="titre":
+        elif ctx.invoked_with=="titre":
             embed=await titleCCMD(ctx,args,nom,curseur)
-        elif args[0].lower()=="bas":
+        elif ctx.invoked_with=="bas":
             embed=await footerCCMD(ctx,args,nom,curseur)
-        elif args[0].lower()=="image":
+        elif ctx.invoked_with=="image":
             embed=await imageCCMD(ctx,args,nom,curseur,"Image")
-        elif args[0].lower()=="miniature":
+        elif ctx.invoked_with=="miniature":
             embed=await imageCCMD(ctx,args,nom,curseur,"Miniature")
-        elif args[0].lower()=="couleur":
+        elif ctx.invoked_with=="couleur":
             embed=await colorCCMD(ctx,args,nom,curseur)
-        elif args[0].lower()=="len":
-            embed=createEmbed("Longueur de la commande","Nom : {0}\nLongueur : {1}".format(nom,len(command["Description"])+len(command["Footer"])+len(command["Author"])+len(command["Title"])),0x220cc9,ctx.invoked_with.lower(),ctx.guild)
+        elif ctx.invoked_with=="len":
+            embed=createEmbed("Longueur de la commande","Nom : {0}\nLongueur : {1}".format(nom,len(command["Description"])+len(command["Footer"])+len(command["Author"])+len(command["Title"])),0x220cc9,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
         else:
             raise AssertionError("Rien ne correspond à votre demande !")
 
