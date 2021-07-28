@@ -53,6 +53,8 @@ async def convSB(guild):
         num=curseur.execute("SELECT COUNT() as Nombre FROM sb").fetchone()["Nombre"]+1
         if i["Salon"] not in salons:
             salons.append(i["Salon"])
+        if i["ID"]=="None":
+            i["ID"]=ord(i["Emote"])
         curseur.execute("INSERT INTO sb VALUES({0},{1},'{2}',{3},{4})".format(num,i["Salon"],i["Emote"],i["ID"],i["Nombre"]))
     table=rechercheCsv("starmessages",guild.id,0,0,0,0)[0]
     for j in salons:

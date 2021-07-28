@@ -32,13 +32,16 @@ def homeSpe(date,guildOT,bot,guild,option,pagemax,period):
                     classement.append({"Rank":0,"ID":i["ID"],"Count":total["Total"]})
         elif period in ("mois","annee","global"):
             for i in result:
-                for j in curseur.execute("SELECT * FROM {0}{1}{2} ORDER BY Rank ASC".format(date[0],date[1],i["ID"])).fetchall():
-                    exe=dichotomieID(classement,j["ID"],"ID")
-                    if exe[0]:
-                        classement[exe[1]]["Count"]+=j["Count"]
-                    else:
-                        classement.append({"Rank":0,"ID":j["ID"],"Count":j["Count"]})
-                        classement.sort(key=triID)
+                try:
+                    for j in curseur.execute("SELECT * FROM {0}{1}{2} ORDER BY Rank ASC".format(date[0],date[1],i["ID"])).fetchall():
+                        exe=dichotomieID(classement,j["ID"],"ID")
+                        if exe[0]:
+                            classement[exe[1]]["Count"]+=j["Count"]
+                        else:
+                            classement.append({"Rank":0,"ID":j["ID"],"Count":j["Count"]})
+                            classement.sort(key=triID)
+                except:
+                    pass
             
         if classement!=[]:
             rankingClassic(classement)

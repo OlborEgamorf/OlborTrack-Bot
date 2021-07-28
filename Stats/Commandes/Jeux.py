@@ -39,7 +39,7 @@ async def statsJeux(ctx,turn,react,ligne,guildOT,bot,mode):
             mois,annee=ligne["Args1"],ligne["Args2"]
             option=ligne["Option"]
         
-        connexion,curseur=connectSQL(mode,dictOption[option],"Stats",tableauMois[mois],annee)
+        connexion,curseur=connectSQL(mode,dictOption[option],"Jeux",tableauMois[mois],annee)
 
         pagemax=setMax(curseur.execute("SELECT COUNT() as Nombre FROM {0}{1}".format(mois,annee)).fetchone()["Nombre"])
 

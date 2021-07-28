@@ -32,7 +32,7 @@ def exeClassic(count,id,nom,curseurGuild,guild):
                 curseurGL.execute("DROP TABLE IF EXISTS persoA{0}".format(i["ID"]))
     connexionGL.commit()
 
-    dailySQL(dateID,(strftime("%d"),strftime("%m"),strftime("%y")),nom,curseurGuild,guild.id)
+    dailySQL(dateID,(strftime("%d"),strftime("%m"),strftime("%y")),nom,curseurGuild,guild.id,"Stats")
     if nom not in ("Mentions","Mentionne"):
         rapportsSQL(guild,"ranks",id,None,count,(0,id,strftime("%d"),strftime("%m"),strftime("%y"),dateID,count,nom),strftime("%d"),strftime("%m"),strftime("%y"),nom)
 
@@ -87,7 +87,7 @@ def exeJeuxSQL(id,idObj,state,guild,curseurGuild,count,option,tours):
     if idObj!=None:
         compteurJeuxSQL(curseurGL,"glob"+str(idObj),id,(0,id,idObj,"TO","GL",dictW[state],dictL[state],dictCount[state],0),dictCount[state],(strftime("%d"),strftime("%m"),strftime("%y")),("TO","GL"),"persoA",True,state,5,curseurGL)
         histoSQLJeux(curseurGL,id,tours,strftime("%d")+"/"+strftime("%m")+"/"+strftime("%y"),idObj,state,tours)
-        dailySQL(int(strftime("%y")+strftime("%m")+strftime("%d")),(strftime("%d"),strftime("%m"),strftime("%y")),option+str(idObj),curseurGuild,guild)
+        dailySQL(int(strftime("%y")+strftime("%m")+strftime("%d")),(strftime("%d"),strftime("%m"),strftime("%y")),option+str(idObj),curseurGuild,guild,"Jeux")
     connexionGL.commit()
 
-    dailySQL(int(strftime("%y")+strftime("%m")+strftime("%d")),(strftime("%d"),strftime("%m"),strftime("%y")),option,curseurGuild,guild)
+    dailySQL(int(strftime("%y")+strftime("%m")+strftime("%d")),(strftime("%d"),strftime("%m"),strftime("%y")),option,curseurGuild,guild,"Jeux")
