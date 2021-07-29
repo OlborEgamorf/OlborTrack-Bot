@@ -80,7 +80,7 @@ async def commandeRandom(ctx,ligne,react,guildOT,bot):
     
     else:
         if option in ("Reactions","Emotes"):
-            table=curseur.execute("SELECT * FROM glob WHERE Count>100 ORDER BY RANDOM()").fetchone()
+            table=curseur.execute("SELECT * FROM glob WHERE Rank<400 ORDER BY RANDOM()").fetchone()
         else:
             table=curseur.execute("SELECT * FROM glob ORDER BY RANDOM()").fetchone()
         if period=="mois":

@@ -19,7 +19,7 @@ async def exeCustom(guild:discord.Guild,message:discord.Message,author:discord.M
         tableCommande=curseur.execute("SELECT * FROM custom WHERE Nom='{0}'".format(command)).fetchone()
         if tableCommande!=None:
             if bool(tableCommande["Embed"])==True:
-                dictColor={"olbor":0x3366ff,"blue":0x3498db,"yellow":0xfcfc03,"orange":0xe0a31f,"green":0x14e330,"pink":0xed0ce2,"black":0x000000,"white":0xffffff,"violet":0x8f2aa1,"cyan":0x0ff2eb,"red":0xff0800,"turquoise":0x23b098,"dblue":0x220ce8,"dgreen":0x0c8733,"user":author.color.value}
+                dictColor={"olbor":0x6ec8fa,"blue":0x3498db,"yellow":0xfcfc03,"orange":0xe0a31f,"green":0x14e330,"pink":0xed0ce2,"black":0x000000,"white":0xffffff,"violet":0x8f2aa1,"cyan":0x0ff2eb,"red":0xff0800,"turquoise":0x23b098,"dblue":0x220ce8,"dgreen":0x0c8733,"user":author.color.value}
                 embedC=discord.Embed()
                 embedC.colour=dictColor[tableCommande["Color"]]
                 if tableCommande["Title"]!="None":

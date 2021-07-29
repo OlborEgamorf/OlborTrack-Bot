@@ -89,7 +89,7 @@ class Giveaway():
                     users.remove(bot.user)
         await message.clear_reactions()
         if len(users)<self.gagnants:
-            embed=createEmbed(self.lot,"<:otRED:718392916061716481> Il y a eu moins de participants ({0}) que de gagnants ({1}), le tirage est donc invalidé.".format(len(users),self.gagnants),0xff0000,"giveaway",message.guild)
+            embed=createEmbed(self.lot,"<:otROUGE:868535622237818910> Il y a eu moins de participants ({0}) que de gagnants ({1}), le tirage est donc invalidé.".format(len(users),self.gagnants),0xff0000,"giveaway",message.guild)
             await message.edit(embed=embed)
             return
 
@@ -109,8 +109,8 @@ class Giveaway():
             descip+="<@"+str(won.id)+"> "
         if len(winner)==1:
             embed=createEmbed("Le gagnant de '{0}' est...".format(self.lot),"Félicitations à : <@{0}> !!||\n`Numéro reroll : {1}`||".format(winner[0].id,count),winner[0].color.value,"giveaway",winner[0])
-            await message.reply("<:otVERT:718396570638483538> Bravo à <@{0}> qui a gagné {1} !".format(winner[0].id,self.lot))
+            await message.reply("<:otVERT:868535645897912330> Bravo à <@{0}> qui a gagné {1} !".format(winner[0].id,self.lot))
         else:
             embed=createEmbed("Les gagnants de '{0}' sont...".format(self.lot),"Félicitations à : {0} !!||\n`Numéro reroll : {1}`||".format(descip,count),0xfc03d7,"giveaway",message.guild)
-            await message.reply("<:otVERT:718396570638483538> Bravo à {0}qui ont gagné {1} !".format(descip,self.lot))
+            await message.reply("<:otVERT:868535645897912330> Bravo à {0}qui ont gagné {1} !".format(descip,self.lot))
         await message.edit(embed=embed)

@@ -35,8 +35,7 @@ liste=["Créé avec amour par OlborEgamorf <3",
 "Mon anniversaire est le 15/04/2020",
 "Je possède des commandes de comparaison de stats !",
 "Les commandes d'évolutions sont intéressantes...",
-"Un affichage spécial téléphone existe !",
-""]
+"Un affichage spécial téléphone existe !"]
 
 async def statsEmbed(nom,ligne,page,pagemax,option,guildOT,bot,evol,collapse,curseur):
     author=ligne["AuthorID"]
