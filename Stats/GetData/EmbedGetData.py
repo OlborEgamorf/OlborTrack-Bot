@@ -21,6 +21,6 @@ def embedCreate(embedOri,texte,tempsI,tempsT,guild):
     embedT.add_field(name="Total",value=total)
     embedT.set_footer(text="OT!getdata")
     embedT=auteur(guild.id,guild.name,guild.icon,embedT,"guild")
-    if len(embedT)>=6000:
+    if len(embedT.fields[0])>=1024:
         embedT=embedOri
     return embedT

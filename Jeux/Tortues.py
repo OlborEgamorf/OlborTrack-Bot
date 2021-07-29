@@ -66,7 +66,7 @@ class JeuTortues:
 
     def embedGame(self,user):
         embed=discord.Embed(title="Course de tortues",color=user.color.value)
-        embed=auteur(user.id,user.name,user.avatar,embed,"user")
+        embed=auteur(user.id,"Au tour de {0}".format(user.name),user.avatar,embed,"user")
         embed.set_footer(text="OT!tortues")
         liste=[[0 for i in range(10)] for j in range(5)]
         descip=""

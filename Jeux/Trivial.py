@@ -885,7 +885,7 @@ async def trivialBattleRoyale(ctx,bot):
                 for i in game.restants:
                     game.scores[i]+=1
             else:
-                for i in game.scores:
+                for i in game.restants:
                     if game.scores[i]==0:
                         game.histo[i]=left-count+1
                         game.restants.remove(i)
