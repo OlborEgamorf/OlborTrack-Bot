@@ -3,26 +3,28 @@
 import discord
 from Core.Fonctions.Help3 import *
 from Core.Fonctions.AuteurIcon import auteur
+from Stats.SQL.ConnectSQL import connectSQL
+from Core.Fonctions.setMaxPage import setPage
+from Core.Fonctions.Embeds import embedAssert, exeErrorExcept, sendEmbed
 
-async def exeHelp(ctx,bot,args):
-    if ctx.message.channel.type==discord.ChannelType.private:
-        guild=None
+async def commandeHelp(ctx,turn,react,ligne,bot,guildOT):
+    connexionCMD,curseurCMD=connectSQL(ctx.guild.id,"Commandes","Guild",None,None)
+    if not react:
+        if len(ctx.args)==2:
+            option="home"
+        else:
+            if ctx.args[2].lower() in ("polls","stats","jeux","utile","autre","sv","outils","wiki","spotify","mal","admin","geo"):
+                option=ctx.args[2].lower()
+            else:
+                option="home"
+        curseurCMD.execute("INSERT INTO commandes VALUES({0},{1},'help','{2}','None','None','None','None',1,1,'countDesc',False)".format(ctx.message.id,ctx.author.id,option))
+        ligne=curseurCMD.execute("SELECT * FROM commandes WHERE MessageID={0}".format(ctx.message.id)).fetchone()
     else:
-        guild=ctx.guild.id
-    if len(args)==0:
-        embedH=embedHelp2VI(0,"HE",guild)
-    elif args[0]=="serv" and ctx.guild!=None:
-        embedH=tablesEmbed(ctx.guild.id,rechercheHelp(ctx.guild.id)[0],0,ctx.guild.id,"VC",0,0xfcfc03,True)
-        embedH=auteur(ctx.guild.id,ctx.guild.name,ctx.guild.icon,embedH,"guild")
-    else:
-        dictArgs={"stats":"HS","statistiques":"HS","ranks":"HS","poll":"HP","polls":"HP","sondage":"HP","sondages":"HP","p4":"H4","puissance4":"H4","puissance":"H4","servcommand":"HC","custom":"HC","utile":"HU","utiles":"HU","autre":"HO","autres":"HO","sv":"HV","savezvous":"HV","tab":"HT","tableau":"HT","tableaux":"HT","starboard":"HT","outils":"HT","rapports":"HT","wiki":"HW","wikipedia":"HW","mal":"HM","myanimelist":"HM","anime":"HM","admin":"HA","special":"HA","spotify":"HY","spo":"HY","music":"HY","geo":"HG","nasa":"HG","fun":"H4","jeu":"H4","jeux":"H4","trivial":"H4"}
-        try:
-            embedH=embedHelp2VI(0,dictArgs[args[0].lower()],guild)
-        except:
-            embedH=embedHelp2VI(0,"HE",guild)
-    message=await ctx.send(embed=embedH)
-    await addReact(message,False)
-    return
+        option=ligne["Option"]
+
+    page=setPage(ligne["Page"],ligne["PageMax"],turn)
+    embed,pagemax=embedHelp30(option,guildOT,page,bot)
+    message=await sendEmbed(ctx,embed,react,False,curseurCMD,connexionCMD,page,pagemax)
 
 def embedHelp30(option,guildOT,page,bot):
     dictLinks={"home":"https://media.discordapp.net/attachments/726034739550486618/768453640943042580/logoBldsqdeuddf.png","polls":"https://cdn.discordapp.com/attachments/726034739550486618/736551739473264640/helppoll.png","jeux":"https://cdn.discordapp.com/attachments/726034739550486618/736551738282213397/helpp4.png","utile":"https://cdn.discordapp.com/attachments/726034739550486618/736551744804225093/helputile.png","autre":"https://cdn.discordapp.com/attachments/726034739550486618/736551742937759914/helptrivia.png","sv":"https://cdn.discordapp.com/attachments/726034739550486618/736551741897572362/helpsv.png","outils":"https://media.discordapp.net/attachments/726034739550486618/750659474460770314/helptableaux.png","wiki":"https://media.discordapp.net/attachments/726034739550486618/757641659285635142/Wikipedia-logo-v2.png","mal":"https://media.discordapp.net/attachments/726034739550486618/756234989539950603/helpMAL.png","admin":"https://cdn.discordapp.com/attachments/726034739550486618/736551737187631144/helpadmin.png","spotify":"https://media.discordapp.net/attachments/726034739550486618/763482063319203950/Spotify_Icon_RGB_Green.png?width=676&height=676","stats":"https://media.discordapp.net/attachments/726034739550486618/736551740614246450/helpstats.png","geo":"https://media.discordapp.net/attachments/726034739550486618/769615020568608848/1f30d.png"}
@@ -64,12 +66,15 @@ def embedHelp30(option,guildOT,page,bot):
         for i in dictDescip[option][page]:
             com=bot.get_command(i)
             if com!=None:
-                descip+="**OT!{0}** {1} : {2}\n".format(com.qualified_name,com.usage,com.help)
+                if com.usage!=None:
+                    descip+="**OT!{0}** {1} : {2}\n".format(com.qualified_name,com.usage,com.help)
+                else:
+                    descip+="**OT!{0}** : {1}\n".format(com.qualified_name,com.help)
         try:
             embedHelp.description=dictDescipPlus[option][page]+"\n"+descip
         except:
             embedHelp.description=descip
         for i in dictDescipFields[option][page]:
             embedHelp.add_field(name=dictFields[i]["name"],value=dictFields[i]["value"],inline=True)
-    embedHelp.set_footer(text=("Page {0}/{1}"))
-    return embedHelp
+    embedHelp.set_footer(text=("Page {0}/{1}".format(page,dictLen[option])))
+    return embedHelp, dictLen[option]

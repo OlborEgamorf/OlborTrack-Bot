@@ -28,6 +28,7 @@ from Stats.Compare.CompareRank import compareRank
 from Stats.Compare.CompareServ import compareServ
 from Sondages.GAReroll import commandeGAR
 from Core.Fonctions.SeekMessage import seekMessage
+from Autre.Help import commandeHelp
 
 
 async def reactStats(message:int,reaction:discord.Reaction,bot:commands.Bot,guildOT:OTGuild,payload):
@@ -83,6 +84,8 @@ async def reactStats(message:int,reaction:discord.Reaction,bot:commands.Bot,guil
             await compareServ(ctx,ligne["Option"],getTurn(reaction),True,ligne,guildOT,bot)
         elif ligne["Commande"]=="gareroll":
             await commandeGAR(ctx,getTurn(reaction),True,ligne)
+        elif ligne["Commande"]=="help":
+            await commandeHelp(ctx,getTurn(reaction),True,ligne,bot,guildOT)
         elif ligne["Commande"]=="rapport":
             if reaction.id in (835930140571729941,835928773718835260,835928773740199936,835928773705990154,835928773726699520,835929144579326003,836947337808314389):
                 await switchRapport(ctx,reaction.id,ligne,guildOT,bot)
