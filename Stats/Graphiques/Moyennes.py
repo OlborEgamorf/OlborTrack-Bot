@@ -11,8 +11,7 @@ colorOT=(110/256,200/256,250/256,1)
 
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TOTAL","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12"}
 
-def graphPersoMoy(ligne,ctx,option,bot,period,guildOT):
-    connexion,curseur=connectSQL(ctx.guild.id,"Moyennes","Stats","GL","")
+def graphPersoMoy(ligne,ctx,option,bot,period,guildOT,curseur):
     author,nomTable=ligne["AuthorID"],ligne["AuthorID"]
     if ligne["Args1"]!="None":
         nomTable="{0}{1}".format(ligne["AuthorID"],ligne["Args1"])
@@ -56,8 +55,7 @@ def graphPersoMoy(ligne,ctx,option,bot,period,guildOT):
     plt.savefig("Graphs/otGraph")
     plt.clf()
 
-def graphGroupedMoy(ligne,ctx,option,bot,guildOT):
-    connexion,curseur=connectSQL(ctx.guild.id,"Moyennes","Stats","GL","")
+def graphGroupedMoy(ligne,ctx,option,bot,guildOT,curseur):
     colors={"15":"grey","16":"pink","17":"purple","18":"orange","19":"green","20":"red","21":"blue"}
     author=ligne["AuthorID"]
     annees=curseur.execute("SELECT DISTINCT Annee FROM moy{0}{1} ORDER BY Annee ASC".format(option,author)).fetchall()
@@ -101,8 +99,7 @@ def graphGroupedMoy(ligne,ctx,option,bot,guildOT):
     plt.savefig("Graphs/otGraph")
     plt.clf()
 
-async def graphHeatMoy(ligne,ctx,bot,option,guildOT):
-    connexion,curseur=connectSQL(ctx.guild.id,"Moyennes","Stats","GL","")
+async def graphHeatMoy(ligne,ctx,bot,option,guildOT,curseur):
     author=ligne["AuthorID"]
     setThemeGraph(plt)
     dates=curseur.execute("SELECT DISTINCT Annee FROM moy{0}{1} ORDER BY Annee ASC".format(option,author)).fetchall()

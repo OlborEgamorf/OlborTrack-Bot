@@ -7,8 +7,7 @@ from Core.Fonctions.GetNom import getNomGraph
 from Core.Fonctions.VoiceAxe import voiceAxe
 colorOT=(110/256,200/256,250/256,1)
 
-def graphPerso(ligne,ctx,option,bot,period,guildOT,categ):
-    connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
+def graphPerso(ligne,ctx,option,bot,period,guildOT,categ,curseur):
     author,nomTable=ligne["AuthorID"],ligne["AuthorID"]
     if ligne["Args1"]!="None":
         nomTable="{0}{1}".format(ligne["AuthorID"],ligne["Args1"])

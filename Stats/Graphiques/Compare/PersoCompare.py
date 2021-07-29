@@ -7,8 +7,7 @@ from Core.Fonctions.GetNom import getNomGraph
 from Core.Fonctions.VoiceAxe import voiceAxe
 colorOT=(110/256,200/256,250/256,1)
 
-def graphPersoComp(ligne,ctx,option,bot,period,guildOT,categ):
-    connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
+def graphPersoComp(ligne,ctx,option,bot,period,guildOT,categ,curseur):
     user1,user2=ligne["AuthorID"],ligne["Args2"]
     obj=ligne["Args3"]
     if obj=="None":
@@ -35,7 +34,7 @@ def graphPersoComp(ligne,ctx,option,bot,period,guildOT,categ):
             listeX[z].append("{0}/{1}".format(i["Mois"],i["Annee"]))
             listeY[z].append(dictY[categ])
     
-        user=getNomGraph(ctx,bot,option,int(users[z]))
+        user=getNomGraph(ctx,bot,"Messages",int(users[z]))
 
         if z==0:
             div=voiceAxe(option,listeY[z],plt,"y")

@@ -21,8 +21,9 @@ from Stats.Graphiques.Spider import graphSpider
 from Stats.Graphiques.Compare.PersoCompare import graphPersoComp
 from Stats.Graphiques.Compare.SpiderCompare import graphSpiderCompare, graphSpiderComparePerso
 from Stats.Graphiques.Compare.GroupedCompare import graphGroupedCompare, graphGroupedComparePerso, graphGroupedCompareRank
+from Core.Fonctions.SeekMessage import seekMessage
 
-async def reactGraph(message:discord.Message,bot:commands.Bot,guildOT:OTGuild):
+async def reactGraph(message:int,bot:commands.Bot,guildOT:OTGuild,payload,emoji):
     """Génère et envoie les graphiques pour toutes les commandes du bot.
     
     Regarde dans la base de données des commandes du serveur si le message est valide et regarde les informations enregistrées.
@@ -30,28 +31,30 @@ async def reactGraph(message:discord.Message,bot:commands.Bot,guildOT:OTGuild):
     Ensuite, appelle les graphiques adaptés à la commande.
     
     Envoie tous les graphiques dans un salon privé et récupère les liens de images, afin de les utiliser lors des changements de page."""
-    connexionCMD,curseurCMD=connectSQL(message.guild.id,"Commandes","Guild",None,None)
-    ligne=curseurCMD.execute("SELECT * FROM commandes WHERE MessageID={0}".format(message.id)).fetchone()
+    connexionCMD,curseurCMD=connectSQL(guildOT.id,"Commandes","Guild",None,None)
+    ligne=curseurCMD.execute("SELECT * FROM commandes WHERE MessageID={0}".format(message)).fetchone()
     listeG=[]
     if ligne!=None:
+        message,user=await seekMessage(bot,payload)
         ctx=await bot.get_context(message)            
         if ligne["Commande"] in ("periods","periodsInter"):
             ligne["Args3"]=ligne["AuthorID"]
+            connexion,curseur=connectSQL(ctx.guild.id,ligne["Option"],"Stats","GL","")
 
-            graphPerso(ligne,ctx,ligne["Option"],bot,"mois",guildOT,"Compteur")
+            graphPerso(ligne,ctx,ligne["Option"],bot,"mois",guildOT,"Compteur",curseur)
             messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
             embedM,embed=await embedGraph([1,2,3,4,5],messageGraph,ctx,message)
             listeG.append(messageGraph.attachments[0].url)
 
-            graphGroupedMois(ligne,ctx,ligne["Option"],bot,guildOT)
+            graphGroupedMois(ligne,ctx,ligne["Option"],bot,guildOT,curseur)
             messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
             listeG.append(messageGraph.attachments[0].url)
 
-            graphPerso(ligne,ctx,ligne["Option"],bot,"annee",guildOT,"Compteur")
+            graphPerso(ligne,ctx,ligne["Option"],bot,"annee",guildOT,"Compteur",curseur)
             messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
             listeG.append(messageGraph.attachments[0].url)
 
-            graphPerso(ligne,ctx,ligne["Option"],bot,"mois",guildOT,"Rang")
+            graphPerso(ligne,ctx,ligne["Option"],bot,"mois",guildOT,"Rang",curseur)
             messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
             listeG.append(messageGraph.attachments[0].url)
 
@@ -61,21 +64,25 @@ async def reactGraph(message:discord.Message,bot:commands.Bot,guildOT:OTGuild):
         
         elif ligne["Commande"]=="moy":
             if ligne["Option"] in ("Jour","Heure"):
-                graphPersoMoy(ligne,ctx,ligne["Option"],bot,"mois",guildOT)
+                connexion,curseur=connectSQL(ctx.guild.id,"Moyennes","Stats","GL","")
+
+                graphPersoMoy(ligne,ctx,ligne["Option"],bot,"mois",guildOT,curseur)
                 messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
                 embedM,embed=await embedGraph([1,2,3],messageGraph,ctx,message)
                 listeG.append(messageGraph.attachments[0].url)
 
-                graphGroupedMoy(ligne,ctx,ligne["Option"],bot,guildOT)
+                graphGroupedMoy(ligne,ctx,ligne["Option"],bot,guildOT,curseur)
                 messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
                 listeG.append(messageGraph.attachments[0].url)
 
-                await graphHeatMoy(ligne,ctx,bot,ligne["Option"],guildOT)
+                await graphHeatMoy(ligne,ctx,bot,ligne["Option"],guildOT,curseur)
                 messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
                 listeG.append(messageGraph.attachments[0].url)
 
             elif ligne["Option"]=="Mois":
-                graphPersoMoy(ligne,ctx,ligne["Option"],bot,"annee",guildOT)
+                connexion,curseur=connectSQL(ctx.guild.id,"Moyennes","Stats","GL","")
+
+                graphPersoMoy(ligne,ctx,ligne["Option"],bot,"annee",guildOT,curseur)
                 messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
                 embedM,embed=await embedGraph([1],messageGraph,ctx,message)
                 listeG.append(messageGraph.attachments[0].url)
@@ -85,26 +92,30 @@ async def reactGraph(message:discord.Message,bot:commands.Bot,guildOT:OTGuild):
 
         elif ligne["Commande"]=="compareUser":
             if ligne["Args1"] in ("user","userObj"):
-                graphPersoComp(ligne,ctx,ligne["Option"],bot,"mois",guildOT,"Compteur")
+                connexion,curseur=connectSQL(ctx.guild.id,ligne["Option"],"Stats","GL","")
+
+                graphPersoComp(ligne,ctx,ligne["Option"],bot,"mois",guildOT,"Compteur",curseur)
                 messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
                 embedM,embed=await embedGraph([1,2,3],messageGraph,ctx,message)
                 listeG.append(messageGraph.attachments[0].url)
 
-                graphPersoComp(ligne,ctx,ligne["Option"],bot,"annee",guildOT,"Compteur")
+                graphPersoComp(ligne,ctx,ligne["Option"],bot,"annee",guildOT,"Compteur",curseur)
                 messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
                 listeG.append(messageGraph.attachments[0].url)
 
-                graphPersoComp(ligne,ctx,ligne["Option"],bot,"mois",guildOT,"Rang")
+                graphPersoComp(ligne,ctx,ligne["Option"],bot,"mois",guildOT,"Rang",curseur)
                 messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
                 listeG.append(messageGraph.attachments[0].url)
             
             elif ligne["Args1"]=="userPeriod":
-                graphGroupedCompare(ligne,ctx,ligne["Option"],bot,guildOT)
+                connexion,curseur=connectSQL(ctx.guild.id,ligne["Option"],"Stats",ligne["Args2"],ligne["Args3"])
+
+                graphGroupedCompare(ligne,ctx,ligne["Option"],bot,guildOT,curseur)
                 messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
                 embedM,embed=await embedGraph([1,2],messageGraph,ctx,message)
                 listeG.append(messageGraph.attachments[0].url)
 
-                await graphSpiderCompare(ligne,ctx,bot,ligne["Option"],guildOT)
+                await graphSpiderCompare(ligne,ctx,bot,ligne["Option"],guildOT,curseur)
                 messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
                 listeG.append(messageGraph.attachments[0].url)
         
@@ -185,6 +196,7 @@ async def reactGraph(message:discord.Message,bot:commands.Bot,guildOT:OTGuild):
             await embedM.add_reaction("<:otGAUCHE:772766034335236127>")
             await embedM.add_reaction("<:otDROITE:772766034376523776>")
         await embedM.edit(embed=embed)
+        await message.clear_reaction(emoji)
         
 
 async def embedGraph(listeFonc:list,messageGraph:discord.Message,ctx:commands.Context,message:discord.Message) -> (discord.Message, discord.Embed):
