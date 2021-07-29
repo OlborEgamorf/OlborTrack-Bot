@@ -27,17 +27,21 @@ from Wiki.exeWikipedia import exeWikipedia
 from Stats.Compare.CompareRank import compareRank
 from Stats.Compare.CompareServ import compareServ
 from Sondages.GAReroll import commandeGAR
+from Core.Fonctions.SeekMessage import seekMessage
 
 
-async def reactStats(message:discord.Message,reaction:discord.Reaction,user:discord.Member,bot:commands.Bot,guildOT:OTGuild):
+async def reactStats(message:int,reaction:discord.Reaction,bot:commands.Bot,guildOT:OTGuild,payload):
     """Effectue le changement de page pour toutes les commandes du Bot.
     
     Regarde dans la base de données des commandes du serveur si le message est valide et regarde les informations enregistrées.
     
     Ensuite, appelle la fonction adaptée à la commande."""
-    connexionCMD,curseurCMD=connectSQL(message.guild.id,"Commandes","Guild",None,None)
-    ligne=curseurCMD.execute("SELECT * FROM commandes WHERE MessageID={0}".format(message.id)).fetchone()
+    connexionCMD,curseurCMD=connectSQL(guildOT.id,"Commandes","Guild",None,None)
+    ligne=curseurCMD.execute("SELECT * FROM commandes WHERE MessageID={0}".format(message)).fetchone()
     if ligne!=None:
+        message,user=await seekMessage(bot,payload)
+        if message==None:
+            return
         ctx=await bot.get_context(message)
         if ligne["Commande"]=="rank":
             await statsRank(ctx,ligne["Option"],getTurn(reaction),True,ligne,guildOT,bot)
@@ -93,8 +97,9 @@ async def reactStats(message:discord.Message,reaction:discord.Reaction,user:disc
             await commandeRandom(ctx,ligne,True,guildOT,bot)
         await removeReact(message,reaction.id,user)
     else:
-        ligne=curseurCMD.execute("SELECT * FROM graphs WHERE MessageID={0}".format(message.id)).fetchone()
+        ligne=curseurCMD.execute("SELECT * FROM graphs WHERE MessageID={0}".format(message)).fetchone()
         if ligne!=None:
+            message,user=await seekMessage(bot,payload)
             page=setPage(ligne["Page"],ligne["PageMax"],getTurn(reaction))
             embed=message.embeds[0]
             embed.set_image(url=ligne["Graph{0}".format(page)])
