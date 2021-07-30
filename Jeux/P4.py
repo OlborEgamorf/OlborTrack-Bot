@@ -205,7 +205,7 @@ class JeuP4:
             descip+="\n"
         return descip
 
-async def createGame(ctx,args,client):
+async def createGameP4(ctx,args,client):
     try:
         assert ctx.author.id not in listeJoueurs, "Vous êtes déjà dans une partie !"
         if len(ctx.message.mentions)>0:
@@ -231,7 +231,7 @@ async def createGame(ctx,args,client):
     except:
         await ctx.send(embed=await exeErrorExcept(ctx,client,args))
 
-async def joinGame(message,user,reaction,client):
+async def joinGameP4(message,user,reaction,client):
     if user.id in listeJoueurs or user.bot==True or (listeJeux[message.id].ping!=False and listeJeux[message.id].ping!=user.id):
         if user.bot==False:
             await reaction.remove(user)
@@ -246,7 +246,7 @@ async def joinGame(message,user,reaction,client):
     for i in emotes:
         await message.add_reaction(i)
 
-async def playGame(message,user,reaction):
+async def playGameP4(message,user,reaction):
     if (listeJeux[message.id].J1.id!=user.id and listeJeux[message.id].J2.id!=user.id) or listeJeux[message.id].cheat==True:
         if user.bot==False:
             await reaction.remove(user)
@@ -282,7 +282,7 @@ async def playGame(message,user,reaction):
     else:
         await reaction.remove(user)
 
-async def abandon(message,user,reaction):
+async def abandonP4(message,user,reaction):
     if listeJeux[message.id].playing==True:
         if listeJeux[message.id].J1.id!=user.id and listeJeux[message.id].J2.id!=user.id:
             if user.bot==False:
