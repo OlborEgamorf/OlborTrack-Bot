@@ -61,7 +61,7 @@ class JeuTortues:
         self.guild=guild
         self.action={}
         for i in self.tortues:
-            self.plateau[0].empiler(i)
+            self.plateau[7].empiler(i)
         self.invoke=user
 
     def embedGame(self,user):
@@ -352,11 +352,27 @@ async def startGameTortues(ctx,bot):
                 inGameTortues.remove(i)
             return
         else:
+            listeDel=[]
             for i in game.ids:
                 user=ctx.guild.get_member(i)
-                game.addPlayer(user)
+                try:
+                    await user.send("<:otVERT:868535645897912330> Vous m'avez bel et bien autorisé à vous envoyer des messages privés, vous êtes dans la partie !")
+                    game.addPlayer(user)
+                except discord.Forbidden:
+                    await ctx.send("<:otROUGE:868535622237818910> <@{0}> n'a pas activé ses messages privés, je ne peux pas lui communiquer sa tortue et ne jouera donc pas la partie.".format(i))
+                    inGameTortues.remove(i)
+                    listeDel.append(i)
+            for i in listeDel:
+                game.ids.remove(i)
+            
+            if len(game.ids)<2:
+                await message.edit(embed=createEmbed("Course des tortues","Sur les joueurs qui ont voulu rejoindre la partie, pas assez ont activé leurs messages privés pour recevoir leur couleur. La partie est annulée.",0xad917b,ctx.invoked_with.lower(),ctx.guild))
+                for i in game.ids:
+                    inGameTortues.remove(i)
+                return
+
             await game.emotesUser(bot)
-            descip="La partie commence "
+            descip="<:otVERT:868535645897912330> La partie commence "
             for i in game.joueurs:
                 descip+="<@{0}> ".format(i.userid)
                 await i.user.send(embed=createEmbed("Course des tortues","Votre couleur est : {0} {1}".format(i.couleur,dictEmote[i.couleur]),dictColor[i.couleur],ctx.invoked_with.lower(),i.user))
@@ -369,6 +385,7 @@ async def startGameTortues(ctx,bot):
                 pass
             for i in emotes:
                 await message.add_reaction(i)
+            messAd=await bot.get_channel(870598360296488980).send("{0} - {1} : partie OT!tortues débutée\n{2} joueurs".format(ctx.guild.name,ctx.guild.id,len(game.joueurs)))
 
         game.giveCards()
         turn=randint(0,len(game.joueurs)-1)
@@ -415,6 +432,7 @@ async def startGameTortues(ctx,bot):
             if len(game.cartes)==0:
                 game.cartes=[Carte(i,1) for i in listeCouleurs]*5+[Carte(i,2) for i in listeCouleurs]+[Carte(i,-1) for i in listeCouleurs]*2+[Carte("multi",1) for i in range(5)]+[Carte("last",1) for i in range(3)]+[Carte("last",2) for i in range(2)]+[Carte("multi",-1) for i in range(2)]
 
+        await messAd.delete()
     except AssertionError as er:
         await ctx.send(embed=embedAssert(er))
         return
@@ -460,11 +478,27 @@ async def startGameTortuesDuo(ctx,bot):
                 inGameTortues.remove(i)
             return
         else:
+            listeDel=[]
             for i in game.ids:
                 user=ctx.guild.get_member(i)
-                game.addPlayer(user)
+                try:
+                    await user.send("<:otVERT:868535645897912330> Vous m'avez bel et bien autorisé à vous envoyer des messages privés, vous êtes dans la partie !")
+                    game.addPlayer(user)
+                except discord.Forbidden:
+                    await ctx.send("<:otROUGE:868535622237818910> <@{0}> n'a pas activé ses messages privés, je ne peux pas lui communiquer sa tortue et ne jouera donc pas la partie.".format(i))
+                    inGameTortues.remove(i)
+                    listeDel.append(i)
+            for i in listeDel:
+                game.ids.remove(i)
+            
+            if len(game.ids)<4:
+                await message.edit(embed=createEmbed("Course des tortues","Sur les joueurs qui ont voulu rejoindre la partie, pas assez ont activé leurs messages privés pour recevoir leur couleur. La partie est annulée.",0xad917b,ctx.invoked_with.lower(),ctx.guild))
+                for i in game.ids:
+                    inGameTortues.remove(i)
+                return
+
             await game.emotesUser(bot)
-            descip="La partie commence "
+            descip="<:otVERT:868535645897912330> La partie commence "
             for i in game.joueurs:
                 team=randint(1,2)
                 if len(game.equipe[team])!=2:
@@ -489,6 +523,7 @@ async def startGameTortuesDuo(ctx,bot):
                 pass
             for i in emotes:
                 await message.add_reaction(i)
+            messAd=await bot.get_channel(870598360296488980).send("{0} - {1} : partie OT!tortuesduo débutée\n{2} joueurs".format(ctx.guild.name,ctx.guild.id,len(game.joueurs)))
 
         game.giveCards()
         turn=randint(0,len(game.joueurs)-1)
@@ -544,6 +579,7 @@ async def startGameTortuesDuo(ctx,bot):
             if len(game.cartes)==0:
                 game.cartes=[Carte(i,1) for i in listeCouleurs]*5+[Carte(i,2) for i in listeCouleurs]+[Carte(i,-1) for i in listeCouleurs]*2+[Carte("multi",1) for i in range(5)]+[Carte("last",1) for i in range(3)]+[Carte("last",2) for i in range(2)]+[Carte("multi",-1) for i in range(2)]
 
+        await messAd.delete()
     except AssertionError as er:
         await ctx.send(embed=embedAssert(er))
         return
@@ -581,7 +617,7 @@ async def joinTortues(message,user,reaction):
         elif type(game)==JeuTortuesDuo:
             if len(game.ids)==4:
                 game.playing=True
-        await message.channel.send("<@{0}> rejoint la partie !".format(user.id))
+        await message.channel.send("<:otVERT:868535645897912330> <@{0}> rejoint la partie !".format(user.id))
         await reaction.remove(user)
     except:
         pass
@@ -596,7 +632,7 @@ async def cancelGameTortues(message,user,reaction):
             return
         inGameTortues.remove(user.id)
         game.ids.remove(user.id)
-        await message.channel.send("<@{0}> ne souhaite plus jouer.".format(user.id))
+        await message.channel.send("<:otROUGE:868535622237818910> <@{0}> ne souhaite plus jouer.".format(user.id))
         await reaction.remove(user)
 
 

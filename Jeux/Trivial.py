@@ -578,6 +578,7 @@ async def trivialParty(ctx,bot):
         message=await game.startGame(ctx,bot)
         if message==False:
             return
+        messAd=await bot.get_channel(870598360296488980).send("{0} - {1} : partie OT!trivialparty débutée\n{2} joueurs".format(ctx.guild.name,ctx.guild.id,len(game.joueurs)))
         if len(game.joueurs)<4:
             game.event.remove("duo")
         while game.playing:
@@ -795,6 +796,7 @@ async def trivialParty(ctx,bot):
         await ctx.send(embed=embedAssert(er))
     except:
         await game.error(ctx,bot,message)
+    await messAd.delete()
 
 async def trivialVersus(ctx,bot):
     try:
@@ -803,6 +805,7 @@ async def trivialVersus(ctx,bot):
         message=await game.startGame(ctx,bot)
         if message==False:
             return
+        messAd=await bot.get_channel(870598360296488980).send("{0} - {1} : partie OT!trivialversus débutée\n{2} joueurs".format(ctx.guild.name,ctx.guild.id,len(game.joueurs)))
         while game.playing:
             game.reponses={i:None for i in game.ids}
             game.setCateg(None)
@@ -855,6 +858,7 @@ async def trivialVersus(ctx,bot):
         await ctx.send(embed=embedAssert(er))
     except:
         await game.error(ctx,bot,message)
+    await messAd.delete()
 
 async def trivialBattleRoyale(ctx,bot):
     try:
@@ -863,6 +867,7 @@ async def trivialBattleRoyale(ctx,bot):
         message=await game.startGame(ctx,bot)
         if message==False:
             return
+        messAd=await bot.get_channel(870598360296488980).send("{0} - {1} : partie OT!trivialbr débutée\n{2} joueurs".format(ctx.guild.name,ctx.guild.id,len(game.joueurs)))
         game.restants=game.ids.copy()
         while game.playing:
             game.reponses={i:None for i in game.ids}
@@ -914,6 +919,7 @@ async def trivialBattleRoyale(ctx,bot):
         await ctx.send(embed=embedAssert(er))
     except:
         await game.error(ctx,bot,message)
+    await messAd.delete()
 
 
 async def embedTrivial(arg,ctx,bot,author,option):
