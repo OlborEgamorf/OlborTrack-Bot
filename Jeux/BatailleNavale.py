@@ -4,7 +4,7 @@ from operator import itemgetter
 from random import randint
 
 import discord
-from Core.Fonctions.Embeds import (createEmbed, embedAssert, embedHisto,
+from Core.Fonctions.Embeds import (createEmbed, embedAssert,
                                    exeErrorExcept)
 from Stats.Tracker.Jeux import exeStatsJeux
 
@@ -392,9 +392,7 @@ async def createGame(ctx,args,client):
         if len(ctx.message.mentions)>0:
             listeJeux[message.id].ping=ctx.message.mentions[0].id
         listeJoueurs[ctx.author.id]=message.id
-        embedHistorique=embedHisto(ctx.guild,ctx.channel,ctx.guild.get_member(ctx.author.id),"bn recherche")
         client.loop.create_task(listeJeux[message.id].timerLoad())
-        await client.get_channel(727167795288080535).send(embed=embedHistorique)
         await message.add_reaction("<:otVALIDER:772766033996021761>")
         await message.add_reaction("<:otANNULER:811242376625782785>")
     except AssertionError as er:
@@ -427,6 +425,7 @@ async def joinGame(message,user,reaction,client):
         await message.channel.send("<:otVERT:868535645897912330> Le challenge de <@{0}> a été relevé !".format(game.J1.id))
         await message.clear_reactions()
         await message.edit(embed=createEmbed("Partie en cours.","Les résultats arrivent bientôt.",0xad917b,"bataillenavale",message.guild))
+        listeJeux[message.id].messAd=await client.get_channel(870598360296488980).send("{0} - {1} : partie OT!bataillenavale débutée".format(message.guild.name,message.guild.id))
     except discord.errors.Forbidden:
         del listeJoueurs[game.J1.id]
         del listeJoueurs[game.J2.id]
@@ -536,7 +535,7 @@ async def endGame(game):
         await i.user.send(embed=game.createEmbedBN(True,i,True))
         await i.user.send(embed=game.createEmbedBN(True,game.getOther(i),True))
         await i.user.send("Victoire de {0} !".format(game.getPlaying().nom))
-    exeStatsJeux(game.getPlaying().id,game.getWaiting().id,game.guild,"BatailleNavale",game.tours)
+    exeStatsJeux(game.getPlaying().id,game.getWaiting().id,game.guild,"BatailleNavale",0)
     await game.message.channel.send(embed=game.createEmbedBN(True,game.getWaiting(),True))
     await game.message.channel.send(embed=game.createEmbedBN(True,game.getPlaying(),True))
     await game.message.channel.send("Victoire de {0} !".format(game.getPlaying().nom))
@@ -544,6 +543,7 @@ async def endGame(game):
     del listeJoueurs[game.J1.id]
     del listeJoueurs[game.J2.id]
     game.playing=None
+    await game.messAd.delete()
 
 async def endPosition(game):
     game.temps=0

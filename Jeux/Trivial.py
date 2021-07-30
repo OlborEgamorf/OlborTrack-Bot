@@ -657,9 +657,9 @@ async def trivialParty(ctx,bot):
                 listeJoueurs=game.joueurs.copy()
                 for i in range(2):
                     choix=choice(listeJoueurs)
-                    user.append(choix.id)
+                    user.append(choix)
                     listeJoueurs.remove(user[i])
-                game.reponses={i:None for i in user}
+                game.reponses={i:None for i in user.id}
             elif event=="speedfinal":
                 pass
             else: 

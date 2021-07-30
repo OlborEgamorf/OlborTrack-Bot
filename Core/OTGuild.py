@@ -13,7 +13,7 @@ class OTGuild:
             - si la commande Wikipedia est NSFW
     
     Elle est accompagnée de méthodes pour récupérer ces informations et de deux autres classes pour faciliter le stockage."""
-    def __init__(self,id):
+    def __init__(self,id,get):
         self.id=id
         self.chan=None
         self.users=None
@@ -28,14 +28,15 @@ class OTGuild:
         self.stardict={}
         self.auto=None
 
-        connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
-        self.getStar(curseur)
-        self.getHBM(curseur)
-        self.getPerms(curseur)
-        self.getAuto(curseur)
-        self.getWikiNSFW(curseur)
-        self.getTwitch(curseur)
-        self.getStats(curseur)
+        if get:
+            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+            self.getStar(curseur)
+            self.getHBM(curseur)
+            self.getPerms(curseur)
+            self.getAuto(curseur)
+            self.getWikiNSFW(curseur)
+            self.getTwitch(curseur)
+            self.getStats(curseur)
     
     def getStar(self,curseur=None):
         if curseur==None:

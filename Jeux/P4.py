@@ -17,7 +17,7 @@ sys.path.append('OT3/Exe')
 from random import randint
 from Stats.Tracker.Jeux import exeStatsJeux
 from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.Embeds import createEmbed, embedAssert, embedHisto, exeErrorExcept
+from Core.Fonctions.Embeds import createEmbed, embedAssert, exeErrorExcept
 listeJoueurs=[]
 listeJeux={}
 
@@ -124,6 +124,7 @@ class JeuP4:
         self.tours=0
         self.playing=False
         self.ping=False
+        self.messAd=None
     
     def addPlayer(self,user,player):
         if player==1:
@@ -166,6 +167,7 @@ class JeuP4:
             await self.message.clear_reactions()
             await self.message.edit(embed=self.createEmbedP4("Victoire par forfait de "+self.getPlaying().nom))
             exeStatsJeux(self.getPlaying().id,self.getWaiting().id,self.guild,"P4",self.tours)
+            await self.messAd.delete()
 
     def getColor(self):
         return self.getPlaying().color
@@ -221,9 +223,7 @@ async def createGameP4(ctx,args,client):
         if len(ctx.message.mentions)>0:
             listeJeux[message.id].ping=ctx.message.mentions[0].id
         listeJoueurs.append(ctx.author.id)
-        embedHistorique=embedHisto(ctx.guild,ctx.channel,ctx.guild.get_member(ctx.author.id),"p4 recherche")
         client.loop.create_task(listeJeux[message.id].timerLoad())
-        await client.get_channel(727167795288080535).send(embed=embedHistorique)
         await message.add_reaction("<:otVALIDER:772766033996021761>")
         await message.add_reaction("<:otANNULER:811242376625782785>")
     except AssertionError as er:
@@ -247,6 +247,7 @@ async def joinGameP4(message,user,reaction,client):
     await message.edit(embed=listeJeux[message.id].createEmbedP4(listeJeux[message.id].J1.nom+" VS "+listeJeux[message.id].J2.nom))
     for i in emotes:
         await message.add_reaction(i)
+    listeJeux[message.id].messAd=await client.get_channel(870598360296488980).send("{0} - {1} : partie OT!p4 débutée".format(message.guild.name,message.guild.id))
 
 async def playGameP4(message,user,reaction):
     if message.id not in listeJeux:
@@ -266,6 +267,7 @@ async def playGameP4(message,user,reaction):
                 listeJoueurs.remove(listeJeux[message.id].J2.id)
                 listeJeux[message.id].playing=None
                 exeStatsJeux(listeJeux[message.id].getPlaying().id,listeJeux[message.id].getWaiting().id,listeJeux[message.id].guild,"P4",listeJeux[message.id].tours)
+                await listeJeux[message.id].messAd.delete()
             else:
                 if listeJeux[message.id].tab.checkNul()==True:
                     await message.clear_reactions()
@@ -273,6 +275,7 @@ async def playGameP4(message,user,reaction):
                     listeJoueurs.remove(listeJeux[message.id].J1.id)
                     listeJoueurs.remove(listeJeux[message.id].J2.id)
                     listeJeux[message.id].playing=None
+                    await listeJeux[message.id].messAd.delete()
                 else:
                     listeJeux[message.id].J1.setPlay()
                     listeJeux[message.id].J2.setPlay()
@@ -302,6 +305,7 @@ async def abandonP4(message,user,reaction):
         listeJeux[message.id].playing=None
         await message.clear_reactions()
         await message.edit(embed=listeJeux[message.id].createEmbedP4("Victoire par forfait de "+listeJeux[message.id].getPlaying().nom))
+        await listeJeux[message.id].messAd.delete()
         exeStatsJeux(listeJeux[message.id].getPlaying().id,listeJeux[message.id].getWaiting().id,listeJeux[message.id].guild,"P4",listeJeux[message.id].tours)
     else:
         if listeJeux[message.id].J1.id!=user.id and listeJeux[message.id].ping!=user.id:
