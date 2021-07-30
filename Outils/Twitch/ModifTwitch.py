@@ -15,7 +15,7 @@ async def addTwitch(ctx,bot,args,curseur):
     else:
         raise AssertionError("Ce couple de streamer et de salon existe déjà.")
 
-    return createEmbed("Alerte Twitch créée","Numéro de l'alerte : {0}\nStreamer : {1}\nSalon : <#{2}>\nDescription : {3}".format(num,stream,ctx.message.channel_mentions[0].id,descip),0x220cc9,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
+    return createEmbed("Alerte Twitch créée","Numéro de l'alerte : {0}\nStreamer : {1}\nSalon : <#{2}>\nDescription : {3}".format(num,stream,ctx.message.channel_mentions[0].id,descip),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
 
 
 
@@ -32,7 +32,7 @@ async def chanTwitch(ctx,bot,args,curseur):
     assert alert["Salon"]!=ctx.message.channel_mentions[0].id, "Le salon actuel de cette alerte est le même que le salon mentionné."
     
     curseur.execute("UPDATE twitch SET Salon={0} WHERE Nombre={1}".format(ctx.message.channel_mentions[0].id,alert["Nombre"]))
-    return createEmbed("Alerte Twitch modifiée","Numéro de l'alerte : {0}\nNouveau salon : <#{1}>".format(args[0],ctx.message.channel_mentions[0].id),0x220cc9,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
+    return createEmbed("Alerte Twitch modifiée","Numéro de l'alerte : {0}\nNouveau salon : <#{1}>".format(args[0],ctx.message.channel_mentions[0].id),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
 
 
 
@@ -49,7 +49,7 @@ async def delTwitch(ctx,bot,args,curseur,guild):
     for i in curseur.execute("SELECT * FROM twitch WHERE Nombre>{0} ORDER BY Nombre ASC".format(args[0])).fetchall():
         curseur.execute("UPDATE twitch SET Nombre={0} WHERE Nombre={1}".format(i["Nombre"]-1,i["Nombre"]))
 
-    return createEmbed("Alerte Twitch supprimée","Numéro de l'alerte : {0}".format(args[0]),0x220cc9,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
+    return createEmbed("Alerte Twitch supprimée","Numéro de l'alerte : {0}".format(args[0]),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
 
 
 async def descipTwitch(ctx,bot,args,curseur,guild):
@@ -63,4 +63,4 @@ async def descipTwitch(ctx,bot,args,curseur,guild):
     descip=createPhrase(args[1:len(args)])
     curseur.execute("UPDATE twitch SET Descip='{0}' WHERE Nombre={1}".format(descip,alert["Nombre"]))
 
-    return createEmbed("Alerte Twitch modifiée","Numéro de l'alerte : {0}\nNouvelle description : {1}".format(args[0],descip),0x220cc9,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
+    return createEmbed("Alerte Twitch modifiée","Numéro de l'alerte : {0}\nNouvelle description : {1}".format(args[0],descip),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)

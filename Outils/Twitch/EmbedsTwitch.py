@@ -16,7 +16,7 @@ async def embedAlert(data,stream):
     return embed
 
 def embedTwitch(table,page,pagemax,mobile):
-    embed=discord.Embed(title="Liste des tableux actifs sur votre serveur",color=0x3498db)
+    embed=discord.Embed(title="Liste des tableux actifs sur votre serveur",color=0xf54269)
     stop=15*page if 15*page<len(table) else len(table)
     field1,field2,field3="","",""
     for i in range(15*(page-1),stop):

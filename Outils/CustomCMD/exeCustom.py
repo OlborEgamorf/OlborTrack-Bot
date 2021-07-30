@@ -56,7 +56,7 @@ async def exeSCMD(ctx:commands.Context,bot:commands.Bot,args:str,listeOS:list):
         elif ctx.invoked_with=="couleur":
             embed=await colorCCMD(ctx,args,nom,curseur)
         elif ctx.invoked_with=="len":
-            embed=createEmbed("Longueur de la commande","Nom : {0}\nLongueur : {1}".format(nom,len(command["Description"])+len(command["Footer"])+len(command["Author"])+len(command["Title"])),0x220cc9,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
+            embed=createEmbed("Longueur de la commande","Nom : {0}\nLongueur : {1}".format(nom,len(command["Description"])+len(command["Footer"])+len(command["Author"])+len(command["Title"])),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
         else:
             raise AssertionError("Rien ne correspond à votre demande !")
 

@@ -29,7 +29,7 @@ async def addTableau(ctx,bot,args,curseur):
     except:
         raise AssertionError("Ce couple d'emoji et de salon existe déjà.")
 
-    return createEmbed("Tableau créé","Numéro du tableau : {0}\nEmoji : {1}\nNombre d'utilisations : {2}\nSalon : <#{3}>".format(num,args[0],nb,ctx.message.channel_mentions[0].id),0x220cc9,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
+    return createEmbed("Tableau créé","Numéro du tableau : {0}\nEmoji : {1}\nNombre d'utilisations : {2}\nSalon : <#{3}>".format(num,args[0],nb,ctx.message.channel_mentions[0].id),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
 
 
 
@@ -54,7 +54,7 @@ async def chanTableau(ctx,bot,args,curseur):
         count+=1
     
     curseur.execute("UPDATE sb SET Salon={0} WHERE Nombre={1}".format(ctx.message.channel_mentions[0].id,star["Nombre"]))
-    return createEmbed("Tableau modifié","Numéro du tableau : {0}\nNouveau salon : <#{1}>\nMessages transférés : {2}".format(args[0],ctx.message.channel_mentions[0].id,count),0x220cc9,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
+    return createEmbed("Tableau modifié","Numéro du tableau : {0}\nNouveau salon : <#{1}>\nMessages transférés : {2}".format(args[0],ctx.message.channel_mentions[0].id,count),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
 
 
 
@@ -68,7 +68,7 @@ async def nbTableau(ctx,args,curseur):
     assert star["Count"]!=args[1], "Le nombre d'utilisations donné est le même que celui actuel."
 
     curseur.execute("UPDATE sb SET Count={0} WHERE Nombre={1}".format(args[1],star["Nombre"]))
-    return createEmbed("Tableau modifié","Numéro du tableau : {0}\nNouveau nombre d'utilisations : {1}".format(args[0],args[1]),0x220cc9,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
+    return createEmbed("Tableau modifié","Numéro du tableau : {0}\nNouveau nombre d'utilisations : {1}".format(args[0],args[1]),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
 
 
 
@@ -95,4 +95,4 @@ async def delTableau(ctx,bot,args,curseur,guild):
         curseur.execute("UPDATE sb SET Nombre={0} WHERE Nombre={1}".format(i["Nombre"]-1,i["Nombre"]))
         curseur.execute("UPDATE sbmessages SET Nombre={0} WHERE Nombre={1}".format(i["Nombre"]-1,i["Nombre"]))
 
-    return createEmbed("Tableau supprimé","Numéro du tableau : {0}".format(args[0]),0x220cc9,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
+    return createEmbed("Tableau supprimé","Numéro du tableau : {0}".format(args[0]),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)

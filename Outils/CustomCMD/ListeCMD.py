@@ -32,6 +32,6 @@ def embedCMD(table,page,pagemax):
             descip+="**OT!{0}** : {1}...\n".format(table[i]["Nom"],table[i]["Description"][0:110])
         else:
             descip+="**OT!{0}** : {1}...\n".format(table[i]["Nom"],table[i]["Description"])
-    embed=discord.Embed(title="Commandes de votre serveur",description=descip,color=0x00FFFF)
+    embed=discord.Embed(title="Commandes de votre serveur",description=descip,color=0xf54269)
     embed.set_footer(text="Page {0}/{1}".format(page,pagemax))
     return embed

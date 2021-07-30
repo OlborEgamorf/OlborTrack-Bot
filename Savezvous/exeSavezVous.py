@@ -9,7 +9,7 @@ async def exeSavezVous(ctx,bot,args):
     try:
         args=args.split(" ")
         connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
-        if len(args)==0 or ctx.invoked_with not in ("add", "del", "list", "modo", "edit"):
+        if len(args)==0 or args[0]=="" or ctx.invoked_with not in ("add", "del", "list", "modo", "edit"):
             liste=curseur.execute("SELECT * FROM savezvous").fetchall()
             assert liste!=[], "Vous devez commencer par ajouter une phrase avec `OT!savezvous add` !"
             ligne=choice(liste)
@@ -61,7 +61,7 @@ def addSV(ctx,args,curseur):
     assert len(descip)<2000
     count=curseur.execute("SELECT COUNT() as Nb FROM savezvous").fetchone()["Nb"]
     curseur.execute("INSERT INTO savezvous VALUES('{0}',{1},'{2}',{3})".format(descip,ctx.author.id,image,count+1))
-    embed=createEmbed("Phrase ajoutée","`{0}` : {1}".format(count+1,descip),0x220cc9,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
+    embed=createEmbed("Phrase ajoutée","`{0}` : {1}".format(count+1,descip),0x00ffd0,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
     if image!=None:
         embed.set_image(url=image)
     return embed
@@ -78,7 +78,7 @@ def deleteSV(ctx,args,curseur):
     curseur.execute("DELETE FROM savezvous WHERE Count={0}".format(args[0]))
     for i in curseur.execute("SELECT * FROM savezvous WHERE Count>{0} ORDER BY Count ASC".format(args[0])).fetchall():
         curseur.execute("UPDATE savezvous SET Count={0} WHERE Count={1}".format(i["Count"]-1, i["Count"]))
-    return createEmbed("Phrase supprimée","`{0}` : {1}".format(args[0],descip["Texte"]),0x220cc9,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
+    return createEmbed("Phrase supprimée","`{0}` : {1}".format(args[0],descip["Texte"]),0x00ffd0,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
 
 
 def editSV(ctx,args,curseur):
@@ -91,4 +91,4 @@ def editSV(ctx,args,curseur):
     assert ctx.author.id==phrase["ID"], "Cette phrase ne vous appartient pas."
     descip=createPhrase(args[1:len(args)])
     curseur.execute("UPDATE savezvous SET Texte='{0}' WHERE Count={1}".format(descip,args[0]))
-    return createEmbed("Phrase modifiée","`{0}` : {1}".format(args[0],descip),0x220cc9,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
+    return createEmbed("Phrase modifiée","`{0}` : {1}".format(args[0],descip),0x00ffd0,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
