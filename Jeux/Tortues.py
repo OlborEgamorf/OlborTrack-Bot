@@ -61,7 +61,7 @@ class JeuTortues:
         self.guild=guild
         self.action={}
         for i in self.tortues:
-            self.plateau[7].empiler(i)
+            self.plateau[0].empiler(i)
         self.invoke=user
 
     def embedGame(self,user):

@@ -143,6 +143,15 @@ async def reactGraph(message:int,bot:commands.Bot,guildOT:OTGuild,payload,emoji)
                     listeFonc=[graphRank,graphScatter,graphScatterUsers,graphHeatAnnee,graphCircle]
                 else:
                     listeFonc=[graphRank,graphScatter,graphScatterUsers,graphHeat,graphCircle,graphLine]
+                if ligne["Option"]=="Divers":
+                    if graphScatter in listeFonc:
+                        listeFonc.remove(graphScatter)
+                    if graphHeatGlobal in listeFonc:
+                        listeFonc.remove(graphHeatGlobal)
+                    if graphHeatAnnee in listeFonc:
+                        listeFonc.remove(graphHeatAnnee)
+                    if graphHeat in listeFonc:
+                        listeFonc.remove(graphHeat)
             
             elif ligne["Commande"]=="roles":
                 if ligne["Args1"]=="glob":

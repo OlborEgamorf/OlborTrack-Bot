@@ -232,6 +232,8 @@ async def createGameP4(ctx,args,client):
         await ctx.send(embed=await exeErrorExcept(ctx,client,args))
 
 async def joinGameP4(message,user,reaction,client):
+    if message.id not in listeJeux:
+        return
     if user.id in listeJoueurs or user.bot==True or (listeJeux[message.id].ping!=False and listeJeux[message.id].ping!=user.id):
         if user.bot==False:
             await reaction.remove(user)
@@ -247,6 +249,8 @@ async def joinGameP4(message,user,reaction,client):
         await message.add_reaction(i)
 
 async def playGameP4(message,user,reaction):
+    if message.id not in listeJeux:
+        return
     if (listeJeux[message.id].J1.id!=user.id and listeJeux[message.id].J2.id!=user.id) or listeJeux[message.id].cheat==True:
         if user.bot==False:
             await reaction.remove(user)
@@ -283,6 +287,8 @@ async def playGameP4(message,user,reaction):
         await reaction.remove(user)
 
 async def abandonP4(message,user,reaction):
+    if message.id not in listeJeux:
+        return
     if listeJeux[message.id].playing==True:
         if listeJeux[message.id].J1.id!=user.id and listeJeux[message.id].J2.id!=user.id:
             if user.bot==False:

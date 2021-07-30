@@ -1007,7 +1007,7 @@ async def cancelGameTrivial(message,user,reaction):
             return
         inGameTrivial.remove(user.id)
         game.ids.remove(user.id)
-        await message.channel.send("<@{0}> ne souhaite plus jouer.".format(user.id))
+        await message.channel.send("<:otROUGE:868535622237818910> <@{0}> ne souhaite plus jouer.".format(user.id))
         await reaction.remove(user)
     
 
@@ -1030,7 +1030,7 @@ async def joinVersus(message,user,reaction):
         else:
             if len(game.ids)==15:
                 game.playing=True
-        await message.channel.send("<@{0}> rejoint la partie !".format(user.id))
+        await message.channel.send("<:otVERT:868535645897912330> <@{0}> rejoint la partie !".format(user.id))
         await reaction.remove(user)
     except:
         pass
