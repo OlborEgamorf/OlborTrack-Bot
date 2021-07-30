@@ -61,7 +61,7 @@ def createDirSQL(guild):
             curseur.execute("INSERT INTO users VALUES({0},{1},{2},{3})".format(i.id,False,False,False))
     
     curseur.execute("CREATE TABLE IF NOT EXISTS auto (Commande TEXT PRIMARY KEY, Salon BIGINT, Active BOOL)")
-    listeA=["savezvous","nasaphoto","jour","mois","annee"]
+    listeA=["savezvous","nasaphoto","jour","mois","annee","events"]
     for i in listeA:
         try:
             curseur.execute("INSERT INTO auto VALUES('{0}',False,0)".format(i))

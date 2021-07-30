@@ -7,6 +7,7 @@ from Stats.Tracker.Voice import endNight
 from Stats.Rapports.exeRapports import autoRapport
 from Geo.PhotoNASA import embedNasaPhoto
 from Savezvous.exeSavezVous import autoSV
+from Wiki.Events import autoEvents
 
 
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"to","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","to":"TO","glob":"GL"}
@@ -16,7 +17,7 @@ async def addAuto(ctx,bot,args,guildOT):
         connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
         if ctx.invoked_with in ("add", "edit"):
             assert len(ctx.message.channel_mentions)!=0, "Vous devez me donner un salon valide !"
-            assert args[0].lower() in ("jour","mois","annee","nasaphoto","savezvous"), "Vous devez me donner un nom de commande compatible !\nCommandes automatiques disponibles : jour, mois, annee, nasaphoto, savezvous"
+            assert args[0].lower() in ("jour","mois","annee","nasaphoto","savezvous","events"), "Vous devez me donner un nom de commande compatible !\nCommandes automatiques disponibles : jour, mois, annee, nasaphoto, savezvous, events"
             curseur.execute("UPDATE auto SET Active=True, Salon={0} WHERE Commande='{1}'".format(ctx.message.channel_mentions[0].id,args[0].lower()))
             embed=createEmbed("Commande automatique activée ou modifiée","Commande : {0}\nSalon : <#{1}>".format(args[0].lower(),ctx.message.channel_mentions[0].id),0x220cc9,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
         elif ctx.invoked_with=="del":
@@ -123,6 +124,8 @@ async def boucleAuto(bot,dictGuilds):
                             await autoSV(j["Salon"],i,bot)
                         elif j["Commande"]=="nasaphoto":
                             await bot.get_channel(j["Salon"]).send(embed=await embedNasaPhoto())
+                        elif j["Commande"]=="events":
+                            await autoEvents(bot,j["Salon"],dictGuilds[i.id].id)
                     except:
                         pass     
 

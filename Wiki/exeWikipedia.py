@@ -44,7 +44,7 @@ async def exeWikipedia(ctx,bot,option,turn,ligne):
                 connexionCMD.commit()
         else:
             if option=="search":
-                page=setPage(ligne["Page"]+dictPage[turn],2)
+                page=setPage(ligne["Page"],2,turn)
                 embedF=await embedWikiSearch(ligne["Args1"],page)
                 curseurCMD.execute("UPDATE commandes SET Page={0} WHERE MessageID={1}".format(page,ctx.message.id))
                 connexionCMD.commit()
