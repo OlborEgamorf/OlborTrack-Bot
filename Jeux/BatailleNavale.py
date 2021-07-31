@@ -73,9 +73,9 @@ class JeuBN:
             self.temps+=1
             if self.temps==160:
                 if not self.J1.position:
-                    await self.J1.user.send("<:otORANGE:718396570755661884> plus que 20 secondes pour finir vos placements !")
+                    await self.J1.user.send("<:otORANGE:868538903584456745> plus que 20 secondes pour finir vos placements !")
                 if not self.J2.position:
-                    await self.J2.user.send("<:otORANGE:718396570755661884> plus que 20 secondes pour finir vos placements !")
+                    await self.J2.user.send("<:otORANGE:868538903584456745> plus que 20 secondes pour finir vos placements !")
 
         if self.position:
             listeJ=[self.J1,self.J2]
@@ -95,9 +95,9 @@ class JeuBN:
             self.temps+=1
             if self.temps==50:
                 if self.J1.play:
-                    await self.J1.user.send("<:otORANGE:718396570755661884> plus que 10 secondes <@"+str(self.J1.id)+"> !")
+                    await self.J1.user.send("<:otORANGE:868538903584456745> plus que 10 secondes <@"+str(self.J1.id)+"> !")
                 else:
-                    await self.J2.user.send("<:otORANGE:718396570755661884> plus que 10 secondes <@"+str(self.J2.id)+"> !")
+                    await self.J2.user.send("<:otORANGE:868538903584456745> plus que 10 secondes <@"+str(self.J2.id)+"> !")
 
         if self.playing:
             self.J1.setPlay()
@@ -500,8 +500,8 @@ async def validPosition(user,message):
             return
         if not joueur.position:
             if await joueur.finishPosition():
-                await joueur.user.send("Placements confirmés. Vous ne pouvez plus revenir en arrière.")
-                await game.getOther(joueur).user.send("{0} a terminé ses placements.".format(joueur.nom))
+                await joueur.user.send("<:otVERT:868535645897912330> Placements confirmés. Vous ne pouvez plus revenir en arrière.")
+                await game.getOther(joueur).user.send("<:otVERT:868535645897912330> {0} a terminé ses placements.".format(joueur.nom))
     
         if game.J1.position and game.J2.position:
             await endPosition(game)
@@ -534,11 +534,11 @@ async def endGame(game):
         await i.messageA.delete()
         await i.user.send(embed=game.createEmbedBN(True,i,True))
         await i.user.send(embed=game.createEmbedBN(True,game.getOther(i),True))
-        await i.user.send("Victoire de {0} !".format(game.getPlaying().nom))
+        await i.user.send("<:otVERT:868535645897912330> Victoire de {0} !".format(game.getPlaying().nom))
     exeStatsJeux(game.getPlaying().id,game.getWaiting().id,game.guild,"BatailleNavale",0)
     await game.message.channel.send(embed=game.createEmbedBN(True,game.getWaiting(),True))
     await game.message.channel.send(embed=game.createEmbedBN(True,game.getPlaying(),True))
-    await game.message.channel.send("Victoire de {0} !".format(game.getPlaying().nom))
+    await game.message.channel.send("<:otVERT:868535645897912330> Victoire de {0} !".format(game.getPlaying().nom))
     await game.message.delete()
     del listeJoueurs[game.J1.id]
     del listeJoueurs[game.J2.id]
@@ -550,8 +550,8 @@ async def endPosition(game):
     game.count=int((game.J2.count+game.J1.count)/2)
     game.position=False
     game.playing=True
-    await game.getWaiting().user.send("<:otORANGE:718396570755661884> Placements terminés ! \n__Votre adversaire commence à jouer.__\nPour attaquer, donnez une coordonnée d'une case. \nSi :white_circle: apparait, c'est que le tir est manqué. Si :red_circle: apparait, c'est que vous avez touché, et :orange_circle: si vous avez coulé. Par contre, si les coordonnées ne sont pas bonnes, <:otNON:740174227998769172> sera envoyé. Et si rien ne se passe, réessayez.\n**Quand vous touchez, vous rejouez.**")
-    await game.getPlaying().user.send("<:otORANGE:718396570755661884> Placements terminés ! \n__C'est à vous de jouer.__\nPour attaquer, donnez une coordonnée d'une case. \nSi :white_circle: apparait, c'est que le tir est manqué. Si :red_circle: apparait, c'est que vous avez touché, et :orange_circle: si vous avez coulé. Par contre, si les coordonnées ne sont pas bonnes, <:otNON:740174227998769172> sera envoyé. Et si rien ne se passe, réessayez.\n**Quand vous touchez, vous rejouez.**")
+    await game.getWaiting().user.send("<:otORANGE:868538903584456745> Placements terminés ! \n__Votre adversaire commence à jouer.__\nPour attaquer, donnez une coordonnée d'une case. \nSi :white_circle: apparait, c'est que le tir est manqué. Si :red_circle: apparait, c'est que vous avez touché, et :orange_circle: si vous avez coulé. Par contre, si les coordonnées ne sont pas bonnes, <:otNON:740174227998769172> sera envoyé. Et si rien ne se passe, réessayez.\n**Quand vous touchez, vous rejouez.**")
+    await game.getPlaying().user.send("<:otORANGE:868538903584456745> Placements terminés ! \n__C'est à vous de jouer.__\nPour attaquer, donnez une coordonnée d'une case. \nSi :white_circle: apparait, c'est que le tir est manqué. Si :red_circle: apparait, c'est que vous avez touché, et :orange_circle: si vous avez coulé. Par contre, si les coordonnées ne sont pas bonnes, <:otNON:740174227998769172> sera envoyé. Et si rien ne se passe, réessayez.\n**Quand vous touchez, vous rejouez.**")
 
 
 def getUser(jeu,id):

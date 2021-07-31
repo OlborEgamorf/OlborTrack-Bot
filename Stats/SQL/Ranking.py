@@ -4,8 +4,6 @@ from Stats.SQL.Perso import persoSQL
 from Stats.SQL.Evolutions import evolSQL
 
 def rankingSQL(base,table,countB,countN,id,baseRank,date,period,perso,obj,evol,baseGL):
-    print("-----",date)
-    print(countB,countN)
     rank=base.execute("SELECT COUNT() AS nombre FROM {0} WHERE Count> {1}".format(table,countN)).fetchone()["nombre"]
     equal=base.execute("SELECT COUNT() AS nombre FROM {0} WHERE Rank= {1}".format(table,baseRank)).fetchone()["nombre"]
     newRank=rank+1
@@ -22,7 +20,6 @@ def rankingSQL(base,table,countB,countN,id,baseRank,date,period,perso,obj,evol,b
         if evol==True and evolRank!=None:
             base.execute("UPDATE {0} SET Rank= {1}, Evol={2} WHERE ID = {3}".format(table,newRank,evolRank,id))
         else:
-            print("NR",newRank)
             base.execute("UPDATE {0} SET Rank= {1} WHERE ID = {2}".format(table,newRank,id))
         countE=countN
         if baseRank==0:
@@ -57,7 +54,6 @@ def rankingSQL(base,table,countB,countN,id,baseRank,date,period,perso,obj,evol,b
                     base.execute("UPDATE {0} SET Rank= {1} WHERE ID = {2}".format(table,newRank,etat[i]["ID"]))   
                 if obj==False and newRank==1:
                     firstSQL(baseGL,etat[i]["ID"],countE,period)
-                print(etat[i]["ID"],newRank)
         return base.execute(exe).fetchall()
     return [{"ID":id,"Rank":baseRank}]
 

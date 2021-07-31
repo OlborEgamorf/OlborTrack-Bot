@@ -141,8 +141,7 @@ class JeuP4:
     async def timerLoad(self):
         await asyncio.sleep(300)
         if self.playing==False:
-            embedP4=discord.Embed(title="Pas d'adversaire trouvé !", description="5 minutes se sont écoulées et personne n'a répondu à l'invitation.", color=0xad917b)
-            embedP4.set_footer(text="OT!p4")
+            embedP4=createEmbed("Pas d'adversaire trouvé !","5 minutes se sont écoulées et personne n'a répondu à l'invitation.",0xad917b,"p4",self.message.guild)
             listeJoueurs.remove(self.J1.id)
             await self.message.clear_reactions()
             await self.message.edit(embed=embedP4)
@@ -155,9 +154,9 @@ class JeuP4:
             self.temps+=1
             if self.temps==75:
                 if self.J1.play==True:
-                    await self.message.channel.send("<:otORANGE:718396570755661884> plus que 15 secondes <@"+str(self.J1.id)+"> !")
+                    await self.message.channel.send("<:otORANGE:868538903584456745> plus que 15 secondes <@"+str(self.J1.id)+"> !")
                 else:
-                    await self.message.channel.send("<:otORANGE:718396570755661884> plus que 15 secondes <@"+str(self.J2.id)+"> !")
+                    await self.message.channel.send("<:otORANGE:868538903584456745> plus que 15 secondes <@"+str(self.J2.id)+"> !")
         if self.playing==True:
             self.J1.setPlay()
             self.J2.setPlay()
@@ -166,6 +165,7 @@ class JeuP4:
             self.playing=None
             await self.message.clear_reactions()
             await self.message.edit(embed=self.createEmbedP4("Victoire par forfait de "+self.getPlaying().nom))
+            await self.message.channel.send("<:otVERT:868535645897912330> Victoire de {0} par forfait".format(self.getPlaying().nom))
             exeStatsJeux(self.getPlaying().id,self.getWaiting().id,self.guild,"P4",self.tours)
             await self.messAd.delete()
 
@@ -252,69 +252,74 @@ async def joinGameP4(message,user,reaction,client):
 async def playGameP4(message,user,reaction):
     if message.id not in listeJeux:
         return
-    if (listeJeux[message.id].J1.id!=user.id and listeJeux[message.id].J2.id!=user.id) or listeJeux[message.id].cheat==True:
+    if user.bot:
+        return
+    game=listeJeux[message.id]
+    if (game.J1.id!=user.id and game.J2.id!=user.id) or game.cheat==True:
         if user.bot==False:
             await reaction.remove(user)
         return
-    if (listeJeux[message.id].J1.id==user.id and listeJeux[message.id].J1.play==True) or (listeJeux[message.id].J2.id==user.id and listeJeux[message.id].J2.play==True):
-        listeJeux[message.id].cheat=True
-        add=listeJeux[message.id].tab.addJeton(dictCo[reaction.emoji.id],listeJeux[message.id].getPlaying().numero)
+    if game.getPlaying().id==user.id:
+        game.cheat=True
+        add=game.tab.addJeton(dictCo[reaction.emoji.id],game.getPlaying().numero)
         if add[0]==True:
-            if listeJeux[message.id].tab.checkTab(add[1],add[2],listeJeux[message.id].getPlaying().numero)==True:
+            if game.tab.checkTab(add[1],add[2],game.getPlaying().numero)==True:
                 await message.clear_reactions()
-                await message.edit(embed=listeJeux[message.id].createEmbedP4("Victoire de "+listeJeux[message.id].getPlaying().nom))
-                listeJoueurs.remove(listeJeux[message.id].J1.id)
-                listeJoueurs.remove(listeJeux[message.id].J2.id)
-                listeJeux[message.id].playing=None
-                exeStatsJeux(listeJeux[message.id].getPlaying().id,listeJeux[message.id].getWaiting().id,listeJeux[message.id].guild,"P4",listeJeux[message.id].tours)
-                await listeJeux[message.id].messAd.delete()
+                await message.edit(embed=game.createEmbedP4("Victoire de "+game.getPlaying().nom))
+                await message.channel.send("<:otVERT:868535645897912330> Victoire de {0} !".format(game.getPlaying().nom))
+                listeJoueurs.remove(game.J1.id)
+                listeJoueurs.remove(game.J2.id)
+                game.playing=None
+                exeStatsJeux(game.getPlaying().id,game.getWaiting().id,game.guild,"P4",game.tours)
+                await game.messAd.delete()
             else:
-                if listeJeux[message.id].tab.checkNul()==True:
+                if game.tab.checkNul()==True:
                     await message.clear_reactions()
-                    await message.edit(embed=listeJeux[message.id].createEmbedP4("Match nul !"))
-                    listeJoueurs.remove(listeJeux[message.id].J1.id)
-                    listeJoueurs.remove(listeJeux[message.id].J2.id)
-                    listeJeux[message.id].playing=None
-                    await listeJeux[message.id].messAd.delete()
+                    await message.edit(embed=game.createEmbedP4("Match nul !"))
+                    listeJoueurs.remove(game.J1.id)
+                    listeJoueurs.remove(game.J2.id)
+                    game.playing=None
+                    await game.messAd.delete()
                 else:
-                    listeJeux[message.id].J1.setPlay()
-                    listeJeux[message.id].J2.setPlay()
-                    listeJeux[message.id].temps=0
-                    listeJeux[message.id].tours+=1
-                    await message.edit(embed=listeJeux[message.id].createEmbedP4(listeJeux[message.id].J1.nom+" VS "+listeJeux[message.id].J2.nom))
+                    game.J1.setPlay()
+                    game.J2.setPlay()
+                    game.temps=0
+                    game.tours+=1
+                    await message.edit(embed=game.createEmbedP4(game.J1.nom+" VS "+game.J2.nom))
                     await reaction.remove(user)
         else:
             await reaction.remove(user)
-        listeJeux[message.id].cheat=False
+        game.cheat=False
     else:
         await reaction.remove(user)
 
 async def abandonP4(message,user,reaction):
     if message.id not in listeJeux:
         return
-    if listeJeux[message.id].playing==True:
-        if listeJeux[message.id].J1.id!=user.id and listeJeux[message.id].J2.id!=user.id:
+    game=listeJeux[message.id]
+    if game.playing==True:
+        if game.J1.id!=user.id and game.J2.id!=user.id:
             if user.bot==False:
                 await reaction.remove(user)
             return
-        if listeJeux[message.id].getPlaying().id==user.id:
-            listeJeux[message.id].J1.setPlay()
-            listeJeux[message.id].J2.setPlay()
-        listeJoueurs.remove(listeJeux[message.id].J1.id)
-        listeJoueurs.remove(listeJeux[message.id].J2.id)
-        listeJeux[message.id].playing=None
+        if game.getPlaying().id==user.id:
+            game.J1.setPlay()
+            game.J2.setPlay()
+        listeJoueurs.remove(game.J1.id)
+        listeJoueurs.remove(game.J2.id)
+        game.playing=None
         await message.clear_reactions()
-        await message.edit(embed=listeJeux[message.id].createEmbedP4("Victoire par forfait de "+listeJeux[message.id].getPlaying().nom))
-        await listeJeux[message.id].messAd.delete()
-        exeStatsJeux(listeJeux[message.id].getPlaying().id,listeJeux[message.id].getWaiting().id,listeJeux[message.id].guild,"P4",listeJeux[message.id].tours)
+        await message.edit(embed=game.createEmbedP4("Victoire par forfait de "+game.getPlaying().nom))
+        await message.channel.send("<:otVERT:868535645897912330> Victoire de {0} par forfait.".format(game.getPlaying().nom))
+        await game.messAd.delete()
+        exeStatsJeux(game.getPlaying().id,game.getWaiting().id,game.guild,"P4",game.tours)
     else:
-        if listeJeux[message.id].J1.id!=user.id and listeJeux[message.id].ping!=user.id:
+        if game.J1.id!=user.id and game.ping!=user.id:
             if user.bot==False:
                 await reaction.remove(user)
             return
-        embedP4=discord.Embed(title="Défi annulé", description="La recherche de partie a été annulée.", color=0xad917b)
-        embedP4.set_footer(text="OT!p4")
-        listeJoueurs.remove(listeJeux[message.id].J1.id)
-        listeJeux[message.id].playing=None
+        embedP4=createEmbed("Défi annulé","La recherche de partie a été annulée.",0xad917b,"p4",message.guild)
+        listeJoueurs.remove(game.J1.id)
+        game.playing=None
         await message.clear_reactions()
         await message.edit(embed=embedP4)

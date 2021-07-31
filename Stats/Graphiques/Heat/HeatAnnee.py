@@ -87,6 +87,6 @@ async def graphHeatAnnee(ligne,ctx,bot,option,guildOT):
     plt.title(titre)
 
     plt.xticks(rotation=0)
-    plt.gcf().set_size_inches(32, 18)
+    plt.gcf().set_size_inches(24, 13)
     plt.savefig("Graphs/otGraph.png", bbox_inches="tight")
     plt.clf()

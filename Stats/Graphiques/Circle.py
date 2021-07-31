@@ -11,7 +11,7 @@ tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai",
 
 async def graphCircle(ligne,ctx,bot,option,guildOT):
     setThemeGraph(plt)
-    fig, ax = plt.subplots(figsize=(8,8))
+    fig, ax = plt.subplots(figsize=(6.4,6.4))
     listeX,listeY,listeC=[],[],[]
     obj=ligne["Args3"] if ligne["Args3"]!="None" else ""
     if ligne["Commande"]=="perso":
@@ -31,7 +31,7 @@ async def graphCircle(ligne,ctx,bot,option,guildOT):
     else:
         connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[ligne["Args1"]],ligne["Args2"])
         table=curseur.execute("SELECT * FROM {0}{1}{2} WHERE Rank<=100 AND Count>0 ORDER BY Rank DESC".format(ligne["Args1"],ligne["Args2"],obj)).fetchall()
-
+    delete=0
     for i in range(len(table)):
         listeX.append(table[i]["Count"])
         listeC.append(colorOT)
@@ -45,13 +45,17 @@ async def graphCircle(ligne,ctx,bot,option,guildOT):
                     listeY.append("{0}...".format(role.name[0:15]))
             elif option in ("Salons","Voicechan") and obj=="":
                 if guildOT.chan[table[i]["ID"]]["Hide"]:
-                    listeY.append("??")
+                    del listeX[i]
+                    del listeC[i]
+                    delete+=1
                 else:
                     listeY.append(getNomGraph(ctx,bot,option,table[i]["ID"]))
             elif option in ("Messages","Mots","Voice") or obj!="":
                 if guildOT.users[table[i]["ID"]]["Hide"]:
-                    listeY.append("")
-                if guildOT.users[table[i]["ID"]]["Leave"]:
+                    del listeX[i]
+                    del listeC[i]
+                    delete+=1
+                elif guildOT.users[table[i]["ID"]]["Leave"]:
                     if table[i]["Rank"]>15:
                         listeY.append("??")
                     else:
@@ -62,9 +66,11 @@ async def graphCircle(ligne,ctx,bot,option,guildOT):
                     if table[i]["Rank"]>15:
                         listeY.append("??")
                     else:
-                        listeY.append(user.name)   
+                        listeY.append(user.name) 
             else:
-                listeY.append(getNomGraph(ctx,bot,option,table[i]["ID"]))     
+                listeY.append(getNomGraph(ctx,bot,option,table[i]["ID"]))  
+            if len(listeY[i-delete])>15:
+                listeY[i-delete]="{0}...".format(listeY[i-delete][0:15])     
         except:
             listeY.append("??")
 

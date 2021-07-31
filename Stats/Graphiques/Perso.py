@@ -6,6 +6,7 @@ from Core.Fonctions.DichoTri import triPeriod
 from Core.Fonctions.GetNom import getNomGraph
 from Core.Fonctions.VoiceAxe import voiceAxe
 colorOT=(110/256,200/256,250/256,1)
+dictNameAxis={"Messages":"Messages","Salons":"Messages","Freq":"Messages","Mots":"Mots","Emotes":"Utilisations","Reactions":"Utilisations","Mentions":"Mentions","Mentionne":"Mentions","Divers":"Nombre"}
 
 def graphPerso(ligne,ctx,option,bot,period,guildOT,categ,curseur):
     author,nomTable=ligne["AuthorID"],ligne["AuthorID"]
@@ -36,6 +37,12 @@ def graphPerso(ligne,ctx,option,bot,period,guildOT,categ,curseur):
     voiceAxe(option,listeY,plt,"y")
 
     df=pd.DataFrame({'date': listeX, categ: listeY})
+    if categ=="Rang":
+        label="Rang"
+        labelx=dictNameAxis[option]
+    else:
+        label=dictNameAxis[option]
+        labelx="Rang"
     if user==None:
         plt.plot('date', categ, data=df, linestyle='-', marker='o',color=colorOT)
         plt.title("Ancien membre - Périodes{0}".format(plus),fontsize=12)
@@ -56,9 +63,9 @@ def graphPerso(ligne,ctx,option,bot,period,guildOT,categ,curseur):
     df2=pd.DataFrame({'date': listeX, 'Moyenne': [somme/len(table) for i in range(len(listeX))]})
     plt.plot("date","Moyenne",data=df2, linestyle="--", color=dictColor[theme],label="Moyenne ({0})".format(round(somme/len(table),2)))
     plt.legend()
-    plt.xlabel("Date")
-
-    plt.ylabel(categ)
+    plt.xlabel("Date - {0}".format(labelx))
+    if categ=="Rang":
+        plt.ylabel(categ)
     plt.xticks(rotation=90)
     plt.tight_layout()
     plt.savefig("Graphs/otGraph")

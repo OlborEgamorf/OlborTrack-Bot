@@ -14,12 +14,12 @@ from Stats.GetData.Ecriture import ecritureSQL
 import sys
 import shutil
 from Stats.SQL.Verification import verifExecGD
-import csv
 from Core.Fonctions.DichoTri import dichotomieID, dichotomiePlage, triID
 from Core.Fonctions.TempsVoice import tempsVoice
 from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.Embeds import embedAssert
 import asyncio
+from Core.OTGuild import OTGuild
 
 
 async def newGetData(guild,channel,bot,guildOT):
@@ -32,6 +32,7 @@ async def newGetData(guild,channel,bot,guildOT):
         embedT=embedAssert("Vous avez désactivé les statistiques pour votre serveur. Utilisez la commande OT!statson pour les réactiver.")
         await messEdit.edit(embed=embedT)
         return
+    os.makedirs("SQL/{0}/GETING".format(guild.id))
     guildOT.gd=True
     temps=time()
     to=0
@@ -245,59 +246,4 @@ async def newGetData(guild,channel,bot,guildOT):
         error=str(sys.exc_info()[0])+"\n"+str(sys.exc_info()[1])+"\n"+str(sys.exc_info()[2].tb_frame)+"\n"+str(sys.exc_info()[2].tb_lineno)
         await bot.get_channel(717727027465289768).send("Procédure get data **ECHEC** : "+guild.name+" | "+str(guild.member_count)+" | "+str(guild.id)+" | "+tempsVoice(time()-tempsI)+"\n"+error)"""
     guildOT.gd=False
-
-
-def reloadVoice(bot,dictGuilds):
-    for j in bot.guilds:
-        try:
-            shutil.rmtree("SQL/{0}/{1}".format(j.id,"Voice"))
-        except:
-            pass
-        listeMois,listeDivers,tableJours,listeChannels=[],{11:[]},[],{}
-        for root, dirs, files in os.walk("CSV/_"+str(j.id)+"/voice/_histo/"):
-            for i in files:
-                tableStats=[]
-                open(root+"/"+i, "a",encoding="utf-8-sig")
-                with open(root+"/"+i, encoding="utf-8-sig", newline="") as fichier :
-                    for ligne in csv.DictReader(fichier):
-                        tableStats.append(dict(ligne))
-                for h in tableStats:
-                    primeAll(listeMois,int(i[1:len(i)-4]),h["Date"][3:5],h["Date"][0:2],h["Date"][6:8],int(h["Temps"]))
-                    primeAll(listeDivers[11],int(i[1:len(i)-4]),h["Date"][3:5],h["Date"][0:2],h["Date"][6:8],int(h["Temps"]))
-                    compteurGD28(tableJours,"ID",int(h["Temps"]),int(h["Date"][6:8]+h["Date"][0:2]+h["Date"][3:5]),h["Date"][3:5],0,h["Date"][0:2],h["Date"][6:8],"day")
-                    if int(h["Chan"]) not in listeChannels:
-                        listeChannels[int(h["Chan"])]=[]
-                    primeAll(listeChannels[int(h["Chan"])],int(i[1:len(i)-4]),h["Date"][3:5],h["Date"][0:2],h["Date"][6:8],int(h["Temps"]))
-
-        if listeMois==[]:
-            continue
-
-        chanGlob=[]
-        allGlob=[chanGlob]
-        allList=[listeChannels]
-        noms=["Voicechan"]
-        for i in range(len(allGlob)):
-            for z in allList[i]:
-                for y in allList[i][z]:
-                    primeAll(allGlob[i],int(z),str(y.id)[4:6],str(y.id)[2:4],y.annee,sommeTable(y.table))
-
-        coRap,curRap=connectSQL(j.id,"Rapports","Stats","GL","")
-        guildCo,guildCur=connectSQL(j.id,"Guild","Guild",None,None)
-
-        tempsI=time()
-        etat=agregatorEvol(listeMois,j,True,"","Voice",{},{},curRap)
-        dictConnexion=etat[0]
-        dictCurseur=etat[1]
-
-        rankingClassic(tableJours)
-        ecritureSQL("dayRank",tableJours,dictCurseur["GL"],10)
-        for i in dictConnexion:
-            dictConnexion[i].commit()
-
-        dictConnexion,dictCurseur=agregatorEvol(allGlob[0],j,True,"",noms[0],{},{},curRap) 
-        for z in allList[0]:
-            agregatorEvol(allList[0][z],j,True,int(z),noms[0],dictConnexion,dictCurseur,curRap) 
-        for z in dictConnexion:
-            dictConnexion[z].commit()
-        
-        coRap.commit()
+    shutil.rmtree("SQL/{0}/GETING".format(guild.id)) 

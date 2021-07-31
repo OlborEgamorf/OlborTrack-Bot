@@ -162,7 +162,7 @@ def anecdotesSpe(date,guildOT,bot,guild,option,page,pagemax,period):
             embed.add_field(name="Records",value=dictPremier[option].format(descip,reste),inline=False)
         
     if option in ("Freq","Messages","Salons","Voice","Voicechan"):
-        dictSilent={"Messages":"Sur les **{0}** humains de ce serveur, **{1}** ont été actifs à cette date, soit {2}%.","Salons":"Sur les **{0}** salons existants de ce serveur, **{1}** ont été actifs à cette date, soit {2}%.","Freq":"Sur les 24 heures qui composent une journée, **{1}** ont vu des messages, soit {2}%.","Voice":"Sur les **{0}** humains de ce serveur, **{1}** ont été actifs à cette date, soit {2}%.","Voicechan":"Sur les **{0}** salons vocaux existants de ce serveur, **{1}** ont été actifs à cette date, soit {2}%."}
+        dictSilent={"Messages":"**{1}** humains ont été actifs à cette date, soit {2}% des {0} humains actuellement présents sur le serveur.","Salons":"Sur les **{0}** salons existants de ce serveur, **{1}** ont été actifs à cette date, soit {2}%.","Freq":"Sur les 24 heures qui composent une journée, **{1}** ont vu des messages, soit {2}%.","Voice":"**{1}** humains ont été actifs à cette date, soit {2}% des {0} humains actuellement présents sur le serveur.","Voicechan":"Sur les **{0}** salons vocaux existants de ce serveur, **{1}** ont été actifs à cette date, soit {2}%."}
         count=0
         if option in ("Messages","Voice"):
             for i in guild.members:

@@ -9,7 +9,7 @@ from Stats.SQL.ConnectSQL import connectSQL
 import os
 
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TOTAL","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12"}
-listeTitres={"Messages":"nombre de messages envoyés","Salons":"nombre de messages envoyés","Freq":"nombre de messages envoyés","Emotes":"nombre d'emotes utilisées","Reactions":"nombre de réactions utilisées","Voice":"temps passé en vocal","Voicechan":"temps passé en vocal"}
+listeTitres={"Messages":"nombre de messages envoyés","Salons":"nombre de messages envoyés","Freq":"nombre de messages envoyés","Emotes":"nombre d'emotes utilisées","Reactions":"nombre de réactions utilisées","Voice":"temps passé en vocal","Voicechan":"temps passé en vocal","Divers":"nombre d'occurences de la statistique diverse"}
 
 async def graphHeatGlobal(ligne,ctx,bot,option,guildOT):
     connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
@@ -71,6 +71,6 @@ async def graphHeatGlobal(ligne,ctx,bot,option,guildOT):
 
     plt.xticks(rotation=0)
     plt.yticks(rotation=0)
-    plt.gcf().set_size_inches(32, 18)
+    plt.gcf().set_size_inches(16, 9)
     plt.savefig("Graphs/otGraph",bbox_inches="tight")
     plt.clf()

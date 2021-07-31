@@ -3,8 +3,6 @@ from Stats.SQL.ConnectSQL import connectSQL
 from Stats.SQL.Execution import exeJeuxSQL
 
 def exeStatsJeux(idW,idL,guild,option,tours):
-    temps=time()
-
     connexionGuild,curseurGuild=connectSQL(guild,"Guild","Guild",None,None)
     connexionOT,curseurOT=connectSQL("OT","Guild","Guild",None,None)
 
@@ -15,4 +13,3 @@ def exeStatsJeux(idW,idL,guild,option,tours):
 
     connexionGuild.commit()
     connexionOT.commit()
-    print(time()-temps)

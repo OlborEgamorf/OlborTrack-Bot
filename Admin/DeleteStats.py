@@ -60,9 +60,9 @@ async def confirmDel(ctx,author,bot):
 
 async def cancelDel(ctx,author,bot):
     try:
+        assert ctx.message.id in listeDel
         assert not author.bot
         assert author.guild_permissions.administrator
-        assert ctx.message.id in listeDel
         await ctx.message.clear_reactions()
         embed=createEmbed("Suppression des statistiques","Opération annulée.",0x220cc9,"delstats",ctx.guild)
         await ctx.message.edit(embed=embed)

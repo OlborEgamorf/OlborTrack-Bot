@@ -86,8 +86,7 @@ def exeJeuxSQL(id,idObj,state,guild,curseurGuild,count,option,tours):
     compteurJeuxSQL(curseurGL,"glob",id,(0,id,"TO","GL",dictW[state],dictL[state],dictCount[state],0),dictCount[state],(strftime("%d"),strftime("%m"),strftime("%y")),("TO","GL"),"persoA",False,state,4,curseurGL)
     if idObj!=None:
         compteurJeuxSQL(curseurGL,"glob"+str(idObj),id,(0,id,idObj,"TO","GL",dictW[state],dictL[state],dictCount[state],0),dictCount[state],(strftime("%d"),strftime("%m"),strftime("%y")),("TO","GL"),"persoA",True,state,5,curseurGL)
-        histoSQLJeux(curseurGL,id,tours,strftime("%d")+"/"+strftime("%m")+"/"+strftime("%y"),idObj,state,tours)
-        dailySQL(int(strftime("%y")+strftime("%m")+strftime("%d")),(strftime("%d"),strftime("%m"),strftime("%y")),option+str(idObj),curseurGuild,guild,"Jeux")
+        histoSQLJeux(curseurGL,id,tours,strftime("%d")+"/"+strftime("%m")+"/"+strftime("%y"),idObj,state)
     connexionGL.commit()
 
     dailySQL(int(strftime("%y")+strftime("%m")+strftime("%d")),(strftime("%d"),strftime("%m"),strftime("%y")),option,curseurGuild,guild,"Jeux")
