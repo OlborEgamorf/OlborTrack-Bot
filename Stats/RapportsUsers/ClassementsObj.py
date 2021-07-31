@@ -30,6 +30,7 @@ def ranksIntoSpes(date,guildOT,bot,guild,option,page,pagenorm,pagemax,period,use
                 else:
                     obj=curseur.execute("SELECT * FROM persoA{0}{1} ORDER BY Count DESC".format(user,result[i]["ID"])).fetchall()
             except:
+                embed.add_field(name="Introuvable",value="La table de cet objet est introuvable.",inline=True)
                 continue
             if option in ("Salons","Voicechan"):
                 nom=guild.get_channel(result[i]["ID"]).name

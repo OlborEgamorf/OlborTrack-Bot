@@ -11,15 +11,15 @@ def archiveRapport(date,guildOT,bot,guild,option,period,page,pagemax):
     if period=="jour":
         connexion,curseur=connectSQL(guild.id,"Rapports","Stats","GL","")
         mois=curseur.execute("SELECT * FROM archives WHERE DateID={0}{1}{2} AND Type='{3}' AND Periode='Mois'".format(date[2],date[1],date[0],option)).fetchall()
-        if mois!=None:
+        if mois!=[]:
             embed.add_field(name="Classement mois {0}/{1}".format(date[1],date[2]),value=descipGlobal(option,mois,0,len(mois),guildOT,bot,None,period),inline=True)
 
         annee=curseur.execute("SELECT * FROM archives WHERE DateID={0}{1}{2} AND Type='{3}' AND Periode='Annee'".format(date[2],date[1],date[0],option)).fetchall()
-        if annee!=None:
+        if annee!=[]:
             embed.add_field(name="Classement année 20{0}".format(date[2]),value=descipGlobal(option,annee,0,len(annee),guildOT,bot,None,period),inline=True)
 
         glob=curseur.execute("SELECT * FROM archives WHERE DateID={0}{1}{2} AND Type='{3}' AND Periode='Global'".format(date[2],date[1],date[0],option)).fetchall()
-        if glob!=None:
+        if glob!=[]:
             embed.add_field(name="Classement global",value=descipGlobal(option,glob,0,len(glob),guildOT,bot,None,period),inline=True)
     elif period=="mois":
         connexion,curseur=connectSQL(guild.id,"Rapports","Stats","GL","GL")
@@ -30,11 +30,11 @@ def archiveRapport(date,guildOT,bot,guild,option,period,page,pagemax):
             dateArch=curseur.execute("SELECT Jour,Mois,Annee FROM archives WHERE DateID<{0}{1}00 AND Type='{2}' AND Periode='Annee' ORDER BY DateID DESC".format(demain[1],tableauMois[demain[0]],option)).fetchone()
         if dateArch!=None:
             annee=curseur.execute("SELECT * FROM archives WHERE DateID={0}{1}{2} AND Type='{3}' AND Periode='Annee'".format(dateArch["Annee"],dateArch["Mois"],dateArch["Jour"],option)).fetchall()
-            if annee!=None:
+            if annee!=[]:
                 embed.add_field(name="Classement année 20{0}".format(date[1]),value=descipGlobal(option,annee,0,len(annee),guildOT,bot,None,period),inline=True)
 
             glob=curseur.execute("SELECT * FROM archives WHERE DateID={0}{1}{2} AND Type='{3}' AND Periode='Global'".format(dateArch["Annee"],dateArch["Mois"],dateArch["Jour"],option)).fetchall()
-            if glob!=None:
+            if glob!=[]:
                 embed.add_field(name="Classement global",value=descipGlobal(option,glob,0,len(glob),guildOT,bot,None,period),inline=True)
     elif period=="annee":
         connexion,curseur=connectSQL(guild.id,"Rapports","Stats","GL","")
@@ -46,6 +46,6 @@ def archiveRapport(date,guildOT,bot,guild,option,period,page,pagemax):
             dateArch=curseur.execute("SELECT Jour,Mois,Annee FROM archives WHERE DateID<{0}0000 AND Type='{1}' AND Periode='Annee' ORDER BY DateID DESC".format(demain[1],option)).fetchone()
         if dateArch!=None:
             glob=curseur.execute("SELECT * FROM archives WHERE DateID={0}{1}{2} AND Type='{3}' AND Periode='Global'".format(dateArch["Annee"],dateArch["Mois"],dateArch["Jour"],option)).fetchall()
-            if glob!=None:
+            if glob!=[]:
                 embed.add_field(name="Classement global",value=descipGlobal(option,glob,0,len(glob),guildOT,bot,None,period),inline=True)
     return embedRapport(guild,embed,date,"Archives à cette date : classements {0}".format(option.lower()),page,pagemax,period)

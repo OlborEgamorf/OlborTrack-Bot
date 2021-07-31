@@ -24,7 +24,7 @@ from Core.OTGuild import OTGuild
 
 async def newGetData(guild,channel,bot,guildOT):
     messEdit=await channel.send(embed=discord.Embed(title="Olbor Track GetData - Lancement", description="Patientez... Les anciennes données de votre serveur vont être supprimées.", color=0x220cc9))
-    if guildOT.gd:
+    if guildOT.gd or os.path.exists("SQL/{0}/GETING".format(guild.id)):
         embedT=embedAssert("Vous avez déjà lancé la procédure GetData !")
         await messEdit.edit(embed=embedT)
         return

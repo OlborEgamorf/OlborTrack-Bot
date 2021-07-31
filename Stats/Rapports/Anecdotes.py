@@ -136,14 +136,20 @@ def anecdotesSpe(date,guildOT,bot,guild,option,page,pagemax,period):
                     records.append({"ID":i["ID"],"Count":formatCount(option,best["Count"])})
         elif period=="mois":
             for i in result:
-                tablePerso=curGL.execute("SELECT Mois, Annee, Annee || '' || Mois AS DateID, Count FROM persoM{0} WHERE DateID<='{1}{2}' ORDER BY Count DESC".format(i["ID"],date[1],tableauMois[date[0]])).fetchone()
-                if tablePerso["Mois"]==tableauMois[date[0]] and tablePerso["Annee"]==date[1]:
-                    records.append({"ID":i["ID"],"Count":formatCount(option,tablePerso["Count"])})
+                try:
+                    tablePerso=curGL.execute("SELECT Mois, Annee, Annee || '' || Mois AS DateID, Count FROM persoM{0} WHERE DateID<='{1}{2}' ORDER BY Count DESC".format(i["ID"],date[1],tableauMois[date[0]])).fetchone()
+                    if tablePerso["Mois"]==tableauMois[date[0]] and tablePerso["Annee"]==date[1]:
+                        records.append({"ID":i["ID"],"Count":formatCount(option,tablePerso["Count"])})
+                except:
+                    continue
         elif period=="annee":
             for i in result:
-                tablePerso=curGL.execute("SELECT Mois, Annee, Count FROM persoA{0} WHERE Annee<='{1}' ORDER BY Count DESC".format(i["ID"],date[1])).fetchone()
-                if tablePerso["Annee"]==date[1]:
-                    records.append({"ID":i["ID"],"Count":formatCount(option,tablePerso["Count"])})
+                try:
+                    tablePerso=curGL.execute("SELECT Mois, Annee, Count FROM persoA{0} WHERE Annee<='{1}' ORDER BY Count DESC".format(i["ID"],date[1])).fetchone()
+                    if tablePerso["Annee"]==date[1]:
+                        records.append({"ID":i["ID"],"Count":formatCount(option,tablePerso["Count"])})
+                except:
+                    continue
         if records==[]:
             embed.add_field(name="Records",value="Rien ou personne n'a battu son record d'activité à cette date.".format(i),inline=False)
         else:
@@ -213,7 +219,7 @@ def anecdotesSpe(date,guildOT,bot,guild,option,page,pagemax,period):
                 moins+=1
             elif count["Count"]<i["Count"]:
                 plus+=1
-        dictPlusMoins={"Messages":"Parmi les membres actifs à cette date, **{0}** l'ont été **moins** que la période précédente, **{1} plus** et **{2} ne l'avaient pas été**.","Salons":"Parmi les salons actifs à cette date, {0} l'ont été moins que la période précédente, {1} plus et {2} ne l'avaient pas été.","Freq":"Parmi les heures actives à cette date, {0} l'ont été moins que la période précédente, {1} plus et {2} ne l'avaient pas été.","Emotes":"Parmi les emotes utilisées à cette date, {0} l'ont été moins que la période précédente, {1} plus et {2} ne l'avaient pas été.","Reactions":"Parmi les réactions utilisées à cette date, {0} l'ont été moins que la période précédente, {1} plus et {2} ne l'avaient pas été.","Voice":"Parmi les membres actifs à cette date, **{0}** l'ont été **moins** que la période précédente, **{1} plus** et **{2} ne l'avaient pas été**.","Voicechan":"Parmi les salons actifs à cette date, {0} l'ont été moins que la période précédente, {1} plus et {2} ne l'avaient pas été."}
+        dictPlusMoins={"Messages":"Parmi les membres actifs à cette date, **{0}** l'ont été **moins** que la période précédente, **{1} plus** et **{2} ne l'avaient pas été**.","Salons":"Parmi les salons actifs à cette date, **{0}** l'ont été **moins** que la période précédente, **{1} plus** et **{2} ne l'avaient pas été**.","Freq":"Parmi les heures actives à cette date, **{0}** l'ont été **moins** que la période précédente, **{1} plus** et **{2} ne l'avaient pas été**.","Emotes":"Parmi les emotes utilisées à cette date, **{0}** l'ont été **moins** que la période précédente, **{1} plus** et **{2} ne l'avaient pas été**.","Reactions":"Parmi les réactions utilisées à cette date, **{0}** l'ont été **moins** que la période précédente, **{1} plus** et **{2} ne l'avaient pas été**.","Voice":"Parmi les membres actifs à cette date, **{0}** l'ont été **moins** que la période précédente, **{1} plus** et **{2} ne l'avaient pas été**.","Voicechan":"Parmi les salons actifs à cette date, **{0}** l'ont été **moins** que la période précédente, **{1} plus** et **{2} ne l'avaient pas été**."}
         embed.add_field(name=title,value=dictPlusMoins[option].format(moins,plus,new),inline=False)
 
     return embedRapport(guild,embed,date,"Section {0} : anecdotes".format(dictSection[option]),page,pagemax,period) 

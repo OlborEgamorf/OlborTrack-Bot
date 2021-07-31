@@ -46,7 +46,9 @@ def embedAuto(ctx,guildOT):
 
 def archivesSave(guild,jour,mois,annee):
     connexion,curseur=connectSQL(guild,"Rapports","Stats","GL","")
-    for i in ("Salons","Freq","Messages","Emojis","Reactions","Voice","Voicechan"):
+    if curseur.execute("SELECT * FROM ranks WHERE Jour='{0}' AND Mois='{1}' AND Annee='{2}'".format(jour,mois,annee)).fetchone()==None:
+        return
+    for i in ("Salons","Freq","Messages","Emotes","Reactions","Voice","Voicechan"):
         try:
             for z in ("Mois","Annee","Global"):
                 if z=="Mois":
@@ -60,7 +62,7 @@ def archivesSave(guild,jour,mois,annee):
                     table=curseurSpe.execute("SELECT * FROM glob WHERE Rank<=10 ORDER BY Rank ASC LIMIT 10").fetchall()
                 many=[]
                 for j in table:
-                    many.append((table[i]["Rank"],table[i]["ID"],jour,mois,annee,int(annee+mois+jour),z,table[i]["Count"],table[i]["Evol"],i))
+                    many.append((j["Rank"],j["ID"],jour,mois,annee,int(annee+mois+jour),z,j["Count"],j["Evol"],i))
                 curseur.executemany("INSERT INTO archives VALUES (?,?,?,?,?,?,?,?,?,?)",many)
         except:
             continue

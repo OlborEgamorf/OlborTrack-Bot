@@ -255,12 +255,12 @@ async def graphEvolAutour(ligne,ctx,bot,option,guildOT):
             listeColor.append((user.color.r/256,user.color.g/256,user.color.b/256,1))
             plt.plot("Date", "Count", data=df2, linestyle=dictLine[listeColor.count((user.color.r/256,user.color.g/256,user.color.b/256,1))], marker="", color=(user.color.r/256,user.color.g/256,user.color.b/256,1),label=user.name)
         else:
-            try:
-                nom=getNomGraph(ctx,bot,option,tableRank[i]["ID"])
-            except:
-                if option in ("Messages","Mots","Voice"):
-                    nom="Ancien membre"
-                else:
+            if option in ("Messages","Mots","Voice"):
+                nom="Ancien membre"
+            else:
+                try:
+                    nom=getNomGraph(ctx,bot,option,tableRank[i]["ID"])
+                except:
                     nom="??"
             plt.plot("Date", "Count", data=df2, linestyle='--', marker='',color=colorsBasic[i],label=nom)
     

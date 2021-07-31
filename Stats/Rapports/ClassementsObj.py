@@ -27,6 +27,7 @@ def ranksIntoSpes(date,guildOT,bot,guild,option,page,pagenorm,pagemax,period):
                 try:
                     obj=curseur.execute("SELECT * FROM {0}{1}{2} ORDER BY Rank ASC".format(date[0],date[1],result[i]["ID"])).fetchall()
                 except:
+                    embed.add_field(name="Introuvable",value="Le classement de cet objet est introuvable.",inline=True)
                     continue
             stop2=6 if len(obj)>6 else len(obj)
             if option in ("Salons","Voicechan"):
