@@ -3,12 +3,13 @@ from time import strftime
 
 import discord
 from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.Embeds import addtoFields, countRankCompare, createFields, newDescip, sendEmbed
+from Core.Fonctions.Embeds import addtoFields, countRankCompare, createFields, embedAssert, newDescip, sendEmbed
 from Core.Fonctions.GetNom import getObj, nomsOptions
 from Core.Fonctions.GetPeriod import getAnnee, getMois
 from Core.Fonctions.setMaxPage import setMax, setPage
 from Stats.SQL.ConnectSQL import connectSQL
 from Core.Fonctions.DichoTri import triPeriod
+from Stats.SQL.Verification import verifCommands
 
 tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai","06":"Juin","07":"Juillet","08":"Aout","09":"Septembre","10":"Octobre","11":"Novembre","12":"Décembre","TO":"Année","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO","GL":"GL"}
 dictTriArg={"countAsc":"Count","rankAsc":"Rank","countDesc":"Count","rankDesc":"Rank","dateAsc":"DateID","dateDesc":"DateID","periodAsc":"None","periodDesc":"None","moyDesc":"Moyenne","nombreDesc":"Nombre"}
@@ -18,9 +19,9 @@ dictTriField={"countAsc":"Compteur {0} croissant","rankAsc":"Rang {0} croissant"
 
 
 async def compareUser(ctx,option,turn,react,ligne,guildOT,bot):
-    if True:
+    try:
+        assert verifCommands(guildOT,option)
         connexionCMD,curseurCMD=connectSQL(ctx.guild.id,"Commandes","Guild",None,None)
-        
         if not react:
             assert ctx.message.mentions!=[]
             mention=ctx.message.mentions[0].id
@@ -81,6 +82,11 @@ async def compareUser(ctx,option,turn,react,ligne,guildOT,bot):
         embed.set_footer(text="Page {0}/{1}".format(page,pagemax))
 
         await sendEmbed(ctx,embed,react,True,curseurCMD,connexionCMD,page,pagemax)
+    except:
+        if react:
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit le classement cherché n'existe plus."))
+        else:
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit le classement cherché n'existe pas.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))
         
 
 def embedCompare(nom,id1,id2,option,optionCompare,curseur,ligne,page,guildOT,bot,obj):

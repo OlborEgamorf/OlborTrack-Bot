@@ -12,7 +12,7 @@ dictOption={"tortues":"Tortues","tortuesduo":"TortuesDuo","trivialversus":"Trivi
 dictNoms={"culture":0,"divertissement":1,"sciences":2,"mythologie":3,"sport":4,"géographie":5,"histoire":6,"politique":7,"art":8,"célébrités":9,"animaux":10,"véhicules":11,"streak":"Streak"}
 
 async def statsTrivial(ctx,turn,react,ligne,guildOT,bot,option):
-    if True:
+    try:
         connexionCMD,curseurCMD=connectSQL(ctx.guild.id,"Commandes","Guild",None,None)
         if not react:
             if option=="trivialperso":
@@ -50,5 +50,8 @@ async def statsTrivial(ctx,turn,react,ligne,guildOT,bot,option):
             embed=auteur(ctx.guild.get_member(699728606493933650),None,None,embed,"olbor")
         embed.colour=0x3498db
         await sendEmbed(ctx,embed,react,True,curseurCMD,connexionCMD,page,pagemax)
-    else:
-        await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez."))
+    except:
+        if react:
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nLe classement cherché n'existe plus ou alors il y a un problème de mon côté."))
+        else:
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\Le classement cherché n'existe pas ou alors il y a un problème de mon côté.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))

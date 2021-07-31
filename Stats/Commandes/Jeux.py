@@ -65,4 +65,7 @@ async def statsJeux(ctx,turn,react,ligne,guildOT,bot,mode):
         await sendEmbed(ctx,embed,react,True,curseurCMD,connexionCMD,page,pagemax)
     
     except:
-        await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez."))
+        if react:
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nLe classement cherché n'existe plus ou alors il y a un problème de mon côté."))
+        else:
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\Le classement cherché n'existe pas ou alors il y a un problème de mon côté.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))

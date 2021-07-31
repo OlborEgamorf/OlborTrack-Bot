@@ -6,9 +6,11 @@ from Core.Fonctions.setMaxPage import setMax, setPage
 from Stats.Embeds.Central import statsEmbed
 from Core.Fonctions.Embeds import embedAssert, newDescip, sendEmbed
 from Core.Fonctions.AuteurIcon import auteur
+from Stats.SQL.Verification import verifCommands
 
 async def statsPeriodsInter(ctx,option,turn,react,ligne,guildOT,bot):
-    if True:
+    try:
+        assert verifCommands(guildOT,option)
         connexionCMD,curseurCMD=connectSQL(ctx.guild.id,"Commandes","Guild",None,None)
         connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
         if not react:
@@ -41,5 +43,8 @@ async def statsPeriodsInter(ctx,option,turn,react,ligne,guildOT,bot):
 
         await sendEmbed(ctx,embed,react,True,curseurCMD,connexionCMD,page,pagemax)
         
-    else:
-        await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez."))
+    except:
+        if react:
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée n'existe plus."))
+        else:
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée cherché n'existe pas.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))

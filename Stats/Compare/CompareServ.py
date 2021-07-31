@@ -1,11 +1,12 @@
 from Stats.SQL.ConnectSQL import connectSQL
 from Core.Fonctions.setMaxPage import setMax, setPage
-from Core.Fonctions.Embeds import addtoFields, countRankCompare, createFields, newDescip, sendEmbed
+from Core.Fonctions.Embeds import addtoFields, countRankCompare, createFields, embedAssert, newDescip, sendEmbed
 from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.GetNom import getObj, nomsOptions
 from time import strftime
 from Core.Fonctions.GetPeriod import getAnnee, getMois
 import discord
+from Stats.SQL.Verification import verifCommands
 
 tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai","06":"Juin","07":"Juillet","08":"Aout","09":"Septembre","10":"Octobre","11":"Novembre","12":"Décembre","TO":"Année","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
 dictTriArg={"countAsc":"Count","rankAsc":"Rank","countDesc":"Count","rankDesc":"Rank","dateAsc":"DateID","dateDesc":"DateID","periodAsc":"None","periodDesc":"None","moyDesc":"Moyenne","nombreDesc":"Nombre"}
@@ -14,7 +15,8 @@ dictTriField={"countAsc":"Compteur {0} {1} croissant","countDesc":"Compteur {0} 
 dictF1={"Salons":"Salons","Freq":"Heures","Emotes":"Emotes","Reactions":"Réactions","Voicechan":"Salons","Messages":"Membres","Voice":"Membres","Mots":"Membres"}
 
 async def compareServ(ctx,option,turn,react,ligne,guildOT,bot):
-    if True:
+    try:
+        assert verifCommands(guildOT,option)
         connexionCMD,curseurCMD=connectSQL(ctx.guild.id,"Commandes","Guild",None,None)
         if not react:
             liste=[]
@@ -57,6 +59,11 @@ async def compareServ(ctx,option,turn,react,ligne,guildOT,bot):
             embed.description=newDescip(embed.description,tempOption,int(obj),guildOT,bot)
 
         await sendEmbed(ctx,embed,react,True,curseurCMD,connexionCMD,page,pagemax)
+    except:
+        if react:
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit le classement cherché n'existe plus."))
+        else:
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit le classement cherché n'existe pas.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))
 
 def detectPeriod(args,liste,curseur):
     if args[0].lower()=="mois":

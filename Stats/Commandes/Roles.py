@@ -8,12 +8,15 @@ from Stats.Embeds.Roles import embedRole
 from Stats.Embeds.Membres import embedMembre
 from Core.Fonctions.Embeds import embedAssert, newDescip, sendEmbed
 from Core.Fonctions.AuteurIcon import auteur
+from Stats.SQL.Verification import verifCommands
 
 tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai","06":"Juin","07":"Juillet","08":"Aout","09":"Septembre","10":"Octobre","11":"Novembre","12":"Décembre","TO":"Année","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
 dictTriField={"countAsc":"Compteur croissant","rankAsc":"Rang croissant","countDesc":"Compteur décroissant","rankDesc":"Rang décroissant","dateAsc":"Date croissante","dateDesc":"Date décroissante","periodAsc":"Date croissante","periodDesc":"Date décroissante","moyDesc":"Moyenne décroissante","nombreDesc":"Compteur décroissant","winAsc":"Victoires croissant","winDesc":"Victoires décroissant","loseAsc":"Défaites croissant","loseDesc":"Défaites décroissant","expDesc":"Expérience décroissant","expAsc":"Expérience croissant"}
 
 async def statsRoles(ctx,option,turn,react,ligne,guildOT,bot):
-    if True:
+    try:
+        assert verifCommands(guildOT,option)
+        assert verifCommands(guildOT,"Roles")
         connexionCMD,curseurCMD=connectSQL(ctx.guild.id,"Commandes","Guild",None,None)
         if not react:
             if len(ctx.args)==2 or ctx.args[2].lower() not in ("mois","annee"):
@@ -81,5 +84,8 @@ async def statsRoles(ctx,option,turn,react,ligne,guildOT,bot):
         embed=auteur(ctx.guild.id,ctx.guild.name,ctx.guild.icon,embed,"guild")
         await sendEmbed(ctx,embed,react,True,curseurCMD,connexionCMD,page,pagemax)
         
-    else:
-        await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez."))
+    except:
+        if react:
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée n'existe plus."))
+        else:
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée cherché n'existe pas.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))
