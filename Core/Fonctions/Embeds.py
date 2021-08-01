@@ -186,7 +186,19 @@ def embedAssert(info:str) -> discord.Embed:
     embedTable.set_footer(text="Avertissement")
     return embedTable
 
-def countRankCompare(table,table2,i,option):
+def countRankCompare(table,table2,i,option,guildOT):
+    if option in ("Messages","Voice","Mots"):
+        if guildOT.users[table[i]["ID"]]["Hide"]:
+            table[i]["Count"]="??"
+        if table2!=None:
+            if guildOT.users[table2["ID"]]["Hide"]:
+                table2["Count"]="??"
+    elif option in ("Voicechan","Salons"):
+        if guildOT.chan[table[i]["ID"]]["Hide"]:
+            table[i]["Count"]="??"
+        if table2!=None:
+            if guildOT.chan[table2["ID"]]["Hide"]:
+                table2["Count"]="??"
     if table2==None:
         rang1="__{0}e__".format(table[i]["Rank"])
         count1="__{0}__".format(formatCount(option,table[i]["Count"]))
@@ -203,15 +215,16 @@ def countRankCompare(table,table2,i,option):
             rang1="{0}e".format(table[i]["Rank"])
             rang2="{0}e".format(table2["Rank"])
         
-        if table[i]["Count"]>table2["Count"]:
+        if table[i]["Count"]==table2["Count"]:
+            count1="{0}".format(formatCount(option,table[i]["Count"]))
+            count2="{0}".format(formatCount(option,table2["Count"]))
+        elif table[i]["Count"]!="??" and (table2["Count"]=="??" or table[i]["Count"]>table2["Count"]):
             count1="__{0}__".format(formatCount(option,table[i]["Count"]))
             count2="{0}".format(formatCount(option,table2["Count"]))
-        elif table[i]["Count"]!=table2["Count"]:
-            count1="{0}".format(formatCount(option,table[i]["Count"]))
-            count2="__{0}__".format(formatCount(option,table2["Count"]))
         else:
             count1="{0}".format(formatCount(option,table[i]["Count"]))
-            count2="{0}".format(formatCount(option,table2["Count"]))
+            count2="__{0}__".format(formatCount(option,table2["Count"]))
+
     return rang1,rang2,count1,count2
 
 

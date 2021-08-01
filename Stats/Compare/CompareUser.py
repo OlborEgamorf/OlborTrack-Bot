@@ -1,4 +1,3 @@
-
 from time import strftime
 
 import discord
@@ -110,7 +109,7 @@ def embedCompare(nom,id1,id2,option,optionCompare,curseur,ligne,page,guildOT,bot
             else:
                 period="{0} 20{1}".format(tableauMois[table[i]["Mois"]],table[i]["Annee"])
             table2=curseur.execute("SELECT * FROM {0}{1}{2} WHERE Mois='{3}' AND Annee='{4}'".format(nom,id2,obj,table[i]["Mois"],table[i]["Annee"])).fetchone()
-            rang1,rang2,count1,count2=countRankCompare(table,table2,i,option)
+            rang1,rang2,count1,count2=countRankCompare(table,table2,i,"Mois",guildOT)
             field1,field2,field3=addtoFields(field1,field2,field3,mobile,period,"{0} | {1}".format(rang1,count1),"{0} | {1}".format(rang2,count2))
         nomF1="Période"
     elif optionCompare=="userPeriod":
@@ -119,7 +118,7 @@ def embedCompare(nom,id1,id2,option,optionCompare,curseur,ligne,page,guildOT,bot
         for i in range(15*(page-1),stop):
             nom2=nomsOptions(option,table[i]["ID"],guildOT,bot)
             table2=curseur.execute("SELECT * FROM {0}{1} WHERE ID={2}".format(nom,id2,table[i]["ID"])).fetchone()
-            rang1,rang2,count1,count2=countRankCompare(table,table2,i,option)
+            rang1,rang2,count1,count2=countRankCompare(table,table2,i,option,guildOT)
             field1,field2,field3=addtoFields(field1,field2,field3,mobile,nom2,"{0} | {1}".format(rang1,count1),"{0} | {1}".format(rang2,count2))
         nomF1=option
     

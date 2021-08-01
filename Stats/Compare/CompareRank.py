@@ -84,7 +84,7 @@ def embedCompare(mois,annee,curseur,obj1,obj2,ligne,page,guildOT,bot,option,ctx)
     for i in range(15*(page-1),stop):
         nom=nomsOptions("Messages",table[i]["ID"],guildOT,bot)
         table2=curseur.execute("SELECT * FROM {0}{1}{2} WHERE ID={3}".format(mois,annee,obj2,table[i]["ID"])).fetchone()
-        rang1,rang2,count1,count2=countRankCompare(table,table2,i,option)
+        rang1,rang2,count1,count2=countRankCompare(table,table2,i,"Messages",guildOT)
         field1,field2,field3=addtoFields(field1,field2,field3,mobile,nom,"{0} | {1}".format(rang1,count1),"{0} | {1}".format(rang2,count2))
 
     embed=createFields(mobile,embed,field1,field2,field3,"Membre",getNomGraph(ctx,bot,option,int(obj1)),getNomGraph(ctx,bot,option,int(obj2)))

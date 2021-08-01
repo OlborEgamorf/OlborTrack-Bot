@@ -98,7 +98,10 @@ def embedCompare(liste1,liste2,obj,option,curseur1,curseur2,ligne,page,guildOT,b
     for i in range(15*(page-1),stop):
         nom=nomsOptions(option,table[i]["ID"],guildOT,bot)
         table2=curseur2.execute("SELECT * FROM {0}{1}{2} WHERE ID={3}".format(liste2[0],liste2[1],obj,table[i]["ID"])).fetchone()
-        rang1,rang2,count1,count2=countRankCompare(table,table2,i,option)
+        if obj=="":
+            rang1,rang2,count1,count2=countRankCompare(table,table2,i,option,guildOT)
+        else:
+            rang1,rang2,count1,count2=countRankCompare(table,table2,i,"Messages",guildOT)
         field1,field2,field3=addtoFields(field1,field2,field3,mobile,nom,"{0} | {1}".format(rang1,count1),"{0} | {1}".format(rang2,count2))
     
     if obj=="":
