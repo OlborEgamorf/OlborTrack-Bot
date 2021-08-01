@@ -11,11 +11,11 @@ async def exePP(ctx,bot):
         if len(ctx.message.mentions)==0:
             embedF=discord.Embed(title="Photo de profil :",color=ctx.author.color.value)
             embedF.set_image(url=ctx.author.avatar_url)
-            embedF=auteur(ctx.author.id,ctx.author,ctx.author.avatar,embedF,"user") 
+            embedF=auteur(ctx.author.id,ctx.author.name,ctx.author.avatar,embedF,"user") 
         else:
             embedF=discord.Embed(title="Photo de profil :",color=ctx.message.mentions[0].color.value)
             embedF.set_image(url=ctx.message.mentions[0].avatar_url)
-            embedF=auteur(ctx.message.mentions[0].id,ctx.message.mentions[0],ctx.message.mentions[0].avatar,embedF,"user")
+            embedF=auteur(ctx.message.mentions[0].id,ctx.message.mentions[0].name,ctx.message.mentions[0].avatar,embedF,"user")
         embedF.set_footer(text="OT!avatar")
     except:
         embedF=await exeErrorExcept(ctx,bot,"")

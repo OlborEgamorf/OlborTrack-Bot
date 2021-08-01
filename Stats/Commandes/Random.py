@@ -76,7 +76,10 @@ async def commandeRandom(ctx,ligne,react,guildOT,bot):
                         "Emotes":"{0}, tu as utilisé **{1}** fois l'emote {2}.\nTon rang pour cette emote est **{3}e** !",
                         "Reactions":"{0}, tu as utilisé **{1}** fois la réaction {2}.\nTon rang cette réaction est **{3}e** !"}
             descip=dictPhrase[option].format(periodStr,tableUser["Count"],nomsOptions(option,tableUser["ID"],guildOT,bot),tableUser["Rank"])
-        embed=createEmbed("Statistique aléatoire",descip,user.color.value,"random",user)
+        if user!=None:
+            embed=createEmbed("Statistique aléatoire",descip,user.color.value,"random",user)
+        else:
+            embed=createEmbed("Statistique aléatoire",descip,0x6ec8fa,"random",bot.user)
     
     else:
         if option in ("Reactions","Emotes"):

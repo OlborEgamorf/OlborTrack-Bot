@@ -13,7 +13,7 @@ async def exeRoulette(ctx,bot,args):
         assert len(args)>1, "Mettez deux propositions dans la roulette !"
         embedTable=discord.Embed(title="Roulette !", description=choice(args), color=0x2ba195)
         embedTable.set_footer(text="OT!roulette")
-        embedTable=auteur(ctx.author.id,ctx.author,ctx.author.avatar,embedTable,"user")
+        embedTable=auteur(ctx.author.id,ctx.author.name,ctx.author.avatar,embedTable,"user")
     except AssertionError as er:
         embedTable=embedAssert(str(er))
     except:

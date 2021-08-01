@@ -22,7 +22,12 @@ async def statsMoy(ctx,option,turn,react,ligne,guildOT,bot):
         embed=await statsEmbed("moy{0}{1}".format(option,author),ligne,page,pagemax,"Moy",guildOT,bot,False,False,curseur)
         embed.title="Moyennes {0}".format(option.lower())
         user=ctx.guild.get_member(author)
-        embed=auteur(user.id,user.name,user.avatar,embed,"user")
+        if user!=None:
+            embed=auteur(user.id,user.name,user.avatar,embed,"user")
+            embed.colour=user.color.value
+        else:
+            embed=auteur(bot.user.id,"Ancien membre",bot.user.avatar,embed,"user")
+            embed.colour=0x3498db
         embed.colour=user.color.value
         await sendEmbed(ctx,embed,react,True,curseurCMD,connexionCMD,page,pagemax)
         

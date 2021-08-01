@@ -22,7 +22,7 @@ async def exeDice(ctx,bot,args):
             somme+=lancer
             descip+=dictDe[lancer]+" "
         embedTable=discord.Embed(title="Lancer de dé(s)", description=descip+"\nCela fait un total de **"+str(somme)+"** !", color=0x2ba195)
-        embedTable=auteur(ctx.author.id,ctx.author,ctx.author.avatar,embedTable,"user")
+        embedTable=auteur(ctx.author.id,ctx.author.name,ctx.author.avatar,embedTable,"user")
         embedTable.set_footer(text="OT!dice")
     except AssertionError as er:
         embedTable=embedAssert(str(er))

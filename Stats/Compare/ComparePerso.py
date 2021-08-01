@@ -38,8 +38,12 @@ async def comparePerso(ctx,option,turn,react,ligne,guildOT,bot):
         
         embed=embedCompare(liste1,liste2,option,curseur1,curseur2,ligne,page,guildOT,bot)
         user=ctx.guild.get_member(ligne["AuthorID"])
-        embed=auteur(user.id,user.name,user.avatar,embed,"user")
-        embed.colour=user.color.value
+        if user!=None:
+            embed=auteur(user.id,user.name,user.avatar,embed,"user")
+            embed.colour=user.color.value
+        else:
+            embed=auteur(bot.user.id,"Ancien membre",bot.user.avatar,embed,"user")
+            embed.colour=0x3498db
         embed.title="Comparaison perso, entre {0}/{1} et {2}/{3}\n{4}".format(liste1[0],liste1[1],liste2[0],liste2[1],option)
         embed.add_field(name="Tri <:otTRI:833666016491864114>",value=dictTriField[ligne["Tri"]].format(liste1[0],liste1[1]),inline=True)
         embed.set_footer(text="Page {0}/{1}".format(page,pagemax))

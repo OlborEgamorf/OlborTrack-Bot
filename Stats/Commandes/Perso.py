@@ -49,8 +49,12 @@ async def statsPerso(ctx,option,turn,react,ligne,guildOT,bot):
         embed=await statsEmbed("perso{0}{1}{2}".format(mois,annee,author),ligne,page,pagemax,option,guildOT,bot,False,False,curseur)
         embed.title=title
         user=ctx.guild.get_member(author)
-        embed=auteur(user.id,user.name,user.avatar,embed,"user")
-        embed.colour=user.color.value
+        if user!=None:
+            embed=auteur(user.id,user.name,user.avatar,embed,"user")
+            embed.colour=user.color.value
+        else:
+            embed=auteur(bot.user.id,"Ancien membre",bot.user.avatar,embed,"user")
+            embed.colour=0x3498db
         await sendEmbed(ctx,embed,react,True,curseurCMD,connexionCMD,page,pagemax)
         
     except:
