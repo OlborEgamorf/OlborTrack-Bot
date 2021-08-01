@@ -1,12 +1,13 @@
 import discord
+from Autre.Help import commandeHelp
+from Core.Fonctions.SeekMessage import seekMessage
 from Core.Fonctions.setMaxPage import setPage
 from Core.OTGuild import OTGuild
 from Core.Reactions.Outils import getTurn, removeReact
 from discord.ext import commands
 from MAL.exeMAL import exeMAL
-from Outils.Tableaux.EmbedsTab import commandeSB
-from Outils.Twitch.ExeTwitch import commandeTwitch
 from Savezvous.ListModo import commandeSV
+from Sondages.GAReroll import commandeGAR
 from Stats.Commandes.Classements import statsRank
 from Stats.Commandes.Evol import statsEvol
 from Stats.Commandes.Jeux import statsJeux
@@ -19,16 +20,16 @@ from Stats.Commandes.Random import commandeRandom
 from Stats.Commandes.Roles import statsRoles
 from Stats.Commandes.Trivial import statsTrivial
 from Stats.Compare.ComparePerso import comparePerso
+from Stats.Compare.CompareRank import compareRank
+from Stats.Compare.CompareServ import compareServ
 from Stats.Compare.CompareUser import compareUser
 from Stats.Rapports.exeRapports import changePage, switchRapport
 from Stats.RapportsUsers.exeRapports import changePageUser, switchRapportUser
 from Stats.SQL.ConnectSQL import connectSQL
 from Wiki.exeWikipedia import exeWikipedia
-from Stats.Compare.CompareRank import compareRank
-from Stats.Compare.CompareServ import compareServ
-from Sondages.GAReroll import commandeGAR
-from Core.Fonctions.SeekMessage import seekMessage
-from Autre.Help import commandeHelp
+
+from Outils.Tableaux.EmbedsTab import commandeSB
+from Outils.Twitch.ExeTwitch import commandeTwitch
 
 
 async def reactStats(message:int,reaction:discord.Reaction,bot:commands.Bot,guildOT:OTGuild,payload):

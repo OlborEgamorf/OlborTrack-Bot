@@ -17,10 +17,10 @@ async def exeZip(ctx,bot):
             for file in files:
                 ziph.write(os.path.join(root, file))
         ziph.close()
-        embedF=discord.Embed(title="<:otVERT:718396570638483538> Voici les données de votre serveur.", description="Vous pouvez en refaire la demande quand vous le souhaitez.", color=0x339966)
+        embedF=discord.Embed(title="<:otVERT:868535645897912330> Voici les données de votre serveur.", description="Vous pouvez en refaire la demande quand vous le souhaitez.", color=0x339966)
         embedF.set_footer(text="OT!zip")
         await ctx.author.send(embed=embedF,file=discord.File("SQL/{0}/{0}.zip".format(ctx.guild.id)))
     except:
-        await ctx.send("Je n'ai pas réussi à envoyer le fichier. Soit vos DMs sont désactivés, soit le fichier est trop lourd pour être envoyé.")
+        await ctx.send("<:otROUGE:868535622237818910> Je n'ai pas réussi à envoyer le fichier. Soit vos DMs sont désactivés, soit le fichier est trop lourd pour être envoyé.")
     os.remove("SQL/{0}/{0}.zip".format(ctx.guild.id))
     return

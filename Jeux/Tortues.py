@@ -375,7 +375,7 @@ async def startGameTortues(ctx,bot):
             descip="<:otVERT:868535645897912330> La partie commence "
             for i in game.joueurs:
                 descip+="<@{0}> ".format(i.userid)
-                await i.user.send(embed=createEmbed("Course des tortues","Votre couleur est : {0} {1}".format(i.couleur,dictEmote[i.couleur]),dictColor[i.couleur],ctx.invoked_with.lower(),i.user))
+                await i.user.send(embed=createEmbed("Course des tortues : {0}".format(i.couleur),"Votre couleur est : {0} {1}".format(i.couleur,dictEmote[i.couleur]),dictColor[i.couleur],ctx.invoked_with.lower(),i.user))
             await message.channel.send(descip)
             message=await message.channel.send(embed=discord.Embed(title="Votre couleur vous a été envoyée par MP..."))
             gamesTortues[message.id]=game

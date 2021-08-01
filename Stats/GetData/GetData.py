@@ -32,11 +32,15 @@ async def newGetData(guild,channel,bot,guildOT):
         embedT=embedAssert("Vous avez désactivé les statistiques pour votre serveur. Utilisez la commande OT!statson pour les réactiver.")
         await messEdit.edit(embed=embedT)
         return
+    if guild.get_member(699728606493933650).guild_permissions.read_message_history==False:
+        embedT=embedAssert("Je ne peux pas accèder au passé de votre serveur. Donnez moi la permission 'lire l'historique des messages' pour pouvoir lancer la procédure.")
+        await messEdit.edit(embed=embedT)
+        return
     os.makedirs("SQL/{0}/GETING".format(guild.id))
     guildOT.gd=True
     temps=time()
     to=0
-    if True:
+    try:
         await bot.get_channel(717727027465289768).send("Procédure get data enclenchée : "+guild.name+" | "+str(guild.member_count)+" | "+str(guild.id))
         listeDel=[15,16,17,18,19,20,21,22,23,"GL"]
         for i in listeDel:
@@ -239,11 +243,11 @@ async def newGetData(guild,channel,bot,guildOT):
         embedT=discord.Embed(title="OlborTrack GetData - Succès",description="Terminé ! Sans accroc. Temps écoulé : "+tempsVoice(int(time()-temps)),color=0x220cc9)
         embedT=auteur(guild.id,guild.name,guild.icon,embedT,"guild")
         await messEdit.channel.send(embed=embedT)
-    """except:
+    except:
         embedT=discord.Embed(title="OlborTrack GetData - Erreur",description="Une erreur innatendue est arrivée. Contactez le support. "+tempsVoice(time()-tempsI)+" "+str(sys.exc_info()[0]),color=0x220cc9)
         embedT=auteur(guild.id,guild.name,guild.icon,embedT,"guild")
         await messEdit.channel.send(embed=embedT)
         error=str(sys.exc_info()[0])+"\n"+str(sys.exc_info()[1])+"\n"+str(sys.exc_info()[2].tb_frame)+"\n"+str(sys.exc_info()[2].tb_lineno)
-        await bot.get_channel(717727027465289768).send("Procédure get data **ECHEC** : "+guild.name+" | "+str(guild.member_count)+" | "+str(guild.id)+" | "+tempsVoice(time()-tempsI)+"\n"+error)"""
+        await bot.get_channel(717727027465289768).send("Procédure get data **ECHEC** : "+guild.name+" | "+str(guild.member_count)+" | "+str(guild.id)+" | "+tempsVoice(time()-tempsI)+"\n"+error)
     guildOT.gd=False
     shutil.rmtree("SQL/{0}/GETING".format(guild.id)) 

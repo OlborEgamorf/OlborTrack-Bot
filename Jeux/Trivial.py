@@ -287,7 +287,7 @@ class Versus(Question):
         self.ids.append(ctx.author.id)
         self.invoke=ctx.author.id
         inGameTrivial.append(ctx.author.id)
-        dictHelp={"party":"Appuyez sur la réaction <:otVALIDER:772766033996021761> pour rejoindre la partie de Trivial Party et <:otANNULER:811242376625782785> pour annuler votre participation. La personne qui a demandé la partie peut cliquer sur <:otVALIDER:772766033996021761> pour lancer directement la partie. Sinon, elle va démarrer dans une minute.\n\n**Comment jouer ? : ** le Trivial Party se joue de 2 à 15 joueurs. Des questions vont se suivre, il faut obtenir 15 points pour gagner ! De manière aléatoire, des évènement peuvent se dérouler pour changer complétement la partie ! Le jeu se déroule dans ce salon et sur ce message. Les propositions sont numérotés de <:ot1:705766186909958185> à <:ot4:705766186947706934>, cliquez sur la réaction qui correspond pour choisir votre réponse. Au bout de 20s ou quand tout le monde a répondu, les résultats sont affichés. La prochaine question démarrera peu de temps après. Bonne chance !","versus":"Appuyez sur la réaction <:otVALIDER:772766033996021761> pour rejoindre la partie de Trivial Versus et <:otANNULER:811242376625782785> pour annuler votre participation. La personne qui a demandé la partie peut cliquer sur <:otVALIDER:772766033996021761> pour lancer directement la partie. Sinon, elle va démarrer dans une minute.\n\n**Comment jouer ? : ** le Trivial Versus se joue de 2 à 5 joueurs. Des questions vont se suivre, l'objectif est d'atteindre 5 bonnes réponses avant tout le monde ! Le jeu se déroule dans ce salon et sur ce message. Les propositions sont numérotés de <:ot1:705766186909958185> à <:ot4:705766186947706934>, cliquez sur la réaction qui correspond pour choisir votre réponse. Au bout de 20s ou quand tout le monde a répondu, les résultats sont affichés. La prochaine question démarrera 7s après. Bonne chance !","br":"Appuyez sur la réaction <:otVALIDER:772766033996021761> pour rejoindre la partie de Trivial Battle Royale et <:otANNULER:811242376625782785> pour annuler votre participation. La personne qui a demandé la partie peut cliquer sur <:otVALIDER:772766033996021761> pour lancer directement la partie. Sinon, elle va démarrer dans une minute.\n\n**Comment jouer ? : ** le Trivial BR se joue de 2 à 15 joueurs. Des questions vont se suivre, l'objectif est d'être le dernier en vie ! Au début vous avez 3 vies, et vous en perdez une par mauvaise réponse. Le jeu se déroule dans ce salon et sur ce message. Les propositions sont numérotés de <:ot1:705766186909958185> à <:ot4:705766186947706934>, cliquez sur la réaction qui correspond pour choisir votre réponse. Au bout de 20s ou quand tout le monde a répondu, les résultats sont affichés. Bonne chance !"}
+        dictHelp={"party":"Appuyez sur la réaction <:otVALIDER:772766033996021761> pour rejoindre la partie de Trivial Party et <:otANNULER:811242376625782785> pour annuler votre participation. La personne qui a demandé la partie peut cliquer sur <:otVALIDER:772766033996021761> pour lancer directement la partie. Sinon, elle va démarrer dans une minute.\n\n**Comment jouer ? : ** le Trivial Party se joue de 2 à 15 joueurs. Des questions vont se suivre, il faut obtenir 12 points pour gagner ! De manière aléatoire, des évènement peuvent se dérouler pour changer complétement la partie ! Le jeu se déroule dans ce salon et sur ce message. Les propositions sont numérotés de <:ot1:705766186909958185> à <:ot4:705766186947706934>, cliquez sur la réaction qui correspond pour choisir votre réponse. Au bout de 20s ou quand tout le monde a répondu, les résultats sont affichés. La prochaine question démarrera peu de temps après. Bonne chance !","versus":"Appuyez sur la réaction <:otVALIDER:772766033996021761> pour rejoindre la partie de Trivial Versus et <:otANNULER:811242376625782785> pour annuler votre participation. La personne qui a demandé la partie peut cliquer sur <:otVALIDER:772766033996021761> pour lancer directement la partie. Sinon, elle va démarrer dans une minute.\n\n**Comment jouer ? : ** le Trivial Versus se joue de 2 à 5 joueurs. Des questions vont se suivre, l'objectif est d'atteindre 5 bonnes réponses avant tout le monde ! Le jeu se déroule dans ce salon et sur ce message. Les propositions sont numérotés de <:ot1:705766186909958185> à <:ot4:705766186947706934>, cliquez sur la réaction qui correspond pour choisir votre réponse. Au bout de 20s ou quand tout le monde a répondu, les résultats sont affichés. La prochaine question démarrera 7s après. Bonne chance !","br":"Appuyez sur la réaction <:otVALIDER:772766033996021761> pour rejoindre la partie de Trivial Battle Royale et <:otANNULER:811242376625782785> pour annuler votre participation. La personne qui a demandé la partie peut cliquer sur <:otVALIDER:772766033996021761> pour lancer directement la partie. Sinon, elle va démarrer dans une minute.\n\n**Comment jouer ? : ** le Trivial BR se joue de 2 à 15 joueurs. Des questions vont se suivre, l'objectif est d'être le dernier en vie ! Au début vous avez 3 vies, et vous en perdez une par mauvaise réponse. Le jeu se déroule dans ce salon et sur ce message. Les propositions sont numérotés de <:ot1:705766186909958185> à <:ot4:705766186947706934>, cliquez sur la réaction qui correspond pour choisir votre réponse. Au bout de 20s ou quand tout le monde a répondu, les résultats sont affichés. Bonne chance !"}
         message=await ctx.send(embed=createEmbed("Trivial {0}".format(self.option.upper()),dictHelp[self.option],0xad917b,ctx.invoked_with.lower(),ctx.guild))
         gamesTrivial[message.id]=self
         await message.add_reaction("<:otVALIDER:772766033996021761>")
@@ -430,7 +430,7 @@ class Versus(Question):
 class Party(Versus):
     def __init__(self, guild,option):
         super().__init__(guild,option)
-        self.max=15
+        self.max=12
         self.event=["malus","double","triple","10s","solo","ratio","theme1","themeA","speed","diff1","diffA","duo","vol",None]
         self.eventTimes={i:0 for i in self.event}
         self.eventMax={"malus":3,"double":2,"triple":1,"10s":2,"solo":2,"ratio":1,"theme1":2,"themeA":1,"speed":3,"diff1":2,"diffA":1,"duo":1,"vol":2,None:4}
@@ -659,7 +659,7 @@ async def trivialParty(ctx,bot):
                     choix=choice(listeJoueurs)
                     user.append(choix)
                     listeJoueurs.remove(user[i])
-                game.reponses={i:None for i in user.id}
+                game.reponses={i.id:None for i in user}
             elif event=="speedfinal":
                 pass
             else: 
@@ -870,7 +870,8 @@ async def trivialBattleRoyale(ctx,bot):
         messAd=await bot.get_channel(870598360296488980).send("{0} - {1} : partie OT!trivialbr débutée\n{2} joueurs".format(ctx.guild.name,ctx.guild.id,len(game.joueurs)))
         game.restants=game.ids.copy()
         while game.playing:
-            game.reponses={i:None for i in game.ids}
+            listeDel=[]
+            game.reponses={i:None for i in game.restants}
             game.setCateg(None)
             game.setDiff()
             game.newQuestion()
@@ -893,12 +894,14 @@ async def trivialBattleRoyale(ctx,bot):
                 for i in game.restants:
                     if game.scores[i]==0:
                         game.histo[i]=left-count+1
-                        game.restants.remove(i)
+                        listeDel.append(i)
+                for i in listeDel:
+                    game.restants.remove(i)
             
             embedT=game.createEmbed(True)
             if good>0:
                 embedT.colour=0x47b03c
-                embedT.description="**{0} personnes ont eu juste !** {1}".format(good,game.affichageWin()[20:-1])
+                embedT.description="**{0} personne*(s)* a *(ont)* eu juste !** {1}".format(good,game.affichageWin()[20:-1])
             else:
                 embedT.colour=0xcf1742
                 embedT.description="**Tout le monde s'est trompé...** {0}".format(game.affichageLose(None)[10:-1])
