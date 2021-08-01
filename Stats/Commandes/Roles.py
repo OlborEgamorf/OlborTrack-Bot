@@ -48,8 +48,10 @@ async def statsRoles(ctx,option,turn,react,ligne,guildOT,bot):
         connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[mois],annee)
         obj="" if ligne["Args3"]=="None" else ligne["Args3"]
         role=ligne["Args4"]
-        
 
+        if option in ("Salons","Voicechan") and obj!="":
+            assert not guildOT.chan[int(obj)]["Hide"]
+        
         if role=="None":
             table=getTableRoles(curseur,ctx.guild,"{0}{1}{2}".format(mois,annee,obj),ligne["Tri"])
             pagemax=setMax(len(table))
@@ -86,6 +88,6 @@ async def statsRoles(ctx,option,turn,react,ligne,guildOT,bot):
         
     except:
         if react:
-            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée n'existe plus."))
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée n'existe plus ou alors est masqué par un administrateur."))
         else:
-            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée cherché n'existe pas.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée cherché n'existe pas ou alors est masqué par un administrateur.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))

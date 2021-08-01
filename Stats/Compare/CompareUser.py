@@ -74,6 +74,8 @@ async def compareUser(ctx,option,turn,react,ligne,guildOT,bot):
         if obj=="":
             embed.description="{0}, {1}".format(nomsOptions("Messages",int(ligne["AuthorID"]),guildOT,bot),newDescip(embed.description,"Messages",mention,guildOT,bot))
         else:
+            if option in ("Salons","Voicechan"):
+                assert not guildOT.chan[int(obj)]["Hide"]
             embed.description="{0}, {1}, {2}".format(nomsOptions("Messages",int(ligne["AuthorID"]),guildOT,bot),nomsOptions("Messages",int(mention),guildOT,bot),newDescip(embed.description,option,obj,guildOT,bot))
         embed=auteur(ctx.guild.id,ctx.guild.name,ctx.guild.icon,embed,"guild")
         embed.colour=0x3498db
@@ -84,9 +86,9 @@ async def compareUser(ctx,option,turn,react,ligne,guildOT,bot):
         await sendEmbed(ctx,embed,react,True,curseurCMD,connexionCMD,page,pagemax)
     except:
         if react:
-            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit le classement cherché n'existe plus."))
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit le classement cherché n'existe plus ou alors est masqué par un administrateur."))
         else:
-            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit le classement cherché n'existe pas.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit le classement cherché n'existe pas ou alors est masqué par un administrateur.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))
         
 
 def embedCompare(nom,id1,id2,option,optionCompare,curseur,ligne,page,guildOT,bot,obj):

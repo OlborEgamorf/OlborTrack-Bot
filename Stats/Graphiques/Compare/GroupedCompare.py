@@ -23,6 +23,9 @@ def graphGroupedCompare(ligne,ctx,option,bot,guildOT,curseur):
     setThemeGraph(plt)
     plt.subplots(figsize=(6.4,4.8))
     for i in range(len(table)):
+        if option in ("Salons","Voicechan"):
+            if guildOT.chan[table[i]["ID"]]["Hide"]:
+                continue
         center=0
         listeX.append(pos)
         listeY.append(table[i]["Count"])
@@ -106,6 +109,12 @@ def graphGroupedComparePerso(ligne,ctx,option,bot,guildOT):
     setThemeGraph(plt)
     plt.subplots(figsize=(6.4,4.8))
     for i in range(len(table)):
+        if option in ("Messages","Mots","Voice") or obj!="":
+            if guildOT.users[table[i]["ID"]]["Hide"]:
+                continue
+        elif option in ("Salons","Voicechan"):
+            if guildOT.chan[table[i]["ID"]]["Hide"]:
+                continue
         center=0
         listeX.append(pos)
         listeY.append(table[i]["Count"])
@@ -168,6 +177,8 @@ def graphGroupedCompareRank(ligne,ctx,option,bot,guildOT):
     setThemeGraph(plt)
     plt.subplots(figsize=(6.4,4.8))
     for i in range(len(table)):
+        if guildOT.users[table[i]["ID"]]["Hide"]:
+            continue
         center=0
         listeX.append(pos)
         listeY.append(table[i]["Count"])
@@ -198,7 +209,7 @@ def graphGroupedCompareRank(ligne,ctx,option,bot,guildOT):
 
     plt.bar(listeX, listeY, color=[colors[i] for i in listeA], width=1, edgecolor='white')
     plt.xticks(listeSX, listeSN,rotation=45)
-    plt.xlabel(dictYAx[option])
+    plt.xlabel("Membres")
 
     for i in range(len(listeY)):
         plt.text(x=listeX[i], y=listeY[i], s=listeY[i], size=8, ha="center")

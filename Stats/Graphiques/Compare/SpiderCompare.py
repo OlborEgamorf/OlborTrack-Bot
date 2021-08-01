@@ -17,6 +17,9 @@ async def graphSpiderCompare(ligne,ctx,bot,option,guildOT,curseur):
     dictValues={}
     listeNext,listeNextTitre=[],[]
     for i in table:
+        if option in ("Salons","Voicechan"):
+            if guildOT.chan[i["ID"]]["Hide"]:
+                continue
         listeCount.append(i["Count"])
         if i["Count"]==0:
             continue
@@ -103,6 +106,12 @@ async def graphSpiderComparePerso(ligne,ctx,bot,option,guildOT):
     dictValues={}
     listeNext,listeNextTitre=[],[]
     for i in table:
+        if option in ("Messages","Mots","Voice") or obj!="":
+            if guildOT.users[i["ID"]]["Hide"]:
+                continue
+        elif option in ("Salons","Voicechan"):
+            if guildOT.chan[i["ID"]]["Hide"]:
+                continue
         listeCount.append(i["Count"])
         if i["Count"]==0:
             continue

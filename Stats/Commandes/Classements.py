@@ -39,6 +39,7 @@ async def statsRank(ctx,option,turn,react,ligne,guildOT,bot):
         else:
             mois,annee=ligne["Args1"],ligne["Args2"]
         
+        
         connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[mois],annee)
 
         if ligne["Args3"]=="None":
@@ -49,6 +50,8 @@ async def statsRank(ctx,option,turn,react,ligne,guildOT,bot):
         page=setPage(ligne["Page"],pagemax,turn)
         obj="" if ligne["Args3"]=="None" else ligne["Args3"]
         if obj!="":
+            if option in ("Salons","Voicechan"):
+                assert not guildOT.chan[int(obj)]["Hide"]
             tempOption=option
             if option=="Voicechan":
                 option="Voice"
@@ -75,6 +78,6 @@ async def statsRank(ctx,option,turn,react,ligne,guildOT,bot):
     
     except:
         if react:
-            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit le classement cherché n'existe plus."))
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit le classement cherché n'existe plus ou alors est masqué par un administrateur."))
         else:
-            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit le classement cherché n'existe pas.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit le classement cherché n'existe pas ou alors est masqué par un administrateur.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))

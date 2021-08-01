@@ -20,6 +20,9 @@ async def statsPeriods(ctx,option,turn,react,ligne,guildOT,bot):
         else:
             author=ligne["AuthorID"]
 
+        if option in ("Salons","Voicechan"):
+            assert not guildOT.chan[int(author)]["Hide"]
+
         pagemax=setMax(curseur.execute("SELECT COUNT() as Nombre FROM persoM{0}".format(author)).fetchone()["Nombre"])+1
         page=setPage(ligne["Page"],pagemax,turn)
 
@@ -47,6 +50,6 @@ async def statsPeriods(ctx,option,turn,react,ligne,guildOT,bot):
         
     except:
         if react:
-            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée n'existe plus."))
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée n'existe plus ou alors est masqué par un administrateur."))
         else:
-            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée cherché n'existe pas.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée cherché n'existe pas ou alors est masqué par un administrateur.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))

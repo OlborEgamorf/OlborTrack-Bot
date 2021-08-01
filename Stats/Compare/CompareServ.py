@@ -42,6 +42,8 @@ async def compareServ(ctx,option,turn,react,ligne,guildOT,bot):
         page=setPage(ligne["Page"],pagemax,turn)
 
         if obj!="":
+            if option in ("Salons","Voicechan"):
+                assert not guildOT.chan[int(obj)]["Hide"]
             tempOption=option
             if option=="Voicechan":
                 option="Voice"
@@ -61,9 +63,9 @@ async def compareServ(ctx,option,turn,react,ligne,guildOT,bot):
         await sendEmbed(ctx,embed,react,True,curseurCMD,connexionCMD,page,pagemax)
     except:
         if react:
-            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit le classement cherché n'existe plus."))
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit le classement cherché n'existe plus ou alors est masqué par un administrateur."))
         else:
-            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit le classement cherché n'existe pas.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit le classement cherché n'existe pas ou alors est masqué par un administrateur.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))
 
 def detectPeriod(args,liste,curseur):
     if args[0].lower()=="mois":

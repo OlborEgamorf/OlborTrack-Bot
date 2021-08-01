@@ -42,7 +42,11 @@ async def compareRank(ctx,option,turn,react,ligne,guildOT,bot):
             ligne=curseurCMD.execute("SELECT * FROM commandes WHERE MessageID={0}".format(ctx.message.id)).fetchone()
         else:
             mois,annee,obj1,obj2=ligne["Args1"],ligne["Args2"],int(ligne["Args3"]),int(ligne["Args4"])
-            
+        
+        if option in ("Salons","Voicechan"):
+            assert not guildOT.chan[int(obj1)]["Hide"]
+            assert not guildOT.chan[int(obj2)]["Hide"]
+
         connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[mois],annee)
         pagemax=setMax(curseur.execute("SELECT COUNT() as Nombre FROM {0}{1}{2}".format(mois,annee,obj1)).fetchone()["Nombre"])
         page=setPage(ligne["Page"],pagemax,turn)
@@ -66,9 +70,9 @@ async def compareRank(ctx,option,turn,react,ligne,guildOT,bot):
         await sendEmbed(ctx,embed,react,True,curseurCMD,connexionCMD,page,pagemax)
     except:
         if react:
-            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit le classement cherché n'existe plus."))
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit le classement cherché n'existe plus ou alors est masqué par un administrateur.\n"))
         else:
-            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit le classement cherché n'existe pas.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit le classement cherché n'existe pas ou alors est masqué par un administrateur.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))
 
 def embedCompare(mois,annee,curseur,obj1,obj2,ligne,page,guildOT,bot,option,ctx):
     embed=discord.Embed()
