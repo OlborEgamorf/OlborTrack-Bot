@@ -144,22 +144,25 @@ async def sendEmbed(ctx:commands.Context,embed:discord.Embed,react:bool,boutons:
         pagemax : page maximale
     Sortie :
         Si react==True : rien, sinon le message envoyé."""
-    if react:
-        await ctx.message.edit(embed=embed)
-        curseurCMD.execute("UPDATE commandes SET Page={0}, PageMax={1} WHERE MessageID={2}".format(page,pagemax,ctx.message.id))
-        connexionCMD.commit()
-    else:
-        message=await ctx.reply(embed=embed)
-        if pagemax!=1:
-            await message.add_reaction("<:otGAUCHE:772766034335236127>")
-            await message.add_reaction("<:otDROITE:772766034376523776>")
-        if boutons:
-            await message.add_reaction("<:otGRAPH:772766034558058506>")
-            await message.add_reaction("<:otTRI:833666016491864114>")
-            await message.add_reaction("<:otMOBILE:833736320919797780>")
-        curseurCMD.execute("UPDATE commandes SET Page={0}, PageMax={1}, MessageID={2} WHERE MessageID={3}".format(page,pagemax,message.id,ctx.message.id))
-        connexionCMD.commit()
-        return message
+    try:
+        if react:
+            await ctx.message.edit(embed=embed)
+            curseurCMD.execute("UPDATE commandes SET Page={0}, PageMax={1} WHERE MessageID={2}".format(page,pagemax,ctx.message.id))
+            connexionCMD.commit()
+        else:
+            message=await ctx.reply(embed=embed)
+            if pagemax!=1:
+                await message.add_reaction("<:otGAUCHE:772766034335236127>")
+                await message.add_reaction("<:otDROITE:772766034376523776>")
+            if boutons:
+                await message.add_reaction("<:otGRAPH:772766034558058506>")
+                await message.add_reaction("<:otTRI:833666016491864114>")
+                await message.add_reaction("<:otMOBILE:833736320919797780>")
+            curseurCMD.execute("UPDATE commandes SET Page={0}, PageMax={1}, MessageID={2} WHERE MessageID={3}".format(page,pagemax,message.id,ctx.message.id))
+            connexionCMD.commit()
+            return message
+    except discord.errors.Forbidden:
+        await ctx.reply(embed=embedAssert("Je n'ai pas pu envoyer les réactions de cette commande, qui servent à naviguer dedans. Donnez moi les permissions 'utiliser emojis externes' et 'ajouter des réactions' si vous ne voulez plus voir ce message, et profiter à fond de mes possibilités."),delete_after=10)
 
 
 def embedHisto(ctx:commands.Context,bot) -> discord.Embed:
