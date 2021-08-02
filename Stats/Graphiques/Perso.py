@@ -47,7 +47,7 @@ def graphPerso(ligne,ctx,option,bot,period,guildOT,categ,curseur):
         plt.plot('date', categ, data=df, linestyle='-', marker='o',color=colorOT)
         plt.title("Ancien membre - Périodes{0}".format(plus),fontsize=12)
     else:
-        if option in ("Messages","Mots","Voice"):
+        if option in ("Messages","Mots","Voice","Mentions","Mentionne"):
             plt.plot('date', categ, data=df, linestyle='-', marker='o',color=(user.color.r/256,user.color.g/256,user.color.b/256,1))
             plt.title("{0} - Périodes{1}".format(user.name,plus),fontsize=12)
         else:

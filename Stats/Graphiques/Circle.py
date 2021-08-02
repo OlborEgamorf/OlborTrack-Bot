@@ -50,7 +50,7 @@ async def graphCircle(ligne,ctx,bot,option,guildOT):
                     delete+=1
                 else:
                     listeY.append(getNomGraph(ctx,bot,option,table[i]["ID"]))
-            elif option in ("Messages","Mots","Voice") or obj!="":
+            elif option in ("Messages","Mots","Voice","Mentions","Mentionne") or obj!="":
                 if guildOT.users[table[i]["ID"]]["Hide"]:
                     del listeX[i]
                     del listeC[i]

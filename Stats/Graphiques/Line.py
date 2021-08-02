@@ -59,7 +59,7 @@ async def graphLine(ligne,ctx,bot,option,guildOT):
         if option in ("Salons","Voicechan") and obj=="":
             if guildOT.chan[table[i]["ID"]]["Hide"]:
                 continue
-        elif option in ("Messages","Mots","Voice") or obj!="":
+        elif option in ("Messages","Mots","Voice","Mentions","Mentionne") or obj!="":
             if guildOT.users[table[i]["ID"]]["Hide"]:
                 continue 
         df=pd.DataFrame({"Date": listeX[i], "Count": listeY[i]})
