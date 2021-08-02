@@ -1,6 +1,6 @@
 import discord
 from Core.Fonctions.Embeds import addtoFields, createFields, defEvol
-from Core.Fonctions.TempsVoice import formatCount
+from Core.Fonctions.TempsVoice import formatCount, tempsVoice
 from Core.Fonctions.DichoTri import dichotomieID, triID
 
 dictNameF3={"Messages":"Messages","Salons":"Messages","Freq":"Messages","Mots":"Mots","Emotes":"Utilisations","Reactions":"Utilisations","Voice":"Temps","Voicechan":"Temps","Mentions":"Mentions","Mentionne":"Mentions","Divers":"Nombre"}
@@ -12,7 +12,10 @@ def embedMembre(table,guildOT,page,mobile,id,evol,option):
     stop=15*page if 15*page<len(table) else len(table)
     for i in range(15*(page-1),stop):
         rank="{0} {1}".format(table[i]["Rank"],defEvol(table[i],evol))
-        count=formatCount(option,table[i]["Count"])
+        if option=="Divers" and table[i]["IDComp"]==11:
+            count=tempsVoice(table[i]["Count"])
+        else:
+            count=formatCount(option,table[i]["Count"])
         if guildOT.users[table[i]["ID"]]["Hide"]:
             nom="*Membre masqué*"
             count="*?*"
