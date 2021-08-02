@@ -82,7 +82,7 @@ def checkSoloEmotes(guild,mois,annee):
     connexion.commit()
 
 
-async def boucleAuto(bot,dictGuilds):
+async def boucleAutoCMD(bot,dictGuilds):
     while True:
         minute,heure=strftime("%M"),strftime("%H")
         jour,mois,annee=strftime("%d"),strftime("%m"),strftime("%y")
@@ -91,22 +91,12 @@ async def boucleAuto(bot,dictGuilds):
             minute=strftime("%M")
 
         heure=strftime("%H")
-        while heure!="23":
+        while heure!="00":
             await asyncio.sleep(3600)
             heure=strftime("%H")
 
-        await endNight(bot,dictGuilds)
-
-        while heure!="00":
-            await asyncio.sleep(30)
-            heure=strftime("%H")
-
         for i in bot.guilds:
-            try:
-                archivesSave(i.id,jour,mois,annee)
-            except:
-                await bot.get_channel(706175527953760277).send("Sauvegarde archive échec : {0} / {1}".format(i.id,i.name))
-
+            
             if dictGuilds[i.id].auto==None:
                 continue
 
@@ -130,5 +120,32 @@ async def boucleAuto(bot,dictGuilds):
                             await autoEvents(bot,j["Salon"],dictGuilds[i.id].id)
                     except:
                         pass     
+
+        await asyncio.sleep(80000)
+
+async def boucleAutoStats(bot,dictGuilds):
+    while True:
+        minute,heure=strftime("%M"),strftime("%H")
+        jour,mois,annee=strftime("%d"),strftime("%m"),strftime("%y")
+        while minute!="59":
+            await asyncio.sleep(60)
+            minute=strftime("%M")
+
+        heure=strftime("%H")
+        while heure!="23":
+            await asyncio.sleep(3600)
+            heure=strftime("%H")
+
+        await endNight(bot,dictGuilds)
+
+        while heure!="00":
+            await asyncio.sleep(30)
+            heure=strftime("%H")
+
+        for i in bot.guilds:
+            try:
+                archivesSave(i.id,jour,mois,annee)
+            except:
+                await bot.get_channel(706175527953760277).send("Sauvegarde archive échec : {0} / {1}".format(i.id,i.name))
 
         await asyncio.sleep(80000)

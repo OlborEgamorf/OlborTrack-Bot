@@ -6,7 +6,10 @@ def animateGraph(i,*fargs):
     else:
         ligne=graphiqueOT[i]
         if i%30==0:
-            date=str(ligne[0]["date"])
+            try:
+                date=str(ligne[0]["date"])
+            except:
+                return
             plt.title("Graphique animé {1}/{2} - {3}\nClassement au {0}/{1}/{2}".format(date[4:6],date[2:4],date[0:2],option))
         if i!=0:
             if getRankList(ligne)!=getRankList(graphiqueOT[i-1]):

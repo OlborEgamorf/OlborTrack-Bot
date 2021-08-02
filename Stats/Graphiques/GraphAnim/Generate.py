@@ -38,8 +38,8 @@ async def getGraph(ctx,bot,guildOT,option):
 
         fig=plt.figure()
         
-        data=createEvol(ctx,bot,guildOT,ligne,option)
-        graphiqueOT=createDict(data,bot,ctx,option)
+        data=createEvol(ctx,bot,ligne,option)
+        graphiqueOT=createDict(data,bot,ctx,option,guildOT)
         
         zero=generatePlot(graphiqueOT)
         barcollection = plt.barh(zero[0],zero[1],color=zero[2],fill=True)

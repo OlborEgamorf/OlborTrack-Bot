@@ -182,7 +182,7 @@ async def reactGraph(message:int,bot:commands.Bot,guildOT:OTGuild,payload,emoji)
             elif ligne["Commande"]=="trivial" and ligne["Option"]=="trivialperso":
                 listeFonc=[graphSpider]
 
-            elif ligne["Commande"]=="jeux":
+            elif ligne["Commande"] in ("jeux","trivial"):
                 await ctx.reply("Les graphiques pour les classements de jeux ne sont pas encore disponible ! Il manque des choses à régler pour cela...")
                 return
             

@@ -5,7 +5,7 @@ from Core.Fonctions.RankingClassic import rankingClassic
 
 tableauSiom={"janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","TOTAL":"TO",":":":","00":"00","01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre"}
 
-def createEvol(ctx,bot,guildOT,ligne,option):
+def createEvol(ctx,bot,ligne,option):
     listeMois=[]
     connexion,curseur=connectSQL(ctx.guild.id,"Rapports","Stats","GL","")
     dates=curseur.execute("SELECT DISTINCT Jour FROM ranks WHERE Mois='{0}' AND Annee='{1}' AND Type='{2}' ORDER BY Jour ASC".format(tableauSiom[ligne["Args1"]],ligne["Args2"],option)).fetchall()
@@ -14,7 +14,7 @@ def createEvol(ctx,bot,guildOT,ligne,option):
         listeMois.append(table.copy())
     return listeMois
 
-def createDict(listeMois,client,ctx,option):
+def createDict(listeMois,client,ctx,option,guildOT):
     dictGraph={}
     listeAll=[]
     listeRank=[]
@@ -26,6 +26,14 @@ def createDict(listeMois,client,ctx,option):
         else:
             borne=len(listeMois[i])
         for h in range(borne):
+            if option in ("Messages","Mots","Voice"):
+                print(listeMois[i][h]["ID"])
+                if guildOT.users[listeMois[i][h]["ID"]]["Hide"]:
+                    print("oui")
+                    continue
+            elif option in ("Salons","Voicechan"):
+                if guildOT.chan[listeMois[i][h]["ID"]]["Hide"]:
+                    continue
             if listeMois[i][h]["ID"] not in listeAll:
                 listeAll.append(listeMois[i][h]["ID"])
     for i in listeAll:
