@@ -26,8 +26,9 @@ async def exeReactOT(emoji:discord.Reaction, message:discord.Message, bot:comman
         elif emoji.id==833736320919797780:
             await changeMobile(message,emoji,bot,guildOT,payload)
         elif emoji.id==866705696505200691:
+            message,user=await seekMessage(bot,payload)
             ctx=await bot.get_context(message)
-            await confirmDel(ctx,ctx.author,bot)
+            await confirmDel(ctx,user,bot)
         else:
             return
     except discord.errors.Forbidden:
