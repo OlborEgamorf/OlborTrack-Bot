@@ -71,6 +71,11 @@ def graphGroupedCompare(ligne,ctx,option,bot,guildOT,curseur):
 
     plt.legend([matplotlib.patches.Patch(color=colors[ligne["AuthorID"]]),matplotlib.patches.Patch(color=colors[int(ligne["Args4"])])],[noms[ligne["AuthorID"]],noms[int(ligne["Args4"])]])
 
+    if table[0]["Annee"]=="GL":
+        titre="Classement global - {0} - {1}".format(ctx.guild.name,option)   
+    else:
+        titre="Classement {0} 20{1} - {2} - {3}".format(tableauMois[table[0]["Mois"]],table[0]["Annee"],ctx.guild.name,option)
+
     plt.title("Groupement comparaison\n{0} - {1}/{2}".format(option,ligne["Args2"],ligne["Args3"]))
     plt.tight_layout()
     plt.savefig("Graphs/otGraph")
@@ -215,6 +220,11 @@ def graphGroupedCompareRank(ligne,ctx,option,bot,guildOT):
         plt.text(x=listeX[i], y=listeY[i], s=listeY[i], size=8, ha="center")
 
     plt.legend([matplotlib.patches.Patch(color=colors[0]),matplotlib.patches.Patch(color=colors[1])],[noms[0],noms[1]])
+
+    if table[0]["Annee"]=="GL":
+        plt.title("Groupement comparaison\n{0} - Période globale".format(option))   
+    else:
+        plt.title("Groupement comparaison\n{0} - {1} 20{2}".format(option,tableauMois[table[0]["Mois"]],table[0]["Annee"]))   
 
     plt.title("Groupement comparaison\n{0}".format(option))
     plt.tight_layout()

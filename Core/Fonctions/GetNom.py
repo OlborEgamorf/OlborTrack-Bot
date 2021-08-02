@@ -19,7 +19,9 @@ def nomsOptions(option:str,id:int,guildOT:OTGuild,bot:commands.Bot) -> str:
     Sortie :
         nom : le formatage"""
     if option in ("Voice","Messages","Mots","Mentions","Mentionne"):
-        if guildOT.users[id]["Hide"]==True:
+        if id not in guildOT.users:
+            nom="??"
+        elif guildOT.users[id]["Hide"]==True:
             nom="*Membre masqué*"
         elif guildOT.users[id]["Leave"]==True:
             nom="*Ancien membre*"
@@ -37,7 +39,9 @@ def nomsOptions(option:str,id:int,guildOT:OTGuild,bot:commands.Bot) -> str:
                 nom=str(emote)
 
     elif option in ("Salons","Voicechan"):
-        if guildOT.chan[id]["Hide"]==True:
+        if id not in guildOT.chan:
+            nom="??"
+        elif guildOT.chan[id]["Hide"]==True:
             nom="*Salon masqué*"
         else:
             nom="<#{0}>".format(id)

@@ -31,6 +31,9 @@ def graphPersoComp(ligne,ctx,option,bot,period,guildOT,categ,curseur):
     for z in range(2):
         for i in tables[z]:
             dictY={"Compteur":i["Count"],"Rang":i["Rank"]}
+            if z==1:
+                if "{0}/{1}".format(i["Mois"],i["Annee"]) not in listeX[0]:
+                    continue
             listeX[z].append("{0}/{1}".format(i["Mois"],i["Annee"]))
             listeY[z].append(dictY[categ])
     
