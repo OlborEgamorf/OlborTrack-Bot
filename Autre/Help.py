@@ -4,6 +4,7 @@ from Core.Fonctions.AuteurIcon import auteur
 from Stats.SQL.ConnectSQL import connectSQL
 from Core.Fonctions.setMaxPage import setPage
 from Core.Fonctions.Embeds import embedAssert, exeErrorExcept, sendEmbed
+from Outils.CustomCMD.ListeCMD import commandeCMD
 
 dictDescip={"home":{},"stats":dictStats,"polls":dictPoll,"jeux":dictJeux,"utile":dictUtile,"autre":dictAutre,"sv":dictSV,"outils":dictOutils,"wiki":dictWiki,"mal":dictMAL,"admin":dictAdmin,"spotify":dictSpotify,"geo":dictGeo}
 
@@ -14,7 +15,10 @@ async def commandeHelp(ctx,turn,react,ligne,bot,guildOT):
         if len(ctx.args)==2:
             option="home"
         else:
-            if ctx.args[2].lower() in ("polls","stats","jeux","utile","autre","sv","outils","wiki","spotify","mal","admin","geo"):
+            if ctx.args[2].lower()=="serv":
+                await commandeCMD(ctx,None,False,None)
+                return
+            elif ctx.args[2].lower() in ("polls","stats","jeux","utile","autre","sv","outils","wiki","spotify","mal","admin","geo"):
                 option=ctx.args[2].lower()
             else:
                 option="home"
@@ -50,9 +54,9 @@ def embedHelp30(option,guildOT,page,bot):
     dictDescipFields={"home":{},"stats":dictFStats,"polls":dictFPoll,"jeux":dictFJeux,"utile":dictFUtile,"autre":dictFAutre,"sv":dictFSV,"outils":dictFOutils,"wiki":dictFWiki,"mal":dictFMAL,"admin":dictFAdmin,"spotify":dictFSpotify,"geo":dictFGeo}
     dictDescipTitres={"home":{},"stats":dictTStats,"polls":dictTPoll,"jeux":dictTJeux,"utile":dictTUtile,"autre":dictTAutre,"sv":dictTSV,"outils":dictTOutils,"wiki":dictTWiki,"mal":dictTMAL,"admin":dictTAdmin,"spotify":dictTSpotify,"geo":dictTGeo}
 
-    listeName=["<:OTHstats:859840446901649459> OT!help stats","<:OTHjeux:859840446675419167> OT!help jeux","<:OTHoutils:859840447126700083> OT!help outils","<:OTHpoll:859840447210848306> OT!help polls","<:OTHsv:859840446780145665> OT!help savezvous","<:ot30:845649462918512671> OT!help utile","<:OTHmal:859840447367348284> OT!help mal","<:OTHwiki:859840446800592937> OT!help wiki","<:OTHspotify:859840447048712201> OT!help spotify","<:OTHgeo:859840447073878036> OT!help geo","<:OTHadmin:859840446984486972> OT!help admin","<:ot30:845649462918512671> OT!help autre"]
-    listeValue=["Statistiques de l'activité de votre serveur !","Gérez vos outils !","Questions de culture, Tortues et plus !","Sondages, giveaway et rappels !","Créez une boîte de connaissances commune !","Les commandes utilitaires.","Intéractions avec MyAnimeList !","Intéractions avec Wikipédia !","Intéractions avec Spotify !","Géographie et espace !","Toutes les commandes pour les administrateurs.","Autres commandes."]
-    listeOptions=["stats","jeux","outils","polls","sv","utile","mal","wiki","spotify","geo","admin","autre"]
+    listeName=["<:OTHstats:859840446901649459> OT!help stats","<:OTHoutils:859840447126700083> OT!help outils","<:OTHjeux:859840446675419167> OT!help jeux","<:OTHpoll:859840447210848306> OT!help polls","<:OTHsv:859840446780145665> OT!help savezvous","<:ot30:845649462918512671> OT!help utile","<:OTHmal:859840447367348284> OT!help mal","<:OTHwiki:859840446800592937> OT!help wiki","<:OTHspotify:859840447048712201> OT!help spotify","<:OTHgeo:859840447073878036> OT!help geo","<:OTHadmin:859840446984486972> OT!help admin","<:ot30:845649462918512671> OT!help autre","<:ot30:845649462918512671> OT!help serv"]
+    listeValue=["Statistiques de l'activité de votre serveur !","Gérez vos outils !","Questions de culture, Tortues et plus !","Sondages, giveaway et rappels !","Créez une boîte de connaissances commune !","Les commandes utilitaires.","Intéractions avec MyAnimeList !","Intéractions avec Wikipédia !","Intéractions avec Spotify !","Géographie et espace !","Toutes les commandes pour les administrateurs.","Autres commandes.","Les commandes personnalisées de votre serveur (s'il y en a)"]
+    listeOptions=["stats","jeux","outils","polls","sv","utile","mal","wiki","spotify","geo","admin","autre","serv"]
 
     embedHelp=discord.Embed(color=dictColor[option])
     embedHelp.set_author(icon_url=dictLinks[option],name=dictAuthor[option])
@@ -73,10 +77,11 @@ def embedHelp30(option,guildOT,page,bot):
                     embedHelp.add_field(name=listeName[i], value=listeValue[i], inline=True)
                 else:
                     descip=""
-                    for j in dictDescip[listeOptions[i]]:
-                        for h in dictDescip[listeOptions[i]][j]:
-                            descip+="{0}, ".format(h)
-                    embedHelp.add_field(name=listeName[i], value="`"+descip[0:-2]+"`", inline=False)
+                    if listeOptions[i]!="serv":
+                        for j in dictDescip[listeOptions[i]]:
+                            for h in dictDescip[listeOptions[i]][j]:
+                                descip+="{0}, ".format(h)
+                        embedHelp.add_field(name=listeName[i], value="`"+descip[0:-2]+"`", inline=False)
         else:
             embedHelp.set_image(url="https://cdn.discordapp.com/attachments/726034739550486618/870617284920619058/unknown.png")
     else:
