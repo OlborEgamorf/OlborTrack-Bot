@@ -17,6 +17,7 @@ class PollTime():
         self.question=question
         self.start=time()
         self.chan=chan
+        self.active=True
 
     async def trigger(self,bot):
         reacts=[]
@@ -33,6 +34,7 @@ class PollTime():
         embed=self.affichage(reacts,message.guild)
         await message.reply(embed=embed)
         await message.clear_reactions()
+        self.active=False
 
     def affichage(self,table,guild):
         total=0
@@ -59,6 +61,7 @@ class Reminder():
         self.temps=temps
         self.remind=remind
         self.start=time()
+        self.active=True
 
     async def trigger(self,bot):
         if self.temps>0:
@@ -66,6 +69,7 @@ class Reminder():
         user=bot.get_user(self.user)
         embed=createEmbed("Rappel",self.remind,0xfc03d7,"reminder",user)
         await user.send(embed=embed)
+        self.active=False
 
 class Giveaway():
     def __init__(self,id,guild,temps,lot,gagnants,chan):
@@ -76,6 +80,7 @@ class Giveaway():
         self.gagnants=gagnants
         self.start=time()
         self.chan=chan
+        self.active=True
 
     async def trigger(self,bot):
         if self.temps>0:
@@ -91,6 +96,7 @@ class Giveaway():
         if len(users)<self.gagnants:
             embed=createEmbed(self.lot,"<:otROUGE:868535622237818910> Il y a eu moins de participants ({0}) que de gagnants ({1}), le tirage est donc invalidé.".format(len(users),self.gagnants),0xff0000,"giveaway",message.guild)
             await message.edit(embed=embed)
+            self.active=False
             return
 
         connexion,curseur=connectSQL(self.guild,"Giveaway","Guild",None,None)
@@ -114,3 +120,4 @@ class Giveaway():
             embed=createEmbed("Les gagnants de '{0}' sont...".format(self.lot),"Félicitations à : {0} !!||\n`Numéro reroll : {1}`||".format(descip,count),0xfc03d7,"giveaway",message.guild)
             await message.reply("<:otVERT:868535645897912330> Bravo à {0}qui ont gagné {1} !".format(descip,self.lot))
         await message.edit(embed=embed)
+        self.active=False

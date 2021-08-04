@@ -119,17 +119,17 @@ def sauvegardePoll(bot):
     curseur.execute("CREATE TABLE IF NOT EXISTS Polls (ID INT, Guild INT, Temps INT, Question TEXT, Start INT, Salon INT)")
     curseur.execute("CREATE TABLE IF NOT EXISTS Reminders (ID INT, User INT, Temps INT, Remind TEXT, Start INT)")
     curseur.execute("CREATE TABLE IF NOT EXISTS Giveaways (ID INT, Guild INT, Temps INT, Lot TEXT, Gagnants INT, Start INT, Salon INT)")
-    print(dictPolls)
     for i in dictPolls:
-        if type(dictPolls[i])==PollTime:
-            curseur.execute("INSERT INTO Polls VALUES({0},{1},{2},'{3}',{4},{5})".format(dictPolls[i].id,dictPolls[i].guild,dictPolls[i].temps,createPhrase([dictPolls[i].question]),dictPolls[i].start,dictPolls[i].chan))
-            curseur.execute("CREATE TABLE p{0} (Prop TEXT)".format(dictPolls[i].id))
-            for j in dictPolls[i].propositions:
-                curseur.execute("INSERT INTO p{0} VALUES ('{1}')".format(dictPolls[i].id,createPhrase([j])))
-        elif type(dictPolls[i])==Reminder:
-            curseur.execute("INSERT INTO Reminders VALUES({0},{1},{2},'{3}',{4})".format(dictPolls[i].id,dictPolls[i].user,dictPolls[i].temps,createPhrase([dictPolls[i].remind]),dictPolls[i].start))
-        elif type(dictPolls[i])==Giveaway:
-            curseur.execute("INSERT INTO Giveaways VALUES({0},{1},{2},'{3}',{4},{5},{6})".format(dictPolls[i].id,dictPolls[i].guild,dictPolls[i].temps,createPhrase([dictPolls[i].lot]),dictPolls[i].gagnants,dictPolls[i].start,dictPolls[i].chan))
+        if dictPolls[i].active:
+            if type(dictPolls[i])==PollTime:
+                curseur.execute("INSERT INTO Polls VALUES({0},{1},{2},'{3}',{4},{5})".format(dictPolls[i].id,dictPolls[i].guild,dictPolls[i].temps,createPhrase([dictPolls[i].question]),dictPolls[i].start,dictPolls[i].chan))
+                curseur.execute("CREATE TABLE p{0} (Prop TEXT)".format(dictPolls[i].id))
+                for j in dictPolls[i].propositions:
+                    curseur.execute("INSERT INTO p{0} VALUES ('{1}')".format(dictPolls[i].id,createPhrase([j])))
+            elif type(dictPolls[i])==Reminder:
+                curseur.execute("INSERT INTO Reminders VALUES({0},{1},{2},'{3}',{4})".format(dictPolls[i].id,dictPolls[i].user,dictPolls[i].temps,createPhrase([dictPolls[i].remind]),dictPolls[i].start))
+            elif type(dictPolls[i])==Giveaway:
+                curseur.execute("INSERT INTO Giveaways VALUES({0},{1},{2},'{3}',{4},{5},{6})".format(dictPolls[i].id,dictPolls[i].guild,dictPolls[i].temps,createPhrase([dictPolls[i].lot]),dictPolls[i].gagnants,dictPolls[i].start,dictPolls[i].chan))
     
     connexion.commit()
 
