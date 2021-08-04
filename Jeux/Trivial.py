@@ -1037,3 +1037,8 @@ async def joinVersus(message,user,reaction):
         await reaction.remove(user)
     except:
         pass
+
+
+async def checkReactTrivial(message,reaction):
+    if message.id in gamesTrivial:
+        await message.add_reaction(str(reaction))

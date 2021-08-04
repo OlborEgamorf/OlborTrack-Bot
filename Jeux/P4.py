@@ -323,3 +323,8 @@ async def abandonP4(message,user,reaction):
         game.playing=None
         await message.clear_reactions()
         await message.edit(embed=embedP4)
+
+
+async def checkReactP4(message,reaction):
+    if message.id in listeJeux:
+        await message.add_reaction(str(reaction))

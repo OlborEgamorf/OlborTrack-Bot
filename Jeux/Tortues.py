@@ -659,3 +659,7 @@ async def attente(game,temps,event):
                 if game.action[j] in (None,0,1,2,3,4):
                     done=False
         time+=0.5
+
+async def checkReactTortues(message,reaction):
+    if message.id in gamesTortues:
+        await message.add_reaction(str(reaction))
