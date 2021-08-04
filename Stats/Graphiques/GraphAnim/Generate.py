@@ -7,7 +7,7 @@ import discord
 from Core.Fonctions.Embeds import exeErrorExcept
 from Core.Fonctions.GraphTheme import setThemeGraph
 
-dictNameX={"Messages":"Messages","Salons":"Messages","Freq":"Messages","Mots":"Mots","Emotes":"Utilisations","Reactions":"Utilisations","Voice":"Temps","Voicechan":"Temps"}
+dictNameX={"Messages":"Messages","Salons":"Messages","Freq":"Messages","Mots":"Mots","Emotes":"Utilisations","Reactions":"Utilisations","Voice":"Temps (en secondes)","Voicechan":"Temps (en secondes)"}
 dictNameY={"Messages":"Membres","Salons":"Salons","Freq":"Heures","Mots":"Membres","Emotes":"Emotes","Reactions":"Réactions","Voice":"Membres","Voicechan":"Salons"}
 tableauMois={"janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","TOTAL":"TO",":":":","00":"00","01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre"}
 def generatePlot(graph):

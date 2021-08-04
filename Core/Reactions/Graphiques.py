@@ -41,9 +41,14 @@ async def reactGraph(message:int,bot:commands.Bot,guildOT:OTGuild,payload,emoji)
             ligne["Args3"]=ligne["AuthorID"]
             connexion,curseur=connectSQL(ctx.guild.id,ligne["Option"],"Stats","GL","")
 
+            if ligne["Option"] not in ("Divers","Mentions","Mentionne"):
+                liste=[1,2,3,4,5]
+            else:
+                liste=[1,2,3,4]
+
             graphPerso(ligne,ctx,ligne["Option"],bot,"mois",guildOT,"Compteur",curseur)
             messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
-            embedM,embed=await embedGraph([1,2,3,4,5],messageGraph,ctx,message)
+            embedM,embed=await embedGraph(liste,messageGraph,ctx,message)
             listeG.append(messageGraph.attachments[0].url)
 
             graphGroupedMois(ligne,ctx,ligne["Option"],bot,guildOT,curseur)
@@ -58,9 +63,10 @@ async def reactGraph(message:int,bot:commands.Bot,guildOT:OTGuild,payload,emoji)
             messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
             listeG.append(messageGraph.attachments[0].url)
 
-            await graphHeatGlobal(ligne,ctx,bot,ligne["Option"],guildOT)
-            messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
-            listeG.append(messageGraph.attachments[0].url)
+            if ligne["Option"] not in ("Divers","Mentions","Mentionne"):
+                await graphHeatGlobal(ligne,ctx,bot,ligne["Option"],guildOT)
+                messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
+                listeG.append(messageGraph.attachments[0].url)
         
         elif ligne["Commande"]=="moy":
             if ligne["Option"] in ("Jour","Heure"):
@@ -143,7 +149,7 @@ async def reactGraph(message:int,bot:commands.Bot,guildOT:OTGuild,payload,emoji)
                     listeFonc=[graphRank,graphScatter,graphScatterUsers,graphHeatAnnee,graphCircle]
                 else:
                     listeFonc=[graphRank,graphScatter,graphScatterUsers,graphHeat,graphCircle,graphLine]
-                if ligne["Option"]=="Divers":
+                if ligne["Option"] in ("Divers","Mentions","Mentionne"):
                     if graphScatter in listeFonc:
                         listeFonc.remove(graphScatter)
                     if graphHeatGlobal in listeFonc:

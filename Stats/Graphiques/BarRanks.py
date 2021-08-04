@@ -75,7 +75,7 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
                         listeN.append("")
                     else:
                         listeN.append(getNomGraph(ctx,bot,option,table[i]["ID"]))
-            elif option in ("Messages","Mots","Voice") or obj!="None":
+            elif option in ("Messages","Mots","Voice","Mentions","Mentionne") or obj!="None":
                 if guildOT.users[table[i]["ID"]]["Hide"]:
                     listeY[i]=0
                     listeN.append("")

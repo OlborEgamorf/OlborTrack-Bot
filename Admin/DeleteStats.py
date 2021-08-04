@@ -43,10 +43,14 @@ async def confirmDel(ctx,author,bot):
             for i in listeAnnee:
                 for j in listeMois:
                     try:
+                        if listeDel[ctx.message.id]=="mentions":
+                            os.remove("SQL/{0}/{1}/{2}/Mentionne.db".format(ctx.guild.id,i,j))
                         os.remove("SQL/{0}/{1}/{2}/{3}.db".format(ctx.guild.id,i,j,listeDel[ctx.message.id]))
                     except:
                         pass
             try:
+                if listeDel[ctx.message.id]=="mentions":
+                    os.remove("SQL/{0}/GL/Mentionne.db".format(ctx.guild.id))
                 os.remove("SQL/{0}/GL/{1}.db".format(ctx.guild.id,listeDel[ctx.message.id]))
             except:
                 pass

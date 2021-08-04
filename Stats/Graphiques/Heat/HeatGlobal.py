@@ -53,12 +53,20 @@ async def graphHeatGlobal(ligne,ctx,bot,option,guildOT):
                 else:
                     listeHeat[i][j]=somme
                     labels[i][j]=formatCount(option,somme)
+                if option in ("Voice","Voicechan"):
+                    if len(labels[i][j].split(" "))>=3:
+                        descip=""
+                        for z in range(len(labels[i][j].split(" "))):
+                            if z==2:
+                                descip+="\n"
+                            descip+=labels[i][j].split(" ")[z]+" "
+                        labels[i][j]=descip
             except:
                 listeHeat[i][j]=0
 
     df = pd.DataFrame(listeHeat, index=["20{0}".format(dates[i]["Annee"]) for i in range(len(dates))],columns=listeMois)
     midpoint = (df.values.max() - df.values.min()) / 2
-    sns.heatmap(df, annot=np.array(labels),annot_kws={"size": 15},cmap="YlGnBu",fmt="",center=midpoint,square=True,xticklabels=True,yticklabels=True,cbar_kws={"shrink": 0.5})
+    sns.heatmap(df, annot=np.array(labels),annot_kws={"size": 14},cmap="YlGnBu",fmt="",center=midpoint,square=True,xticklabels=True,yticklabels=True,cbar_kws={"shrink": 0.5})
 
     titre="Calendrier global {0} chaque mois".format(listeTitres[option])
     if ligne["Commande"]=="periodsInter":

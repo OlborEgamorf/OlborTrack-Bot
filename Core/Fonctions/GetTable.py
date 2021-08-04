@@ -16,9 +16,9 @@ def getTableDay(curseur:sqlite3.Cursor,mois:str,annee:str,tri:str) -> list:
         tri : comment la liste doit être triée
     Sortie :
         la liste qui répond à nos critères, renvoyée par la requête SQL"""
-    if mois=="glob":
+    if mois.lower()=="glob":
         return curseur.execute("SELECT *, Annee || '' || Mois || '' || Jour AS DateID FROM dayRank ORDER BY {0} {1}".format(dictTriArg[tri],dictTriSens[tri])).fetchall()
-    elif mois=="to":
+    elif mois.lower()=="to":
         return curseur.execute("SELECT *, Annee || '' || Mois || '' || Jour AS DateID FROM dayRank WHERE Annee='{0}' ORDER BY {1} {2}".format(annee,dictTriArg[tri],dictTriSens[tri])).fetchall()
     else:
         return curseur.execute("SELECT *, Annee || '' || Mois || '' || Jour AS DateID FROM dayRank WHERE Mois='{0}' AND Annee='{1}' ORDER BY {2} {3}".format(mois,annee,dictTriArg[tri],dictTriSens[tri])).fetchall()

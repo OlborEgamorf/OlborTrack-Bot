@@ -33,10 +33,10 @@ def graphPersoMoy(ligne,ctx,option,bot,period,guildOT,curseur):
     df=pd.DataFrame({'date': listeX, "Moyennes": listeY})
     if user==None:
         plt.plot('date', "Moyennes", data=df, linestyle='-', marker='o',color=colorOT)
-        plt.title("Ancien membre - Moyennes par {0}".format(option.lower()),fontsize=12)
+        plt.title("Ancien membre - Moyennes messages envoyés par {0}".format(option.lower()),fontsize=12)
     else:
         plt.plot('date', "Moyennes", data=df, linestyle='-', marker='o',color=(user.color.r/256,user.color.g/256,user.color.b/256,1))
-        plt.title("{0} - Moyennes par {1}".format(user.name,option.lower()),fontsize=12)
+        plt.title("{0} - Moyennes messages envoyés par {1}".format(user.name,option.lower()),fontsize=12)
     
     for i in range(len(listeX)):
         plt.text(x=i, y=listeY[i], s=listeY[i],size=8) 
@@ -48,7 +48,7 @@ def graphPersoMoy(ligne,ctx,option,bot,period,guildOT,curseur):
     plt.plot("date","moy",data=df2, linestyle="--", color=dictColor[theme],label="Moyenne globale ({0})".format(round(somme/len(table),2)))
     plt.legend()
     plt.xlabel("Date")
-    plt.ylabel("Compteur")
+    plt.ylabel("Moyennes")
 
     plt.xticks(rotation=90)
     plt.tight_layout()
@@ -80,7 +80,7 @@ def graphGroupedMoy(ligne,ctx,option,bot,guildOT,curseur):
         listeSN.append(tableauMois[mois[i]["Mois"]])
         pos+=0.75
 
-    voiceAxe(option,listeY,plt,"y")
+    plt.ylabel("Moyennes")
     for i in range(len(listeA)):
         plt.text(x=listeX[i], y=listeY[i], s="20{0}".format(listeA[i]), size=5, fontproperties="italic", ha="center") 
 
@@ -94,7 +94,7 @@ def graphGroupedMoy(ligne,ctx,option,bot,guildOT,curseur):
     except:
         nom="Ancien membre"
 
-    plt.title("{0} - Mois groupés moyennes par {1}".format(nom,option))
+    plt.title("{0} - Mois groupés moyennes messages envoyés par {1}".format(nom,option))
     plt.tight_layout()
     plt.savefig("Graphs/otGraph")
     plt.clf()
@@ -125,7 +125,7 @@ async def graphHeatMoy(ligne,ctx,bot,option,guildOT,curseur):
     midpoint = (df.values.max() - df.values.min()) / 2
     sns.heatmap(df, annot=np.array(labels),annot_kws={"size": 15},cmap="YlGnBu",fmt="",center=midpoint,square=True,xticklabels=True,yticklabels=True,cbar_kws={"shrink": 0.5})
 
-    plt.title("Calendrier global moyenne {0} chaque mois".format(option.lower()))
+    plt.title("Calendrier global moyenne messages envoyés {0} chaque mois".format(option.lower()))
 
     plt.xticks(rotation=0)
     plt.yticks(rotation=0)

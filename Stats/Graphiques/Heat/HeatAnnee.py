@@ -77,7 +77,7 @@ async def graphHeatAnnee(ligne,ctx,bot,option,guildOT):
 
     df = pd.DataFrame(listeHeat, columns=[i+1 for i in range(31)],index=listeMois)
     midpoint = (df.values.max() - df.values.min()) / 2
-    sns.heatmap(df, annot=np.array(labels),annot_kws={"size": 10},cmap="YlGnBu",fmt="",center=midpoint,square=True,mask=np.array(mask),xticklabels=True,yticklabels=True,cbar_kws={"shrink": len(listeMois)*0.65/12})
+    sns.heatmap(df, annot=np.array(labels),annot_kws={"size": 9},cmap="YlGnBu",fmt="",center=midpoint,square=True,mask=np.array(mask),xticklabels=True,yticklabels=True,cbar_kws={"shrink": len(listeMois)*0.65/12})
 
     titre="Calendrier {0} {1} chaque jour".format(anneeDate,listeTitres[option])
     if obj!="":

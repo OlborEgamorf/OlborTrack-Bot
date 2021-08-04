@@ -20,7 +20,7 @@ async def statsMoy(ctx,option,turn,react,ligne,guildOT,bot):
         
 
         embed=await statsEmbed("moy{0}{1}".format(option,author),ligne,page,pagemax,"Moy",guildOT,bot,False,False,curseur)
-        embed.title="Moyennes {0}".format(option.lower())
+        embed.title="Moyennes messages envoyés - {0}".format(option.lower())
         user=ctx.guild.get_member(author)
         if user!=None:
             embed=auteur(user.id,user.name,user.avatar,embed,"user")
