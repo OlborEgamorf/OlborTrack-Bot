@@ -97,7 +97,7 @@ async def exeGiveaway(ctx,args,bot):
 async def exeReminder(ctx,bot,args):
     try:
         assert len(args)!=0, "Votre demande est vide. Donnez moi ce dont vous voulez que je vous rappelle et dans combien de temps ! \nLe temps doit être un nombre suivi de s (pour secondes), m (pour minutes), h (pour heures) ou d (pour jours)."
-        assert len(args)>1, "Donnez moi du temps !\nLe temps doit être un nombre suivi de s (pour secondes), m (pour minutes), h (pour heures) ou d (pour jours)."
+        assert len(args)>1, "Donnez moi du temps !\nLe temps doit être un nombre suivi de s (pour secondes), m (pour minutes), h (pour heures) ou j (pour jours)."
         phrase=""
         for i in range(0,len(args)-1):
             phrase+=" "+args[i]
