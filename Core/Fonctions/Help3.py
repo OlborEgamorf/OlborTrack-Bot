@@ -67,7 +67,7 @@ dictFields={
     "heure":{"name":"Pour chercher une heure","value":"Donner une heure sous la forme [heure]h.\nExemples : 21h, 1h, 13h, ..."},
     "emote":{"name":"Pour chercher une emote","value":"Ecrire l'emote que l'on veut."},
     "divers":{"name":"Pour chercher une stat diverse","value":"Regarder dans avec la commande OT!divers quelles stats existent, puis donner le nom de celle que l'on veut."},
-    "temps":{"name":"Instructions pour le temps","value":"Indiquer un nombre suivi de s (pour secondes) ou m (pour minutes) ou h (pour heures) ou j (pour jours). Si vous voulez mettre des nombres à virgule, utilisez un point (.).\nExemples : 20m (20 minutes), 1.5j (1 jour et 12 heures), 10h (10 heures)"},
+    "temps":{"name":"Instructions pour le temps","value":"Indiquer un nombre suivi de s (pour secondes) ou m (pour minutes) ou h (pour heures) ou j (pour jours). Si vous voulez mettre des nombres à virgule, utilisez un point (.).\nExemples : 20m (20 minutes), 1.5j (1 jour et 12 heures), 10h (10 heures), 20h20m10s (20 heures, 20 minutes et 10 secondes."},
     "texte":{"name":"Instructions pour le texte","value":"Pour le bot, chaque mot correspond à une proposition. Si vous voulez poser une question et/ou avoir des propositions plus longues que un seul mot, ajoutez des guillemets (\" \") aux deux extrèmités de chaque proposition."},
     "gagnants":{"name":"Comment avoir plusieurs gagnants ?","value":"A la fin de la commande, donnez le nombre de gagnants que vous souhaitez suivi de 'g'.\nExemples : 2g (2 gagnants), 10g (10 gagnants)."},
     "jeux":{"name":"Liste des jeux","value":"trivialversus, trivialparty, trivialbr, tortues, tortuesduo, p4, bataillenavale"},

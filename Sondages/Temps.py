@@ -5,27 +5,22 @@ dictLimite={"01":31,"02":28,"03":31,"04":30,"05":31,"06":30,"07":31,"08":31,"09"
 
 def gestionTemps(tempo):
     mode=tempo[len(tempo)-1]
-    somme=""
-    add=True
-    for i in range(len(tempo)-1):
-        somme=somme+tempo[i]
-    try:
-        somme=float(somme)
-    except:
-        add=False
-    assert add==True, "Je n'ai pas compris le temps que vous voulez mettre...\nLe temps doit être un nombre suivi de s (pour secondes), m (pour minutes), h (pour heures) ou d (pour jours).\nPour mettre un nombre à virgule, mettez un point à la place de la virgule. (2.5m ou lieu de 2,5m par exemple)"
-    assert somme>=0, "Je ne peux pas remonter dans le temps !"
-    assert mode.lower() in ("s","m","h","j"), "Je n'ai pas compris le temps que vous voulez mettre...\nLe temps doit être un nombre suivi de s (pour secondes), m (pour minutes), h (pour heures) ou j (pour jours).\nPour mettre un nombre à virgule, mettez un point à la place de la virgule. (2.5m ou lieu de 2,5m par exemple)"
-    if mode.lower()=="m":
-        somme=somme*60
-    elif mode.lower()=="h":
-        somme=somme*3600
-    elif mode.lower()=="j":
-        somme=somme*86400
-    somme=round(somme,0)
-    assert somme<2592000, "Pas plus de trente jours !"
-    return int(somme)
-
+    assert mode.lower() in ("s","m","h","j"), "Vous devez baliser les périodes avec s (pour secondes), m (pour minutes), h (pour heures) ou j (pour jours)."
+    tempo=tempo.lower()
+    listeBalise=["s","m","h","j"]
+    listeMulti={"s":1,"m":60,"h":3600,"j":86400}
+    balise=0
+    count=0
+    for i in range(len(tempo)):
+        if tempo[i] in listeBalise:
+            try:
+                count+=listeMulti[tempo[i]]*float(tempo[balise:i])
+                balise=i+1
+            except:
+                raise AssertionError("Je n'ai pas compris le temps que vous voulez mettre...\nLe temps doit être balisé avec s (pour secondes), m (pour minutes), h (pour heures) ou j (pour jours).\nPour mettre un nombre à virgule, mettez un point à la place de la virgule. (2.5m ou lieu de 2,5m par exemple)")
+    assert count<2592000, "Pas plus de trente jours !"
+    assert count>1, "Vous devez mettre plus de 1 seconde !"
+    return int(count)
 
 def footerTime(temps):
     '''Timer de la commande OT!polltime.\n
