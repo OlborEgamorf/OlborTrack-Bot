@@ -5,6 +5,7 @@ from Stats.SQL.Compteur import compteurSQL
 from Stats.SQL.Historique import histoSQL
 from Stats.SQL.Verification import verifExecSQL
 from Stats.Tracker.Divers import exeDiversSQL
+from Core.OTGuild import OTGuild
 listeCo={}
 dictMois={1:31,2:28,3:31,4:30,5:31,6:30,7:31,8:31,9:30,10:31,11:30,12:31}
 
@@ -110,7 +111,7 @@ async def disconnect(client):
     for i in listeDeco:
         try:
             if listeCo[i].connect==True:
-                await listeCo[i].exeStat()
+                await listeCo[i].exeStat(OTGuild(listeCo[i].guildid,True))
         except:
             pass
     await client.get_channel(705390619538882641).send("Voice : Utilisateurs Déconnectés.")

@@ -64,7 +64,7 @@ def embedHelp30(option,guildOT,page,bot):
         embedHelp.description="Effectuez une de ces commandes pour avoir plus d'infos sur mes commandes !\n**Mon préfixe est OT!**\nVous pouvez aussi faire **OT!help [nom d'une commande]** pour avoir directement les infos d'une commande.\n[Invitez moi !](https://discord.com/oauth2/authorize?client_id=699728606493933650&permissions=120259472576&scope=bot) - [Faites une donation !](https://paypal.me/OlborTrack) - [Serveur de test](https://discord.com/invite/kMQz7nF) - [Twitter](https://twitter.com/olbortrack) - [Instagram](https://www.instagram.com/OlborTrack/)"
         if page==1 or page==2:
             if guildOT.mcmd!=None:
-                dictPerms={"Stats":0,"Sondages":1,"Outils":2,"Savezvous":3,"Jeux":4,"MAL":7,"Wiki":8,"Spotify":9,"Geo":10}
+                dictPerms={"Stats":0,"Sondages":3,"Outils":1,"Savezvous":4,"Jeux":2,"MAL":6,"Wiki":7,"Spotify":8,"Geo":9}
                 nb=0
                 for i in guildOT.mcmd:
                     if i["Statut"]==False:

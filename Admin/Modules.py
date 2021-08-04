@@ -18,7 +18,7 @@ async def exeModules(ctx,bot,args,guild):
         dictCommande={"modulestat":"modulesStats","modulecmd":"modulesCMD"}
         dictBool={False:"désactivé",True:"activé"}
         listeN=["Salons","Moyennes","Fréquences","Réactions","Mentions","Voice","Mots","Roles","Emojis","Messages","Autre"]
-        listeC=["Stats","Sondages","Custom","Savezvous","Jeux","MAL","Wiki","Spotify","Geo"]
+        listeC=["Stats","Sondages","Outils","Savezvous","Jeux","MAL","Wiki","Spotify","Geo"]
         connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
         if len(args)==0:
             embedTable=commandePerms(ctx,ctx.command.name,guild)
