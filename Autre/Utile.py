@@ -18,7 +18,7 @@ async def exeUtile(ctx,bot,option):
     elif option=="reseaux":
         embedF=discord.Embed(title="Réseaux sociaux",description="**Twitter** : https://twitter.com/OlborTrack\n **Instagram** : https://www.instagram.com/OlborTrack \nCes comptes servent à donner les mises à jours et contenus à venir du bot ! [Rejoindre le serveur de test](https://discord.com/invite/kMQz7nF) permet aussi d'avoir ces informations, en plus détaillé.",color=0xfcfc03)
     elif option=="servcount":
-        embedF=discord.Embed(title="Nombre de serveurs",description="Je suis présent dans **{0}** serveurs actuellement !\nAidez-moi à grandir en m'invitant sur d'autres serveurs ! (OT!invite)".format(len(bot.guild)),color=0xfcfc03)
+        embedF=discord.Embed(title="Nombre de serveurs",description="Je suis présent dans **{0}** serveurs actuellement !\nAidez-moi à grandir en m'invitant sur d'autres serveurs ! (OT!invite)".format(len(bot.guilds)),color=0xfcfc03)
     embedF.set_footer(text="OT!"+option)
     embedF=auteur(bot.user,0,0,embedF,"olbor")
     
