@@ -138,10 +138,6 @@ async def boucleAutoStats(bot,dictGuilds):
 
         await endNight(bot,dictGuilds)
 
-        while heure!="00":
-            await asyncio.sleep(30)
-            heure=strftime("%H")
-
         for i in bot.guilds:
             try:
                 archivesSave(i.id,jour,mois,annee)

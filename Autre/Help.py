@@ -101,4 +101,11 @@ def embedHelp30(option,guildOT,page,bot):
             embedHelp.add_field(name=dictFields[i]["name"],value=dictFields[i]["value"],inline=True)
         embedHelp.title=dictDescipTitres[option][page]
     embedHelp.set_footer(text=("Page {0}/{1}".format(page,dictLen[option])))
+    
+    if option=="outils":
+        if page==2:
+            embedHelp.set_image(url="https://media.discordapp.net/attachments/726034739550486618/872435056533184512/sb.gif")
+        elif page==3:
+            embedHelp.set_image(url="https://media.discordapp.net/attachments/726034739550486618/872776089678778399/cmd.gif")
+
     return embedHelp, dictLen[option]
