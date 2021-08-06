@@ -89,7 +89,11 @@ class Question:
             curseur.executemany("INSERT INTO trivial{0} VALUES (?,?,?,?,?,?,?)".format(self.author.id),many)
             connexion.commit()
         self.user=user
-        self.multi=round(1+user[12]["Multi"]*0.05+user[self.categ]["Multi"]*0.02,2)
+        multi=round(1+user[12]["Multi"]*0.05+user[self.categ]["Multi"]*0.02,2)
+        if multi>3:
+            self.multi=3
+        else:
+            self.multi=multi
     
     def setCateg(self,args):
         try:
