@@ -1,14 +1,17 @@
-from Core.Fonctions.Embeds import addtoFields, createEmbed, createFields, embedAssert, sendEmbed
-from Titres.Verificateurs import verifAchat, verifVente
-from Stats.SQL.ConnectSQL import connectSQL
 import asyncio
-from Core.Fonctions.setMaxPage import setMax, setPage
-import discord
-from Core.Fonctions.AuteurIcon import auteur
 
-dictValue={0:"?",1:300,2:800,3:5000}
-dictStatut={0:"Fabuleux",1:"Rare",2:"Légendaire",3:"Unique"}
+import discord
+from Stats.SQL.ConnectSQL import connectSQL
+
+from Titres.Verificateurs import verifAchat, verifVente
+from Core.Fonctions.Embeds import createEmbed, embedAssert
+from Titres.Outils import createAccount
+from Titres.Listes import commandeTMP
+
 dictReverse={300:1,800:2,5000:3}
+dictStatut={0:"Fabuleux",1:"Rare",2:"Légendaire",3:"Unique"}
+dictTrade={705766186909958185:"Coins",705766186989912154:"Titre"}
+
 
 async def achatTitre(ctx,idtitre,bot,gift):
     try:
@@ -17,9 +20,9 @@ async def achatTitre(ctx,idtitre,bot,gift):
         nom,valeur,coins=verifAchat(ctx,idtitre,gift)
 
         if gift:
-            embed=createEmbed("Cadeau de Titre","Vous êtes sur le point d'offrir **{0}** pour *{1} <:otCOINS:873226814527520809>* à <@{2}>.\nVous possèdez {3} <:otCOINS:873226814527520809> au total et en aurez {4} après la transaction.\nAppuyez sur <:otVALIDER:772766033996021761> pour confirmer l'achat.".format(nom,valeur,ctx.message.mentions[0].id,coins,coins-valeur),0xf58d1d,ctx.invoked_with.lower(),ctx.author)
+            embed=createEmbed("Cadeau de Titre","Vous êtes sur le point d'offrir **{0}** pour *{1} <:otCOINS:873226814527520809>* à <@{2}>.\nVous possèdez {3} <:otCOINS:873226814527520809> au total et en aurez {4} <:otCOINS:873226814527520809> après la transaction.\nAppuyez sur <:otVALIDER:772766033996021761> pour confirmer l'achat.".format(nom,valeur,ctx.message.mentions[0].id,coins,coins-valeur),0xf58d1d,ctx.invoked_with.lower(),ctx.author)
         else:
-            embed=createEmbed("Achat de Titre","Vous êtes sur le point d'acheter **{0}** pour *{1} <:otCOINS:873226814527520809>*.\nVous possèdez {2} <:otCOINS:873226814527520809> au total et en aurez {3} après la transaction.\nAppuyez sur <:otVALIDER:772766033996021761> pour confirmer l'achat.".format(nom,valeur,coins,coins-valeur),0xf58d1d,ctx.invoked_with.lower(),ctx.author)
+            embed=createEmbed("Achat de Titre","Vous êtes sur le point d'acheter **{0}** pour *{1} <:otCOINS:873226814527520809>*.\nVous possèdez {2} <:otCOINS:873226814527520809> au total et en aurez {3} <:otCOINS:873226814527520809> après la transaction.\nAppuyez sur <:otVALIDER:772766033996021761> pour confirmer l'achat.".format(nom,valeur,coins,coins-valeur),0xf58d1d,ctx.invoked_with.lower(),ctx.author)
 
         message=await ctx.reply(embed=embed)
         await message.add_reaction("<:otVALIDER:772766033996021761>")
@@ -49,9 +52,9 @@ async def achatTitre(ctx,idtitre,bot,gift):
         connexionUser.commit()
 
         if gift:
-            embed=createEmbed("Cadeau de Titre","Titre offert avec succès !\n<@{0}> peut équiper **{1}** avec la commande **OT!titre set**.".format(ctx.message.mentions[0].id,nom),0xf58d1d,ctx.invoked_with.lower(),ctx.author)
+            embed=createEmbed("Cadeau de Titre","Titre offert avec succès !\n<@{0}> peut équiper **{1}** avec la commande **OT!titre set {2}**.".format(ctx.message.mentions[0].id,nom,idtitre),0xf58d1d,ctx.invoked_with.lower(),ctx.author)
         else:
-            embed=createEmbed("Achat de Titre","Titre acheté avec succès !\nVous pouvez équiper **{0}** avec la commande **OT!titre set**.".format(nom),0xf58d1d,ctx.invoked_with.lower(),ctx.author)
+            embed=createEmbed("Achat de Titre","Titre acheté avec succès !\nVous pouvez équiper **{0}** avec la commande **OT!titre set {1}**.".format(nom,idtitre),0xf58d1d,ctx.invoked_with.lower(),ctx.author)
 
         await message.reply(embed=embed)
     except AssertionError as er:
@@ -65,7 +68,7 @@ async def venteTitre(ctx,idtitre,bot):
     try:
         nom,valeur,coins=verifVente(ctx,idtitre)
 
-        embed=createEmbed("Vente de Titre","Vous êtes sur le point de vendre **{0}** pour *{1} <:otCOINS:873226814527520809>*.\nVous possèdez {2} <:otCOINS:873226814527520809> au total, et en aurez {3} après la transaction.\nAppuyez sur <:otVALIDER:772766033996021761> pour confirmer la vente.".format(nom,valeur,coins,coins+valeur),0xf58d1d,ctx.invoked_with.lower(),ctx.author)
+        embed=createEmbed("Vente de Titre","Vous êtes sur le point de vendre **{0}** pour *{1} <:otCOINS:873226814527520809>*.\nVous possèdez {2} <:otCOINS:873226814527520809> au total, et en aurez {3} <:otCOINS:873226814527520809> après la transaction.\nAppuyez sur <:otVALIDER:772766033996021761> pour confirmer la vente.".format(nom,valeur,coins,coins+valeur),0xf58d1d,ctx.invoked_with.lower(),ctx.author)
         message=await ctx.reply(embed=embed)
         await message.add_reaction("<:otVALIDER:772766033996021761>")
 
@@ -98,54 +101,120 @@ async def venteTitre(ctx,idtitre,bot):
         await message.clear_reactions()
 
 
-async def commandeTMP(ctx,turn,react,ligne,option):
-    connexionCMD,curseurCMD=connectSQL(ctx.guild.id,"Commandes","Guild",None,None)
-    connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
-    if not react:
-        if option=="marketplace":
-            table=curseur.execute("SELECT marketplace.ID,marketplace.Stock,titres.Rareté,titres.Nom FROM marketplace JOIN titres ON marketplace.ID=titres.ID ORDER BY Rareté DESC").fetchall()
+async def setTitre(ctx,idtitre,bot):
+    try:
+        connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
+        connexionUser,curseurUser=connectSQL("OT",ctx.author.id,"Titres",None,None)
+        titre=curseurUser.execute("SELECT * FROM titresUser WHERE ID={0}".format(idtitre)).fetchone()
+        assert titre!=None, "Vous ne possèdez pas ce titre."
+        if curseur.execute("SELECT * FROM active WHERE MembreID={0}".format(ctx.author.id)).fetchone()==None:
+            curseur.execute("INSERT INTO active VALUES({0},{1})".format(idtitre,ctx.author.id))
         else:
-            table=curseur.execute("SELECT * FROM titres ORDER BY Rareté DESC").fetchall()
-        assert table!=[], "Il n'y a plus aucun titre en vente actuellement. Attendez le retour de stocks demain, ou que quelqu'un en vende un."
-        pagemax=setMax(len(table))
-        curseurCMD.execute("INSERT INTO commandes VALUES({0},{1},'titres','{2}','None','None','None','None',1,{3},'countDesc',False)".format(ctx.message.id,ctx.author.id,option,pagemax))
-        ligne=curseurCMD.execute("SELECT * FROM commandes WHERE MessageID={0}".format(ctx.message.id)).fetchone()
-    else:
-        if option=="marketplace":
-            table=curseur.execute("SELECT marketplace.ID,marketplace.Stock,titres.Rareté,titres.Nom FROM marketplace JOIN titres ON marketplace.ID=titres.ID ORDER BY Rareté DESC").fetchall()
+            curseur.execute("UPDATE active SET TitreID={0} WHERE MembreID={1}".format(idtitre,ctx.author.id))
+        embed=createEmbed("Titre équipé","Titre équipé avec succès !\nVotre nouveau titre est maintenant : **{0}**.".format(titre["Nom"]),0xf58d1d,ctx.invoked_with.lower(),ctx.author)
+        await ctx.reply(embed=embed)
+        connexion.commit()
+    except AssertionError as er:
+        await ctx.reply(embed=embedAssert(er))
+
+
+async def tradeTitre(ctx,idtitre,bot):
+    try:
+        assert len(ctx.message.mentions)!=0, "Vous devez mentionner quelqu'un pour lancer un échange !"
+        connexionUser1,curseurUser1=connectSQL("OT",ctx.author.id,"Titres",None,None)
+        connexionUser2,curseurUser2=connectSQL("OT",ctx.message.mentions[0].id,"Titres",None,None)
+        createAccount(connexionUser1,curseurUser1)
+        createAccount(connexionUser2,curseurUser2)
+        assert curseurUser2.execute("SELECT * FROM titresUser").fetchall()!=[], "La personne avec qui vous voulez échanger ne possède aucun titre !"
+
+        user1,user2=ctx.author,ctx.message.mentions[0]
+
+
+        embed=createEmbed("Échange de Titre","<@{0}> veut échanger des titres avec <@{1}> !\n<@{1}> doit appuyer sur <:otVALIDER:772766033996021761> pour lancer la procédure.".format(user1.id,user2.id),0xf58d1d,ctx.invoked_with.lower(),bot.user)
+        message=await ctx.reply(embed=embed)
+        await message.add_reaction("<:otVALIDER:772766033996021761>")
+
+        def checkValide(reaction,user):
+            if type(reaction.emoji)==str:
+                return False
+            return reaction.emoji.id==772766033996021761 and reaction.message.id==message.id and user.id==user2.id
+
+        reaction,user=await bot.wait_for('reaction_add', check=checkValide, timeout=60)
+        await message.clear_reactions()
+
+
+        ctx.author=ctx.message.mentions[0]
+        await commandeTMP(ctx,None,False,None,"user")
+
+        embed=createEmbed("Échange de Titre","Vous êtes sur le point d'échanger des titres avec <@{0}> !\nParmi la liste de titres de <@{0}>, choisissez celui que vous souhaitez avoir.\nUne fois fait, envoyez **l'ID du titre**.".format(user2.id),0xf58d1d,ctx.invoked_with.lower(),user1)
+        message=await ctx.reply(embed=embed)
+
+        def checkTitre(mess):
+            try:
+                int(mess.content)
+                assert curseurUser2.execute("SELECT * FROM titresUser WHERE ID={0}".format(int(mess.content))).fetchone()!=None
+            except:
+                return False
+            return user.id==user1.id and mess.channel.id==message.channel.id
+
+        mess=await bot.wait_for('message', check=checkTitre, timeout=60)
+        titre=curseurUser2.execute("SELECT * FROM titresUser WHERE ID={0}".format(int(mess.content))).fetchone()
+
+
+        embed=createEmbed("Échange de Titre","<@{0}> souhaite obtenir votre titre {1} ({2}) !\nAppuyez sur <:otVALIDER:772766033996021761> pour valider l'échange et choisir contre quoi vous voulez l'échanger.".format(user1.id,titre["Nom"],dictStatut[titre["Rareté"]]),0xf58d1d,ctx.invoked_with.lower(),user2)
+        message=await ctx.reply(embed=embed)
+        await message.add_reaction("<:otVALIDER:772766033996021761>")
+
+        def checkValide(reaction,user):
+            if type(reaction.emoji)==str:
+                return False
+            return reaction.emoji.id==772766033996021761 and reaction.message.id==message.id and user.id==user2.id
+
+        reaction,user=await bot.wait_for('reaction_add', check=checkValide, timeout=60)
+        await message.clear_reactions()
+
+        coins=curseurUser1.execute("SELECT * FROM coins").fetchone()["Coins"]
+        titres=curseurUser1.execute("SELECT Count() AS Count FROM titresUser").fetchone()["Count"]
+
+        assert coins!=0 or titres!=0, "<@{0}> n'a rien a échanger !".format(user1.id)
+        if coins!=0 and titres!=0:
+            embed=createEmbed("Échange de Titre","<@{0}> peut échanger le titre {1} ({2}) avec un autre titre ou des OT Coins <:otCOINS:873226814527520809>.\nChoisissez sous quelle forme vous voulez échanger : \n- <:ot1:705766186909958185> : OT Coins\n- <:ot2:705766186989912154> : Autre titre".format(user1.id,titre["Nom"],dictStatut[titre["Rareté"]]),0xf58d1d,ctx.invoked_with.lower(),ctx.author)
+            message=await ctx.reply(embed=embed)
+            await message.add_reaction("<:ot1:705766186909958185>")
+            await message.add_reaction("<:ot2:705766186989912154>")
+
+            def checkValide(reaction,user):
+                if type(reaction.emoji)==str:
+                    return False
+                return (reaction.emoji.id==705766186909958185 or reaction.emoji.id==705766186989912154) and reaction.message.id==message.id and user.id==user2
+
+            reaction,user=await bot.wait_for('reaction_add', check=checkValide, timeout=60)
+            await message.clear_reactions()
+
+            way=dictTrade[reaction.emoji.id]
+        elif coins!=0:
+            way="Coins"
         else:
-            table=curseur.execute("SELECT * FROM titres ORDER BY Rareté DESC").fetchall()
-        pagemax=setMax(len(table))
+            way="Titre"
 
-    page=setPage(ligne["Page"],pagemax,turn)
+        if way=="Coins":
+            embed=createEmbed("Échange de Titre","Vous êtes sur le point d'échanger le titre {0} ({1}) contre des OT Coins <:otCOINS:873226814527520809> !\n.".format(user2.id),0xf58d1d,ctx.invoked_with.lower(),user1)
+            message=await ctx.reply(embed=embed)
 
-    embed=embedTMP(table,page,ligne["Mobile"])
-    embed=auteur(ctx.guild.get_member(699728606493933650),None,None,embed,"olbor")
-    embed.set_footer(text="Page {0}/{1}".format(page,pagemax))
-    if option=="marketplace":
-        embed.title="Titres en vente aujourd'hui"
-    else:
-        embed.title="Liste des titres existants"
-    embed.color=0xf58d1d
-    
-    message=await sendEmbed(ctx,embed,react,False,curseurCMD,connexionCMD,page,pagemax)
-    if not react:
-        await message.add_reaction("<:otMOBILE:833736320919797780>")
-    
+            def checkTitre(mess):
+                try:
+                    int(mess.content)
+                    assert curseurUser2.execute("SELECT * FROM titresUser WHERE ID={0}".format(int(mess.content))).fetchone()!=None
+                except:
+                    return False
+                return user.id==user1.id and mess.channel.id==message.channel.id
 
-def embedTMP(table,page,mobile):
-    embed=discord.Embed()
-    field1,field2,field3="","",""
-    stop=15*page if 15*page<len(table) else len(table)
-    for i in range(15*(page-1),stop):
-        nom="__{0}__ - {1}".format(table[i]["ID"],table[i]["Nom"])
-        stock=table[i]["Stock"]
-        statut="{0} <:otCOINS:873226814527520809> - {1}".format(dictValue[table[i]["Rareté"]],dictStatut[table[i]["Rareté"]])
-        if table[i]["Stock"]==0:
-            nom="~~{0}~~".format(nom)
-            stock="~~{0}~~".format(stock)
-            statut="~~{0}~~".format(statut)
-        field1,field2,field3=addtoFields(field1,field2,field3,mobile,nom,stock,statut)
-    
-    embed=createFields(mobile,embed,field1,field2,field3,"ID - Titre","Stock","Prix <:otCOINS:873226814527520809> - Type") 
-    return embed
+            mess=await bot.wait_for('message', check=checkTitre, timeout=60)
+
+
+
+    except AssertionError as er:
+        await ctx.reply(embed=embedAssert(er))
+    except asyncio.exceptions.TimeoutError:
+        await message.reply(embed=embedAssert("Une minute s'est écoulée et rien ne s'est produit. La transaction a été annulée."))
+        await message.clear_reactions()

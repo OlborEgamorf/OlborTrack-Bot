@@ -38,7 +38,7 @@ def verifVente(ctx,idtitre):
 
     titre=curseurUser.execute("SELECT * FROM titresUser WHERE ID={0}".format(idtitre)).fetchone()
     assert titre!=None, "Vous ne possèdez pas ce titre."
-    #assert curseur.execute("SELECT * FROM active WHERE MembreID={0}".format(ctx.author.id)).fetchone()["TitreID"]!=int(idtitre), "Le titre que vous voulez vendre est celui qui est actuellement équipé pour vous."
+    assert curseur.execute("SELECT * FROM active WHERE MembreID={0}".format(ctx.author.id)).fetchone()["TitreID"]!=int(idtitre), "Le titre que vous voulez vendre est celui qui est actuellement équipé pour vous."
 
     coins=curseurUser.execute("SELECT * FROM coins").fetchone()["Coins"]
 
