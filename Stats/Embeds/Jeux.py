@@ -1,6 +1,8 @@
 import discord
 from Core.Fonctions.Embeds import addtoFields, createFields, defEvol
 from Core.Fonctions.DichoTri import dichotomieID, triID
+from Stats.SQL.ConnectSQL import connectSQL
+from Titres.Outils import getTitre
 
 def embedJeux(table,guild,page,mobile,id,evol,option):
     embed=discord.Embed()
@@ -8,6 +10,7 @@ def embedJeux(table,guild,page,mobile,id,evol,option):
     author=False
     stop=15*page if 15*page<len(table) else len(table)
     wl=""
+    connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
     for i in range(15*(page-1),stop):
         rank="{0} {1}".format(table[i]["Rank"],defEvol(table[i],evol))
         if option!="trivial":
@@ -16,7 +19,7 @@ def embedJeux(table,guild,page,mobile,id,evol,option):
         if type(guild.get_member(table[i]["ID"]))==discord.Member:
             nom="<@{0}>".format(table[i]["ID"])
         else:
-            nom="*???*"
+            nom=getTitre(curseur,table[i]["ID"])
         
         if table[i]["ID"]==id:
             rank="**__{0}__**".format(rank)

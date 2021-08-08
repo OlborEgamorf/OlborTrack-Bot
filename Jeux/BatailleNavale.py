@@ -103,7 +103,7 @@ class JeuBN:
         if self.playing:
             self.J1.setPlay()
             self.J2.setPlay()
-            await endGame(self)
+            await endGame(self,"abandon")
         del listeJeux[self.id]
 
     def createEmbedBN(self,spoil,author,dev):
@@ -470,7 +470,7 @@ async def playGame(user,message):
                         await message.add_reaction(dictReact[tir[1]])
                         await messageO.add_reaction(dictReact[tir[1]])
                         if game.getWaiting().plateau.victoire():
-                            await endGame(game)
+                            await endGame(game,"win")
                         else:
                             await game.J1.editMessage(game,True)
                             await game.J2.editMessage(game,True)
@@ -526,9 +526,9 @@ async def cancelGame(message,user,reaction):
             game.J1.setPlay()
             game.J2.setPlay()
         game.position=None
-        await endGame(game)
+        await endGame(game,"abandon")
 
-async def endGame(game):
+async def endGame(game,option):
     listeJ=[game.J1,game.J2]
     for i in listeJ:
         await i.messageP.delete()
@@ -536,7 +536,7 @@ async def endGame(game):
         await i.user.send(embed=game.createEmbedBN(True,i,True))
         await i.user.send(embed=game.createEmbedBN(True,game.getOther(i),True))
         await i.user.send("<:otVERT:868535645897912330> Victoire de {0} !".format(game.getPlaying().nom))
-    exeStatsJeux(game.getPlaying().id,game.getWaiting().id,game.guild,"BatailleNavale",0)
+    exeStatsJeux(game.getPlaying().id,game.getWaiting().id,game.guild,"BatailleNavale",0,option)
     gainCoins(game.getPlaying().id,50)
     await game.message.channel.send(embed=game.createEmbedBN(True,game.getWaiting(),True))
     await game.message.channel.send(embed=game.createEmbedBN(True,game.getPlaying(),True))

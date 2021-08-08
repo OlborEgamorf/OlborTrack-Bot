@@ -5,6 +5,7 @@ from Stats.SQL.Daily import dailySQL
 from Stats.SQL.CompteurP4 import compteurJeuxSQL
 from Stats.SQL.Historique import histoSQL, histoSQLJeux
 from Stats.SQL.ConnectSQL import connectSQL
+from Titres.Outils import titresJeux
 
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TOTAL"}
 
@@ -87,6 +88,10 @@ def exeJeuxSQL(id,idObj,state,guild,curseurGuild,count,option,tours):
     if idObj!=None:
         compteurJeuxSQL(curseurGL,"glob"+str(idObj),id,(0,id,idObj,"TO","GL",dictW[state],dictL[state],dictCount[state],0),dictCount[state],(strftime("%d"),strftime("%m"),strftime("%y")),("TO","GL"),"persoA",True,state,5,curseurGL)
         histoSQLJeux(curseurGL,id,tours,strftime("%d")+"/"+strftime("%m")+"/"+strftime("%y"),idObj,state)
+    if guild=="OT" and state=="W":
+        count=curseurGL.execute("SELECT Count FROM glob WHERE ID= {0}".format(id)).fetchone()["Count"]
+        if count in (5,10):
+            titresJeux(count,option,id)
     connexionGL.commit()
 
     dailySQL(int(strftime("%y")+strftime("%m")+strftime("%d")),(strftime("%d"),strftime("%m"),strftime("%y")),option,curseurGuild,guild,"Jeux")

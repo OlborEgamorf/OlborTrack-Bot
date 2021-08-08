@@ -167,7 +167,7 @@ class JeuP4:
             await self.message.clear_reactions()
             await self.message.edit(embed=self.createEmbedP4("Victoire par forfait de "+self.getPlaying().nom))
             await self.message.channel.send("<:otVERT:868535645897912330> Victoire de {0} par forfait".format(self.getPlaying().nom))
-            exeStatsJeux(self.getPlaying().id,self.getWaiting().id,self.guild,"P4",self.tours)
+            exeStatsJeux(self.getPlaying().id,self.getWaiting().id,self.guild,"P4",self.tours,"abandon")
             gainCoins(self.getPlaying().id,50)
             await self.messAd.delete()
 
@@ -272,7 +272,7 @@ async def playGameP4(message,user,reaction):
                 listeJoueurs.remove(game.J1.id)
                 listeJoueurs.remove(game.J2.id)
                 game.playing=None
-                exeStatsJeux(game.getPlaying().id,game.getWaiting().id,game.guild,"P4",game.tours)
+                exeStatsJeux(game.getPlaying().id,game.getWaiting().id,game.guild,"P4",game.tours,"win")
                 gainCoins(game.getPlaying().id,50)
                 await game.messAd.delete()
             else:
@@ -315,7 +315,7 @@ async def abandonP4(message,user,reaction):
         await message.edit(embed=game.createEmbedP4("Victoire par forfait de "+game.getPlaying().nom))
         await message.channel.send("<:otVERT:868535645897912330> Victoire de {0} par forfait.".format(game.getPlaying().nom))
         await game.messAd.delete()
-        exeStatsJeux(game.getPlaying().id,game.getWaiting().id,game.guild,"P4",game.tours)
+        exeStatsJeux(game.getPlaying().id,game.getWaiting().id,game.guild,"P4",game.tours,"abandon")
         gainCoins(game.getPlaying().id,50)
     else:
         if game.J1.id!=user.id and game.ping!=user.id:

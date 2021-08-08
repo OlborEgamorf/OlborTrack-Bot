@@ -23,7 +23,7 @@ from Core.Fonctions.Embeds import embedAssert, exeErrorExcept, createEmbed
 from Stats.SQL.Compteur import compteurSQL, compteurTrivialS
 from Stats.SQL.ConnectSQL import connectSQL
 from Stats.SQL.Execution import exeJeuxSQL
-from Titres.Outils import gainCoins
+from Titres.Outils import gainCoins, titresTrivial
 
 emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>"]
 emotesTrue=["<:ot1VRAI:773993429130149909>", "<:ot2VRAI:773993429050195979>", "<:ot3VRAI:773993429331738624>", "<:ot4VRAI:773993429423095859>"]
@@ -154,6 +154,7 @@ class Question:
         categ,multi,diff,author=self.categ,self.multi,self.diff,self.author.id
         points={"easy":10,"medium":15,"hard":25}
         niveaux=[30, 60, 100, 150, 200, 400, 600, 1000, 1500, 2000, 3000, 4000, 5000, 7500, 10000, 20000, 30000, 40000, 50000, 100000, 1000000]
+        gainCoins(author,points[diff]*multi)
         connexion,curseur=connectSQL("OT",author,"Trivial",None,None)
         table=curseur.execute("SELECT * FROM trivial{0}".format(author)).fetchall()
         if victoire:
@@ -168,12 +169,16 @@ class Question:
                 count+=1
                 curseur.execute("UPDATE trivial{0} SET Next={1} WHERE IDCateg={2}".format(author,niveaux[table[categ]["Niveau"]+count-1],categ))
                 curseur.execute("UPDATE trivial{0} SET Niveau={1} WHERE IDCateg={2}".format(author,table[categ]["Niveau"]+count,categ))
+                if table[categ]["Niveau"]+count in (5,10):
+                    titresTrivial(table[categ]["Niveau"]+count,categ,author)
 
             count=0
             while curseur.execute("SELECT Exp FROM trivial{0} WHERE IDCateg=12".format(author)).fetchone()["Exp"]>=curseur.execute("SELECT Next FROM trivial{0} WHERE IDCateg=12".format(author)).fetchone()["Next"]:
                 count+=1
                 curseur.execute("UPDATE trivial{0} SET Next={1} WHERE IDCateg=12".format(author,niveaux[table[categ]["Niveau"]+count-1]))
                 curseur.execute("UPDATE trivial{0} SET Niveau={1} WHERE IDCateg=12".format(author,table[categ]["Niveau"]+count))
+                if table[categ]["Niveau"]+count in (5,10):
+                    titresTrivial(table[categ]["Niveau"]+count,categ,author)
             connexion.commit()
 
             connexion,curseur=connectSQL("OT","ranks","Trivial",None,None)

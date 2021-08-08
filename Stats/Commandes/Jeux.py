@@ -68,4 +68,4 @@ async def statsJeux(ctx,turn,react,ligne,guildOT,bot,mode):
         if react:
             await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nLe classement cherché n'existe plus ou alors il y a un problème de mon côté."))
         else:
-            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\Le classement cherché n'existe pas ou alors il y a un problème de mon côté.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nLe classement cherché n'existe pas ou alors il y a un problème de mon côté.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))
