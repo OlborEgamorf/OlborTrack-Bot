@@ -7,6 +7,7 @@ import discord
 from Core.Fonctions.Embeds import (createEmbed, embedAssert,
                                    exeErrorExcept)
 from Stats.Tracker.Jeux import exeStatsJeux
+from Titres.Outils import gainCoins
 
 listeJoueurs={}
 listeJeux={}
@@ -536,6 +537,7 @@ async def endGame(game):
         await i.user.send(embed=game.createEmbedBN(True,game.getOther(i),True))
         await i.user.send("<:otVERT:868535645897912330> Victoire de {0} !".format(game.getPlaying().nom))
     exeStatsJeux(game.getPlaying().id,game.getWaiting().id,game.guild,"BatailleNavale",0)
+    gainCoins(game.getPlaying().id,50)
     await game.message.channel.send(embed=game.createEmbedBN(True,game.getWaiting(),True))
     await game.message.channel.send(embed=game.createEmbedBN(True,game.getPlaying(),True))
     await game.message.channel.send("<:otVERT:868535645897912330> Victoire de {0} !".format(game.getPlaying().nom))

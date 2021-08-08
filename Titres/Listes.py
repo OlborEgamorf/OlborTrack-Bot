@@ -5,7 +5,7 @@ from Core.Fonctions.setMaxPage import setMax, setPage
 from Stats.SQL.ConnectSQL import connectSQL
 import discord
 
-dictSell={1:150,2:400,3:2500}
+dictSell={1:150,2:400,3:2500,0:"Aucune"}
 dictValue={0:"?",1:300,2:800,3:5000}
 dictStatut={0:"Fabuleux",1:"Rare",2:"Légendaire",3:"Unique"}
 

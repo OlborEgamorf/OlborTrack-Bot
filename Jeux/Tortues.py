@@ -5,6 +5,7 @@ from Core.Fonctions.AuteurIcon import auteur
 from Stats.SQL.ConnectSQL import connectSQL
 from Stats.SQL.Execution import exeJeuxSQL
 from Core.Fonctions.Embeds import createEmbed, embedAssert, exeErrorExcept
+from Titres.Outils import gainCoins
 
 inGameTortues=[]
 gamesTortues={}
@@ -224,6 +225,7 @@ class JeuTortues:
         connexionOT,curseurOT=connectSQL("OT","Guild","Guild",None,None)
         for i in self.joueurs:
             if i.couleur==win:
+                gainCoins(i.userid,len(self.ids)*25)
                 count,state=2,"W"
             else:
                 count,state=-1,"L"
@@ -283,6 +285,7 @@ class JeuTortuesDuo(JeuTortues):
         connexionOT,curseurOT=connectSQL("OT","Guild","Guild",None,None)
         for i in self.joueurs:
             if i.equipe==team:
+                gainCoins(i.userid,100)
                 count,state=2,"W"
             else:
                 count,state=-1,"L"

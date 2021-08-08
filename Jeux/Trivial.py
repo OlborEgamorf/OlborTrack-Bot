@@ -23,6 +23,7 @@ from Core.Fonctions.Embeds import embedAssert, exeErrorExcept, createEmbed
 from Stats.SQL.Compteur import compteurSQL, compteurTrivialS
 from Stats.SQL.ConnectSQL import connectSQL
 from Stats.SQL.Execution import exeJeuxSQL
+from Titres.Outils import gainCoins
 
 emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>"]
 emotesTrue=["<:ot1VRAI:773993429130149909>", "<:ot2VRAI:773993429050195979>", "<:ot3VRAI:773993429331738624>", "<:ot4VRAI:773993429423095859>"]
@@ -295,8 +296,6 @@ class Versus(Question):
         message=await ctx.send(embed=createEmbed("Trivial {0}".format(self.option.upper()),dictHelp[self.option],0xad917b,ctx.invoked_with.lower(),ctx.guild))
         gamesTrivial[message.id]=self
         await message.add_reaction("<:otVALIDER:772766033996021761>")
-        #await message.add_reaction("<:pepoG:825979653876482048>")
-        #await message.add_reaction("<:KappaAngry:662410175097077780>")
         await message.add_reaction("<:otANNULER:811242376625782785>")
 
         for i in range(60):
@@ -412,6 +411,7 @@ class Versus(Question):
         embedT=discord.Embed(title="Victoire de {0}".format(winner.name), description=descip, color=0xf2eb16)
         embedT.set_footer(text="OT!trivialversus")
         embedT=auteur(winner.id,winner.name,winner.avatar,embedT,"user")
+        embedT.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(winner.name),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25))
         return embedT
 
     async def error(self,ctx,bot,message):
@@ -424,6 +424,7 @@ class Versus(Question):
         for i in self.ids:
             if i==win.id:
                 count,state=2,"W"
+                gainCoins(i,25*len(self.ids))
             else:
                 count,state=-1,"L"
             exeJeuxSQL(i,None,state,self.guild.id,curseurGuild,count,option,None)
@@ -478,6 +479,7 @@ class Party(Versus):
         embedT=discord.Embed(title="Victoire de {0}".format(winner.name), description=descip, color=0xf2eb16)
         embedT.set_footer(text="OT!trivialparty")
         embedT=auteur(winner.id,winner.name,winner.avatar,embedT,"user")
+        embedT.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(winner.name),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25))
         return embedT
 
     def createEmbed(self,results,event):
@@ -550,6 +552,7 @@ class BattleRoyale(Versus):
         embedT=discord.Embed(title="Victoire de {0}".format(winner.name), description=descip, color=0xf2eb16)
         embedT.set_footer(text="OT!trivialbr")
         embedT=auteur(winner.id,winner.name,winner.avatar,embedT,"user")
+        embedT.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(winner.name),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25))
         return embedT
 
 
