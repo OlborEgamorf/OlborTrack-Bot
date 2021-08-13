@@ -13,7 +13,7 @@ def compteurJeuxSQL(base,table,id,insert,count,date,period,perso,obj,state,crea,
         countB,rank,winlose=etat["Count"],etat["Rank"],etat[state]
         base.execute("UPDATE {0} SET Count= {1}, {2}={3} WHERE ID={4}".format(table,count+countB,state,winlose+1,id))
         countN=countB+count
-    if obj==None:
+    if obj==False:
         rankingSQL(base,table,countB,countN,id,rank,date,period,perso,obj,True,baseGL)
     else:
         rankingSQL(base,table,countB,countN,id,rank,date,period,perso,obj,False,baseGL)
