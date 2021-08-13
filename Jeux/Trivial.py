@@ -33,7 +33,6 @@ dictCateg={9:0,10:1,11:1,12:1,13:1,14:1,15:1,16:1,17:2,18:2,19:2,20:3,21:4,22:5,
 dictDiff={"easy":"Facile (+10)","medium":"Moyenne (+15)","hard":"Difficile (+25)"}
 gamesTrivial={}
 inGameTrivial=[]
-dictNomsVal={"culture":9,"divertissement":choice([10,11,12,13,14,15,16,29,31,32]),"sciences":choice([17,18,19,30]),"mythologie":20,"sport":21,"géographie":22,"histoire":23,"politique":24,"art":25,"célébrités":26,"animaux":27,"véhicules":28,"livres":10,"films":11,"musique":12,"anime":31,"manga":31}
 
 class Question:
     def __init__(self,author,option):
@@ -97,6 +96,7 @@ class Question:
             self.multi=multi
     
     def setCateg(self,args):
+        dictNomsVal={"culture":9,"divertissement":choice([10,11,12,13,14,15,16,29,31,32]),"sciences":choice([17,18,19,30]),"mythologie":20,"sport":21,"géographie":22,"histoire":23,"politique":24,"art":25,"célébrités":26,"animaux":27,"véhicules":28,"livres":10,"films":11,"musique":12,"anime":31,"manga":31}
         try:
             arg=dictNomsVal[args[0].lower()]
         except:
@@ -237,7 +237,7 @@ class Streak(Question):
             self.rota=["culture","divertissement","sciences","mythologie","sport","géographie","histoire","politique","art","célébrités","animaux","véhicules"]
         arg=choice(self.rota)
         self.rota.remove(arg)
-        super().setCateg(arg)
+        super().setCateg((arg))
 
     def createEmbed(self):
         embedT=super().createEmbed()
@@ -594,6 +594,7 @@ async def trivialParty(ctx,bot):
         if len(game.joueurs)<4:
             game.event.remove("duo")
         while game.playing:
+            dictNomsVal={"culture":9,"divertissement":choice([10,11,12,13,14,15,16,29,31,32]),"sciences":choice([17,18,19,30]),"mythologie":20,"sport":21,"géographie":22,"histoire":23,"politique":24,"art":25,"célébrités":26,"animaux":27,"véhicules":28,"livres":10,"films":11,"musique":12,"anime":31,"manga":31}
             liste=[]
             for i in game.scores:
                 if game.scores[i]>=15:
@@ -948,6 +949,10 @@ async def embedTrivial(arg,ctx,bot,author,option):
                 question=gamesTrivial[ctx.message.id]
             else:
                 question=Streak(author)
+        if option!="streak":
+            if len(arg)!=0:
+                if arg[0].lower()=="art":
+                    arg=None
         question.setCateg(arg)
         question.setUser()
         question.setDiff()
