@@ -22,6 +22,8 @@ dictAdmin={1:[],2:["hide","blind","mute"],3:["modulestat","modulecmd"],4:["delst
 
 dictAutre={1:["roulette","dice","snipe","avatar","say","zeynah"]}
 
+dictTitres={1:[],2:["titre","titre liste","titre perso","titre set","titre custom","titre infos"],3:["titre achat","titre vente","titre cadeau","titre trade","titre pack"]}
+
 dictPStats={1:"Olbor Track est capable de capter différentes statistiques comme les messages envoyés par chaque membre du serveur, le temps passé en vocal, les emotes utilisées par exemple.\nCes statistiques sont stockées sous plusieurs formes, et consultables avec ces commandes.\nLes administrateurs peuvent les configurer (voir OT!help admin).\n\n**Sous les commandes apparaitront des réactions :**\n <:otGAUCHE:772766034335236127> / <:otDROITE:772766034376523776> : changer de page\n<:otGRAPH:772766034558058506> : afficher les graphiques\n<:otTRI:833666016491864114> : changer le tri\n<:otMOBILE:833736320919797780> : changer l'affichage : classique ou mobile",13:"**OT!messganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les messages.\n**OT!saloganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les salons.\n**OT!freqganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les heures d'activité.\n**OT!voicganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour le temps passé en vocal.\n**OT!vchaganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les salons vocaux.\n**OT!emotganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les emotes.\n**OT!reacganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les réactions.\n**OT!motsganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les mots envoyés."}
 dictPPoll={1:"Olbor Track dispose de plusieurs commandes pour faire des sondages et giveaway.\nPour pouvoir les lancer, il faut avoir la permission 'gestion des messages' sur le serveur.\nLa commande OT!reminder ne nécessite aucune permission spéciale."}
 dictPJeux={1:"Olbor Track possède plusieurs jeux qui se jouent à plusieurs, de 2 à 15 joueurs !\nEssayez des jeux Trivial, la Course des Tortues, le Puissance 4 ou la Bataille Navale !\nTous les jeux possèdent des classements par serveurs et mondial !",2:"Vous pouvez proposer de nouvelles questions pour étoffer les jeux Trivial [en cliquant ici !](https://docs.google.com/forms/d/e/1FAIpQLSc6d3fHx95m5pRnCYMfcFg7Ng0eeEhXl4aS87Hb0cupA_NvOg/viewform)\n"}
@@ -34,6 +36,7 @@ dictPSpotify={1:"Olbor Track possède des intéractions avec Wikipedia, pour fai
 dictPGeo={1:"Olbor Track possède quelques commandes liées à l'espace : une qui vous donne la photo astronomique du jour, et une autre qui vous montre où se trouve l'ISS en orbite actuellement !"}
 dictPAdmin={1:"Les administrateurs du serveur peuvent configurer Olbor Track afin d'avoir une utilisation personnalisée du bot.\nIls peuvent moduler les statistiques traquées, les commandes activées, le statut des salons, et +...",4:"**OT!getdata** : [ADMIN] Initialise toutes les statistiques de votre serveur."}
 dictPAutre={}
+dictPTitres={1:"Les titres sont des cosmétiques qui s'affichent sur les classements mondiaux des jeux, et que vous pouvez acheter/vendre/débloquer/échanger, à l'aide d'une monnaie spéciale : les OT Coins <:otCOINS:873226814527520809>.\nCette monnaie se gagne en jouant à n'importe lequel de mes jeux ou en devenant un donateur (OT!support).\nCertains titres sont déblocables en jouant, ou en étant dans les premières places des classements !"}
 
 dictFStats={1:[],2:["periodes","usage"],3:["periodes","roles","usage"],4:["periodes","roles","usage"],5:["periodes","salons","roles","usage"],6:["periodes","heure","roles","usage"],7:["periodes","voice","roles","usage"],8:["periodes","emote","roles","usage"],9:["periodes","emote","roles","usage"],10:["periodes","roles","usage"],11:["periodes","divers","roles","usage"],12:["periodes","usage"],13:["periodes","usage"],14:["periodes","usage"],15:["periodes","usage"],16:["periodes","usage"],17:["periodes","usage"]}
 
@@ -58,6 +61,8 @@ dictFGeo={1:[],2:[]}
 dictFAdmin={1:[],2:["salons","usage"],3:["usage"],4:["usage"],5:[]}
 
 dictFAutre={1:["texte","usage"]}
+
+dictFTitres={1:[],2:["usage"],3:["usage"]}
 
 dictFields={
     "periodes":{"name":"Gestion des périodes","value":"'mois' : donne le mois actuel\n'annee' : donne l'année actuelle\n[mois] [année] : donne le mois que l'on veut *(ex : février 2020)*\n[année] : donne l'année que l'on veut *(ex : 2021)*"},
@@ -100,3 +105,5 @@ dictTGeo={1:"Commandes spatiales",2:"Commandes spatiales"}
 dictTAdmin={1:"Commandes administrateur",2:"Gestion des salons",3:"Gestion des modules",4:"Gestion des stats",5:"Autres paramètres"}
 
 dictTAutre={1:"Autres commandes"}
+
+dictTTitres={1:"Les Titres",2:"Listes et équipement",3:"Achat, vente et échange"}

@@ -16,10 +16,10 @@ def embedJeux(table,guild,page,mobile,id,evol,option):
         if option!="trivial":
             wl="({0}/{1})".format(table[i]["W"],table[i]["L"])
         count="{0} {1}".format(int(table[i]["Count"]),wl)
-        if type(guild.get_member(table[i]["ID"]))==discord.Member:
+
+        nom=getTitre(curseur,table[i]["ID"])
+        if type(guild.get_member(table[i]["ID"]))==discord.Member and nom=="Inconnu":
             nom="<@{0}>".format(table[i]["ID"])
-        else:
-            nom=getTitre(curseur,table[i]["ID"])
         
         if table[i]["ID"]==id:
             rank="**__{0}__**".format(rank)
@@ -34,13 +34,17 @@ def embedJeux(table,guild,page,mobile,id,evol,option):
         etat=dichotomieID(table,id,"ID")
         if etat[0]:
             rank="\n**__{0}__**".format(table[etat[1]]["Rank"])
+
+            nom="**__{0}__**".format(getTitre(curseur,id))
+            if nom=="**__Inconnu__**":
+                nom="**__<@{0}>__**".format(id)
+
             if option!="trivial":
                 wl="({0}/{1})".format(table[etat[1]]["W"],table[etat[1]]["L"])
             if mobile:
-                nom="**__<@{0}>__**".format(id)
                 count="**__{0} {1}__**".format(int(table[etat[1]]["Count"]),wl)
             else:
-                nom="\n**__<@{0}>__**".format(id)
+                nom="\n{0}".format(nom)
                 count="\n**__{0} {1}__**".format(int(table[etat[1]]["Count"]),wl)
             field1,field2,field3=addtoFields(field1,field2,field3,mobile,rank,nom,count)
 

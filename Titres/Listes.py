@@ -1,12 +1,11 @@
 from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.Embeds import (addtoFields, createEmbed, createFields,
-                                   embedAssert, sendEmbed)
+from Core.Fonctions.Embeds import addtoFields, createEmbed, createFields, embedAssert, newDescip, sendEmbed
 from Core.Fonctions.setMaxPage import setMax, setPage
 from Stats.SQL.ConnectSQL import connectSQL
 import discord
 
-dictSell={1:150,2:400,3:2500,0:"Aucune"}
-dictValue={0:"?",1:300,2:800,3:5000}
+dictSell={1:150,2:400,3:2500,0:"Inestimable"}
+dictValue={0:"Inestimable",1:300,2:800,3:5000}
 dictStatut={0:"Fabuleux",1:"Rare",2:"Légendaire",3:"Unique"}
 
 async def commandeTMP(ctx,turn,react,ligne,option):
@@ -30,12 +29,18 @@ async def commandeTMP(ctx,turn,react,ligne,option):
     else:
         embed=embedTMP(table,page,ligne["Mobile"])
         embed=auteur(ctx.guild.get_member(699728606493933650),None,None,embed,"olbor")
-    embed.set_footer(text="Page {0}/{1}".format(page,pagemax))
+    
     if option=="marketplace":
         embed.title="Titres en vente aujourd'hui"
     else:
         embed.title="Liste des titres existants"
     embed.color=0xf58d1d
+
+    if option=="user":
+        connexionUser,curseurUser=connectSQL("OT",ligne["AuthorID"],"Titres",None,None)
+        embed.set_footer(text="Page {0}/{1} - Vous avez {2} OT Coins".format(page,pagemax,curseurUser.execute("SELECT * FROM coins").fetchone()["Coins"]))
+    else:
+        embed.set_footer(text="Page {0}/{1}".format(page,pagemax))
     
     message=await sendEmbed(ctx,embed,react,False,curseurCMD,connexionCMD,page,pagemax)
     if not react:

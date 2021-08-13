@@ -17,7 +17,7 @@ def dailyCoins():
 async def monthlyTitles(mois,annee,bot):
     dictCoins={3:50,2:100,1:200}
     dictTitres={"P4":"des Puissants","BatailleNavale":"des Mers","Tortues":"des Tortues","TortuesDuo":"de la Co-Op","TrivialVersus":"des Questions","TrivialParty":"de la Fête","TrivialBR":"de la Survie"}
-    dictID={"P4":144,"BatailleNavale":147,"Tortues":141,"TortuesDuo":150,"TrivialVersus":156,"TrivialParty":159,"TrivialBR":153}
+    dictID={"P4":76,"BatailleNavale":11,"Tortues":90,"TortuesDuo":95,"TrivialVersus":136,"TrivialParty":131,"TrivialBR":126}
     liste=["P4","BatailleNavale","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR"]
     for i in liste:
         connexion,curseur=connectSQL("OT",i,"Jeux",mois,annee)
@@ -52,7 +52,7 @@ async def monthlyTitles(mois,annee,bot):
             curseurUser.execute("DELETE FROM titresUser WHERE ID={0}".format(dictID[i]+2))
             if curseurTitre.execute("SELECT * FROM active WHERE MembreID={0}".format(old["ID"])).fetchone()!=None:
                 if curseurTitre.execute("SELECT * FROM active WHERE MembreID={0}".format(old["ID"])).fetchone()["TitreID"]==dictID[i]+2:
-                    curseurTitre.execute("UPDATE active SET TitreID=8 WHERE MembreID={0}".format(old["ID"]))
+                    curseurTitre.execute("UPDATE active SET TitreID=73 WHERE MembreID={0}".format(old["ID"]))
             connexionUser.commit()
 
             curseurTitre.execute("UPDATE monthly SET ID={0} WHERE Jeu='{1}'".format(rank1["ID"],i))
@@ -68,7 +68,7 @@ async def monthlyTitles(mois,annee,bot):
 async def annualyTitles(annee,bot):
     dictCoins={3:250,2:500,1:1000}
     dictTitres={"P4":"des Puissants","BatailleNavale":"des Mers","Tortues":"des Tortues","TortuesDuo":"de la Co-Op","TrivialVersus":"des Questions","TrivialParty":"de la Fête","TrivialBR":"de la Survie"}
-    dictID={"P4":145,"BatailleNavale":148,"Tortues":142,"TortuesDuo":151,"TrivialVersus":157,"TrivialParty":160,"TrivialBR":154}
+    dictID={"P4":77,"BatailleNavale":12,"Tortues":91,"TortuesDuo":96,"TrivialVersus":137,"TrivialParty":132,"TrivialBR":127}
     liste=["P4","BatailleNavale","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR"]
     for i in liste:
         connexion,curseur=connectSQL("OT",i,"Jeux","TO",annee)

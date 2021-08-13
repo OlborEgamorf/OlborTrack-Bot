@@ -57,11 +57,11 @@ def titresTrivial(niveau,categ,user):
     connexionUser,curseurUser=connectSQL("OT",user,"Titres",None,None)
     if niveau==5:
         dict5={0:"Cultivé",1:"Diverti",2:"Scientifique",3:"Mythe",4:"Sportif",5:"Géographe",6:"Historien",7:"Député",8:"Artiste",9:"Célèbre",10:"Lion",11:"Mécano",12:"Cerveau"}
-        dict5ID={0:162,1:11,2:13,3:15,4:17,5:19,6:21,7:23,8:25,9:27,10:29,11:31,12:9}
+        dict5ID={0:122,1:100,2:102,3:104,4:106,5:108,6:110,7:112,8:114,9:116,10:118,11:120,12:98}
         curseurUser.execute("INSERT INTO titresUser VALUES({0},'{1}',0)".format(dict5ID[categ],dict5[categ]))
     else:
         dict10={0:"Connaisseur",1:"Réalisateur",2:"Virologue",3:"Légende",4:"Athlète",5:"Cartographe",6:"Historique",7:"Ministre",8:"Chef d’Oeuvre",9:"Star",10:"Requin",11:"Bolide",12:"Encyclopédie"}
-        dict10ID={0:163,1:12,2:14,3:16,4:18,5:20,6:22,7:24,8:26,9:28,10:30,11:32,12:10}
+        dict10ID={0:123,1:101,2:103,3:105,4:107,5:109,6:111,7:113,8:115,9:117,10:119,11:121,12:99}
         curseurUser.execute("INSERT INTO titresUser VALUES({0},'{1}',0)".format(dict10ID[categ],dict10[categ]))
     connexionUser.commit()
 
@@ -69,11 +69,11 @@ def titresJeux(wins,option,user):
     connexionUser,curseurUser=connectSQL("OT",user,"Titres",None,None)
     if wins==5:
         dict5={"P4":"Aligné","BatailleNavale":"Navire","Tortues":"Empilé","TortuesDuo":"Équipier","TrivialVersus":"Vainqueur","TrivialParty":"Fêtard","TrivialBR":"Vivant"}
-        dict5ID={"P4":39,"BatailleNavale":45,"Tortues":41,"TortuesDuo":43,"TrivialVersus":33,"TrivialParty":35,"TrivialBR":37}
+        dict5ID={"P4":74,"BatailleNavale":9,"Tortues":88,"TortuesDuo":93,"TrivialVersus":134,"TrivialParty":129,"TrivialBR":124}
         curseurUser.execute("INSERT INTO titresUser VALUES({0},'{1}',0)".format(dict5ID[option],dict5[option]))
     else:
         dict10={"P4":"Puissance 10","BatailleNavale":"Flotte Armée","Tortues":"Tortue de Sport","TortuesDuo":"Co-Pilote","TrivialVersus":"Médaillé","TrivialParty":"Bourré","TrivialBR":"Survivant"}
-        dict10ID={"P4":40,"BatailleNavale":46,"Tortues":42,"TortuesDuo":44,"TrivialVersus":34,"TrivialParty":36,"TrivialBR":38}
+        dict10ID={"P4":75,"BatailleNavale":10,"Tortues":89,"TortuesDuo":94,"TrivialVersus":135,"TrivialParty":130,"TrivialBR":125}
         curseurUser.execute("INSERT INTO titresUser VALUES({0},'{1}',0)".format(dict10ID[option],dict10[option]))
     connexionUser.commit()
 
@@ -88,3 +88,10 @@ def getTitre(curseur,user):
     else:
         total+=titre["Nom"]
     return total
+
+def changeIDs():
+    connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
+    liste=curseur.execute("SELECT * FROM titres ORDER BY Collection ASC").fetchall()
+    for i in range(len(liste)):
+        curseur.execute("UPDATE titres SET ID={0} WHERE Nom='{1}'".format(i+1,liste[i]["Nom"]))
+    connexion.commit()

@@ -62,7 +62,7 @@ class JeuTortues:
         self.guild=guild
         self.action={}
         for i in self.tortues:
-            self.plateau[0].empiler(i)
+            self.plateau[7].empiler(i)
         self.invoke=user
 
     def embedGame(self,user):
@@ -212,6 +212,7 @@ class JeuTortues:
                 embed=discord.Embed(title="Victoire de {0}".format(i.name), description="Il/elle était la tortue {0} ! {1}".format(win,dictEmote[win]), color=dictColor[win])
                 embed=auteur(i.userid,i.name,i.user.avatar,embed,"user")
                 play=True
+                embed.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(i.name),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25))
             descip+="{0} : <@{1}>\n".format(dictEmote[i.couleur],i.userid)
 
         if play==False: 
