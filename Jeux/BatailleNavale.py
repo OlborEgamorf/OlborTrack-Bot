@@ -401,7 +401,7 @@ async def createGame(ctx,args,client):
     except:
         await ctx.send(embed=await exeErrorExcept(ctx,client,args))
 
-async def joinGame(message,user,reaction,client):
+async def joinGameBN(message,user,reaction,client):
     try:
         if message.id not in listeJeux:
             return
@@ -507,7 +507,7 @@ async def validPosition(user,message):
         if game.J1.position and game.J2.position:
             await endPosition(game)
 
-async def cancelGame(message,user,reaction):
+async def cancelGameBN(message,user,reaction):
     if message.id in listeJeux:
         game=listeJeux[message.id]
         if game.J1.id!=user.id and game.ping!=user.id:

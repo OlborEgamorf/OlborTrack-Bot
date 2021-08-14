@@ -1,24 +1,13 @@
-############################################################################
-
- #######  #########     #########       #######
-#       #     #                 #            #     Olbor Track Bot    
-#       #     #                 #           #      Créé par OlborEgamorf  
-#       #     #         #########          #       Puissance 4
-#       #     #         #                 #                  
- #######      #         ############# #  #                         
-
-############################################################################
+import asyncio
+import sys
+from random import randint
 
 import discord
-import asyncio
-import sys 
-sys.path.append('OT3/Fonctions')
-sys.path.append('OT3/Exe')
-from random import randint
-from Stats.Tracker.Jeux import exeStatsJeux
 from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.Embeds import createEmbed, embedAssert, exeErrorExcept
+from Stats.Tracker.Jeux import exeStatsJeux
 from Titres.Outils import gainCoins
+
 listeJoueurs=[]
 listeJeux={}
 
