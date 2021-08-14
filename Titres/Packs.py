@@ -37,7 +37,7 @@ async def packTitre(ctx,bot):
         
         descip+="\n\nCliquez sur la réaction correspondante au pack pour l'acheter. Vous avez actuellement {0} OT Coins.".format(coins)
         
-        embed=createEmbed("Packs de Titres",descip,0xf58d1d,ctx.invoked_with.lower(),ctx.author)
+        embed=createEmbed("Packs de Titres",descip,0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
         message=await ctx.reply(embed=embed)
         for i in range(len(liste)):
             await message.add_reaction(listeReact[i])
@@ -95,7 +95,7 @@ async def packTitre(ctx,bot):
         connexion.commit()
         connexionUser.commit()
         
-        embed=createEmbed("Packs de Titres acheté !",descip,0xf58d1d,ctx.invoked_with.lower(),ctx.author)
+        embed=createEmbed("Packs de Titres acheté !",descip,0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
         message=await ctx.reply(embed=embed)
     except AssertionError as er:
         await ctx.reply(embed=embedAssert(er))

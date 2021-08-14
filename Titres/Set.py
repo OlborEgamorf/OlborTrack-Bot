@@ -11,7 +11,7 @@ async def setTitre(ctx,idtitre,bot):
             curseur.execute("INSERT INTO active VALUES({0},{1})".format(idtitre,ctx.author.id))
         else:
             curseur.execute("UPDATE active SET TitreID={0} WHERE MembreID={1}".format(idtitre,ctx.author.id))
-        embed=createEmbed("Titre équipé","Titre équipé avec succès !\nVotre nouveau titre est maintenant : **{0}**.".format(titre["Nom"]),0xf58d1d,ctx.invoked_with.lower(),ctx.author)
+        embed=createEmbed("Titre équipé","Titre équipé avec succès !\nVotre nouveau titre est maintenant : **{0}**.".format(titre["Nom"]),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
         await ctx.reply(embed=embed)
         connexion.commit()
     except AssertionError as er:

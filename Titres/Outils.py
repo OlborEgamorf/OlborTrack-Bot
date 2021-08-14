@@ -77,18 +77,6 @@ def titresJeux(wins,option,user):
         curseurUser.execute("INSERT INTO titresUser VALUES({0},'{1}',0)".format(dict10ID[option],dict10[option]))
     connexionUser.commit()
 
-def getTitre(curseur,user):
-    total=""
-    custom=curseur.execute("SELECT Custom FROM custom WHERE ID={0}".format(user)).fetchone()
-    titre=curseur.execute("SELECT titres.Nom FROM active JOIN titres ON active.TitreID=titres.ID WHERE MembreID={0}".format(user)).fetchone()
-    if custom!=None:
-        total+="{0}, ".format(custom["Custom"])
-    if titre==None:
-        total+="Inconnu"
-    else:
-        total+=titre["Nom"]
-    return total
-
 def changeIDs():
     connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
     liste=curseur.execute("SELECT * FROM titres ORDER BY Collection ASC").fetchall()

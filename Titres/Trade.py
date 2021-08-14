@@ -17,7 +17,7 @@ async def tradeTitre(ctx,idtitre,bot):
         titre=verifTrade(ctx,curseurUser,idtitre)
         curseurUser.close()
         
-        embed=createEmbed("Échange de Titre","<@{0}> veut échanger le titre **{1}** !\nVous pouvez appuyer sur <:otVALIDER:772766033996021761> pour lancer la procédure et échanger avec lui !.".format(ctx.author.id,titre["Nom"]),0xf58d1d,ctx.invoked_with.lower(),ctx.author)
+        embed=createEmbed("Échange de Titre","<@{0}> veut échanger le titre **{1}** !\nVous pouvez appuyer sur <:otVALIDER:772766033996021761> pour lancer la procédure et échanger avec lui !.".format(ctx.author.id,titre["Nom"]),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
         message=await ctx.reply(embed=embed)
         await message.add_reaction("<:otVALIDER:772766033996021761>")
 
@@ -29,7 +29,7 @@ async def tradeTitre(ctx,idtitre,bot):
         reaction,userTrade=await bot.wait_for('reaction_add', check=checkValide, timeout=60)
         await message.clear_reactions()
 
-        embed=createEmbed("Échange de Titre","<@{0}> accepte l'échange du titre {1} avec <@{2}> !\n<@{0}>, vous devez choisir si vous voulez échanger ce titre contre des OT Coins (<:ot1:705766186909958185>) ou un autre titre (<:ot2:705766186989912154>).".format(userTrade.id,titre["Nom"],ctx.author.id),0xf58d1d,ctx.invoked_with.lower(),userTrade)
+        embed=createEmbed("Échange de Titre","<@{0}> accepte l'échange du titre {1} avec <@{2}> !\n<@{0}>, vous devez choisir si vous voulez échanger ce titre contre des OT Coins (<:ot1:705766186909958185>) ou un autre titre (<:ot2:705766186989912154>).".format(userTrade.id,titre["Nom"],ctx.author.id),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),userTrade)
         message=await ctx.reply(embed=embed)
         await message.add_reaction("<:ot1:705766186909958185>")
         await message.add_reaction("<:ot2:705766186989912154>")
@@ -50,7 +50,7 @@ async def tradeTitre(ctx,idtitre,bot):
             coins=curseurTrade.execute("SELECT * FROM coins").fetchone()["Coins"]
             connexionTrade.close()
 
-            embed=createEmbed("Échange de Titre","<@{0}>, parmis vos {1} OT Coins actuels, écrivez combien voulez vous donner pour acheter le titre **{2}**".format(userTrade.id,coins,titre["Nom"]),0xf58d1d,ctx.invoked_with.lower(),userTrade)
+            embed=createEmbed("Échange de Titre","<@{0}>, parmis vos {1} OT Coins actuels, écrivez combien voulez vous donner pour acheter le titre **{2}**".format(userTrade.id,coins,titre["Nom"]),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),userTrade)
             message=await ctx.reply(embed=embed)
 
             def checkTitre(mess):
@@ -64,7 +64,7 @@ async def tradeTitre(ctx,idtitre,bot):
             somme=int(mess.content)
             assert coins-somme>=0, "Vous n'avez pas assez de OT Coins !"
 
-            embed=createEmbed("Échange de Titre","<@{0}>, <@{1}> vous fait une proposition de **{2} OT Coins** pour acheter votre titre **{3}**\nAppuyez sur <:otVALIDER:772766033996021761> pour finaliser l'échange.\nAu bout de 60 secondes sans réponse, l'échange sera annulé.".format(ctx.author.id,userTrade.id,somme,titre["Nom"]),0xf58d1d,ctx.invoked_with.lower(),ctx.author)
+            embed=createEmbed("Échange de Titre","<@{0}>, <@{1}> vous fait une proposition de **{2} OT Coins** pour acheter votre titre **{3}**\nAppuyez sur <:otVALIDER:772766033996021761> pour finaliser l'échange.\nAu bout de 60 secondes sans réponse, l'échange sera annulé.".format(ctx.author.id,userTrade.id,somme,titre["Nom"]),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
             message=await ctx.reply(embed=embed)
             await message.add_reaction("<:otVALIDER:772766033996021761>")
 
@@ -91,7 +91,7 @@ async def tradeTitre(ctx,idtitre,bot):
         
         else:
             connexionTrade.close()
-            embed=createEmbed("Échange de Titre","<@{0}>, parmis les titres que vous possèdez, écrivez l'ID de celui que vous voudriez échanger contre **{1}**.\nVous pouvez consulter votre liste de titres avec OT!titre perso.".format(userTrade.id,titre["Nom"]),0xf58d1d,ctx.invoked_with.lower(),userTrade)
+            embed=createEmbed("Échange de Titre","<@{0}>, parmis les titres que vous possèdez, écrivez l'ID de celui que vous voudriez échanger contre **{1}**.\nVous pouvez consulter votre liste de titres avec OT!titre perso.".format(userTrade.id,titre["Nom"]),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),userTrade)
             message=await ctx.reply(embed=embed)
 
             def checkTitre(mess):
@@ -105,7 +105,7 @@ async def tradeTitre(ctx,idtitre,bot):
             idtrade=int(mess.content)
             titreTrade=verifVente(userTrade.id,idtrade)
 
-            embed=createEmbed("Échange de Titre","<@{0}>, <@{1}> vous fait une proposition d'échanger le titre **{2}** contre votre titre **{3}**\nAppuyez sur <:otVALIDER:772766033996021761> pour finaliser l'échange.\nAu bout de 60 secondes sans réponse, l'échange sera annulé.".format(ctx.author.id,userTrade.id,titreTrade[0],titre["Nom"]),0xf58d1d,ctx.invoked_with.lower(),ctx.author)
+            embed=createEmbed("Échange de Titre","<@{0}>, <@{1}> vous fait une proposition d'échanger le titre **{2}** contre votre titre **{3}**\nAppuyez sur <:otVALIDER:772766033996021761> pour finaliser l'échange.\nAu bout de 60 secondes sans réponse, l'échange sera annulé.".format(ctx.author.id,userTrade.id,titreTrade[0],titre["Nom"]),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
             message=await ctx.reply(embed=embed)
             await message.add_reaction("<:otVALIDER:772766033996021761>")
 
@@ -130,7 +130,7 @@ async def tradeTitre(ctx,idtitre,bot):
             connexionUser.commit()
             connexionTrade.commit()
         
-        embed=createEmbed("Échange de Titre","Échange terminé !",0xf58d1d,ctx.invoked_with.lower(),ctx.author)
+        embed=createEmbed("Échange de Titre","Échange terminé !",0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
         await ctx.reply(embed=embed)
 
     except AssertionError as er:
