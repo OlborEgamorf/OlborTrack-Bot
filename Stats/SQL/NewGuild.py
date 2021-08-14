@@ -34,6 +34,7 @@ def createDirSQL(guild):
     curseur.execute("CREATE TABLE IF NOT EXISTS savezvous (Texte TEXT, ID BIGINT, Image TEXT, Count INT)")
     curseur.execute("CREATE TABLE IF NOT EXISTS sb (Nombre INT, Salon BIGINT, Emote TEXT, ID BIGINT, Count INT, PRIMARY KEY(Salon,Emote))")
     curseur.execute("CREATE TABLE IF NOT EXISTS twitch (Nombre INT, Salon BIGINT, Stream TEXT, Descip TEXT, Sent BOOL, PRIMARY KEY(Salon,Stream))")
+    curseur.execute("CREATE TABLE IF NOT EXISTS youtube (Nombre INT, Salon BIGINT, Chaine TEXT, Descip TEXT, LastID TEXT, Nom TEXT PRIMARY KEY(Salon,Chaine))")
 
     curseur.execute("CREATE TABLE IF NOT EXISTS wikinsfw (Active BOOL PRIMARY KEY)")
     try:

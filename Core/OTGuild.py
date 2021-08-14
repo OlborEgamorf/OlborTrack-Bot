@@ -23,6 +23,7 @@ class OTGuild:
         self.stats=True
         self.gd=False
         self.twitch=[]
+        self.yt=[]
         self.snipe=OTSnipe()
         self.starlist={}
         self.stardict={}
@@ -37,7 +38,10 @@ class OTGuild:
             self.getWikiNSFW(curseur)
             self.getTwitch(curseur)
             self.getStats(curseur)
-    
+            try:
+                self.getYouTube(curseur)
+            except:
+                pass
     def getStar(self,curseur=None):
         if curseur==None:
             connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
@@ -82,6 +86,13 @@ class OTGuild:
         for i in curseur.execute("SELECT * FROM twitch").fetchall():
             self.twitch.append(OTTwitch(i))
 
+    def getYouTube(self,curseur=None):
+        if curseur==None:
+            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+        self.yt=[]
+        for i in curseur.execute("SELECT * FROM youtube").fetchall():
+            self.yt.append(OTYouTube(i))
+
     def getStats(self,curseur=None):
         if curseur==None:
             connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
@@ -112,4 +123,13 @@ class OTTwitch:
         self.salon=infos["Salon"]
         self.descip=infos["Descip"]
         self.sent=infos["Sent"]
+        self.numero=infos["Nombre"]
+
+
+class OTYouTube:
+    def __init__(self,infos):
+        self.chaine=infos["Chaine"]
+        self.salon=infos["Salon"]
+        self.descip=infos["Descip"]
+        self.last=infos["LastID"]
         self.numero=infos["Nombre"]

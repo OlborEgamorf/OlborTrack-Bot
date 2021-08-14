@@ -7,12 +7,12 @@ async def addTwitch(ctx,bot,args,curseur):
     assert ctx.message.channel_mentions[0].permissions_for(ctx.guild.get_member(bot.user.id)).send_messages==True, "Le salon mentionné n'a pas les permissions nécessaires pour que je puisse envoyer des messages."
     assert len(args)>=3, "Il manque des éléments pour créer l'alerte ! Donnez moi dans l'ordre : un streamer, un salon mentionné et une description."
     
-    if True:
+    try:
         num=curseur.execute("SELECT COUNT() as Nombre FROM twitch").fetchone()["Nombre"]+1
         stream=createPhrase([args[0]]).lower()[0:-1]
         descip=createPhrase(args[2:len(args)])
         curseur.execute("INSERT INTO twitch VALUES({0},{1},'{2}','{3}',False)".format(num,ctx.message.channel_mentions[0].id,stream,descip))
-    else:
+    except:
         raise AssertionError("Ce couple de streamer et de salon existe déjà.")
 
     return createEmbed("Alerte Twitch créée","Numéro de l'alerte : {0}\nStreamer : {1}\nSalon : <#{2}>\nDescription : {3}".format(num,stream,ctx.message.channel_mentions[0].id,descip),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
