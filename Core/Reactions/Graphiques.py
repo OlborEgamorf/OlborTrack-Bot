@@ -142,7 +142,7 @@ async def reactGraph(message:int,bot:commands.Bot,guildOT:OTGuild,payload,emoji)
             listeG.append(messageGraph.attachments[0].url)
 
         else:
-            if ligne["Commande"]=="rank":
+            if ligne["Commande"] in ("rank","jeux"):
                 if ligne["Args1"]=="glob":
                     listeFonc=[graphRank,graphHeatGlobal,graphCircle]
                 elif ligne["Args1"]=="to":
@@ -159,6 +159,9 @@ async def reactGraph(message:int,bot:commands.Bot,guildOT:OTGuild,payload,emoji)
                     if graphHeat in listeFonc:
                         listeFonc.remove(graphHeat)
             
+            elif ligne["Commande"]=="trivial" and ligne["Option"]!="trivialperso":
+                listeFonc=[graphRank,graphCircle]
+
             elif ligne["Commande"]=="roles":
                 if ligne["Args1"]=="glob":
                     listeFonc=[graphRank,graphHeatGlobal,graphCircle]

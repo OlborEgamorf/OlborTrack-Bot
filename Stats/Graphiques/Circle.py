@@ -28,6 +28,9 @@ async def graphCircle(ligne,ctx,bot,option,guildOT):
         table.reverse()
         if len(table)>15:
             table=table[0:15]
+    elif ligne["Commande"]=="trivial":
+        connexion,curseur=connectSQL("OT","ranks","Trivial",None,None)
+        table=curseur.execute("SELECT * FROM {0} WHERE Rank<=100 AND Count>0 ORDER BY Rank DESC".format(ligne["Args2"])).fetchall()
     else:
         connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[ligne["Args1"]],ligne["Args2"])
         table=curseur.execute("SELECT * FROM {0}{1}{2} WHERE Rank<=100 AND Count>0 ORDER BY Rank DESC".format(ligne["Args1"],ligne["Args2"],obj)).fetchall()
@@ -43,6 +46,9 @@ async def graphCircle(ligne,ctx,bot,option,guildOT):
                     listeY.append("{0}".format(role.name))
                 else:
                     listeY.append("{0}...".format(role.name[0:15]))
+            elif ligne["Commande"] in ("jeux","trivial"):
+                listeY.append(getNomGraph(ctx,bot,option,table[i]["ID"]))
+                listeX[i]=int(listeX[i])
             elif option in ("Salons","Voicechan") and obj=="":
                 if guildOT.chan[table[i]["ID"]]["Hide"]:
                     del listeX[i]
@@ -74,6 +80,7 @@ async def graphCircle(ligne,ctx,bot,option,guildOT):
         except:
             listeY.append("??")
 
+    print(len(listeY),len(listeX),len(listeC))
     df=pd.DataFrame({"Noms":listeY,"Valeurs":listeX,"Couleurs":listeC})
 
     circles = circlify.circlify(df['Valeurs'].tolist(), show_enclosure=False, target_enclosure=circlify.Circle(x=0, y=0, r=1))
@@ -95,7 +102,9 @@ async def graphCircle(ligne,ctx,bot,option,guildOT):
     else:
         titre="Bulles {0} 20{1} - {2} - {3}".format(tableauMois[table[0]["Mois"]],table[0]["Annee"],ctx.guild.name,option)
     
-    if obj not in ("None",""):
+    if option=="trivial":
+        titre+="\n{0}".format(obj)
+    elif obj not in ("None",""):
         titre+="\n{0}".format(getNomGraph(ctx,bot,option,int(obj)))
     if ligne["Commande"]=="roles" and ligne["Args4"]!="None":
         titre+="\n{0}".format(getNomGraph(ctx,bot,"Roles",int(ligne["Args4"])))

@@ -2,7 +2,7 @@ import discord
 from Core.Fonctions.Embeds import addtoFields, createFields, defEvol
 from Core.Fonctions.DichoTri import dichotomieID, triID
 from Stats.SQL.ConnectSQL import connectSQL
-from Titres.Outils import getTitre
+from Core.Fonctions.GetNom import getTitre
 
 def embedJeux(table,guild,page,mobile,id,evol,option):
     embed=discord.Embed()

@@ -7,6 +7,7 @@ from Core.Fonctions.Phrase import createPhrase
 from Core.OTGuild import OTGuild
 from discord.ext import commands
 from Stats.SQL.EmoteDetector import emoteDetector
+from Stats.SQL.ConnectSQL import connectSQL
 
 
 def nomsOptions(option:str,id:int,guildOT:OTGuild,bot:commands.Bot) -> str:
@@ -65,7 +66,12 @@ def getNomGraph(ctx:commands.Context,bot:commands.Bot,option:str,id:int) -> (str
         bot : l'objet bot du bot
     Sortie :
         nom : le formatage ou alors un membre en fonction de l'option donnée."""
-    if option in ("Salons","Voicechan"):
+    if option in ("tortues","tortuesduo","p4","bataillenavale","trivialversus","trivialbr","trivialparty","trivial"):
+        connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
+        nom=getTitre(curseur,id)
+        nom=nom if len(nom)<=15 else "{0}...".format(nom[0:15])
+        return nom
+    elif option in ("Salons","Voicechan"):
         nom=bot.get_channel(id).name
         nom=nom if len(nom)<=15 else "{0}...".format(nom[0:15])
         return nom
@@ -146,3 +152,15 @@ def getAuthor(option:str,ctx:commands.Context,nb:int) -> (str or None):
     except:
         author=None
     return author
+
+def getTitre(curseur,user):
+    total=""
+    custom=curseur.execute("SELECT Custom FROM custom WHERE ID={0}".format(user)).fetchone()
+    titre=curseur.execute("SELECT titres.Nom FROM active JOIN titres ON active.TitreID=titres.ID WHERE MembreID={0}".format(user)).fetchone()
+    if custom!=None:
+        total+="{0}, ".format(custom["Custom"])
+    if titre==None:
+        total+="Inconnu"
+    else:
+        total+=titre["Nom"]
+    return total

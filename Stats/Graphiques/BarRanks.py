@@ -11,6 +11,7 @@ from Core.Fonctions.WebRequest import getAvatar, getImage
 from Core.Fonctions.VoiceAxe import voiceAxe
 colorOT=(110/256,200/256,250/256,1)
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TO","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
+dictOption={"tortues":"Tortues","tortuesduo":"TortuesDuo","trivialversus":"TrivialVersus","trivialbr":"TrivialBR","trivialparty":"TrivialParty","p4":"P4","bataillenavale":"BatailleNavale"}
 
 async def graphRank(ligne,ctx,bot,option,guildOT):
     
@@ -18,6 +19,7 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
     setThemeGraph(plt)
     fig,ax=plt.subplots()
     mois,annee,obj=ligne["Args1"],ligne["Args2"],ligne["Args3"]
+    colorBase=colorOT
     
     if ligne["Commande"]=="rank":
         connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[mois],annee)
@@ -25,7 +27,6 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
             table=curseur.execute("SELECT * FROM {0}{1} WHERE Rank<=15 ORDER BY Rank DESC".format(mois,annee)).fetchall()
         else:
             table=curseur.execute("SELECT * FROM {0}{1}{2} WHERE Rank<=15 ORDER BY Rank DESC".format(mois,annee,obj)).fetchall()
-        colorBase=colorOT
     elif ligne["Commande"]=="roles":
         connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[mois],annee)
         obj="" if ligne["Args3"]=="None" else ligne["Args3"]
@@ -36,7 +37,12 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
         table.reverse()
         if len(table)>15:
             table=table[0:15]
-        colorBase=colorOT
+    elif ligne["Commande"]=="jeux":
+        connexion,curseur=connectSQL(ctx.guild.id,dictOption[option],"Stats",tableauMois[mois],annee)
+        table=curseur.execute("SELECT * FROM {0}{1} WHERE Rank<=15 ORDER BY Rank DESC".format(mois,annee)).fetchall()
+    elif ligne["Commande"]=="trivial":
+        connexion,curseur=connectSQL("OT","ranks","Trivial",None,None)
+        table=curseur.execute("SELECT * FROM {0} WHERE Rank<=15 ORDER BY Rank DESC".format(ligne["Args2"])).fetchall()
     else:
         connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",mois,annee)
         table=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY Count DESC LIMIT 15".format(mois,annee,ligne["AuthorID"])).fetchall()
@@ -59,6 +65,9 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
                     listeN.append("{0}".format(role.name))
                 else:
                     listeN.append("{0}...".format(role.name[0:15]))
+            elif ligne["Commande"] in ("jeux","trivial"):
+                listeN.append(getNomGraph(ctx,bot,option,table[i]["ID"]))
+                listeY[i]=int(listeY[i])
             elif option in ("Salons","Emotes","Reactions","Voicechan") and obj=="None":
                 if option in ("Emotes","Reactions"):
                     try:
@@ -105,7 +114,9 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
     else:
         titre="Classement {0} 20{1} - {2} - {3}".format(tableauMois[table[0]["Mois"]],table[0]["Annee"],ctx.guild.name,option)
     
-    if obj not in ("None",""):
+    if option=="trivial":
+        titre+="\n{0}".format(obj)
+    elif obj not in ("None",""):
         titre+="\n{0}".format(getNomGraph(ctx,bot,option,int(obj)))
     if ligne["Commande"]=="roles" and ligne["Args4"]!="None":
         titre+="\n{0}".format(getNomGraph(ctx,bot,"Roles",int(ligne["Args4"])))
