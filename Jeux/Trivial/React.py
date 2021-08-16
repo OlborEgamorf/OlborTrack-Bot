@@ -19,6 +19,8 @@ async def trivialReact(message,client,emoji,user,guild,reaction,inGame,gamesTriv
             if not user.bot:
                 await reaction.remove(user)
             return
+        else:
+            return
         if tableQuestion.vrai==choix[emoji.id]+1:
             tableQuestion.gestionMulti(True,inGame)
             if tableQuestion.option=="classic":
