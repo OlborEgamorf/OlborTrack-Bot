@@ -38,7 +38,7 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
         if len(table)>15:
             table=table[0:15]
     elif ligne["Commande"]=="jeux":
-        connexion,curseur=connectSQL(ctx.guild.id,dictOption[option],"Stats",tableauMois[mois],annee)
+        connexion,curseur=connectSQL(ligne["Args3"],dictOption[option],"Jeux",tableauMois[mois],annee)
         table=curseur.execute("SELECT * FROM {0}{1} WHERE Rank<=15 ORDER BY Rank DESC".format(mois,annee)).fetchall()
     elif ligne["Commande"]=="trivial":
         connexion,curseur=connectSQL("OT","ranks","Trivial",None,None)
@@ -66,7 +66,10 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
                 else:
                     listeN.append("{0}...".format(role.name[0:15]))
             elif ligne["Commande"] in ("jeux","trivial"):
-                listeN.append(getNomGraph(ctx,bot,option,table[i]["ID"]))
+                if ligne["Commande"]=="jeux" and obj!="OT":
+                    listeN.append(getNomGraph(ctx,bot,"Messages",table[i]["ID"]).name)
+                else:
+                    listeN.append(getNomGraph(ctx,bot,option,table[i]["ID"]))
                 listeY[i]=int(listeY[i])
             elif option in ("Salons","Emotes","Reactions","Voicechan") and obj=="None":
                 if option in ("Emotes","Reactions"):
@@ -108,15 +111,21 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
 
     plt.barh(listeL, listeY, color=listeC,edgecolor="white")
     plt.yticks(listeL, listeN)
-    
-    if table[0]["Annee"]=="GL":
-        titre="Classement global - {0} - {1}".format(ctx.guild.name,option)   
+
+    if ligne["Commande"]=="jeux" and obj=="OT":
+        if table[0]["Annee"]=="GL":
+            titre="Classement global - Mondial - {0}".format(option)   
+        else:
+            titre="Classement {0} 20{1} - Mondial - {2}".format(tableauMois[table[0]["Mois"]],table[0]["Annee"],option)
     else:
-        titre="Classement {0} 20{1} - {2} - {3}".format(tableauMois[table[0]["Mois"]],table[0]["Annee"],ctx.guild.name,option)
+        if table[0]["Annee"]=="GL":
+            titre="Classement global - {0} - {1}".format(ctx.guild.name,option)   
+        else:
+            titre="Classement {0} 20{1} - {2} - {3}".format(tableauMois[table[0]["Mois"]],table[0]["Annee"],ctx.guild.name,option)
     
     if option=="trivial":
         titre+="\n{0}".format(obj)
-    elif obj not in ("None",""):
+    elif obj not in ("None","") and ligne["Commande"]!="jeux":
         titre+="\n{0}".format(getNomGraph(ctx,bot,option,int(obj)))
     if ligne["Commande"]=="roles" and ligne["Args4"]!="None":
         titre+="\n{0}".format(getNomGraph(ctx,bot,"Roles",int(ligne["Args4"])))

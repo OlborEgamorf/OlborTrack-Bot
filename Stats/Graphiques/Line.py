@@ -7,16 +7,25 @@ from Stats.SQL.ConnectSQL import connectSQL
 from Core.Fonctions.GetNom import getNomGraph
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TOTAL","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
 colorOT=(110/256,200/256,250/256,1)
+dictOption={"tortues":"Tortues","tortuesduo":"TortuesDuo","trivialversus":"TrivialVersus","trivialbr":"TrivialBR","trivialparty":"TrivialParty","p4":"P4","bataillenavale":"BatailleNavale"}
 
 async def graphLine(ligne,ctx,bot,option,guildOT):
     colorsBasic=[colorOT,"green","red"]
     plt.subplots(figsize=(6.4,4.8))
     setThemeGraph(plt)
     obj=ligne["Args3"] if ligne["Args3"]!="None" else ""
-    connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[ligne["Args1"]],ligne["Args2"])
+    if ligne["Commande"]=="jeux":
+        connexion,curseur=connectSQL(ligne["Args3"],dictOption[option],"Jeux",tableauMois[ligne["Args1"]],ligne["Args2"])
+        obj=""
+    else:
+        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[ligne["Args1"]],ligne["Args2"])
     table=curseur.execute("SELECT * FROM {0}{1}{2} ORDER BY Rank ASC".format(ligne["Args1"],ligne["Args2"],obj)).fetchall()
 
-    connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
+    if ligne["Commande"]=="jeux":
+        connexion,curseur=connectSQL(ligne["Args3"],dictOption[option],"Jeux","GL","")
+    else:
+        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
+
     if obj=="":
         old10=curseur.execute("SELECT * FROM firstM WHERE DateID<={0}{1} ORDER BY DateID DESC".format(ligne["Args2"],tableauMois[ligne["Args1"]])).fetchall()
     else:
@@ -30,7 +39,10 @@ async def graphLine(ligne,ctx,bot,option,guildOT):
     stop=3 if len(table)>3 else len(table)
     for i in range(stop-1,-1,-1):
         for j in range(len(old10)-1,-1,-1):
-            connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",old10[j]["Mois"],old10[j]["Annee"])
+            if ligne["Commande"]=="jeux":
+                connexion,curseur=connectSQL(ligne["Args3"],dictOption[option],"Jeux",old10[j]["Mois"],old10[j]["Annee"])
+            else:
+                connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",old10[j]["Mois"],old10[j]["Annee"])
             count=curseur.execute("SELECT Count,Rank FROM {0}{1}{2} WHERE ID={3}".format(tableauMois[old10[j]["Mois"]],old10[j]["Annee"],obj,table[i]["ID"])).fetchone()
             if count!=None:
                 if old10[j]["DateID"] not in listeDates:

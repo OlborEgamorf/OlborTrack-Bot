@@ -149,8 +149,8 @@ async def reactGraph(message:int,bot:commands.Bot,guildOT:OTGuild,payload,emoji)
                     listeFonc=[graphRank,graphScatter,graphScatterUsers,graphHeatAnnee,graphCircle]
                 else:
                     listeFonc=[graphRank,graphScatter,graphScatterUsers,graphHeat,graphCircle,graphLine]
-                if ligne["Option"] in ("Divers","Mentions","Mentionne"):
-                    if graphScatter in listeFonc:
+                if ligne["Option"] in ("Divers","Mentions","Mentionne") or ligne["Commande"]=="jeux":
+                    if graphScatter in listeFonc and ligne["Commande"]!="jeux":
                         listeFonc.remove(graphScatter)
                     if graphHeatGlobal in listeFonc:
                         listeFonc.remove(graphHeatGlobal)
