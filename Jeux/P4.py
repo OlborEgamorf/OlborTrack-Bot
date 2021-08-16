@@ -1,37 +1,20 @@
-import asyncio
-import sys
-from random import randint
-
-import discord
-from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.Embeds import createEmbed, embedAssert, exeErrorExcept
+import asyncio
+import discord
+from random import randint
+from Core.Fonctions.AuteurIcon import auteur
 from Stats.Tracker.Jeux import exeStatsJeux
 from Titres.Outils import gainCoins
 
-listeJoueurs=[]
-listeJeux={}
-
-embedPerm=discord.Embed(title="<:otRED:718392916061716481> Permission manquante", description="Je ne peux retirer votre réaction ! Donnez moi la permission 'gestion des messages' pour ne plus voir ce message.",color=0xff0000)
-embedPerm.set_footer(text="Permission")
-emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>","<:ot5:705766186713088042>","<:ot6:705766187182850148>","<:ot7:705766187115741246>","<:otANNULER:811242376625782785>"]
+emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>","<:ot5:705766186713088042>","<:ot6:705766187182850148>","<:ot7:705766187115741246>"]
 dictCo={705766186909958185:0,705766186989912154:1,705766186930929685:2,705766186947706934:3,705766186713088042:4,705766187182850148:5,705766187115741246:6}
-#####
-
 
 class JoueurP4:
-    def __init__(self,user,num):
+    def __init__(self,user):
         self.id=user.id
         self.nom=user.name
         self.color=user.color.value
         self.avatar=user.avatar
-        self.play=False
-        self.numero=num
-    
-    def setPlay(self):
-        if self.play==True:
-            self.play=False
-        else:
-            self.play=True
 
 class TabP4:
     def __init__(self):
@@ -102,83 +85,31 @@ class TabP4:
         return add,i+1,colonne
 
 class JeuP4:
-    def __init__(self,guild,message):
-        self.id=message.id
+    def __init__(self,guild,user):
+        self.joueurs=[]
+        self.ids=[]
+        self.mises={}
+        self.emotes={}
         self.guild=guild
-        self.message=message
-        self.J1=None
-        self.J2=None
-        self.temps=0
         self.tab=TabP4()
-        self.cheat=False
         self.tours=0
         self.playing=False
-        self.ping=False
-        self.messAd=None
+        self.invoke=user
     
-    def addPlayer(self,user,player):
-        if player==1:
-            self.J1=JoueurP4(user,1)
-        else:
-            self.J2=JoueurP4(user,2)
+    def addPlayer(self,user):
+        self.joueurs.append(JoueurP4(user))
 
-    def setTurn(self):
-        if randint(1,2)==1:
-            self.J1.setPlay()
-        else:
-            self.J2.setPlay()
-
-    async def timerLoad(self):
-        await asyncio.sleep(300)
-        if self.playing==False:
-            embedP4=createEmbed("Pas d'adversaire trouvé !","5 minutes se sont écoulées et personne n'a répondu à l'invitation.",0xad917b,"p4",self.message.guild)
-            listeJoueurs.remove(self.J1.id)
-            await self.message.clear_reactions()
-            await self.message.edit(embed=embedP4)
-        del listeJeux[self.id]
-    
-    async def start(self):
-        self.playing=True
-        while self.temps<90 and self.playing==True:
-            await asyncio.sleep(1)
-            self.temps+=1
-            if self.temps==75:
-                if self.J1.play==True:
-                    await self.message.channel.send("<:otORANGE:868538903584456745> plus que 15 secondes <@"+str(self.J1.id)+"> !")
-                else:
-                    await self.message.channel.send("<:otORANGE:868538903584456745> plus que 15 secondes <@"+str(self.J2.id)+"> !")
-        if self.playing==True:
-            self.J1.setPlay()
-            self.J2.setPlay()
-            listeJoueurs.remove(self.J1.id)
-            listeJoueurs.remove(self.J2.id)
-            self.playing=None
-            await self.message.clear_reactions()
-            await self.message.edit(embed=self.createEmbedP4("Victoire par forfait de "+self.getPlaying().nom))
-            await self.message.channel.send("<:otVERT:868535645897912330> Victoire de {0} par forfait".format(self.getPlaying().nom))
-            exeStatsJeux(self.getPlaying().id,self.getWaiting().id,self.guild,"P4",self.tours,"abandon")
-            gainCoins(self.getPlaying().id,50)
-            await self.messAd.delete()
-
-    def getColor(self):
-        return self.getPlaying().color
-
-    def getPlaying(self):
-        if self.J1.play==True:
-            return self.J1
-        else:
-            return self.J2
-    
-    def getWaiting(self):
-        if self.J1.play==True:
-            return self.J2
-        else:
-            return self.J1
-
-    def createEmbedP4(self,titre):
-        embed=discord.Embed(title=titre,description=self.affichageTab(),color=self.getColor())
-        auteur(self.getPlaying().id,self.getPlaying().nom,self.getPlaying().avatar,embed,"user")
+    def createEmbedP4(self,turn):
+        embed=discord.Embed(title="Au tour de {0}".format(self.joueurs[turn].nom),description=self.affichageTab(),color=self.joueurs[turn].color)
+        auteur(self.joueurs[turn].id,self.joueurs[turn].nom,self.joueurs[turn].avatar,embed,"user")
         embed.set_footer(text="OT!p4")
+        embed.add_field(name="Joueurs",value="<@{0}> : <:otP1:726164724882079854>\n<@{1}> : <:otP2:726165146229145610>".format(self.joueurs[0].id,self.joueurs[1].id))
+        if sum(self.mises.values())!=0:
+            descip=""
+            for i in self.mises:
+                if self.mises[i]!=0:
+                    descip+="<@{0}> : {1} <:otCOINS:873226814527520809>\n".format(i,self.mises[i])
+            embed.add_field(name="Mises d'OT Coins",value=descip)
         return embed
 
     def affichageTab(self):
@@ -198,126 +129,115 @@ class JeuP4:
             descip+="\n"
         return descip
 
-async def createGameP4(ctx,args,client):
-    try:
-        assert ctx.author.id not in listeJoueurs, "Vous êtes déjà dans une partie !"
-        if len(ctx.message.mentions)>0:
-            assert ctx.message.mentions[0].bot==False, "Vous ne pouvez pas jouer contre un robot !"
-            assert ctx.message.mentions[0]!=ctx.author, "Vous voulez vraiment vous défier vous même ?"
-            assert ctx.message.mentions[0].id not in listeJoueurs, "La personne défiée est déjà dans une partie !"
-            descip="<@"+str(ctx.message.mentions[0].id)+"> est défié par <@"+str(ctx.author.id)+"> pour une partie de puissance 4 !\n<@"+str(ctx.message.mentions[0].id)+"> doit appuyer sur la réaction <:otVALIDER:772766033996021761> pour accepter ou <:otANNULER:811242376625782785> pour refuser ou annuler le défi."
+    def embedWin(self,win,nul):
+        if nul==True:
+            embed=discord.Embed(title="Match nul !", description="Le tableau est bloqué, et personne n'a gagné !", color=0xad917b)
         else:
-            descip="Appuyez sur la réaction <:otVALIDER:772766033996021761> pour défier <@"+str(ctx.author.id)+"> au puissance 4. La personne qui a demandé la partie peut cliquer sur <:otANNULER:811242376625782785> pour annuler la recherche."
-        message=await ctx.send(embed=createEmbed("Puissance 4",descip,0xad917b,ctx.invoked_with.lower(),ctx.author))
-        listeJeux[message.id]=JeuP4(ctx.guild.id,message)
-        listeJeux[message.id].addPlayer(ctx.author,1)
-        if len(ctx.message.mentions)>0:
-            listeJeux[message.id].ping=ctx.message.mentions[0].id
-        listeJoueurs.append(ctx.author.id)
-        client.loop.create_task(listeJeux[message.id].timerLoad())
+            embed=discord.Embed(title="Victoire de {0}".format(self.joueurs[win].nom), description="Bravo à lui/elle !", color=self.joueurs[win].color)
+            embed=auteur(self.joueurs[win].id,self.joueurs[win].nom,self.joueurs[win].avatar,embed,"user")
+            embed.add_field(name="<:otCOINS:873226814527520809> gagnés",value="{0} <:otCOINS:873226814527520809>".format(50+sum(self.mises.values())))
+
+        embed.set_footer(text="OT!p4")
+        return embed
+
+
+    async def play(self,turn,message,bot):
+
+        def check(reaction,user):
+            if type(reaction.emoji)==str:
+                return False
+            return reaction.emoji.id in (705766186909958185,705766186989912154,705766186930929685,705766186947706934,705766186713088042,705766187182850148,705766187115741246) and reaction.message.id==message.id and self.joueurs[turn].id==user.id
+
+        try:
+            reaction,user=await bot.wait_for('reaction_add', check=check, timeout=60)
+            await reaction.remove(user)
+        except asyncio.exceptions.TimeoutError:
+            add=self.tab.addJeton(randint(0,6),turn+1)
+        else:
+            add=self.tab.addJeton(dictCo[reaction.emoji.id],turn+1)
+        return add
+
+
+async def startGameP4(ctx,bot,inGame,gamesP4):
+    if True:
+        assert ctx.author.id not in inGame, "Terminez votre partie en cours avant de lancer ou rejoindre une partie."
+        game=JeuP4(ctx.guild,ctx.author.id)
+        game.ids.append(ctx.author.id)
+        game.mises[ctx.author.id]=0
+        inGame.append(ctx.author.id)
+        message=await ctx.send(embed=createEmbed("Puissance 4","Appuyez sur la réaction <:otVALIDER:772766033996021761> pour défier <@{0}> au Puissance 4.\nL'objectif est d'aligner 4 jetons de votre couleur dans n'importe quel sens (horizontallement, verticalement ou diagonalement) en premier !\nLes réactions allant de <:ot1:705766186909958185> à <:ot7:705766187115741246> représentent les colonnes où vous pouvez placer votre jeton. Cliquez sur l'une d'entre elles et le jeton apparaîtra !\nLa personne qui a demandé la partie peut cliquer sur <:otANNULER:811242376625782785> pour se retirer de la partie.".format(ctx.author.id),0xad917b,ctx.invoked_with.lower(),ctx.guild))
+        gamesP4[message.id]=game
+
         await message.add_reaction("<:otVALIDER:772766033996021761>")
         await message.add_reaction("<:otANNULER:811242376625782785>")
-    except AssertionError as er:
-        await ctx.send(embed=embedAssert(str(er)))
-    except:
-        await ctx.send(embed=await exeErrorExcept(ctx,client,args))
 
-async def joinGameP4(message,user,reaction,client):
-    if message.id not in listeJeux:
-        return
-    if user.id in listeJoueurs or user.bot==True or (listeJeux[message.id].ping!=False and listeJeux[message.id].ping!=user.id):
-        if user.bot==False:
-            await reaction.remove(user)
-        return
-    listeJoueurs.append(user.id)
-    listeJeux[message.id].addPlayer(user,2)
-    listeJeux[message.id].setTurn()
-    client.loop.create_task(listeJeux[message.id].start())
-    await message.channel.send("<:otVERT:868535645897912330> Le challenge de <@{0}> a été relevé !".format(listeJeux[message.id].J1.id))
-    await message.clear_reactions()
-    await message.edit(embed=listeJeux[message.id].createEmbedP4(listeJeux[message.id].J1.nom+" VS "+listeJeux[message.id].J2.nom))
-    for i in emotes:
-        await message.add_reaction(i)
-    listeJeux[message.id].messAd=await client.get_channel(870598360296488980).send("{0} - {1} : partie OT!p4 débutée".format(message.guild.name,message.guild.id))
-
-async def playGameP4(message,user,reaction):
-    if message.id not in listeJeux:
-        return
-    if user.bot:
-        return
-    game=listeJeux[message.id]
-    if (game.J1.id!=user.id and game.J2.id!=user.id) or game.cheat==True:
-        if user.bot==False:
-            await reaction.remove(user)
-        return
-    if game.getPlaying().id==user.id:
-        game.cheat=True
-        add=game.tab.addJeton(dictCo[reaction.emoji.id],game.getPlaying().numero)
-        if add[0]==True:
-            if game.tab.checkTab(add[1],add[2],game.getPlaying().numero)==True:
-                await message.clear_reactions()
-                await message.edit(embed=game.createEmbedP4("Victoire de "+game.getPlaying().nom))
-                await message.channel.send("<:otVERT:868535645897912330> Victoire de {0} !".format(game.getPlaying().nom))
-                listeJoueurs.remove(game.J1.id)
-                listeJoueurs.remove(game.J2.id)
-                game.playing=None
-                exeStatsJeux(game.getPlaying().id,game.getWaiting().id,game.guild,"P4",game.tours,"win")
-                gainCoins(game.getPlaying().id,50)
-                await game.messAd.delete()
+        for i in range(60):
+            if not game.playing:
+                await asyncio.sleep(1)
             else:
-                if game.tab.checkNul()==True:
+                break
+        
+        game.playing=True
+        await message.clear_reactions()
+        if len(game.ids)<2:
+            await message.edit(embed=createEmbed("Puissance 4","Une minute s'est écoulée et personne n'a répondu à l'invitation.",0xad917b,ctx.invoked_with.lower(),ctx.guild))
+            for i in game.ids:
+                inGame.remove(i)
+                return
+        for i in game.ids:
+            game.addPlayer(ctx.guild.get_member(i))
+        descip="<:otVERT:868535645897912330> La partie commence "
+        for i in game.joueurs:
+            descip+="<@{0}> ".format(i.id)
+        await message.channel.send(descip)
+        gamesP4[message.id]=game
+        try:
+            await message.pin()
+        except:
+            pass
+        for i in emotes:
+            await message.add_reaction(i)
+        await message.add_reaction("<:otCOINS:873226814527520809>")
+        messAd=await bot.get_channel(870598360296488980).send("{0} - {1} : partie OT!p4 débutée\n2 joueurs".format(ctx.guild.name,ctx.guild.id))
+
+        turn=randint(0,1)
+        while game.playing:
+            await message.edit(embed=game.createEmbedP4(turn))
+            add=await game.play(turn,message,bot)
+            if add[0]==True:
+                if game.tab.checkTab(add[1],add[2],turn+1)==True:
                     await message.clear_reactions()
-                    await message.edit(embed=game.createEmbedP4("Match nul !"))
-                    listeJoueurs.remove(game.J1.id)
-                    listeJoueurs.remove(game.J2.id)
-                    game.playing=None
-                    await game.messAd.delete()
+                    await message.edit(embed=game.createEmbedP4(turn))
+                    if turn==0: lose=1
+                    else: lose=0
+                    exeStatsJeux(game.joueurs[turn].id,game.joueurs[lose].id,game.guild,"P4",game.tours,"win")
+                    gainCoins(game.joueurs[turn].id,50+sum(game.mises.values()))
+                    await message.channel.send(embed=game.embedWin(turn,False))
+                    game.playing=False
                 else:
-                    game.J1.setPlay()
-                    game.J2.setPlay()
-                    game.temps=0
-                    game.tours+=1
-                    await message.edit(embed=game.createEmbedP4(game.J1.nom+" VS "+game.J2.nom))
-                    await reaction.remove(user)
-        else:
-            await reaction.remove(user)
-        game.cheat=False
-    else:
-        await reaction.remove(user)
-
-async def abandonP4(message,user,reaction):
-    if message.id not in listeJeux:
+                    if game.tab.checkNul()==True:
+                        await message.clear_reactions()
+                        await message.edit(embed=game.createEmbedP4(turn))
+                        await message.channel.send(embed=game.embedWin(turn,True))
+                        game.playing=False
+                    else:
+                        game.tours+=1      
+                        for i in range(7):
+                            if game.tab.tableau[0][i]!=0:
+                                await message.clear_reaction(emotes[i])
+            turn+=1
+            if turn==len(game.joueurs):
+                turn=0
+        await messAd.delete()
+    """except AssertionError as er:
+        await ctx.send(embed=embedAssert(er))
         return
-    game=listeJeux[message.id]
-    if game.playing==True:
-        if game.J1.id!=user.id and game.J2.id!=user.id:
-            if user.bot==False:
-                await reaction.remove(user)
-            return
-        if game.getPlaying().id==user.id:
-            game.J1.setPlay()
-            game.J2.setPlay()
-        listeJoueurs.remove(game.J1.id)
-        listeJoueurs.remove(game.J2.id)
-        game.playing=None
-        await message.clear_reactions()
-        await message.edit(embed=game.createEmbedP4("Victoire par forfait de "+game.getPlaying().nom))
-        await message.channel.send("<:otVERT:868535645897912330> Victoire de {0} par forfait.".format(game.getPlaying().nom))
-        await game.messAd.delete()
-        exeStatsJeux(game.getPlaying().id,game.getWaiting().id,game.guild,"P4",game.tours,"abandon")
-        gainCoins(game.getPlaying().id,50)
-    else:
-        if game.J1.id!=user.id and game.ping!=user.id:
-            if user.bot==False:
-                await reaction.remove(user)
-            return
-        embedP4=createEmbed("Défi annulé","La recherche de partie a été annulée.",0xad917b,"p4",message.guild)
-        listeJoueurs.remove(game.J1.id)
-        game.playing=None
-        await message.clear_reactions()
-        await message.edit(embed=embedP4)
-
-
-async def checkReactP4(message,reaction):
-    if message.id in listeJeux:
-        await message.add_reaction(str(reaction))
+    except:
+        await ctx.send(embed=await exeErrorExcept(ctx,bot,""))
+        try:
+            await message.unpin()
+        except:
+            pass"""
+    for i in game.ids:
+        inGame.remove(i)
+    del gamesP4[message.id]
