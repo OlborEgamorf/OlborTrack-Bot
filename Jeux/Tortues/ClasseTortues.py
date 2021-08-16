@@ -44,6 +44,7 @@ class JeuTortues:
         self.ids=[]
         self.historique={}
         self.emotes={}
+        self.mises={}
         self.plateau=[Pile() for i in range(10)]
         self.cartes=[Carte(i,1) for i in listeCouleurs]*5+[Carte(i,2) for i in listeCouleurs]+[Carte(i,-1) for i in listeCouleurs]*2+[Carte("multi",1) for i in range(5)]+[Carte("last",1) for i in range(3)]+[Carte("last",2) for i in range(2)]+[Carte("multi",-1) for i in range(2)]
         self.playing=False
@@ -92,7 +93,11 @@ class JeuTortues:
                 else:
                     form=self.historique[i.userid].valeur
                 descip+="Dernier coup : {0} {1}".format(form,dictEmote[self.historique[i.userid].couleur])
-            embed.add_field(name="{0} {2}Cartes de {1}{2}".format(self.emotes[i.userid],i.user.name,sup),value=descip)
+            if self.mises[i.userid]!=0:
+                mise="\nMise : {0} <:otCOINS:873226814527520809>".format(self.mises[i.userid])
+            else:
+                mise=""
+            embed.add_field(name="{0} {2}Cartes de {1}{2}{3}".format(self.emotes[i.userid],i.user.name,sup,mise),value=descip)
         return embed
                 
     def mouvement(self,couleur,valeur):
@@ -171,7 +176,7 @@ class JeuTortues:
         for i in self.joueurs:
             for j in range(4):
                 try:
-                    emote=await bot.get_guild(idServ[j]).create_custom_emoji(name=i.name.split(" ")[0],image=await i.user.avatar_url_as(size=128).read(),roles=None,reason=None)
+                    emote=await bot.get_guild(idServ[j]).create_custom_emoji(name=str(i.userid),image=await i.user.avatar_url_as(size=128).read(),roles=None,reason=None)
                     break
                 except:
                     if j==3:
@@ -199,7 +204,7 @@ class JeuTortues:
                 embed=discord.Embed(title="Victoire de {0}".format(i.name), description="Il/elle était la tortue {0} ! {1}".format(win,dictEmote[win]), color=dictColor[win])
                 embed=auteur(i.userid,i.name,i.user.avatar,embed,"user")
                 play=True
-                embed.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(i.name),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25))
+                embed.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(i.name),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25+sum(self.mises.values())))
             descip+="{0} : <@{1}>\n".format(dictEmote[i.couleur],i.userid)
 
         if play==False: 
@@ -213,7 +218,7 @@ class JeuTortues:
         connexionOT,curseurOT=connectSQL("OT","Guild","Guild",None,None)
         for i in self.joueurs:
             if i.couleur==win:
-                gainCoins(i.userid,len(self.ids)*25)
+                gainCoins(i.userid,len(self.ids)*25+sum(self.mises.values()))
                 count,state=2,"W"
             else:
                 count,state=-1,"L"

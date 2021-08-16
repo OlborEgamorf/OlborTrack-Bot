@@ -17,6 +17,7 @@ async def startGameTortues(ctx,bot,inGame,gamesTortues):
         assert ctx.author.id not in inGame, "Terminez votre partie en cours avant de lancer ou rejoindre une partie."
         game=JeuTortues(ctx.guild,ctx.author.id)
         game.ids.append(ctx.author.id)
+        game.mises[ctx.author.id]=0
         inGame.append(ctx.author.id)
         message=await ctx.send(embed=createEmbed("Course des tortues","Le jeu se joue de 2 à 5 joueurs.\nAu début de la partie, chaque joueur se voit attribuer une couleur secrète, envoyée en message privé, qui est celle de sa tortue.\nLe but est d'atteindre l'arrivée avant tout le monde, en jouant avec des cartes qui font avancer les tortues.\nLes joueurs jouent chacun leur tour. Les réactions <:ot1:705766186909958185> à <:ot5:705766186713088042> permettent de choisir sa carte.\nSi vous choisissez une carte 'au choix', cliquez ensuite sur la réaction de la tortue que vous voulez déplacer <:OTTbleu:860119157491892255> <:OTTjaune:860119157688631316> <:OTTrouge:860119157495693343> <:OTTvert:860119157331853333> <:OTTviolet:860119157672247326>.\nLes cartes 'dernière tortue' font avancer la dernière tortue.\nEn dehors de la case départ, les tortues s'empilent et avancent en même temps !\nSi plusieurs tortues arrivent en même temps, celle qui est le plus bas gagne !\nBonne chance !\n\nAppuyez sur la réaction <:otVALIDER:772766033996021761> pour rejoindre la partie de Course des tortues et <:otANNULER:811242376625782785> pour annuler votre participation.\n<@{0}> peut lancer la partie en appuyant sur <:otVALIDER:772766033996021761>, sinon elle se lancera automatiquement au bout de 1 minute.".format(ctx.author.id),0xad917b,ctx.invoked_with.lower(),ctx.guild))
         gamesTortues[message.id]=game
@@ -47,6 +48,7 @@ async def startGameTortues(ctx,bot,inGame,gamesTortues):
                 pass
             for i in emotes:
                 await message.add_reaction(i)
+            await message.add_reaction("<:otCOINS:873226814527520809>")
             messAd=await bot.get_channel(870598360296488980).send("{0} - {1} : partie OT!tortues débutée\n{2} joueurs".format(ctx.guild.name,ctx.guild.id,len(game.joueurs)))
         else:
             return

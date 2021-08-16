@@ -58,7 +58,7 @@ class Party(Versus):
         embedT=discord.Embed(title="Victoire de {0}".format(winner.name), description=descip, color=0xf2eb16)
         embedT.set_footer(text="OT!trivialparty")
         embedT=auteur(winner.id,winner.name,winner.avatar,embedT,"user")
-        embedT.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(winner.name),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25))
+        embedT.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(winner.name),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25+sum(self.mises.values())))
         return embedT
 
     def createEmbed(self,results,event):
