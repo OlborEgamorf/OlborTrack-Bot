@@ -10,11 +10,14 @@ def embedSalon(table,guildOT,page,mobile,evol,option):
     for i in range(15*(page-1),stop):
         rank="{0} {1}".format(table[i]["Rank"],defEvol(table[i],evol))
         count=formatCount(option,table[i]["Count"])
-        if guildOT.chan[table[i]["ID"]]["Hide"]:
-            nom="*Salon masqué*"
-            count="*?*"
-        else:
-            nom="<#{0}>".format(table[i]["ID"])
+        try:
+            if guildOT.chan[table[i]["ID"]]["Hide"]:
+                nom="*Salon masqué*"
+                count="*?*"
+            else:
+                nom="<#{0}>".format(table[i]["ID"])
+        except:
+            nom="??"
         field1,field2,field3=addtoFields(field1,field2,field3,mobile,rank,nom,count)
         
     embed=createFields(mobile,embed,field1,field2,field3,"Rang","Salon","Messages") 

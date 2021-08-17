@@ -33,12 +33,12 @@ async def commandeTwitch(ctx,turn,react,ligne,bot,guildOT:OTGuild,curseur):
     connexionCMD,curseurCMD=connectSQL(ctx.guild.id,"Commandes","Guild",None,None)
     if not react:
         assert guildOT.twitch!=[], "Aucune alerte n'est configurée pour votre serveur."
-        pagemax=setMax(len(guildOT.stardict))
+        pagemax=setMax(len(guildOT.twitch))
         curseurCMD.execute("INSERT INTO commandes VALUES({0},{1},'twitch','None','None','None','None','None',1,{2},'countDesc',False)".format(ctx.message.id,ctx.author.id,pagemax))
         ligne=curseurCMD.execute("SELECT * FROM commandes WHERE MessageID={0}".format(ctx.message.id)).fetchone()
     else:
         connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
-        pagemax=setMax(len(guildOT.stardict))
+        pagemax=setMax(len(guildOT.twitch))
 
     mobile=ligne["Mobile"]
     table=curseur.execute("SELECT * FROM twitch ORDER BY Nombre ASC").fetchall()

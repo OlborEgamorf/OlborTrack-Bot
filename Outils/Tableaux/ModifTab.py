@@ -8,7 +8,7 @@ async def addTableau(ctx,bot,args,curseur):
     assert ctx.message.channel_mentions[0].permissions_for(ctx.guild.get_member(bot.user.id)).send_messages==True, "Le salon mentionné n'a pas les permissions nécessaires pour que je puisse envoyer des messages."
     assert len(args)>=0, "Il manque des éléments pour créer le tableau ! Donnez moi dans l'ordre : un emoji, le nombre de réactions nécessaire pour faire apparaître un message et un salon mentionné."
     try:
-        if args[1].lower()!="all":
+        if args[0].lower()!="all":
             id=emoteDetector(args[0])[0]
         else:
             id=0
