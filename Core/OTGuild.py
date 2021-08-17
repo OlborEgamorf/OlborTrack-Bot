@@ -27,6 +27,8 @@ class OTGuild:
         self.snipe=OTSnipe()
         self.starlist={}
         self.stardict={}
+        self.voicehub={}
+        self.voiceephem=[]
         self.auto=None
 
         if get:
@@ -40,6 +42,8 @@ class OTGuild:
             self.getStats(curseur)
             try:
                 self.getYouTube(curseur)
+                self.getHubs()
+                self.getChans()
             except:
                 pass
     def getStar(self,curseur=None):
@@ -97,6 +101,20 @@ class OTGuild:
         if curseur==None:
             connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
         self.stats=curseur.execute("SELECT * FROM stats").fetchone()["Active"]
+
+    def getHubs(self,curseur=None):
+        self.voicehub={}
+        if curseur==None:
+            connexion,curseur=connectSQL(self.id,"VoiceEphem","Guild",None,None)
+        for i in curseur.execute("SELECT * FROM hub").fetchall():
+            self.voicehub[i["ID"]]=i["Limite"]
+    
+    def getChans(self,curseur=None):
+        self.voiceephem=[]
+        if curseur==None:
+            connexion,curseur=connectSQL(self.id,"VoiceEphem","Guild",None,None)
+        for i in curseur.execute("SELECT * FROM salons WHERE ID<>0").fetchall():
+            self.voiceephem.append(i["ID"])
 
 class OTTableau:
     def __init__(self,star):
