@@ -21,7 +21,7 @@ def auteur(id,nom,avatar,embed,option):
     elif avatar==None and option=="guild":
         embed.set_author(name=nom, icon_url='https://cdn.discordapp.com/icons/'+str(id))
     elif avatar==None and option=="user":
-        embed.set_author(name=nom, icon_url=('https://cdn.discordapp.com/avatars/'+str(id)))
+        embed.set_author(name=nom, icon_url=('https://cdn.discordapp.com/avatars/'+str(id)+".png"))
     else:
         if avatar[1]=="_":
             sufx=".gif"

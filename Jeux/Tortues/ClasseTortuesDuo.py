@@ -40,7 +40,7 @@ class JeuTortuesDuo(JeuTortues):
         embed.add_field(name="<:otCOINS:873226814527520809> gagnés par chacun des gagnants",value="{0} <:otCOINS:873226814527520809>".format(75+sum(self.mises.values())/2))
 
         embed=auteur(self.guild.id,self.guild.name,self.guild.icon,embed,"guild")
-        embed.set_footer(text="OT!tortues")
+        embed.set_footer(text="OT!tortuesduo")
         embed.description+="\n\n"+descip
         return embed
 

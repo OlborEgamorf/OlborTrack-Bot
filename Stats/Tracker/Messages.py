@@ -49,7 +49,8 @@ async def exeMessageClient(option,message,client,guild):
 
     listeMots=message.content.split(" ")
     temps=exeStatsSQL(message.author.id,guild,message.channel.id,len(listeMots),option,message.content)
-    await client.get_channel(804783800080400394).send("{0} dans {1}".format(temps,message.guild.name))
+    if temps>2:
+        await client.get_channel(804783800080400394).send("{0} dans {1}".format(temps,message.guild.name))
     return
 
 def exeStatsSQL(id,guild,chan,mots,option,content):
