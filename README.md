@@ -3,7 +3,7 @@
 Bonjour et bienvenue sur la page GitHub du projet OlborTrack !
 OlborTrack est un bot Discord multifonction, concentré sur les statistiques et embarquant des jeux, des commandes custom, des sondages...
 
-Actuellement, je développe la version 3.0, et vous pouvez m'aider !
+Actuellement, je développe la version 3.1, et vous pouvez m'aider !
 
 Le code est quasiment complet, il manque que la partie "exécution" qui contient des informations sensibles et que je ne veux pas divulguer.
 
@@ -11,9 +11,9 @@ Je me sert de ces bibliothèques : discord.py, asyncio, aiohttp, wikiquote, wiki
 
 Pour les statistiques, je me sers de sqlite3 et donc du langage SQL pour stocker et gérer les données. 
 
-Pour le moment, il reste des choses à spécifier, ce sera fait sous peu.
+Peu de fichiers sont spécifiés dans leur intégralité, mais ça arrivera.
 
-Beaucoup de choses peuvent être brouillon, car jusque là je programmais pour moi-même, je vais corriger pas mal de choses !
+Beaucoup de choses peuvent être brouillon, car jusque là je programmais pour moi-même, mais le temps fera corriger certaines choses au fur et à mesure !
 
 Merci d'avance pour votre aide !
 
@@ -32,8 +32,9 @@ Il y a encore des fichiers et fonctions qui sont obsolètes et qui bientot ne se
 
 ## Liens
 
- * [Inviter OlborTrack sur votre serveur Discord](https://discord.com/api/oauth2/authorize?client_id=699728606493933650&permissions=912582&scope=bot)
+ * [Inviter OlborTrack sur votre serveur Discord](https://discord.com/oauth2/authorize?client_id=699728606493933650&permissions=120259472576&scope=bot)
  * [Page Twitter](https://twitter.com/OlborTrack)
  * [Page Instagram](https://instagram.com/OlborTrack)
  * [Soutenir le projet financièrement](https://www.paypal.com/paypalme/OlborTrack)
  * [Rejoindre le serveur Discord de tests](https://discord.gg/AVVAbP4)
+ * [Contribuer sur Patreon](https://www.patreon.com/olbortrack)
