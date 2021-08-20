@@ -10,14 +10,17 @@ from Titres.Outils import titresJeux
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TOTAL"}
 
 def exeClassic(count,id,nom,curseurGuild,guild):
+    option="Stats"
+    if nom=="Cross":
+        option=="Jeux"
     dateID=int(strftime("%y")+strftime("%m")+strftime("%d"))
-    connexionGL,curseurGL=connectSQL(guild.id,nom,"Stats","GL","")
+    connexionGL,curseurGL=connectSQL(guild.id,nom,option,"GL","")
 
-    connexion,curseur=connectSQL(guild.id,nom,"Stats",strftime("%m"),strftime("%y"))
+    connexion,curseur=connectSQL(guild.id,nom,option,strftime("%m"),strftime("%y"))
     compteurSQL(curseur,tableauMois[strftime("%m")]+strftime("%y"),id,(0,id,strftime("%m"),strftime("%y"),count,0),count,(strftime("%d"),strftime("%m"),strftime("%y")),(strftime("%m"),strftime("%y")),"persoM",False,True,1,curseurGL)
     connexion.commit()
 
-    connexion,curseur=connectSQL(guild.id,nom,"Stats","TO",strftime("%y"))
+    connexion,curseur=connectSQL(guild.id,nom,option,"TO",strftime("%y"))
     compteurSQL(curseur,"to"+strftime("%y"),id,(0,id,"TO",strftime("%y"),count,0),count,(strftime("%d"),strftime("%m"),strftime("%y")),("TO",strftime("%y")),"persoA",False,True,1,curseurGL)
     connexion.commit()
 
@@ -33,21 +36,24 @@ def exeClassic(count,id,nom,curseurGuild,guild):
                 curseurGL.execute("DROP TABLE IF EXISTS persoA{0}".format(i["ID"]))
     connexionGL.commit()
 
-    dailySQL(dateID,(strftime("%d"),strftime("%m"),strftime("%y")),nom,curseurGuild,guild.id,"Stats")
+    dailySQL(dateID,(strftime("%d"),strftime("%m"),strftime("%y")),nom,curseurGuild,guild.id,option)
     if nom not in ("Mentions","Mentionne"):
         rapportsSQL(guild,"ranks",id,None,count,(0,id,strftime("%d"),strftime("%m"),strftime("%y"),dateID,count,nom),strftime("%d"),strftime("%m"),strftime("%y"),nom)
 
 def exeObj(count,idObj,id,obj,guild,nom):
+    option="Stats"
+    if nom=="Cross":
+        option=="Jeux"
     dateID=int(strftime("%y")+strftime("%m")+strftime("%d"))
-    connexionGL,curseurGL=connectSQL(guild.id,nom,"Stats","GL","")
+    connexionGL,curseurGL=connectSQL(guild.id,nom,option,"GL","")
 
-    connexion,curseur=connectSQL(guild.id,nom,"Stats",strftime("%m"),strftime("%y"))
+    connexion,curseur=connectSQL(guild.id,nom,option,strftime("%m"),strftime("%y"))
     compteurSQL(curseur,tableauMois[strftime("%m")]+strftime("%y")+str(idObj),id,(0,id,idObj,strftime("%m"),strftime("%y"),count),count,(strftime("%d"),strftime("%m"),strftime("%y")),(strftime("%m"),strftime("%y")),"persoM",obj,False,2,curseurGL)
     if nom in ("Emotes","Reactions") and curseur.execute("SELECT Count FROM {0}{1} WHERE ID={2}".format(tableauMois[strftime("%m")],strftime("%y"),idObj)).fetchone()["Count"]<10:
         curseur.execute("DROP TABLE {0}{1}{2}".format(tableauMois[strftime("%m")],strftime("%y"),idObj))
     connexion.commit()
 
-    connexion,curseur=connectSQL(guild.id,nom,"Stats","TO",strftime("%y"))
+    connexion,curseur=connectSQL(guild.id,nom,option,"TO",strftime("%y"))
     compteurSQL(curseur,"to"+strftime("%y")+str(idObj),id,(0,id,idObj,"TO",strftime("%y"),count),count,(strftime("%d"),strftime("%m"),strftime("%y")),("TO",strftime("%y")),"persoA",obj,False,2,curseurGL)
     if nom in ("Emotes","Reactions") and curseur.execute("SELECT Count FROM to{0} WHERE ID={1}".format(strftime("%y"),idObj)).fetchone()["Count"]<25:
         curseur.execute("DROP TABLE to{0}{1}".format(strftime("%y"),idObj))

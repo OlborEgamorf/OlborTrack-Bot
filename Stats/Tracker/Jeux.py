@@ -1,6 +1,7 @@
 from time import time
 from Stats.SQL.ConnectSQL import connectSQL
-from Stats.SQL.Execution import exeJeuxSQL
+from Stats.SQL.Execution import exeClassic, exeJeuxSQL, exeObj
+
 
 def exeStatsJeux(idW,idL,guild,option,tours,statut):
     connexionGuild,curseurGuild=connectSQL(guild,"Guild","Guild",None,None)
@@ -17,3 +18,22 @@ def exeStatsJeux(idW,idL,guild,option,tours,statut):
 
     connexionGuild.commit()
     connexionOT.commit()
+
+
+def statsServ(game,win):
+    connexionOT,curseurOT=connectSQL("OT","Guild","Guild",None,None)
+    count=0
+    guild=game.memguild[win]
+    for i in game.memguild.values():
+        if i!=guild:
+            count+=1
+    exeClassic(count,guild,"Cross",curseurOT,fake)
+    exeObj(count,guild,win,True,fake,"Cross")
+    connexionOT.commit()
+
+
+class FakeGuild:
+    def __init__(self):
+        self.id="OT"
+
+fake=FakeGuild()
