@@ -40,12 +40,10 @@ class OTGuild:
             self.getWikiNSFW(curseur)
             self.getTwitch(curseur)
             self.getStats(curseur)
-            try:
-                self.getYouTube(curseur)
-                self.getHubs()
-                self.getChans()
-            except:
-                pass
+            self.getYouTube(curseur)
+            self.getHubs()
+            self.getChans()
+
     def getStar(self,curseur=None):
         if curseur==None:
             connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)

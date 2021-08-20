@@ -1,3 +1,6 @@
+from Jeux.CrossServeur.ClasseTrivialBRCross import BattleRoyaleCross
+from Jeux.CrossServeur.ClasseTrivialPartyCross import PartyCross
+from Jeux.CrossServeur.ClasseTrivialVSCross import VersusCross
 from Jeux.Trivial.BattleRoyale import BattleRoyale
 from Jeux.Trivial.Classic import Question, Streak, embedTrivial
 from Jeux.Trivial.Party import Party
@@ -12,7 +15,7 @@ async def trivialReact(message,client,emoji,user,guild,reaction,inGame,gamesTriv
         if type(tableQuestion) in (Question,Streak):
             if user.id!=tableQuestion.author.id:
                 return
-        elif type(tableQuestion) in (Versus,Party,BattleRoyale):
+        elif type(tableQuestion) in (Versus,Party,BattleRoyale,VersusCross,BattleRoyaleCross,PartyCross):
             if user.id in tableQuestion.reponses:
                 if tableQuestion.reponses[user.id]==None:
                     tableQuestion.reponses[user.id]=choix[emoji.id]

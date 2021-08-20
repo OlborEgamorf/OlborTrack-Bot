@@ -9,7 +9,7 @@ async def setEmote(ctx,bot,args):
         emote=emoteDetector(args[0])
         assert len(emote)!=0, "Vous devez me donner l'emote que vous voulez équiper !"
         emoteBot=bot.get_emoji(int(emote[0]))
-        assert emoteBot!=None, "Vous devez me donner une emote que je connais et qui est visible à mes yeux !"
+        assert emoteBot!=None, "Vous devez me donner une emote que je connais et qui est visible à mes yeux !\nAttention : si vous venez de la créer, il est possible qu'il y est des soucis de synchronisation."
 
         connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
         if curseur.execute("SELECT * FROM emotes WHERE ID={0}".format(ctx.author.id)).fetchone()==None:

@@ -34,7 +34,7 @@ def createDirSQL(guild):
     curseur.execute("CREATE TABLE IF NOT EXISTS savezvous (Texte TEXT, ID BIGINT, Image TEXT, Count INT)")
     curseur.execute("CREATE TABLE IF NOT EXISTS sb (Nombre INT, Salon BIGINT, Emote TEXT, ID BIGINT, Count INT, PRIMARY KEY(Salon,Emote))")
     curseur.execute("CREATE TABLE IF NOT EXISTS twitch (Nombre INT, Salon BIGINT, Stream TEXT, Descip TEXT, Sent BOOL, PRIMARY KEY(Salon,Stream))")
-    curseur.execute("CREATE TABLE IF NOT EXISTS youtube (Nombre INT, Salon BIGINT, Chaine TEXT, Descip TEXT, LastID TEXT, Nom TEXT PRIMARY KEY(Salon,Chaine))")
+    curseur.execute("CREATE TABLE IF NOT EXISTS youtube (Nombre INT, Salon BIGINT, Chaine TEXT, Descip TEXT, LastID TEXT, Nom TEXT, PRIMARY KEY(Salon,Chaine))")
 
     curseur.execute("CREATE TABLE IF NOT EXISTS wikinsfw (Active BOOL PRIMARY KEY)")
     try:
@@ -83,4 +83,14 @@ def createDirSQL(guild):
     connexion,curseur = connectSQL(guild.id,"Commandes","Guild",None,None)
     curseur.execute("CREATE TABLE IF NOT EXISTS commandes (MessageID BIGINT, AuthorID BIGINT, Commande TEXT, Option TEXT, Args1 TEXT, Args2 TEXT, Args3 TEXT, Args4 TEXT, Page INT, PageMax INT, Tri TEXT, Mobile BOOL)")
     curseur.execute("CREATE TABLE IF NOT EXISTS graphs (MessageID BIGINT, Graph1 TEXT, Graph2 TEXT, Graph3 TEXT, Graph4 TEXT, Graph5 TEXT, Graph6 TEXT, Graph7 TEXT, Page INT, PageMax INT)")
+    connexion.commit()
+
+    connexion,curseur = connectSQL(guild.id,"VoiceEphem","Guild",None,None)
+    curseur.execute("CREATE TABLE IF NOT EXISTS hub (Nombre INT PRIMARY KEY, ID INT, Limite INT)")
+    curseur.execute("CREATE TABLE IF NOT EXISTS salons (Nombre INT PRIMARY KEY, Nom TEXT, ID INT)")
+    for i in range(1,51):
+        try:
+            curseur.execute("INSERT INTO salons VALUES({0},'Salon {0}',0)".format(i))
+        except:
+            pass
     connexion.commit()

@@ -1,15 +1,23 @@
+import asyncio
+
+from Core.Fonctions.Embeds import createEmbed, embedAssert
+from Stats.SQL.ConnectSQL import connectSQL
+from Titres.Outils import createAccount
+
+from Jeux.CrossServeur.ClasseP4Cross import JeuP4Cross
+from Jeux.CrossServeur.ClasseTDCross import JeuTortuesDuoCross
+from Jeux.CrossServeur.ClasseTortuesCross import JeuTortuesCross
+from Jeux.CrossServeur.ClasseTrivialVSCross import VersusCross
+from Jeux.P4 import JeuP4
 from Jeux.Tortues.ClasseTortues import JeuTortues
 from Jeux.Tortues.ClasseTortuesDuo import JeuTortuesDuo
 from Jeux.Trivial import Versus
 from Jeux.Trivial.BattleRoyale import BattleRoyale
 from Jeux.Trivial.Party import Party
-from Jeux.NewP4 import JeuP4
-from Core.Fonctions.Embeds import createEmbed, embedAssert
-from Stats.SQL.ConnectSQL import connectSQL
-from Titres.Outils import createAccount
-import asyncio
+from Jeux.CrossServeur.ClasseTrivialBRCross import BattleRoyaleCross
+from Jeux.CrossServeur.ClasseTrivialPartyCross import PartyCross
 
-dictMax={JeuTortues:5,JeuTortuesDuo:4,Versus:5,BattleRoyale:15,Party:15,JeuP4:2}
+dictMax={JeuTortues:5,JeuTortuesDuo:4,Versus:5,BattleRoyale:15,Party:15,JeuP4:2,JeuTortuesCross:5,JeuP4Cross:2,JeuTortuesDuoCross:4,VersusCross:5,BattleRoyaleCross:7,PartyCross:7}
 
 async def joinGame(message,user,reaction,inGame,dictJeux):
     try:
@@ -25,6 +33,9 @@ async def joinGame(message,user,reaction,inGame,dictJeux):
         game.ids.append(user.id)
         game.mises[user.id]=0
         inGame.append(user.id)
+        if type(game) in (JeuTortuesCross,JeuP4Cross,JeuTortuesDuoCross,VersusCross,BattleRoyaleCross,PartyCross):
+            game.memguild[user.id]=message.guild.id
+            game.memmess[user.id]=message
         if len(game.ids)==dictMax[type(game)]:
             game.playing=True
         await message.channel.send("<:otVERT:868535645897912330> <@{0}> rejoint la partie !".format(user.id))
@@ -43,6 +54,9 @@ async def cancelGame(message,user,reaction,inGame,dictJeux):
         inGame.remove(user.id)
         game.ids.remove(user.id)
         del game.mises[user.id]
+        if type(game) in (JeuTortuesCross,JeuP4Cross,JeuTortuesDuoCross,VersusCross,BattleRoyaleCross,PartyCross):
+            del game.memguild[user.id]
+            del game.memmess[user.id]
         await message.channel.send("<:otROUGE:868535622237818910> <@{0}> ne souhaite plus jouer.".format(user.id))
         await reaction.remove(user)
 
