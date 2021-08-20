@@ -84,6 +84,7 @@ def embedHelp30(option,guildOT,page,bot):
                         embedHelp.add_field(name=listeName[i], value="`"+descip[0:-2]+"`", inline=False)
         else:
             embedHelp.set_image(url="https://cdn.discordapp.com/attachments/726034739550486618/870617284920619058/unknown.png")
+            embedHelp.description="**Commandes actuellement en bêta :**\n\n**Jeux Cross-Serveurs** :\nVous pouvez désormais jouer avec des personnes hors de votre serveur !\n- OT!tortuescross\n- OT!tortuesduocross\n- OT!p4cross\n- OT!trivialversuscross\n- OT!trivialbrcross\n- OT!trivialpartycross\n\n**Titres** :\nRetour du système de titres !\nVoir OT!help titres\n\n**Alertes YouTube** :\nRecevez un message quand votre créateur favori poste une vidéo !\nVoir OT!help youtube\n\n**Salons vocaux éphémères**\nCréez des hubs de salons éphémères, qui disparaissent quand plus personne n'est connecté !\nVoir OT!help voiceephem"
     else:
         descip=""
         for i in dictDescip[option][page]:
