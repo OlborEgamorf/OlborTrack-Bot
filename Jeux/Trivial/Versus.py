@@ -8,6 +8,7 @@ from Stats.SQL.ConnectSQL import connectSQL
 from Stats.SQL.Execution import exeJeuxSQL
 from Titres.Outils import gainCoins
 from Jeux.Trivial.Classic import Question
+from math import inf
 
 listeNoms=["Culture","Divertissement","Sciences","Mythologie","Sport","Géographie","Histoire","Politique","Art","Célébrités","Animaux","Véhicules","Global"]
 dictCateg={9:0,10:1,11:1,12:1,13:1,14:1,15:1,16:1,17:2,18:2,19:2,20:3,21:4,22:5,23:6,24:7,25:8,26:9,27:10,28:11,29:1,30:2,31:1,32:1}
@@ -32,6 +33,11 @@ class Versus(Question):
         self.rota=[]
         self.invoke=None
         super().__init__(None,option)
+
+    def maxTour(self):
+        if self.tour==40:
+            return True
+        return False
 
     async def startGame(self,ctx,bot,inGame,gamesTrivial):
         self.ids.append(ctx.author.id)
@@ -164,6 +170,7 @@ class Versus(Question):
     async def error(self,ctx,bot,message,inGame,gamesTrivial):
         await ctx.send(embed=await exeErrorExcept(ctx,bot,""))
         await self.endGame(message,inGame,gamesTrivial)
+        await message.unpin()
 
     def stats(self,win,option):
         connexionGuild,curseurGuild=connectSQL(self.guild.id,"Guild","Guild",None,None)
@@ -225,6 +232,12 @@ async def trivialVersus(ctx,bot,inGame,gamesTrivial):
                 embedT.colour=0xcf1742
                 embedT.description="**Tout le monde s'est trompé...** {0}".format(game.affichageLose(None)[10:-1])
             await message.edit(embed=embedT)
+            if game.maxTour():
+                maxi,maxiJoueur=-inf,None
+                for i in game.joueurs:
+                    if game.scores[i.id]>maxi:
+                        maxi,maxiJoueur=game.scores[i.id],i
+                count=[maxiJoueur]
             if len(count)==1:
                 await message.clear_reactions()
                 await message.channel.send(embed=game.embedResults(count[0]))

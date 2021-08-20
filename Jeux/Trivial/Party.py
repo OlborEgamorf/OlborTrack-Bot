@@ -6,6 +6,7 @@ from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.Embeds import embedAssert
 from Jeux.Trivial.Attente import attente
 from Jeux.Trivial.Versus import Versus
+from math import inf
 
 emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>"]
 listeNoms=["Culture","Divertissement","Sciences","Mythologie","Sport","Géographie","Histoire","Politique","Art","Célébrités","Animaux","Véhicules","Global"]
@@ -236,7 +237,7 @@ async def trivialParty(ctx,bot,inGame,gamesTrivial):
                                 end.append(j)
                                 break
                     else:
-                        game.scores[i]=13
+                        game.scores[i]=10
             elif event=="duo":
                 count=0
                 for i in game.reponses:
@@ -280,6 +281,12 @@ async def trivialParty(ctx,bot,inGame,gamesTrivial):
             embedT.description=game.affichageWin()
             embedT.colour=0x47b03c
             await message.edit(embed=embedT)
+            if game.maxTour():
+                maxi,maxiJoueur=-inf,None
+                for i in game.joueurs:
+                    if game.scores[i.id]>maxi:
+                        maxi,maxiJoueur=game.scores[i.id],i
+                end=[maxiJoueur]
             if len(end)!=0:
                 await message.clear_reactions()
                 await message.channel.send(embed=game.embedResults(end[0]))

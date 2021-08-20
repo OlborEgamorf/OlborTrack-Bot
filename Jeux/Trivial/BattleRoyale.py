@@ -5,6 +5,7 @@ from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.Embeds import embedAssert
 from Jeux.Trivial.Attente import attente
 from Jeux.Trivial.Versus import Versus
+from math import inf
 
 listeNoms=["Culture","Divertissement","Sciences","Mythologie","Sport","Géographie","Histoire","Politique","Art","Célébrités","Animaux","Véhicules","Global"]
 dictCateg={9:0,10:1,11:1,12:1,13:1,14:1,15:1,16:1,17:2,18:2,19:2,20:3,21:4,22:5,23:6,24:7,25:8,26:9,27:10,28:11,29:1,30:2,31:1,32:1}
@@ -125,6 +126,12 @@ async def trivialBattleRoyale(ctx,bot,inGame,gamesTrivial):
                 embedT.colour=0xcf1742
                 embedT.description="**Tout le monde s'est trompé...** {0}".format(game.affichageLose(None)[10:-1])
             await message.edit(embed=embedT)
+            if game.maxTour():
+                maxi,maxiJoueur=-inf,None
+                for i in game.joueurs:
+                    if game.scores[i.id]>maxi:
+                        maxi,maxiJoueur=game.scores[i.id],i.id
+                game.restants=[maxiJoueur]
             if len(game.restants)==1:
                 game.histo[game.restants[0]]=1
                 await message.clear_reactions()
