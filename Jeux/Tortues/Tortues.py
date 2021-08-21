@@ -76,7 +76,8 @@ async def startGameTortues(ctx,bot,inGame,gamesTortues):
             if len(game.cartes)==0:
                 game.cartes=[Carte(i,1) for i in listeCouleurs]*5+[Carte(i,2) for i in listeCouleurs]+[Carte(i,-1) for i in listeCouleurs]*2+[Carte("multi",1) for i in range(5)]+[Carte("last",1) for i in range(3)]+[Carte("last",2) for i in range(2)]+[Carte("multi",-1) for i in range(2)]
 
-        await messAd.delete()
+        if "messAd" in locals():
+            await messAd.delete()
     except AssertionError as er:
         await ctx.send(embed=embedAssert(er))
         return

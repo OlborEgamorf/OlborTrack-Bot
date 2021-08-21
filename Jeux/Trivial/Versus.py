@@ -253,4 +253,5 @@ async def trivialVersus(ctx,bot,inGame,gamesTrivial):
         await ctx.send(embed=embedAssert(er))
     except:
         await game.error(ctx,bot,message,inGame,gamesTrivial)
-    await messAd.delete()
+    if "messAd" in locals():
+        await messAd.delete()

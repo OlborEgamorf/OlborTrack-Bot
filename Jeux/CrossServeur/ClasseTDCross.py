@@ -78,7 +78,6 @@ class JeuTortuesDuoCross(JeuTortuesCross):
         return win
     
     def stats(self,team):
-        connexionGuild,curseurGuild=connectSQL(self.guild.id,"Guild","Guild",None,None)
         connexionOT,curseurOT=connectSQL("OT","Guild","Guild",None,None)
         for i in self.joueurs:
             if i.equipe==team:
@@ -86,7 +85,5 @@ class JeuTortuesDuoCross(JeuTortuesCross):
                 count,state=2,"W"
             else:
                 count,state=-1,"L"
-            exeJeuxSQL(i.userid,None,state,self.guild.id,curseurGuild,count,"TortuesDuo",None)
             exeJeuxSQL(i.userid,None,state,"OT",curseurOT,count,"TortuesDuo",None)
-        connexionGuild.commit()
         connexionOT.commit()

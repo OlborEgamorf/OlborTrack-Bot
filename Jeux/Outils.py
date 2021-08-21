@@ -16,8 +16,9 @@ from Jeux.Trivial.BattleRoyale import BattleRoyale
 from Jeux.Trivial.Party import Party
 from Jeux.CrossServeur.ClasseTrivialBRCross import BattleRoyaleCross
 from Jeux.CrossServeur.ClasseTrivialPartyCross import PartyCross
+from Jeux.Matrice import JeuMatrice
 
-dictMax={JeuTortues:5,JeuTortuesDuo:4,Versus:5,BattleRoyale:15,Party:15,JeuP4:2,JeuTortuesCross:5,JeuP4Cross:2,JeuTortuesDuoCross:4,VersusCross:5,BattleRoyaleCross:7,PartyCross:7}
+dictMax={JeuTortues:5,JeuTortuesDuo:4,Versus:5,BattleRoyale:15,Party:15,JeuP4:2,JeuTortuesCross:5,JeuP4Cross:2,JeuTortuesDuoCross:4,VersusCross:5,BattleRoyaleCross:7,PartyCross:7,JeuMatrice:2}
 
 async def joinGame(message,user,reaction,inGame,dictJeux):
     try:

@@ -57,6 +57,7 @@ async def startGameTortuesCross(ctx,bot,inGame,gamesTortues):
             return
 
         annonce=await bot.get_channel(878254347459366952).send("<:otVERT:868535645897912330> Partie de Tortues en recherche de joueurs !")
+        await annonce.publish()
         for i in range(60):
             if not game.playing:
                 await asyncio.sleep(1)
@@ -128,7 +129,8 @@ async def startGameTortuesCross(ctx,bot,inGame,gamesTortues):
             if len(game.cartes)==0:
                 game.cartes=[Carte(i,1) for i in listeCouleurs]*5+[Carte(i,2) for i in listeCouleurs]+[Carte(i,-1) for i in listeCouleurs]*2+[Carte("multi",1) for i in range(5)]+[Carte("last",1) for i in range(3)]+[Carte("last",2) for i in range(2)]+[Carte("multi",-1) for i in range(2)]
 
-        await messAd.delete()
+        if "messAd" in locals():
+            await messAd.delete()
     except AssertionError as er:
         for i in game.messages:
             await i.channel.send(embed=embedAssert(er))

@@ -9,6 +9,7 @@ from random import choice
 from Core.Fonctions.AuteurIcon import auteur
 from Jeux.Tortues.ClasseTortues import JeuTortues, Tortue
 from Stats.SQL.Execution import exeJeuxSQL
+from Titres.Outils import gainCoins
 
 dictEmote={0:"<:otBlank:828934808200937492>","rouge":"<:OTTrouge:860119157495693343>","verte":"<:OTTvert:860119157331853333>","bleue":"<:OTTbleu:860119157491892255>","jaune":"<:OTTjaune:860119157688631316>","violette":"<:OTTviolet:860119157672247326>","last":"*dernière tortue*","multi":"*au choix*"}
 dictColor={"bleue":0x00CCFF,"violette":0x993366,"rouge":0xFF0000,"verte":0x77B255,"jaune":0xFFFF00}
@@ -79,13 +80,17 @@ class JeuTortuesCross(JeuTortues):
                 embed=auteur(699728606493933650,"Au tour de {0}".format(user.titre),None,embed,"user")
         for i in range(len(self.joueurs)):
             if self.memguild[self.joueurs[i].userid]!=guild:
+                if self.mises[self.joueurs[i].userid]!=0:
+                    mise="\nMise : {0} <:otCOINS:873226814527520809>".format(self.mises[i.userid])
+                else:
+                    mise=""
                 sup=""
                 if user.userid==self.joueurs[i].userid:
                     sup="__"
                 if self.emotesCustom[self.joueurs[i].userid]!=None:
-                    embed.set_field_at(index=i,name="{2}{0} Cartes de {1}{2}".format(self.emotesCustom[self.joueurs[i].userid],self.joueurs[i].titre,sup),value=embed.fields[i].value,inline=True)
+                    embed.set_field_at(index=i,name="{2}{0} Cartes de {1}{2}{3}".format(self.emotesCustom[self.joueurs[i].userid],self.joueurs[i].titre,sup,mise),value=embed.fields[i].value,inline=True)
                 else:
-                    embed.set_field_at(index=i,name="{1}Cartes de {0}{1}".format(self.joueurs[i].titre,sup),value=embed.fields[i].value,inline=True)
+                    embed.set_field_at(index=i,name="{1}Cartes de {0}{1}{2}".format(self.joueurs[i].titre,sup,mise),value=embed.fields[i].value,inline=True)
         if user.colorUser!=None:
             embed.color=user.colorUser
         return embed
@@ -123,6 +128,17 @@ class JeuTortuesCross(JeuTortues):
         for i in self.joueurs:
             emote=getEmoteJeux(i.userid)
             self.emotesCustom[i.userid]=emote
+
+    def stats(self,win):
+        connexionOT,curseurOT=connectSQL("OT","Guild","Guild",None,None)
+        for i in self.joueurs:
+            if i.couleur==win:
+                gainCoins(i.userid,len(self.ids)*25+sum(self.mises.values()))
+                count,state=2,"W"
+            else:
+                count,state=-1,"L"
+            exeJeuxSQL(i.userid,None,state,"OT",curseurOT,count,"Tortues",None)
+        connexionOT.commit()
 
 
 

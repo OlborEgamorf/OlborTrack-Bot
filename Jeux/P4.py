@@ -159,7 +159,7 @@ class JeuP4:
 
 
 async def startGameP4(ctx,bot,inGame,gamesP4):
-    if True:
+    try:
         assert ctx.author.id not in inGame, "Terminez votre partie en cours avant de lancer ou rejoindre une partie."
         game=JeuP4(ctx.guild,ctx.author.id)
         game.ids.append(ctx.author.id)
@@ -210,7 +210,7 @@ async def startGameP4(ctx,bot,inGame,gamesP4):
                     await message.edit(embed=game.createEmbedP4(turn))
                     if turn==0: lose=1
                     else: lose=0
-                    exeStatsJeux(game.joueurs[turn].id,game.joueurs[lose].id,game.guild,"P4",game.tours,"win")
+                    exeStatsJeux(game.joueurs[turn].id,game.joueurs[lose].id,game.guild.id,"P4",game.tours,"win")
                     gainCoins(game.joueurs[turn].id,50+sum(game.mises.values()))
                     await message.channel.send(embed=game.embedWin(turn,False))
                     game.playing=False
@@ -228,8 +228,9 @@ async def startGameP4(ctx,bot,inGame,gamesP4):
             turn+=1
             if turn==len(game.joueurs):
                 turn=0
-        await messAd.delete()
-    """except AssertionError as er:
+        if "messAd" in locals():
+            await messAd.delete()
+    except AssertionError as er:
         await ctx.send(embed=embedAssert(er))
         return
     except:
@@ -237,7 +238,7 @@ async def startGameP4(ctx,bot,inGame,gamesP4):
         try:
             await message.unpin()
         except:
-            pass"""
+            pass
     for i in game.ids:
         inGame.remove(i)
     del gamesP4[message.id]

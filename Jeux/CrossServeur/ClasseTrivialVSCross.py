@@ -68,6 +68,7 @@ class VersusCross(Versus):
             return False
 
         annonce=await bot.get_channel(878254347459366952).send("<:otVERT:868535645897912330> Partie de Trivial {0} en recherche de joueurs !".format(self.option.upper()))
+        await annonce.publish()
         for i in range(60):
             if not self.playing:
                 await asyncio.sleep(1)
@@ -197,7 +198,6 @@ class VersusCross(Versus):
         await self.endGame(message,inGame,gamesTrivial)
 
     def stats(self,win,option):
-        connexionGuild,curseurGuild=connectSQL(self.memguild[win.id],"Guild","Guild",None,None)
         connexionOT,curseurOT=connectSQL("OT","Guild","Guild",None,None)
         for i in self.ids:
             if i==win.id:
@@ -205,7 +205,5 @@ class VersusCross(Versus):
                 gainCoins(i,25*len(self.ids)+sum(self.mises.values()))
             else:
                 count,state=-1,"L"
-            exeJeuxSQL(i,None,state,self.guild.id,curseurGuild,count,option,None)
             exeJeuxSQL(i,None,state,"OT",curseurOT,count,option,None)
-        connexionGuild.commit()
         connexionOT.commit()

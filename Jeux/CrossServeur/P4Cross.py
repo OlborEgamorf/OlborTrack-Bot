@@ -9,6 +9,8 @@ from Jeux.Outils import joinGame
 from Stats.Tracker.Jeux import exeStatsJeux, statsServ
 from Titres.Outils import gainCoins
 from Core.Fonctions.Unpin import pin, unpin
+from Stats.SQL.Execution import exeJeuxSQL
+from Stats.SQL.ConnectSQL import connectSQL
 
 emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>","<:ot5:705766186713088042>","<:ot6:705766187182850148>","<:ot7:705766187115741246>"]
 dictCo={705766186909958185:0,705766186989912154:1,705766186930929685:2,705766186947706934:3,705766186713088042:4,705766187182850148:5,705766187115741246:6}
@@ -56,6 +58,7 @@ async def startGameP4Cross(ctx,bot,inGame,gamesP4):
             return
         
         annonce=await bot.get_channel(878254347459366952).send("<:otVERT:868535645897912330> Partie de P4 en recherche de joueurs !")
+        await annonce.publish()
         for i in range(60):
             if not game.playing:
                 await asyncio.sleep(1)
@@ -69,7 +72,7 @@ async def startGameP4Cross(ctx,bot,inGame,gamesP4):
             await game.memmess[i].clear_reactions()
         if len(game.ids)<2:
             for i in game.memmess:
-                await i.edit(embed=createEmbed("Puissance 4","Une minute s'est écoulée et personne n'a répondu à l'invitation.",0xad917b,ctx.invoked_with.lower(),ctx.guild))
+                await game.memmess[i].edit(embed=createEmbed("Puissance 4","Une minute s'est écoulée et personne n'a répondu à l'invitation.",0xad917b,ctx.invoked_with.lower(),ctx.guild))
             for i in game.ids:
                 inGame.remove(i)
                 return
@@ -115,10 +118,14 @@ async def startGameP4Cross(ctx,bot,inGame,gamesP4):
                     if turn==0: lose=1
                     else: lose=0
 
-                    exeStatsJeux(game.joueurs[turn].id,game.joueurs[lose].id,game.guild,"P4",game.tours,"win")
+                    connexionOT,curseurOT=connectSQL("OT","Guild","Guild",None,None)
+                    exeJeuxSQL(game.joueurs[turn].id,game.joueurs[lose].id,"W","OT",curseurOT,2,"P4",game.tours)
+                    exeJeuxSQL(game.joueurs[lose].id,game.joueurs[turn].id,"L","OT",curseurOT,-1,"P4",game.tours)
+                    connexionOT.commit()
+
                     statsServ(game,game.joueurs[turn].id)
                     gainCoins(game.joueurs[turn].id,50+sum(game.mises.values()))
-
+                    
                     for i in game.messages:
                         await i.clear_reactions()
                         await i.edit(embed=game.createEmbedP4(game.joueurs[turn],i.guild.id))
@@ -141,7 +148,9 @@ async def startGameP4Cross(ctx,bot,inGame,gamesP4):
             turn+=1
             if turn==len(game.joueurs):
                 turn=0
-        await messAd.delete()
+
+        if "messAd" in locals():
+            await messAd.delete()
     except AssertionError as er:
         for i in game.messages:
             await i.channel.send(embed=embedAssert(er))
