@@ -1,6 +1,10 @@
 from Stats.SQL.ConnectSQL import connectSQL
 import discord
 from Core.Fonctions.AuteurIcon import auteur
+from Titres.Couleur import getColorJeux
+from Titres.Emote import getEmoteJeux
+from Core.Fonctions.GetNom import getTitre
+from Titres.Outils import createAccount
 
 dictStatut={0:"Fabuleux",1:"Rare",2:"Légendaire",3:"Unique"}
 dictSell={1:150,2:400,3:2500,0:"Inestimable"}
@@ -21,4 +25,33 @@ async def infosTitre(ctx,idtitre,bot):
     embed.add_field(name="Valeur marchande",value="Achat : {0}\nVente : {1}".format(dictValue[titre["Rareté"]],dictSell[titre["Rareté"]]),inline=True)
     embed.set_footer(text="OT!titre infos")
     embed=embed=auteur(bot.user,None,None,embed,"olbor")
+    await ctx.reply(embed=embed)
+
+
+async def profilUser(ctx,bot):
+    connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
+    connexionUser,curseurUser=connectSQL("OT",ctx.author.id,"Titres",None,None)
+    createAccount(connexionUser,curseurUser)
+    color=getColorJeux(ctx.author.id)
+    emote=getEmoteJeux(ctx.author.id)
+    titre=getTitre(curseur,ctx.author.id)
+    coins=curseurUser.execute("SELECT * FROM coins").fetchone()
+    count=curseurUser.execute("SELECT Count() AS Count FROM titresUser").fetchone()["Count"]
+    embed=discord.Embed(title=titre)
+    if color!=None:
+        embed.color=color
+        embed.add_field(name="Couleur",value="#{0}".format(hex(color)[2:]))
+    else:
+        embed.add_field(name="Couleur",value="*Configurez avec OT!titre couleur*",inline=True)
+
+    if emote!=None:
+        embed.add_field(name="Emote",value=emote,inline=True)
+    else:
+        embed.add_field(name="Emote",value="*Configurez avec OT!titre emote*",inline=True)
+
+    embed.add_field(name="OT Coins",value="{0} <:otCOINS:873226814527520809>".format(coins["Coins"]),inline=True)
+    embed.add_field(name="Titres possédés",value=str(count),inline=True)
+
+    embed.set_footer(text="OT!titre profil")
+    auteur(ctx.author.id,ctx.author.name,ctx.author.avatar,embed,"user")
     await ctx.reply(embed=embed)

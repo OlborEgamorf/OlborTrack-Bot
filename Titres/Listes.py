@@ -4,8 +4,8 @@ from Core.Fonctions.setMaxPage import setMax, setPage
 from Stats.SQL.ConnectSQL import connectSQL
 import discord
 
-dictSell={1:150,2:400,3:2500,0:"Inestimable"}
-dictValue={0:"Inestimable",1:300,2:800,3:5000}
+dictSell={1:150,2:400,3:2000,0:"Inestimable"}
+dictValue={0:"Inestimable",1:300,2:800,3:4000}
 dictStatut={0:"Fabuleux",1:"Rare",2:"Légendaire",3:"Unique"}
 
 async def commandeTMP(ctx,turn,react,ligne,option):
@@ -32,6 +32,8 @@ async def commandeTMP(ctx,turn,react,ligne,option):
     
     if option=="marketplace":
         embed.title="Titres en vente aujourd'hui"
+    elif option=="user":
+        embed.title="Titres en votre possession"
     else:
         embed.title="Liste des titres existants"
     embed.color=0xf58d1d

@@ -9,6 +9,7 @@ from Geo.PhotoNASA import embedNasaPhoto
 from Savezvous.exeSavezVous import autoSV
 from Wiki.Events import autoEvents
 from Titres.Auto import annualyTitles, monthlyTitles, dailyCoins
+from Titres.Outils import setMarketPlace
 
 
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"to","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","to":"TO","glob":"GL"}
@@ -102,6 +103,7 @@ async def boucleAutoCMD(bot,dictGuilds):
             await annualyTitles(annee,bot)
         
         dailyCoins()
+        setMarketPlace()
 
         for i in bot.guilds:
             

@@ -3,7 +3,7 @@ from Stats.SQL.ConnectSQL import connectSQL
 import asyncio
 from Titres.Outils import createAccount
 
-dictSell={1:150,2:400,3:2500}
+dictSell={1:150,2:400,3:2000}
 
 async def venteTitre(ctx,idtitre,bot):
     try:

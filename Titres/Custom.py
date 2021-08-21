@@ -10,9 +10,9 @@ async def achatCustom(ctx,bot):
         createAccount(connexionUser,curseurUser)
         coins=curseurUser.execute("SELECT * FROM coins").fetchone()["Coins"]
         connexionUser.close()
-        assert coins>=4000, "Vous n'avez pas assez d'OT Coins pour acheter le surnom personnalisé !"
+        assert coins>=2500, "Vous n'avez pas assez d'OT Coins pour acheter le surnom personnalisé !"
 
-        embed=createEmbed("Surnom personnalisé","Vous êtes sur le point de personnaliser votre surnom, pour *4000 <:otCOINS:873226814527520809>*.\nVous possèdez {0} <:otCOINS:873226814527520809> au total et en aurez {1} <:otCOINS:873226814527520809> après la transaction.\nAppuyez sur <:otVALIDER:772766033996021761> pour confirmer l'achat, et passer à la configuration.".format(coins,coins-4000),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
+        embed=createEmbed("Surnom personnalisé","Vous êtes sur le point de personnaliser votre surnom, pour *2500 <:otCOINS:873226814527520809>*.\nVous possèdez {0} <:otCOINS:873226814527520809> au total et en aurez {1} <:otCOINS:873226814527520809> après la transaction.\nAppuyez sur <:otVALIDER:772766033996021761> pour confirmer l'achat, et passer à la configuration.".format(coins,coins-2500),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
 
         message=await ctx.reply(embed=embed)
         await message.add_reaction("<:otVALIDER:772766033996021761>")
@@ -49,9 +49,9 @@ async def achatCustom(ctx,bot):
         titre=curseur.execute("SELECT titres.Nom FROM active JOIN titres ON active.TitreID=titres.ID WHERE MembreID={0}".format(ctx.author.id)).fetchone()
         connexion.close()
         if titre==None:
-            embed=createEmbed("Surnom personnalisé","Votre nom affiché dans les classements mondiaux sera désormais **{0}, Inconnu**.\nValidez ce choix avec <:otVALIDER:772766033996021761>.\nVous ne pourrez plus revenir en arrière, chaque changement de surnom coûte 4000 <:otCOINS:873226814527520809>.".format(custom),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
+            embed=createEmbed("Surnom personnalisé","Votre nom affiché dans les classements mondiaux sera désormais **{0}, Inconnu**.\nValidez ce choix avec <:otVALIDER:772766033996021761>.\nVous ne pourrez plus revenir en arrière, chaque changement de surnom coûte 2500 <:otCOINS:873226814527520809>.".format(custom),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
         else:
-            embed=createEmbed("Surnom personnalisé","Votre nom affiché dans les classements mondiaux sera désormais **{0}, {1}**.\nValidez ce choix avec <:otVALIDER:772766033996021761>.\nVous ne pourrez plus revenir en arrière, chaque changement de surnom coûte 4000 <:otCOINS:873226814527520809>.".format(custom,titre["Nom"]),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
+            embed=createEmbed("Surnom personnalisé","Votre nom affiché dans les classements mondiaux sera désormais **{0}, {1}**.\nValidez ce choix avec <:otVALIDER:772766033996021761>.\nVous ne pourrez plus revenir en arrière, chaque changement de surnom coûte 2500 <:otCOINS:873226814527520809>.".format(custom,titre["Nom"]),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
 
         message=await ctx.reply(embed=embed)
         await message.add_reaction("<:otVALIDER:772766033996021761>")
@@ -67,8 +67,8 @@ async def achatCustom(ctx,bot):
 
         connexionUser,curseurUser=connectSQL("OT",ctx.author.id,"Titres",None,None)
         coins=curseurUser.execute("SELECT * FROM coins").fetchone()["Coins"]
-        assert coins>=4000, "Vous n'avez pas assez d'OT Coins pour acheter le surnom personnalisé !"
-        curseurUser.execute("UPDATE coins SET Coins=Coins-4000")
+        assert coins>=2500, "Vous n'avez pas assez d'OT Coins pour acheter le surnom personnalisé !"
+        curseurUser.execute("UPDATE coins SET Coins=Coins-2500")
         connexionUser.commit()
 
         connexion,curseur=connectSQL("OT","Titres","Titres",None,None)

@@ -30,6 +30,7 @@ from Wiki.exeWikipedia import exeWikipedia
 
 from Outils.Tableaux.EmbedsTab import commandeSB
 from Outils.Twitch.ExeTwitch import commandeTwitch
+from Titres.Listes import commandeTMP
 
 
 async def reactStats(message:int,reaction:discord.Reaction,bot:commands.Bot,guildOT:OTGuild,payload):
@@ -87,6 +88,8 @@ async def reactStats(message:int,reaction:discord.Reaction,bot:commands.Bot,guil
             await commandeGAR(ctx,getTurn(reaction),True,ligne)
         elif ligne["Commande"]=="help":
             await commandeHelp(ctx,getTurn(reaction),True,ligne,bot,guildOT)
+        elif ligne["Commande"]=="titres":
+            await commandeTMP(ctx,getTurn(reaction),True,ligne,ligne["Option"])
         elif ligne["Commande"]=="rapport":
             if reaction.id in (835930140571729941,835928773718835260,835928773740199936,835928773705990154,835928773726699520,835929144579326003,836947337808314389):
                 await switchRapport(ctx,reaction.id,ligne,guildOT,bot)

@@ -10,8 +10,11 @@ def dailyCoins():
     liste=["P4","BatailleNavale","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR"]
     for i in liste:
         connexion,curseur=connectSQL("OT",i,"Jeux","GL","")
-        for j in curseur.execute("SELECT * FROM glob WHERE Rank<=5").fetchall():
-            gainCoins(j["ID"],dictRank[j["Rank"]]) 
+        try:
+            for j in curseur.execute("SELECT * FROM glob WHERE Rank<=5").fetchall():
+                gainCoins(j["ID"],dictRank[j["Rank"]]) 
+        except:
+            pass
 
 
 async def monthlyTitles(mois,annee,bot):

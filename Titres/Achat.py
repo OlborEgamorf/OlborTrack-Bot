@@ -3,8 +3,8 @@ from Stats.SQL.ConnectSQL import connectSQL
 import asyncio
 from Titres.Outils import createAccount
 
-dictReverse={300:1,800:2,5000:3}
-dictValue={1:300,2:800,3:5000}
+dictReverse={300:1,800:2,4000:3}
+dictValue={1:300,2:800,3:4000}
 
 async def achatTitre(ctx,idtitre,bot,gift):
     try:
