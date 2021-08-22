@@ -152,6 +152,6 @@ async def boucleAutoStats(bot,dictGuilds):
             try:
                 archivesSave(i.id,jour,mois,annee)
             except:
-                await bot.get_channel(706175527953760277).send("Sauvegarde archive échec : {0} / {1}".format(i.id,i.name))
-
+                pass
+            
         await asyncio.sleep(80000)
