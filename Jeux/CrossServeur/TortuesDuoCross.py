@@ -8,6 +8,7 @@ from Jeux.CrossServeur.ClasseTDCross import JeuTortuesDuoCross
 from Jeux.Outils import joinGame
 from Stats.Tracker.Jeux import statsServ
 from Core.Fonctions.Unpin import pin, unpin
+from Jeux.Paris import Pari
 
 emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>","<:ot5:705766186713088042>","<:OTTbleu:860119157491892255>", "<:OTTjaune:860119157688631316>", "<:OTTrouge:860119157495693343>", "<:OTTvert:860119157331853333>", "<:OTTviolet:860119157672247326>"]
 dictEmote={0:"<:otBlank:828934808200937492>","rouge":"<:OTTrouge:860119157495693343>","verte":"<:OTTvert:860119157331853333>","bleue":"<:OTTbleu:860119157491892255>","jaune":"<:OTTjaune:860119157688631316>","violette":"<:OTTviolet:860119157672247326>","last":"*dernière tortue*","multi":"*au choix*"}
@@ -33,7 +34,6 @@ async def startGameTortuesDuoCross(ctx,bot,inGame,gamesTortues):
         game.memguild[ctx.author.id]=ctx.guild.id
         game.messguild[ctx.message.id]=ctx.guild.id
         game.ids.append(ctx.author.id)
-        game.mises[ctx.author.id]=0
         inGame.append(ctx.author.id)
         if new:
             message=await ctx.send(embed=createEmbed("Course des tortues","**Vous avez créé une partie de OT!tortuesduo en Cross-Serveur. Vous êtes le propriétaire de la partie.**\n\nLe jeu se joue avec 4 joueurs, en 2 contre 2.\nAu début de la partie, chaque binome (aléatoire) se voit attribuer deux couleurs secrètes, envoyées en message privé, qui est celle de ses tortues.\nSauf que vous ne connaissez pas le deuxième membre de votre binome, qui doit faire gagner les mêmes tortues que vous !\nLe but est de faire atteindre l'arrivée avant tout le monde aux deux tortues, en jouant avec des cartes qui font avancer les tortues.\nLes joueurs jouent chacun leur tour. Les réactions <:ot1:705766186909958185> à <:ot5:705766186713088042> permettent de choisir sa carte.\nSi vous choisissez une carte 'au choix', cliquez ensuite sur la réaction de la tortue que vous voulez déplacer <:OTTbleu:860119157491892255> <:OTTjaune:860119157688631316> <:OTTrouge:860119157495693343> <:OTTvert:860119157331853333> <:OTTviolet:860119157672247326>.\nLes cartes 'dernière tortue' font avancer la dernière tortue.\nEn dehors de la case départ, les tortues s'empilent et avancent en même temps !\nSi plusieurs tortues arrivent en même temps, celle qui est le plus bas gagne !\nBonne chance !\n\nAppuyez sur la réaction <:otVALIDER:772766033996021761> pour rejoindre la partie et <:otANNULER:811242376625782785> pour annuler votre participation.\nLa partie se lancera automatiquement quand assez de joueurs auront rejoint, sinon au bout de 1 minute elle sera annulée.",0xad917b,ctx.invoked_with.lower(),ctx.guild))
@@ -55,14 +55,14 @@ async def startGameTortuesDuoCross(ctx,bot,inGame,gamesTortues):
         if not new:
             return
 
-        annonce=await bot.get_channel(878254347459366952).send("<:otVERT:868535645897912330> Partie de Tortues Duo en recherche de joueurs !")
+        annonce=await bot.get_channel(878254347459366952).send("<:otVERT:868535645897912330> Partie de Tortues Duo Cross en recherche de joueurs !\n Faites OT!tortuesduocross pour rejoindre !")
         await annonce.publish()
         for i in range(60):
             if not game.playing:
                 await asyncio.sleep(1)
             else:
                 break
-        await annonce.delete()
+        await annonce.edit(content="~~{0}~~\nRecherche terminée.".format(annonce.content))
         
         game.playing=True
         dictOnline.remove(game)
@@ -110,6 +110,7 @@ async def startGameTortuesDuoCross(ctx,bot,inGame,gamesTortues):
 
         game.giveCards()
         turn=randint(0,len(game.joueurs)-1)
+        game.paris=Pari(game.ids,"TortuesDuo")
         while game.playing:
             for i in game.messages:
                 await i.edit(embed=game.embedGame(game.joueurs[turn],i.guild.id))
@@ -133,9 +134,11 @@ async def startGameTortuesDuoCross(ctx,bot,inGame,gamesTortues):
                                     await unpin(j)
                                 for j in range(2):
                                     statsServ(game,game.equipe[win.equipe][j].userid)
+                                    game.paris.distribParis(game.equipe[win.equipe][j].userid)
                                 game.stats(win.equipe)
                                 break
-                
+            
+            game.fermeture()
             game.joueurs[turn].jeu.remove(carte)
             game.joueurs[turn].pioche(game.cartes)
             turn+=1

@@ -8,6 +8,7 @@ from Jeux.Tortues.ClasseTortues import JeuTortues
 from Jeux.CrossServeur.ClasseTortuesCross import JeuTortuesCross
 from Jeux.Outils import joinGame
 from Stats.Tracker.Jeux import statsServ
+from Jeux.Paris import Pari
 
 listeCouleurs=("rouge","jaune","bleue","verte","violette")
 emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>","<:ot5:705766186713088042>","<:OTTbleu:860119157491892255>", "<:OTTjaune:860119157688631316>", "<:OTTrouge:860119157495693343>", "<:OTTvert:860119157331853333>", "<:OTTviolet:860119157672247326>"]
@@ -34,7 +35,6 @@ async def startGameTortuesCross(ctx,bot,inGame,gamesTortues):
         game.memguild[ctx.author.id]=ctx.guild.id
         game.messguild[ctx.message.id]=ctx.guild.id
         game.ids.append(ctx.author.id)
-        game.mises[ctx.author.id]=0
         inGame.append(ctx.author.id)
         if new:
             message=await ctx.send(embed=createEmbed("Course des tortues","**Vous avez créé une partie de OT!tortues en Cross-Serveur. Vous êtes le propriétaire de la partie.**\n\nLe jeu se joue de 2 à 5 joueurs.\nAu début de la partie, chaque joueur se voit attribuer une couleur secrète, envoyée en message privé, qui est celle de sa tortue.\nLe but est d'atteindre l'arrivée avant tout le monde, en jouant avec des cartes qui font avancer les tortues.\nLes joueurs jouent chacun leur tour. Les réactions <:ot1:705766186909958185> à <:ot5:705766186713088042> permettent de choisir sa carte.\nSi vous choisissez une carte 'au choix', cliquez ensuite sur la réaction de la tortue que vous voulez déplacer <:OTTbleu:860119157491892255> <:OTTjaune:860119157688631316> <:OTTrouge:860119157495693343> <:OTTvert:860119157331853333> <:OTTviolet:860119157672247326>.\nLes cartes 'dernière tortue' font avancer la dernière tortue.\nEn dehors de la case départ, les tortues s'empilent et avancent en même temps !\nSi plusieurs tortues arrivent en même temps, celle qui est le plus bas gagne !\nBonne chance !\n\nAppuyez sur la réaction <:otVALIDER:772766033996021761> pour rejoindre la partie de Course des tortues et <:otANNULER:811242376625782785> pour annuler votre participation.\n<@{0}> peut lancer la partie en appuyant sur <:otVALIDER:772766033996021761>, sinon elle se lancera automatiquement au bout de 1 minute.".format(ctx.author.id),0xad917b,ctx.invoked_with.lower(),ctx.guild))
@@ -56,14 +56,14 @@ async def startGameTortuesCross(ctx,bot,inGame,gamesTortues):
         if not new:
             return
 
-        annonce=await bot.get_channel(878254347459366952).send("<:otVERT:868535645897912330> Partie de Tortues en recherche de joueurs !")
+        annonce=await bot.get_channel(878254347459366952).send("<:otVERT:868535645897912330> Partie de Tortues Cross en recherche de joueurs !\n Faites OT!tortuescross pour rejoindre !")
         await annonce.publish()
         for i in range(60):
             if not game.playing:
                 await asyncio.sleep(1)
             else:
                 break
-        await annonce.delete()
+        await annonce.edit(content="~~{0}~~\nRecherche terminée.".format(annonce.content))
         
         game.playing=True
         dictOnline.remove(game)
@@ -102,6 +102,7 @@ async def startGameTortuesCross(ctx,bot,inGame,gamesTortues):
 
         game.giveCards()
         turn=randint(0,len(game.joueurs)-1)
+        game.paris=Pari(game.ids,"Tortues")
         while game.playing:
             for i in game.messages:
                 await i.edit(embed=game.embedGame(game.joueurs[turn],i.guild.id))
@@ -117,10 +118,12 @@ async def startGameTortuesCross(ctx,bot,inGame,gamesTortues):
                     await i.clear_reactions()
                     await i.unpin()
                 game.stats(win)
+                game.paris.distribParis(game.getWinner().userid)
                 for i in game.joueurs:
                     if i.couleur==win:
                         statsServ(game,i.userid)
-                
+            
+            game.fermeture()
             game.joueurs[turn].jeu.remove(carte)
             game.joueurs[turn].pioche(game.cartes)
             turn+=1

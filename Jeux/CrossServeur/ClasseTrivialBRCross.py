@@ -93,5 +93,10 @@ class BattleRoyaleCross(VersusCross):
             embedT=auteur(winner.id,winner.name,winner.avatar,embedT,"user")
         else:
             embedT.set_author(name=self.titres[winner.id],icon_url="https://cdn.discordapp.com/emojis/{0}.png".format(emoteDetector(self.emotesCustom[winner.id])[0]))
-        embedT.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(winner.name),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25+sum(self.mises.values())))
+        embedT.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(winner.name),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25+sum(self.paris.mises.values())))
         return embedT
+
+    def fermeture(self):
+        for i in self.scores:
+            if self.scores[i]==1:
+                self.paris.ouvert=False 

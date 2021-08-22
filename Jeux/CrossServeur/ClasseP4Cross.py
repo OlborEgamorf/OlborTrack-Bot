@@ -5,7 +5,7 @@ from Stats.SQL.ConnectSQL import connectSQL
 from Stats.SQL.EmoteDetector import emoteDetector
 from Titres.Couleur import getColorJeux
 from Titres.Emote import getEmoteJeux
-from Jeux.P4 import JeuP4, JoueurP4
+from Jeux.ClasseP4 import JeuP4, JoueurP4
 
 
 class JeuP4Cross(JeuP4):
@@ -46,15 +46,23 @@ class JeuP4Cross(JeuP4):
             descip+="{0} : <:otP2:726165146229145610>".format(self.joueurs[1].titre)
 
         embed.add_field(name="Joueurs",value=descip)
-        if sum(self.mises.values())!=0:
+        if sum(self.paris.mises.values())!=0:
             descip=""
             for i in self.joueurs:
-                if self.mises[i.id]!=0:
+                if self.paris.mises[i.id]!=0:
                     if self.memguild[i.id]==guild:
-                        descip+="<@{0}> : {1} <:otCOINS:873226814527520809>\n".format(i.id,self.mises[i.id])
+                        descip+="<@{0}> : {1} <:otCOINS:873226814527520809>\n".format(i.id,self.paris.mises[i.id])
                     else:
-                        descip+="{0} : {1} <:otCOINS:873226814527520809>\n".format(i.titre,self.mises[i.id])
+                        descip+="{0} : {1} <:otCOINS:873226814527520809>\n".format(i.titre,self.paris.mises[i.id])
             embed.add_field(name="Mises d'OT Coins",value=descip)
+        
+        if self.paris.ouvert:
+            descip=""
+            for i in self.paris.cotes:
+                if self.paris.cotes[i]!=None and self.memguild[i]==guild:
+                    descip+="<@{0}> : {1}\n".format(i,self.paris.cotes[i])
+            if descip!="":
+                embed.add_field(name="Côtes",value=descip)
         
         if user.color!=None:
             embed.color=user.color
@@ -73,7 +81,7 @@ class JeuP4Cross(JeuP4):
                     embed.set_author(name=self.joueurs[win].titre,icon_url="https://cdn.discordapp.com/emojis/{0}.png".format(emoteDetector(self.joueurs[win].emote)[0]))
                 else:
                     embed=auteur(699728606493933650,self.joueurs[win].titre,None,embed,"user")
-            embed.add_field(name="<:otCOINS:873226814527520809> gagnés",value="{0} <:otCOINS:873226814527520809>".format(50+sum(self.mises.values())))
+            embed.add_field(name="<:otCOINS:873226814527520809> gagnés",value="{0} <:otCOINS:873226814527520809>".format(50+sum(self.paris.mises.values())))
 
         embed.set_footer(text="OT!p4cross")
         if self.joueurs[win].color!=None:

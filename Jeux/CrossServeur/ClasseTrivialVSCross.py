@@ -39,7 +39,6 @@ class VersusCross(Versus):
         self.memguild[ctx.author.id]=ctx.guild.id
         self.messguild[ctx.message.id]=ctx.guild.id
         self.ids.append(ctx.author.id)
-        self.mises[ctx.author.id]=0
         inGame.append(ctx.author.id)
         if new:
             dictHelp={"party":"**Vous avez créé une partie de OT!trivialparty en Cross-Serveur. Vous êtes le propriétaire de la partie.**\n\nAppuyez sur la réaction <:otVALIDER:772766033996021761> pour rejoindre la partie de Trivial Party et <:otANNULER:811242376625782785> pour annuler votre participation. La personne qui a demandé la partie peut cliquer sur <:otVALIDER:772766033996021761> pour lancer directement la partie. Sinon, elle va démarrer dans une minute.\n\n**Comment jouer ? : ** le Trivial Party se joue de 2 à 15 joueurs. Des questions vont se suivre, il faut obtenir 12 points pour gagner ! De manière aléatoire, des évènement peuvent se dérouler pour changer complétement la partie ! Le jeu se déroule dans ce salon et sur ce message. Les propositions sont numérotés de <:ot1:705766186909958185> à <:ot4:705766186947706934>, cliquez sur la réaction qui correspond pour choisir votre réponse. Au bout de 20s ou quand tout le monde a répondu, les résultats sont affichés. La prochaine question démarrera peu de temps après. Bonne chance !",
@@ -67,14 +66,14 @@ class VersusCross(Versus):
         if not new:
             return False
 
-        annonce=await bot.get_channel(878254347459366952).send("<:otVERT:868535645897912330> Partie de Trivial {0} en recherche de joueurs !".format(self.option.upper()))
+        annonce=await bot.get_channel(878254347459366952).send("<:otVERT:868535645897912330> Partie de Trivial {0} en recherche de joueurs !\n Faites OT!trivial{1}cross pour rejoindre !".format(self.option.uppper(),self.option))
         await annonce.publish()
         for i in range(60):
             if not self.playing:
                 await asyncio.sleep(1)
             else:
                 break
-        await annonce.delete()
+        await annonce.edit(content="~~{0}~~\nRecherche terminée.".format(annonce.content))
 
         self.playing=True
         dictOnline.remove(self)
@@ -173,11 +172,11 @@ class VersusCross(Versus):
         if self.memguild[winner.id]==guild:
             embedT=discord.Embed(title="Victoire de {0}".format(winner.name), description=descip, color=0xf2eb16)
             embedT=auteur(winner.id,winner.name,winner.avatar,embedT,"user")
-            embedT.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(winner.name),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25+sum(self.mises.values())))
+            embedT.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(winner.name),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25+sum(self.paris.mises.values())))
         else:
             embedT=discord.Embed(title="Victoire de {0}".format(self.titres[winner.id]), description=descip, color=0xf2eb16)
             embedT.set_author(name=self.titres[winner.id],icon_url="https://cdn.discordapp.com/emojis/{0}.png".format(emoteDetector(self.emotesCustom[winner.id])[0]))
-            embedT.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(self.titres[winner.id]),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25+sum(self.mises.values())))
+            embedT.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(self.titres[winner.id]),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25+sum(self.paris.mises.values())))
         embedT.set_footer(text="OT!trivialversuscross")
         return embedT
 
@@ -202,7 +201,7 @@ class VersusCross(Versus):
         for i in self.ids:
             if i==win.id:
                 count,state=2,"W"
-                gainCoins(i,25*len(self.ids)+sum(self.mises.values()))
+                gainCoins(i,25*len(self.ids)+sum(self.paris.mises.values()))
             else:
                 count,state=-1,"L"
             exeJeuxSQL(i,None,state,"OT",curseurOT,count,option,None)

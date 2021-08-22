@@ -9,6 +9,7 @@ from Stats.SQL.Execution import exeJeuxSQL
 from Titres.Outils import gainCoins
 from Jeux.Trivial.Classic import Question
 from math import inf
+from Jeux.Paris import Pari
 
 listeNoms=["Culture","Divertissement","Sciences","Mythologie","Sport","Géographie","Histoire","Politique","Art","Célébrités","Animaux","Véhicules","Global"]
 dictCateg={9:0,10:1,11:1,12:1,13:1,14:1,15:1,16:1,17:2,18:2,19:2,20:3,21:4,22:5,23:6,24:7,25:8,26:9,27:10,28:11,29:1,30:2,31:1,32:1}
@@ -25,7 +26,7 @@ class Versus(Question):
         self.reponses={}
         self.scores={}
         self.histo={}
-        self.mises={}
+        self.paris=None
         self.tour=0
         self.guild=guild
         self.playing=False
@@ -186,6 +187,11 @@ class Versus(Question):
         connexionGuild.commit()
         connexionOT.commit()
 
+    def fermeture(self):
+        for i in self.scores:
+            if self.scores[i]==3:
+                self.paris.ouvert=False 
+
 
 async def trivialVersus(ctx,bot,inGame,gamesTrivial):
     try:
@@ -195,6 +201,7 @@ async def trivialVersus(ctx,bot,inGame,gamesTrivial):
         if message==False:
             return
         messAd=await bot.get_channel(870598360296488980).send("{0} - {1} : partie OT!trivialversus débutée\n{2} joueurs".format(ctx.guild.name,ctx.guild.id,len(game.joueurs)))
+        game.paris=Pari(game.ids,"TrivialVersus")
         while game.playing:
             game.reponses={i:None for i in game.ids}
             game.setCateg(None)
@@ -244,8 +251,10 @@ async def trivialVersus(ctx,bot,inGame,gamesTrivial):
                 await message.unpin()
                 game.playing=False
                 game.stats(count[0],"TrivialVersus")
+                game.paris.distribParis(count[0].id)
             elif len(count)>1:
                 game.max+=1
+            game.fermeture()
             game.tour+=1
             await asyncio.sleep(7)
         await game.endGame(message,inGame,gamesTrivial)

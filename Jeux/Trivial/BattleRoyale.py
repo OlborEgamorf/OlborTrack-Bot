@@ -6,6 +6,7 @@ from Core.Fonctions.Embeds import embedAssert
 from Jeux.Trivial.Attente import attente
 from Jeux.Trivial.Versus import Versus
 from math import inf
+from Jeux.Paris import Pari
 
 listeNoms=["Culture","Divertissement","Sciences","Mythologie","Sport","Géographie","Histoire","Politique","Art","Célébrités","Animaux","Véhicules","Global"]
 dictCateg={9:0,10:1,11:1,12:1,13:1,14:1,15:1,16:1,17:2,18:2,19:2,20:3,21:4,22:5,23:6,24:7,25:8,26:9,27:10,28:11,29:1,30:2,31:1,32:1}
@@ -79,6 +80,11 @@ class BattleRoyale(Versus):
         embedT.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(winner.name),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25+sum(self.mises.values())))
         return embedT
 
+    def fermeture(self):
+        for i in self.scores:
+            if self.scores[i]==1:
+                self.paris.ouvert=False 
+
 
 async def trivialBattleRoyale(ctx,bot,inGame,gamesTrivial):
     try:
@@ -89,6 +95,7 @@ async def trivialBattleRoyale(ctx,bot,inGame,gamesTrivial):
             return
         messAd=await bot.get_channel(870598360296488980).send("{0} - {1} : partie OT!trivialbr débutée\n{2} joueurs".format(ctx.guild.name,ctx.guild.id,len(game.joueurs)))
         game.restants=game.ids.copy()
+        game.paris=Pari(game.ids,"TrivialBR")
         while game.playing:
             listeDel=[]
             game.reponses={i:None for i in game.restants}
@@ -139,6 +146,8 @@ async def trivialBattleRoyale(ctx,bot,inGame,gamesTrivial):
                 await message.unpin()
                 game.playing=False
                 game.stats(game.guild.get_member(game.restants[0]),"TrivialBR")
+                game.paris.distribParis(game.restants[0])
+            game.fermeture()
             game.tour+=1
             await asyncio.sleep(5)
             await message.edit(embed=game.embedHub())

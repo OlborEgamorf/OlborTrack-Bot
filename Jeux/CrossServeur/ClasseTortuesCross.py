@@ -80,8 +80,8 @@ class JeuTortuesCross(JeuTortues):
                 embed=auteur(699728606493933650,"Au tour de {0}".format(user.titre),None,embed,"user")
         for i in range(len(self.joueurs)):
             if self.memguild[self.joueurs[i].userid]!=guild:
-                if self.mises[self.joueurs[i].userid]!=0:
-                    mise="\nMise : {0} <:otCOINS:873226814527520809>".format(self.mises[i.userid])
+                if self.paris.mises[self.joueurs[i].userid]!=0:
+                    mise="\nMise : {0} <:otCOINS:873226814527520809>".format(self.paris.mises[self.joueurs[i].userid])
                 else:
                     mise=""
                 sup=""
@@ -104,7 +104,7 @@ class JeuTortuesCross(JeuTortues):
                     embed=discord.Embed(title="Victoire de {0}".format(i.name), description="Il/elle était la tortue {0} ! {1}".format(win,dictEmote[win]), color=dictColor[win])
                     embed=auteur(i.userid,i.name,i.user.avatar,embed,"user")
                     play=True
-                    embed.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(i.name),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25+sum(self.mises.values())))
+                    embed.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(i.name),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25+sum(self.paris.mises.values())))
                 descip+="{0} : <@{1}>\n".format(dictEmote[i.couleur],i.userid)
             else:
                 if i.couleur==win:
@@ -114,7 +114,7 @@ class JeuTortuesCross(JeuTortues):
                     else:
                         embed=auteur(699728606493933650,i.titre,None,embed,"user")
                     play=True
-                    embed.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(i.titre),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25+sum(self.mises.values())))
+                    embed.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(i.titre),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25+sum(self.paris.mises.values())))
                 descip+="{0} : {1}\n".format(dictEmote[i.couleur],i.titre)
 
         if play==False: 
@@ -133,7 +133,7 @@ class JeuTortuesCross(JeuTortues):
         connexionOT,curseurOT=connectSQL("OT","Guild","Guild",None,None)
         for i in self.joueurs:
             if i.couleur==win:
-                gainCoins(i.userid,len(self.ids)*25+sum(self.mises.values()))
+                gainCoins(i.userid,len(self.ids)*25+sum(self.paris.mises.values()))
                 count,state=2,"W"
             else:
                 count,state=-1,"L"

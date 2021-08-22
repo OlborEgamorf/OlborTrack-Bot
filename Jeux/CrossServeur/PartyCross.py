@@ -1,13 +1,14 @@
 import asyncio
+from math import inf
 
 from Core.Fonctions.Embeds import embedAssert
+from Core.Fonctions.Unpin import unpin
 from Jeux.CrossServeur.ClasseTrivialPartyCross import PartyCross
 from Jeux.Outils import joinGame
+from Jeux.Paris import Pari
 from Jeux.Trivial.Attente import attente
 from numpy.random.mtrand import choice
 from Stats.Tracker.Jeux import statsServ
-from Core.Fonctions.Unpin import unpin
-from math import inf
 
 dictOnline=[]
 listeNoms=["Culture","Divertissement","Sciences","Mythologie","Sport","Géographie","Histoire","Politique","Art","Célébrités","Animaux","Véhicules","Global"]
@@ -34,6 +35,7 @@ async def trivialPartyCross(ctx,bot,inGame,gamesTrivial):
         messAd=await bot.get_channel(870598360296488980).send("{0} - {1} : partie OT!trivialparty CROSS débutée\n{2} joueurs".format(ctx.guild.name,ctx.guild.id,len(game.joueurs)))
         if len(game.joueurs)<4:
             game.event.remove("duo")
+        game.paris=Pari(game.ids,"TrivialParty")
         while game.playing:
             dictNomsVal={"culture":9,"divertissement":choice([10,11,12,13,14,15,16,29,31,32]),"sciences":choice([17,18,19,30]),"mythologie":20,"sport":21,"géographie":22,"histoire":23,"politique":24,"art":25,"célébrités":26,"animaux":27,"véhicules":28,"livres":10,"films":11,"musique":12,"anime":31,"manga":31}
             liste=[]
@@ -249,7 +251,7 @@ async def trivialPartyCross(ctx,bot,inGame,gamesTrivial):
                         for j in game.messages:
                             newListe=[]
                             for h in liste:
-                                if game.memguild[i.id]==game.memguild[h.id]:
+                                if game.memguild[i]==game.memguild[h.id]:
                                     newListe.append(h.name)
                                 else:
                                     newListe.append(game.titres[h.id])
@@ -286,7 +288,9 @@ async def trivialPartyCross(ctx,bot,inGame,gamesTrivial):
                 game.playing=False
                 game.stats(end[0],"TrivialParty")
                 statsServ(game,end[0].id)
+                game.paris.distribParis(end[0].id)
             
+            game.fermeture()
             game.tour+=1
             await asyncio.sleep(7)
         await game.endGame(message,inGame,gamesTrivial)

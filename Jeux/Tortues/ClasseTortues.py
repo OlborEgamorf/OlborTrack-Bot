@@ -44,7 +44,7 @@ class JeuTortues:
         self.ids=[]
         self.historique={}
         self.emotes={}
-        self.mises={}
+        self.paris=None
         self.plateau=[Pile() for i in range(10)]
         self.cartes=[Carte(i,1) for i in listeCouleurs]*5+[Carte(i,2) for i in listeCouleurs]+[Carte(i,-1) for i in listeCouleurs]*2+[Carte("multi",1) for i in range(5)]+[Carte("last",1) for i in range(3)]+[Carte("last",2) for i in range(2)]+[Carte("multi",-1) for i in range(2)]
         self.playing=False
@@ -93,10 +93,16 @@ class JeuTortues:
                 else:
                     form=self.historique[i.userid].valeur
                 descip+="Dernier coup : {0} {1}".format(form,dictEmote[self.historique[i.userid].couleur])
-            if self.mises[i.userid]!=0:
-                mise="\nMise : {0} <:otCOINS:873226814527520809>".format(self.mises[i.userid])
+            if self.paris.ouvert:
+                if self.paris.cotes[i.userid]!=None:
+                    mise="\nCôte : {0} ".format(self.paris.cotes[i.userid])
+                else:
+                    mise=""
             else:
-                mise=""
+                if self.paris.mises[i.userid]!=0:
+                    mise="\nMise : {0} <:otCOINS:873226814527520809>".format(self.paris.mises[i.userid])
+                else:
+                    mise=""
             embed.add_field(name="{0} {2}Cartes de {1}{2}{3}".format(self.emotes[i.userid],i.user.name,sup,mise),value=descip)
         return embed
                 
@@ -204,7 +210,7 @@ class JeuTortues:
                 embed=discord.Embed(title="Victoire de {0}".format(i.name), description="Il/elle était la tortue {0} ! {1}".format(win,dictEmote[win]), color=dictColor[win])
                 embed=auteur(i.userid,i.name,i.user.avatar,embed,"user")
                 play=True
-                embed.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(i.name),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25+sum(self.mises.values())))
+                embed.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(i.name),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25+sum(self.paris.mises.values())))
             descip+="{0} : <@{1}>\n".format(dictEmote[i.couleur],i.userid)
 
         if play==False: 
@@ -218,7 +224,7 @@ class JeuTortues:
         connexionOT,curseurOT=connectSQL("OT","Guild","Guild",None,None)
         for i in self.joueurs:
             if i.couleur==win:
-                gainCoins(i.userid,len(self.ids)*25+sum(self.mises.values()))
+                gainCoins(i.userid,len(self.ids)*25+sum(self.paris.mises.values()))
                 count,state=2,"W"
             else:
                 count,state=-1,"L"
@@ -294,3 +300,7 @@ class JeuTortues:
 
         self.historique[self.joueurs[turn].userid]=carte
         return couleur,valeur,carte
+
+    def fermeture(self):
+        if not self.plateau[4].est_vide() or not self.plateau[5].est_vide():
+            self.paris.ouvert=False

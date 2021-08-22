@@ -1,11 +1,13 @@
-from Jeux.Trivial.Attente import attente
 import asyncio
-from Core.Fonctions.Embeds import embedAssert
-from Jeux.Outils import joinGame
-from Jeux.CrossServeur.ClasseTrivialBRCross import BattleRoyaleCross
-from Stats.Tracker.Jeux import statsServ
-from Core.Fonctions.Unpin import unpin
 from math import inf
+
+from Core.Fonctions.Embeds import embedAssert
+from Core.Fonctions.Unpin import unpin
+from Jeux.CrossServeur.ClasseTrivialBRCross import BattleRoyaleCross
+from Jeux.Outils import joinGame
+from Jeux.Paris import Pari
+from Jeux.Trivial.Attente import attente
+from Stats.Tracker.Jeux import statsServ
 
 dictOnline=[]
 
@@ -29,6 +31,7 @@ async def trivialBattleRoyaleCross(ctx,bot,inGame,gamesTrivial):
             return
         messAd=await bot.get_channel(870598360296488980).send("{0} - {1} : partie OT!trivialbr CROSS débutée\n{2} joueurs".format(ctx.guild.name,ctx.guild.id,len(game.joueurs)))
         game.restants=game.ids.copy()
+        game.paris=Pari(game.ids,"TrivialBR")
         
         while game.playing:
             listeDel=[]
@@ -87,6 +90,8 @@ async def trivialBattleRoyaleCross(ctx,bot,inGame,gamesTrivial):
                 game.playing=False
                 game.stats(bot.get_user(game.restants[0]),"TrivialBR")
                 statsServ(game,game.restants[0])
+                game.paris.distribParis(game.restants[0])
+            game.fermeture()
             game.tour+=1
             await asyncio.sleep(5)
             for i in game.messages:

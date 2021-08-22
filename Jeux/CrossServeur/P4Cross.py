@@ -11,6 +11,7 @@ from Titres.Outils import gainCoins
 from Core.Fonctions.Unpin import pin, unpin
 from Stats.SQL.Execution import exeJeuxSQL
 from Stats.SQL.ConnectSQL import connectSQL
+from Jeux.Paris import Pari
 
 emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>","<:ot5:705766186713088042>","<:ot6:705766187182850148>","<:ot7:705766187115741246>"]
 dictCo={705766186909958185:0,705766186989912154:1,705766186930929685:2,705766186947706934:3,705766186713088042:4,705766187182850148:5,705766187115741246:6}
@@ -34,7 +35,6 @@ async def startGameP4Cross(ctx,bot,inGame,gamesP4):
         game.memguild[ctx.author.id]=ctx.guild.id
         game.messguild[ctx.message.id]=ctx.guild.id
         game.ids.append(ctx.author.id)
-        game.mises[ctx.author.id]=0
         inGame.append(ctx.author.id)
         if new:
             message=await ctx.send(embed=createEmbed("Puissance 4","**Vous avez créé une partie de OT!p4 en Cross-Serveur. Vous êtes le propriétaire de la partie.**\n\nAppuyez sur la réaction <:otVALIDER:772766033996021761> pour défier <@{0}> au Puissance 4.\nL'objectif est d'aligner 4 jetons de votre couleur dans n'importe quel sens (horizontallement, verticalement ou diagonalement) en premier !\nLes réactions allant de <:ot1:705766186909958185> à <:ot7:705766187115741246> représentent les colonnes où vous pouvez placer votre jeton. Cliquez sur l'une d'entre elles et le jeton apparaîtra !\nLa personne qui a demandé la partie peut cliquer sur <:otANNULER:811242376625782785> pour se retirer de la partie.".format(ctx.author.id),0xad917b,ctx.invoked_with.lower(),ctx.guild))
@@ -57,14 +57,14 @@ async def startGameP4Cross(ctx,bot,inGame,gamesP4):
         if not new:
             return
         
-        annonce=await bot.get_channel(878254347459366952).send("<:otVERT:868535645897912330> Partie de P4 en recherche de joueurs !")
+        annonce=await bot.get_channel(878254347459366952).send("<:otVERT:868535645897912330> Partie de P4 Cross en recherche de joueurs !\n Faites OT!p4cross pour rejoindre !")
         await annonce.publish()
         for i in range(60):
             if not game.playing:
                 await asyncio.sleep(1)
             else:
                 break
-        await annonce.delete()
+        await annonce.edit(content="~~{0}~~\nRecherche terminée.".format(annonce.content))
         
         game.playing=True
         dictOnline.remove(game)
@@ -75,7 +75,7 @@ async def startGameP4Cross(ctx,bot,inGame,gamesP4):
                 await game.memmess[i].edit(embed=createEmbed("Puissance 4","Une minute s'est écoulée et personne n'a répondu à l'invitation.",0xad917b,ctx.invoked_with.lower(),ctx.guild))
             for i in game.ids:
                 inGame.remove(i)
-                return
+            return
         
         while len(game.ids)>2:
             inGame.remove(game.ids[-1])
@@ -109,6 +109,7 @@ async def startGameP4Cross(ctx,bot,inGame,gamesP4):
         messAd=await bot.get_channel(870598360296488980).send("{0} - {1} : partie OT!p4 CROSS débutée\n2 joueurs".format(ctx.guild.name,ctx.guild.id))
 
         turn=randint(0,1)
+        game.paris=Pari(game.ids,"P4")
         while game.playing:
             for i in game.messages:
                 await i.edit(embed=game.createEmbedP4(game.joueurs[turn],i.guild.id))
@@ -124,7 +125,8 @@ async def startGameP4Cross(ctx,bot,inGame,gamesP4):
                     connexionOT.commit()
 
                     statsServ(game,game.joueurs[turn].id)
-                    gainCoins(game.joueurs[turn].id,50+sum(game.mises.values()))
+                    gainCoins(game.joueurs[turn].id,50+sum(game.paris.mises.values()))
+                    game.paris.distribParis(game.joueurs[turn].id)
                     
                     for i in game.messages:
                         await i.clear_reactions()
@@ -145,6 +147,8 @@ async def startGameP4Cross(ctx,bot,inGame,gamesP4):
                             if game.tab.tableau[0][i]!=0:
                                 for j in game.messages:
                                     await j.clear_reaction(emotes[i])
+
+            game.fermeture()
             turn+=1
             if turn==len(game.joueurs):
                 turn=0

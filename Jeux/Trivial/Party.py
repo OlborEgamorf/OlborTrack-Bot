@@ -7,6 +7,7 @@ from Core.Fonctions.Embeds import embedAssert
 from Jeux.Trivial.Attente import attente
 from Jeux.Trivial.Versus import Versus
 from math import inf
+from Jeux.Paris import Pari
 
 emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>"]
 listeNoms=["Culture","Divertissement","Sciences","Mythologie","Sport","Géographie","Histoire","Politique","Art","Célébrités","Animaux","Véhicules","Global"]
@@ -68,6 +69,11 @@ class Party(Versus):
         embed.add_field(name="Évènement",value=dictTitre[event])
         return embed
 
+    def fermeture(self):
+        for i in self.scores:
+            if self.scores[i]>5:
+                self.paris.ouvert=False 
+
 
 async def trivialParty(ctx,bot,inGame,gamesTrivial):
     try:
@@ -79,6 +85,7 @@ async def trivialParty(ctx,bot,inGame,gamesTrivial):
         messAd=await bot.get_channel(870598360296488980).send("{0} - {1} : partie OT!trivialparty débutée\n{2} joueurs".format(ctx.guild.name,ctx.guild.id,len(game.joueurs)))
         if len(game.joueurs)<4:
             game.event.remove("duo")
+        game.paris=Pari(game.ids,"TrivialParty")
         while game.playing:
             dictNomsVal={"culture":9,"divertissement":choice([10,11,12,13,14,15,16,29,31,32]),"sciences":choice([17,18,19,30]),"mythologie":20,"sport":21,"géographie":22,"histoire":23,"politique":24,"art":25,"célébrités":26,"animaux":27,"véhicules":28,"livres":10,"films":11,"musique":12,"anime":31,"manga":31}
             liste=[]
@@ -293,7 +300,9 @@ async def trivialParty(ctx,bot,inGame,gamesTrivial):
                 await message.unpin()
                 game.playing=False
                 game.stats(end[0],"TrivialParty")
-            
+                game.paris.distribParis(end[0].id)
+
+            game.fermeture()
             game.tour+=1
             await asyncio.sleep(7)
         await game.endGame(message,inGame,gamesTrivial)

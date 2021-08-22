@@ -8,6 +8,7 @@ from Jeux.Outils import joinGame
 from Stats.Tracker.Jeux import statsServ
 from Core.Fonctions.Unpin import unpin
 from math import inf
+from Jeux.Paris import Pari
 
 dictOnline=[]
 emotesTrue=["<:ot1VRAI:773993429130149909>", "<:ot2VRAI:773993429050195979>", "<:ot3VRAI:773993429331738624>", "<:ot4VRAI:773993429423095859>"]
@@ -32,6 +33,7 @@ async def trivialVersusCross(ctx,bot,inGame,gamesTrivial):
         if message==False:
             return
         messAd=await bot.get_channel(870598360296488980).send("{0} - {1} : partie OT!trivialversus CROSS débutée\n{2} joueurs".format(ctx.guild.name,ctx.guild.id,len(game.joueurs)))
+        game.paris=Pari(game.ids,"TrivialVersus")
         while game.playing:
             game.reponses={i:None for i in game.ids}
             game.setCateg(None)
@@ -88,12 +90,14 @@ async def trivialVersusCross(ctx,bot,inGame,gamesTrivial):
                 game.playing=False
                 game.stats(count[0],"TrivialVersus")
                 statsServ(game,count[0].id)
+                game.paris.distribParis(count[0].id)
             elif len(count)>1:
                 game.max+=1
                 await asyncio.sleep(7)
             else:
                 await asyncio.sleep(7)
             game.tour+=1
+            game.fermeture()
         await game.endGame(message,inGame,gamesTrivial)
     except AssertionError as er:
         await ctx.send(embed=embedAssert(er))

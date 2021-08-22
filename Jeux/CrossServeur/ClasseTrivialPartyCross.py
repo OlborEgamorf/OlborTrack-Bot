@@ -64,7 +64,7 @@ class PartyCross(VersusCross):
             embedT.set_author(name=self.titres[winner.id],icon_url="https://cdn.discordapp.com/emojis/{0}.png".format(emoteDetector(self.emotesCustom[winner.id])[0]))
             
         embedT.set_footer(text="OT!trivialparty")
-        embedT.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(winner.name),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25+sum(self.mises.values())))
+        embedT.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(winner.name),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25+sum(self.paris.mises.values())))
         return embedT
 
     def createEmbed(self,results,event,guild):
@@ -72,3 +72,8 @@ class PartyCross(VersusCross):
         embed=super().createEmbed(results,guild)
         embed.add_field(name="Évènement",value=dictTitre[event])
         return embed
+
+    def fermeture(self):
+        for i in self.scores:
+            if self.scores[i]>5:
+                self.paris.ouvert=False 

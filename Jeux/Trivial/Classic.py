@@ -154,15 +154,21 @@ class Question:
                 curseur.execute("UPDATE trivial{0} SET Next={1} WHERE IDCateg={2}".format(author,niveaux[table[categ]["Niveau"]+count-1],categ))
                 curseur.execute("UPDATE trivial{0} SET Niveau={1} WHERE IDCateg={2}".format(author,table[categ]["Niveau"]+count,categ))
                 if table[categ]["Niveau"]+count in (5,10):
-                    titresTrivial(table[categ]["Niveau"]+count,categ,author)
+                    try:
+                        titresTrivial(table[categ]["Niveau"]+count,categ,author)
+                    except:
+                        pass
 
             count=0
             while curseur.execute("SELECT Exp FROM trivial{0} WHERE IDCateg=12".format(author)).fetchone()["Exp"]>=curseur.execute("SELECT Next FROM trivial{0} WHERE IDCateg=12".format(author)).fetchone()["Next"]:
                 count+=1
-                curseur.execute("UPDATE trivial{0} SET Next={1} WHERE IDCateg=12".format(author,niveaux[table[categ]["Niveau"]+count-1]))
-                curseur.execute("UPDATE trivial{0} SET Niveau={1} WHERE IDCateg=12".format(author,table[categ]["Niveau"]+count))
-                if table[categ]["Niveau"]+count in (5,10):
-                    titresTrivial(table[categ]["Niveau"]+count,categ,author)
+                curseur.execute("UPDATE trivial{0} SET Next={1} WHERE IDCateg=12".format(author,niveaux[table[12]["Niveau"]+count-1]))
+                curseur.execute("UPDATE trivial{0} SET Niveau={1} WHERE IDCateg=12".format(author,table[12]["Niveau"]+count))
+                if table[12]["Niveau"]+count in (5,10):
+                    try:
+                        titresTrivial(table[12]["Niveau"]+count,12,author)
+                    except:
+                        pass
             connexion.commit()
 
             connexion,curseur=connectSQL("OT","ranks","Trivial",None,None)
