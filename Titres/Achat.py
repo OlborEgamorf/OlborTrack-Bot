@@ -73,12 +73,12 @@ def verifAchat(ctx,idtitre,gift):
         createAccount(connexionGift,curseurGift)
         assert curseurGift.execute("SELECT * FROM titresUser WHERE ID={0}".format(idtitre)).fetchone()==None, "La personne à qui vous voulez offrir ce titre le possède déjà !"
         if titre["Rareté"]==3:
-            assert curseurGift.execute("SELECT COUNT() FROM titresUser WHERE Rareté=3").fetchone()==0, "La personne à qui vous voulez offrir ce titre a déjà un titre de type Unique."
+            assert curseurGift.execute("SELECT COUNT() AS Count FROM titresUser WHERE Rareté=3").fetchone()["Count"]==0, "La personne à qui vous voulez offrir ce titre a déjà un titre de type Unique."
         connexionGift.close()
     else:
         assert curseurUser.execute("SELECT * FROM titresUser WHERE ID={0}".format(idtitre)).fetchone()==None, "Vous possèdez déjà ce titre !"
         if titre["Rareté"]==3:
-            assert curseurUser.execute("SELECT COUNT() FROM titresUser WHERE Rareté=3").fetchone()==0, "Vous ne pouvez pas avoir plus d'un titre unique dans votre inventaire."
+            assert curseurUser.execute("SELECT COUNT() AS Count FROM titresUser WHERE Rareté=3").fetchone()["Count"]==0, "Vous ne pouvez pas avoir plus d'un titre unique dans votre inventaire."
 
     connexionUser.close()
     connexion.close()

@@ -22,7 +22,7 @@ async def packTitre(ctx,bot):
         if coins>=1500:
             liste.append(2)
             listeReactID.append(705766186989912154)
-        elif coins>=3000:
+        if coins>=3000:
             liste.append(3)
             listeReactID.append(705766186930929685)
 
