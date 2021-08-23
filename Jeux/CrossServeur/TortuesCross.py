@@ -118,7 +118,7 @@ async def startGameTortuesCross(ctx,bot,inGame,gamesTortues):
                     await i.clear_reactions()
                     await i.unpin()
                 game.stats(win)
-                game.paris.distribParis(game.getWinner().userid)
+                
                 for i in game.joueurs:
                     if i.couleur==win:
                         statsServ(game,i.userid)

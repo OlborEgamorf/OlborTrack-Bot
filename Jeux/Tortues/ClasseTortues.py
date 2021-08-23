@@ -225,6 +225,7 @@ class JeuTortues:
         for i in self.joueurs:
             if i.couleur==win:
                 gainCoins(i.userid,len(self.ids)*25+sum(self.paris.mises.values()))
+                self.paris.distribParis(i.userid)
                 count,state=2,"W"
             else:
                 count,state=-1,"L"

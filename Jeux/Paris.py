@@ -40,9 +40,15 @@ class Pari:
                 if i in self.cotes:
                     continue
                 if points[i]>0:
-                    self.cotes[i]=round((somme/points[i])-(victoires[i]/defaites[i]/2),2)
+                    if defaites[i]>0:
+                        self.cotes[i]=round((somme/points[i])-(victoires[i]/defaites[i]/2),2)
+                    else:
+                        self.cotes[i]=round((somme/points[i])-(victoires[i]/2),2)
                 else:
-                    self.cotes[i]=round(4-(victoires[i]/defaites[i]*2),2)
+                    if defaites[i]>0:
+                        self.cotes[i]=round(4-(victoires[i]/defaites[i]*2),2)
+                    else:
+                        self.cotes[i]=round(4-(victoires[i]*2),2)
         else:
             for i in self.ids:
                 if i in self.cotes:

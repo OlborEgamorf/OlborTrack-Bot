@@ -103,7 +103,7 @@ async def boucleAutoCMD(bot,dictGuilds):
             await annualyTitles(annee,bot)
         
         dailyCoins()
-        setMarketPlace()
+        #setMarketPlace()
 
         for i in bot.guilds:
             
