@@ -8,13 +8,13 @@ from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.Embeds import embedAssert, sendEmbed
 
 tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai","06":"Juin","07":"Juillet","08":"Aout","09":"Septembre","10":"Octobre","11":"Novembre","12":"Décembre","TO":"Année","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
-dictOption={"tortues":"Tortues","tortuesduo":"TortuesDuo","trivialversus":"TrivialVersus","trivialbr":"TrivialBR","trivialparty":"TrivialParty","p4":"P4","bataillenavale":"BatailleNavale"}
+dictOption={"tortues":"Tortues","tortuesduo":"TortuesDuo","trivialversus":"TrivialVersus","trivialbr":"TrivialBR","trivialparty":"TrivialParty","p4":"P4","bataillenavale":"BatailleNavale","cross":"Cross"}
 
 async def statsJeux(ctx,turn,react,ligne,guildOT,bot,mode):
-    try:
+    if True:
         connexionCMD,curseurCMD=connectSQL(ctx.guild.id,"Commandes","Guild",None,None)
         if not react:
-            assert ctx.args[2].lower() in ("tortues","tortuesduo","trivialversus","trivialbr","trivialparty","p4","bataillenavale")
+            assert ctx.args[2].lower() in ("tortues","tortuesduo","trivialversus","trivialbr","trivialparty","p4","bataillenavale","cross")
             option=ctx.args[2].lower()
             if len(ctx.args)==3 or ctx.args[3].lower() not in ("mois","annee"):
                 try:
@@ -64,8 +64,8 @@ async def statsJeux(ctx,turn,react,ligne,guildOT,bot,mode):
         embed.colour=0x3498db
         await sendEmbed(ctx,embed,react,True,curseurCMD,connexionCMD,page,pagemax)
     
-    except:
+    """except:
         if react:
             await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nLe classement cherché n'existe plus ou alors il y a un problème de mon côté."))
         else:
-            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nLe classement cherché n'existe pas ou alors il y a un problème de mon côté.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))
+            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nLe classement cherché n'existe pas ou alors il y a un problème de mon côté.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))"""

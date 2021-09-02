@@ -164,3 +164,9 @@ def getTitre(curseur,user):
     else:
         total+=titre["Nom"]
     return total
+
+def getIndic(curseur,guild):
+    indic=curseur.execute("SELECT * FROM servers WHERE ID={0}".format(guild)).fetchone()
+    if indic==None:
+        return "----"
+    return indic["Nom"]

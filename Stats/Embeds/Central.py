@@ -11,6 +11,7 @@ from Stats.Embeds.Mois import embedMois
 from Stats.Embeds.Moyennes import embedMoy
 from Stats.Embeds.Salons import embedSalon
 from Stats.Embeds.Trivialperso import embedTrivialPerso
+from Stats.Embeds.Serveur import embedServeurs
 
 dictTriArg={"countAsc":"Count","rankAsc":"Rank","countDesc":"Count","rankDesc":"Rank","dateAsc":"DateID","dateDesc":"DateID","periodAsc":"None","periodDesc":"None","moyDesc":"Moyenne","nombreDesc":"Nombre","winAsc":"W","winDesc":"W","loseAsc":"L","loseDesc":"L","expDesc":"Exp","expAsc":"Exp"}
 dictTriSens={"countAsc":"ASC","rankAsc":"ASC","countDesc":"DESC","rankDesc":"DESC","dateAsc":"ASC","dateDesc":"DESC","periodAsc":"None","periodDesc":"None","moyDesc":"DESC","nombreDesc":"DESC","winAsc":"ASC","winDesc":"DESC","loseAsc":"ASC","loseDesc":"DESC","expDesc":"DESC","expAsc":"ASC"}
@@ -67,6 +68,8 @@ async def statsEmbed(nom,ligne,page,pagemax,option,guildOT,bot,evol,collapse,cur
         embed=embedJeux(table,guildOT,page,mobile,author,evol,option)
     elif option=="trivialperso":
         embed=embedTrivialPerso(table,page,mobile)
+    elif option=="cross":
+        embed=embedServeurs(table,guildOT,page,mobile,evol)
     
     embed.add_field(name="Tri <:otTRI:833666016491864114>",value=dictTriField[tri],inline=True)
     embed.set_footer(text="Page {0}/{1} | {2}".format(page,pagemax,choice(liste)))
