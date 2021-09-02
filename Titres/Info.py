@@ -49,7 +49,7 @@ async def profilUser(ctx,bot):
     else:
         embed.add_field(name="Emote",value="*Configurez avec OT!titre emote*",inline=True)
 
-    embed.add_field(name="OT Coins",value="{0} <:otCOINS:873226814527520809>".format(coins["Coins"]),inline=True)
+    embed.add_field(name="OT Coins",value="{0} <:otCOINS:873226814527520809>".format(int(coins["Coins"])),inline=True)
     embed.add_field(name="Titres possédés",value=str(count),inline=True)
 
     embed.set_footer(text="OT!titre profil")

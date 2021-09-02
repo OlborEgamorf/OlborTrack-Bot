@@ -13,9 +13,9 @@ async def achatTitre(ctx,idtitre,bot,gift):
         nom,valeur,coins=verifAchat(ctx,idtitre,gift)
 
         if gift:
-            embed=createEmbed("Cadeau de Titre","Vous êtes sur le point d'offrir **{0}** pour *{1} <:otCOINS:873226814527520809>* à <@{2}>.\nVous possèdez {3} <:otCOINS:873226814527520809> au total et en aurez {4} <:otCOINS:873226814527520809> après la transaction.\nAppuyez sur <:otVALIDER:772766033996021761> pour confirmer l'achat.".format(nom,valeur,ctx.message.mentions[0].id,coins,coins-valeur),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
+            embed=createEmbed("Cadeau de Titre","Vous êtes sur le point d'offrir **{0}** pour *{1} <:otCOINS:873226814527520809>* à <@{2}>.\nVous possèdez {3} <:otCOINS:873226814527520809> au total et en aurez {4} <:otCOINS:873226814527520809> après la transaction.\nAppuyez sur <:otVALIDER:772766033996021761> pour confirmer l'achat.".format(nom,valeur,ctx.message.mentions[0].id,int(coins),int(coins-valeur)),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
         else:
-            embed=createEmbed("Achat de Titre","Vous êtes sur le point d'acheter **{0}** pour *{1} <:otCOINS:873226814527520809>*.\nVous possèdez {2} <:otCOINS:873226814527520809> au total et en aurez {3} <:otCOINS:873226814527520809> après la transaction.\nAppuyez sur <:otVALIDER:772766033996021761> pour confirmer l'achat.".format(nom,valeur,coins,coins-valeur),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
+            embed=createEmbed("Achat de Titre","Vous êtes sur le point d'acheter **{0}** pour *{1} <:otCOINS:873226814527520809>*.\nVous possèdez {2} <:otCOINS:873226814527520809> au total et en aurez {3} <:otCOINS:873226814527520809> après la transaction.\nAppuyez sur <:otVALIDER:772766033996021761> pour confirmer l'achat.".format(nom,valeur,int(coins),int(coins-valeur)),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
 
         message=await ctx.reply(embed=embed)
         await message.add_reaction("<:otVALIDER:772766033996021761>")

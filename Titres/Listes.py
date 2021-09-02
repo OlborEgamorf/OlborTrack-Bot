@@ -40,7 +40,7 @@ async def commandeTMP(ctx,turn,react,ligne,option):
 
     if option=="user":
         connexionUser,curseurUser=connectSQL("OT",ligne["AuthorID"],"Titres",None,None)
-        embed.set_footer(text="Page {0}/{1} - Vous avez {2} OT Coins".format(page,pagemax,curseurUser.execute("SELECT * FROM coins").fetchone()["Coins"]))
+        embed.set_footer(text="Page {0}/{1} - Vous avez {2} OT Coins".format(page,pagemax,int(curseurUser.execute("SELECT * FROM coins").fetchone()["Coins"])))
     else:
         embed.set_footer(text="Page {0}/{1}".format(page,pagemax))
     

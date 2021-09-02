@@ -19,7 +19,7 @@ async def setEmote(ctx,bot,args):
         connexion.commit()
         embed=createEmbed("Modification emote personnelle","Votre nouvelle emote est {0} !".format(str(emoteBot)),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
         await ctx.send(embed=embed)
-        await bot.get_channel(750803643820802100).send("{0} - {1}".format(ctx.author.id,str(emoteBot)))
+        await bot.get_channel(750803643820802100).send("Emote : {0} - {1}".format(ctx.author.id,str(emoteBot)))
     except AssertionError as er:
         await ctx.send(embed=embedAssert(er))
 

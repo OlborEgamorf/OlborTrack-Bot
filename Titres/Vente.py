@@ -9,7 +9,7 @@ async def venteTitre(ctx,idtitre,bot):
     try:
         nom,valeur,coins=verifVente(ctx.author.id,idtitre)
 
-        embed=createEmbed("Vente de Titre","Vous êtes sur le point de vendre **{0}** pour *{1} <:otCOINS:873226814527520809>*.\nVous possèdez {2} <:otCOINS:873226814527520809> au total, et en aurez {3} <:otCOINS:873226814527520809> après la transaction.\nAppuyez sur <:otVALIDER:772766033996021761> pour confirmer la vente.".format(nom,valeur,coins,coins+valeur),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
+        embed=createEmbed("Vente de Titre","Vous êtes sur le point de vendre **{0}** pour *{1} <:otCOINS:873226814527520809>*.\nVous possèdez {2} <:otCOINS:873226814527520809> au total, et en aurez {3} <:otCOINS:873226814527520809> après la transaction.\nAppuyez sur <:otVALIDER:772766033996021761> pour confirmer la vente.".format(nom,valeur,int(coins),int(coins+valeur)),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
         message=await ctx.reply(embed=embed)
         await message.add_reaction("<:otVALIDER:772766033996021761>")
 
@@ -33,7 +33,7 @@ async def venteTitre(ctx,idtitre,bot):
         connexion.commit()
         connexionUser.commit()
 
-        embed=createEmbed("Vente de Titre","Titre vendu avec succès !\nVous possèdez désormais **{0} <:otCOINS:873226814527520809>**.".format(coins+valeur),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
+        embed=createEmbed("Vente de Titre","Titre vendu avec succès !\nVous possèdez désormais **{0} <:otCOINS:873226814527520809>**.".format(int(coins+valeur)),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
         await message.reply(embed=embed)
     except AssertionError as er:
         await ctx.reply(embed=embedAssert(er))

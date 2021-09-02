@@ -19,10 +19,10 @@ async def packTitre(ctx,bot):
         liste=[1]
         listeReactID=[705766186909958185]
 
-        if coins>=1500:
+        if coins>=1250:
             liste.append(2)
             listeReactID.append(705766186989912154)
-        if coins>=3000:
+        if coins>=2500:
             liste.append(3)
             listeReactID.append(705766186930929685)
 
@@ -35,7 +35,7 @@ async def packTitre(ctx,bot):
             elif i==3:
                 descip+="\n<:ot3:705766186930929685> : **Super Pack** - 5 titres, minimum 2 Légendaires. **3000** <:otCOINS:873226814527520809>"
         
-        descip+="\n\nCliquez sur la réaction correspondante au pack pour l'acheter. Vous avez actuellement {0} OT Coins.".format(coins)
+        descip+="\n\nCliquez sur la réaction correspondante au pack pour l'acheter. Vous avez actuellement {0} OT Coins.".format(int(coins))
         
         embed=createEmbed("Packs de Titres",descip,0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
         message=await ctx.reply(embed=embed)
