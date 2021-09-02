@@ -29,6 +29,7 @@ class OTGuild:
         self.stardict={}
         self.voicehub={}
         self.voiceephem=[]
+        self.bv=None
         self.auto=None
 
         if get:
@@ -43,6 +44,7 @@ class OTGuild:
             self.getYouTube(curseur)
             self.getHubs()
             self.getChans()
+            self.getBV(curseur)
 
     def getStar(self,curseur=None):
         if curseur==None:
@@ -113,6 +115,13 @@ class OTGuild:
             connexion,curseur=connectSQL(self.id,"VoiceEphem","Guild",None,None)
         for i in curseur.execute("SELECT * FROM salons WHERE ID<>0").fetchall():
             self.voiceephem.append(i["ID"])
+
+    def getBV(self,curseur=None):
+        self.bv=None
+        if curseur==None:
+            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+        if curseur.execute("SELECT * FROM etatBVAD WHERE Type='BV'").fetchone()["Statut"]==True:
+            self.bv=curseur.execute("SELECT * FROM etatBVAD WHERE Type='BV'").fetchone()["Salon"]
 
 class OTTableau:
     def __init__(self,star):

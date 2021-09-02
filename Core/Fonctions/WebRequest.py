@@ -1,5 +1,8 @@
 import aiohttp
 import aiofiles
+from numpy.random.mtrand import randint
+from PIL import Image
+import os
 
 async def webRequest(link):
     """Effectue une requête Get sur un lien donné."""
@@ -34,3 +37,20 @@ async def getAvatar(user):
                 f = await aiofiles.open("PNG/"+str(user.id)+".png", mode='wb')
                 await f.write(await resp.read())
                 await f.close()
+
+
+async def getAttachment(message):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(message.attachments[0].url) as resp:
+            if resp.status == 200:
+                if not os.path.exists("BV/{0}".format(message.guild.id)):
+                    os.makedirs("BV/{0}".format(message.guild.id))
+                count=0
+                path="BV/{0}/{1}.png".format(message.guild.id,message.attachments[0].filename)
+                while os.path.isfile(path): 
+                    path="BV/{0}/{1}{2}.png".format(message.guild.id,message.attachments[0].filename,count)
+                    count+=1
+                f = await aiofiles.open(path, mode='wb')
+                await f.write(await resp.read())
+                await f.close()
+                return path
