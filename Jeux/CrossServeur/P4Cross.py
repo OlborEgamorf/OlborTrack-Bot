@@ -132,7 +132,7 @@ async def startGameP4Cross(ctx,bot,inGame,gamesP4):
                         await i.clear_reactions()
                         await i.edit(embed=game.createEmbedP4(game.joueurs[turn],i.guild.id))
                         await i.channel.send(embed=game.embedWin(turn,False,i.guild.id))
-                    
+                        await unpin(i)
                     game.playing=False
                 else:
                     if game.tab.checkNul()==True:
@@ -140,6 +140,7 @@ async def startGameP4Cross(ctx,bot,inGame,gamesP4):
                             await i.clear_reactions()
                             await i.edit(embed=game.createEmbedP4(game.joueurs[turn],i.guild.id))
                             await i.channel.send(embed=game.embedWin(turn,True,i.guild.id))
+                            await unpin(i)
                         game.playing=False
                     else:
                         game.tours+=1      

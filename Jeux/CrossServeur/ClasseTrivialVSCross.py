@@ -66,7 +66,7 @@ class VersusCross(Versus):
         if not new:
             return False
 
-        annonce=await bot.get_channel(878254347459366952).send("<:otVERT:868535645897912330> Partie de Trivial {0} en recherche de joueurs !\n Faites OT!trivial{1}cross pour rejoindre !".format(self.option.uppper(),self.option))
+        annonce=await bot.get_channel(878254347459366952).send("<:otVERT:868535645897912330> Partie de Trivial {0} en recherche de joueurs !\n Faites OT!trivial{1}cross pour rejoindre !".format(self.option.upper(),self.option))
         await annonce.publish()
         for i in range(60):
             if not self.playing:

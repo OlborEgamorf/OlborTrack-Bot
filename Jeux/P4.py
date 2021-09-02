@@ -7,6 +7,7 @@ from Stats.Tracker.Jeux import exeStatsJeux
 from Titres.Outils import gainCoins
 from Jeux.ClasseP4 import JeuP4
 from Jeux.Paris import Pari
+from Core.Fonctions.Unpin import pin, unpin
 
 emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>","<:ot5:705766186713088042>","<:ot6:705766187182850148>","<:ot7:705766187115741246>"]
 dictCo={705766186909958185:0,705766186989912154:1,705766186930929685:2,705766186947706934:3,705766186713088042:4,705766187182850148:5,705766187115741246:6}
@@ -43,10 +44,7 @@ async def startGameP4(ctx,bot,inGame,gamesP4):
             descip+="<@{0}> ".format(i.id)
         await message.channel.send(descip)
         gamesP4[message.id]=game
-        try:
-            await message.pin()
-        except:
-            pass
+        await pin(message)
         for i in emotes:
             await message.add_reaction(i)
         await message.add_reaction("<:otCOINS:873226814527520809>")
@@ -68,12 +66,14 @@ async def startGameP4(ctx,bot,inGame,gamesP4):
                     game.paris.distribParis(game.joueurs[turn].id)
                     await message.channel.send(embed=game.embedWin(turn,False))
                     game.playing=False
+                    await unpin(message)
                 else:
                     if game.tab.checkNul()==True:
                         await message.clear_reactions()
                         await message.edit(embed=game.createEmbedP4(turn))
                         await message.channel.send(embed=game.embedWin(turn,True))
                         game.playing=False
+                        await unpin(message)
                     else:
                         game.tours+=1      
                         for i in range(7):
@@ -91,10 +91,7 @@ async def startGameP4(ctx,bot,inGame,gamesP4):
         return
     except:
         await ctx.send(embed=await exeErrorExcept(ctx,bot,""))
-        try:
-            await message.unpin()
-        except:
-            pass
+        await unpin(message)
     for i in game.ids:
         inGame.remove(i)
     del gamesP4[message.id]
