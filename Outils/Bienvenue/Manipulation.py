@@ -27,6 +27,25 @@ def fusion(back,user,text,couleur,taille,guild):
 
     img1.save("Temp/BV{0}.png".format(user.id))
 
+def fusionAdieu(back,user,text,couleur,taille,guild,filtre):
+    
+    img1 = Image.open(back)
+    assert img1.size[0]>255 and img1.size[1]>255, "La taille de votre image doit être supérieure à 256 pixels, que ce soit en largeur ou en hauteur."
+    
+    img2 = Image.open("PNG/Round{0}.png".format(user.id))
+    img3 = Image.open("Images/non.png").convert("RGBA")
+
+    img1.paste(img2, ((img1.size[0]-img2.size[0])//2,(img1.size[1]-img2.size[1])//2), mask = img2)
+    img1.paste(img3, ((img1.size[0]-img3.size[0])//2,(img1.size[1]-img3.size[1])//2), mask = img3)
+    
+    if text!=None:
+        setText(img1,img2,back,user,text,couleur,taille,guild)
+    
+    if filtre==True:
+        img1=img1.convert('L')
+
+    img1.save("Temp/AD{0}.png".format(user.id))
+
 
 def formatage(alerte,user,guild):
     new=""
@@ -102,4 +121,16 @@ def setText(img1,img2,back,user,text,couleur,taille,guild):
         nb+=len(i)*pix
 
     draw=ImageDraw.Draw(img1)
+    print((img1.size[0]//2,(img1.size[1]-img2.size[1])//2+img1.size[1]//2),textAlign[1:],color)
     draw.text((img1.size[0]//2,(img1.size[1]-img2.size[1])//2+img1.size[1]//2),textAlign[1:],color,font=font,anchor="mm",align="center")
+
+def resize(path):
+    img=Image.open(path)
+    size=img.size
+    if img.size[0]>1280:
+        img=img.resize((1280,int(size[1]*1280/size[0])))
+    if img.size[1]>720:
+        img=img.resize((int(size[0]*720/size[1]),720))
+    assert img.size[0]>256 and img.size[1]>256
+
+    img.save(path)

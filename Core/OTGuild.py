@@ -30,6 +30,7 @@ class OTGuild:
         self.voicehub={}
         self.voiceephem=[]
         self.bv=None
+        self.ad=None
         self.auto=None
 
         if get:
@@ -118,10 +119,13 @@ class OTGuild:
 
     def getBV(self,curseur=None):
         self.bv=None
+        self.ad=None
         if curseur==None:
             connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
         if curseur.execute("SELECT * FROM etatBVAD WHERE Type='BV'").fetchone()["Statut"]==True:
             self.bv=curseur.execute("SELECT * FROM etatBVAD WHERE Type='BV'").fetchone()["Salon"]
+        if curseur.execute("SELECT * FROM etatBVAD WHERE Type='AD'").fetchone()["Statut"]==True:
+            self.ad=curseur.execute("SELECT * FROM etatBVAD WHERE Type='AD'").fetchone()["Salon"]
 
 class OTTableau:
     def __init__(self,star):

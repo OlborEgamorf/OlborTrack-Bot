@@ -5,12 +5,13 @@ import discord
 from Outils.Bienvenue.Manipulation import fusion, squaretoround
 from Core.Fonctions.WebRequest import getAvatar
 
-async def delImage(ctx,bot,args):
+async def delImage(ctx,bot,args,option):
+    dictTitres={"BV":"de bienvenue","AD":"d'adieu"}
     try:
         assert len(args)>0, "Vous devez me donner le numéro de l'image !"
         connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
         try:
-            image=curseur.execute("SELECT * FROM imagesBV WHERE Nombre={0}".format(args[0])).fetchone()
+            image=curseur.execute("SELECT * FROM images{0} WHERE Nombre={1}".format(option,args[0])).fetchone()
         except:
             raise AssertionError("Le numéro donné n'est pas valide.")
         assert image!=None, "Le numéro donné ne correspond à aucune image."
@@ -20,8 +21,8 @@ async def delImage(ctx,bot,args):
 
         fusion(image["Path"],ctx.author,image["Message"],image["Couleur"],image["Taille"],ctx.guild)
 
-        embed=createEmbed("Suppression image de bienvenue","Voici l'image que vous voulez supprimer.\nSi vous être sûr de votre choix, appuyez sur <:otVALIDER:772766033996021761>.",0xf54269,ctx.invoked_with.lower(),ctx.guild)
-        message=await ctx.reply(embed=embed,file=discord.File("Temp/BV{0}.png".format(ctx.author.id)))
+        embed=createEmbed("Suppression image {0}".format(dictTitres[option]),"Voici l'image que vous voulez supprimer.\nSi vous être sûr de votre choix, appuyez sur <:otVALIDER:772766033996021761>.",0xf54269,ctx.invoked_with.lower(),ctx.guild)
+        message=await ctx.reply(embed=embed,file=discord.File("Temp/{0}{1}.png".format(option,ctx.author.id)))
         await message.add_reaction("<:otVALIDER:772766033996021761>")
 
         def check(reaction,user):
@@ -33,14 +34,14 @@ async def delImage(ctx,bot,args):
         await message.clear_reactions()
 
         connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
-        curseur.execute("DELETE FROM imagesBV WHERE Nombre={0}".format(args[0]))
+        curseur.execute("DELETE FROM images{0} WHERE Nombre={1}".format(option,args[0]))
 
-        for i in curseur.execute("SELECT * FROM imagesBV WHERE Nombre>{0} ORDER BY Nombre ASC".format(args[0])).fetchall():
-            curseur.execute("UPDATE imagesBV SET Nombre={0} WHERE Nombre={1}".format(i["Nombre"]-1,i["Nombre"]))
+        for i in curseur.execute("SELECT * FROM images{0} WHERE Nombre>{1} ORDER BY Nombre ASC".format(option,args[0])).fetchall():
+            curseur.execute("UPDATE images{0} SET Nombre={1} WHERE Nombre={2}".format(option,i["Nombre"]-1,i["Nombre"]))
 
         connexion.commit()
 
-        embed=createEmbed("Suppression image de bienvenue","L'image a bien été supprimée.",0xf54269,ctx.invoked_with.lower(),ctx.guild)
+        embed=createEmbed("Suppression image {0}".format(dictTitres[option]),"L'image a bien été supprimée.",0xf54269,ctx.invoked_with.lower(),ctx.guild)
         await ctx.reply(embed=embed)
 
     except AssertionError as er:
