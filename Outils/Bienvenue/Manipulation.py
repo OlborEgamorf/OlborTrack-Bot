@@ -121,7 +121,6 @@ def setText(img1,img2,back,user,text,couleur,taille,guild):
         nb+=len(i)*pix
 
     draw=ImageDraw.Draw(img1)
-    print((img1.size[0]//2,(img1.size[1]-img2.size[1])//2+img1.size[1]//2),textAlign[1:],color)
     draw.text((img1.size[0]//2,(img1.size[1]-img2.size[1])//2+img1.size[1]//2),textAlign[1:],color,font=font,anchor="mm",align="center")
 
 def resize(path):

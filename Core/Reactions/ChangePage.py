@@ -31,6 +31,7 @@ from Wiki.exeWikipedia import exeWikipedia
 from Outils.Tableaux.EmbedsTab import commandeSB
 from Outils.Twitch.ExeTwitch import commandeTwitch
 from Titres.Listes import commandeTMP
+from Outils.Bienvenue.Listes import commandeImageBV, commandeMessBV
 
 
 async def reactStats(message:int,reaction:discord.Reaction,bot:commands.Bot,guildOT:OTGuild,payload):
@@ -88,6 +89,10 @@ async def reactStats(message:int,reaction:discord.Reaction,bot:commands.Bot,guil
             await commandeGAR(ctx,getTurn(reaction),True,ligne)
         elif ligne["Commande"]=="help":
             await commandeHelp(ctx,getTurn(reaction),True,ligne,bot,guildOT)
+        elif ligne["Commande"]=="imagesBV":
+            await commandeImageBV(ctx,ligne["Option"],getTurn(reaction),True,ligne,bot)
+        elif ligne["Commande"]=="messagesBV":
+            await commandeMessBV(ctx,ligne["Option"],getTurn(reaction),True,ligne,bot)
         elif ligne["Commande"]=="titres":
             await commandeTMP(ctx,getTurn(reaction),True,ligne,ligne["Option"])
         elif ligne["Commande"]=="rapport":
