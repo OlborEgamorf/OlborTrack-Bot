@@ -94,7 +94,7 @@ async def exeGiveaway(ctx,args,bot):
         await ctx.send(embed=await exeErrorExcept(ctx,bot,args))
 
 
-async def exeReminder(ctx,bot,args):
+async def exeReminder(ctx,bot,args,option):
     try:
         assert len(args)!=0, "Votre demande est vide. Donnez moi ce dont vous voulez que je vous rappelle et dans combien de temps ! \nLe temps doit être un nombre suivi de s (pour secondes), m (pour minutes), h (pour heures) ou d (pour jours)."
         assert len(args)>1, "Donnez moi du temps !\nLe temps doit être un nombre suivi de s (pour secondes), m (pour minutes), h (pour heures) ou j (pour jours)."
@@ -105,7 +105,10 @@ async def exeReminder(ctx,bot,args):
         tempsstr=tempsVoice(temps)
         embed=createEmbed("Rappel","Très bien ! Je t'enverrai un message privé dans {0} pour te rappeler de {1} !".format(tempsstr,phrase),0xfc03d7,"reminder",ctx.author)
         message=await ctx.send(embed=embed)
-        dictPolls[message.id]=Reminder(message.id,ctx.author.id,temps,phrase)
+        if option=="mp":
+            dictPolls[message.id]=Reminder(message.id,ctx.author.id,temps,phrase)
+        else:
+            dictPolls[message.id]=ReminderGuild(message.id,ctx.author.id,temps,phrase,ctx.message.channel.id)
         await dictPolls[message.id].trigger(bot)
         del dictPolls[message.id]
     except AssertionError as er:
@@ -118,6 +121,7 @@ def sauvegardePoll(bot):
     connexion,curseur=connectSQL("OT","Polls","Guild",None,None)
     curseur.execute("CREATE TABLE IF NOT EXISTS Polls (ID INT, Guild INT, Temps INT, Question TEXT, Start INT, Salon INT)")
     curseur.execute("CREATE TABLE IF NOT EXISTS Reminders (ID INT, User INT, Temps INT, Remind TEXT, Start INT)")
+    curseur.execute("CREATE TABLE IF NOT EXISTS RemindersGuild (ID INT, User INT, Temps INT, Remind TEXT, Start INT, Chan INT)")
     curseur.execute("CREATE TABLE IF NOT EXISTS Giveaways (ID INT, Guild INT, Temps INT, Lot TEXT, Gagnants INT, Start INT, Salon INT)")
     for i in dictPolls:
         if dictPolls[i].active:
@@ -128,6 +132,8 @@ def sauvegardePoll(bot):
                     curseur.execute("INSERT INTO p{0} VALUES ('{1}')".format(dictPolls[i].id,createPhrase([j])))
             elif type(dictPolls[i])==Reminder:
                 curseur.execute("INSERT INTO Reminders VALUES({0},{1},{2},'{3}',{4})".format(dictPolls[i].id,dictPolls[i].user,dictPolls[i].temps,createPhrase([dictPolls[i].remind]),dictPolls[i].start))
+            elif type(dictPolls[i])==ReminderGuild:
+                curseur.execute("INSERT INTO RemindersGuild VALUES({0},{1},{2},'{3}',{4},{5})".format(dictPolls[i].id,dictPolls[i].user,dictPolls[i].temps,createPhrase([dictPolls[i].remind]),dictPolls[i].start,dictPolls[i].chan))
             elif type(dictPolls[i])==Giveaway:
                 curseur.execute("INSERT INTO Giveaways VALUES({0},{1},{2},'{3}',{4},{5},{6})".format(dictPolls[i].id,dictPolls[i].guild,dictPolls[i].temps,createPhrase([dictPolls[i].lot]),dictPolls[i].gagnants,dictPolls[i].start,dictPolls[i].chan))
     
@@ -143,6 +149,8 @@ async def recupPoll(bot):
             dictPolls[i["ID"]]=PollTime(i["ID"],i["Guild"],i["Temps"]-(time()-i["Start"]),liste,i["Question"],i["Salon"])
         for i in curseur.execute("SELECT * FROM Reminders").fetchall():
             dictPolls[i["ID"]]=Reminder(i["ID"],i["User"],i["Temps"]-(time()-i["Start"]),i["Remind"])
+        for i in curseur.execute("SELECT * FROM RemindersGuild").fetchall():
+            dictPolls[i["ID"]]=Reminder(i["ID"],i["User"],i["Temps"]-(time()-i["Start"]),i["Remind"],i["Chan"])
         for i in curseur.execute("SELECT * FROM Giveaways").fetchall():
             dictPolls[i["ID"]]=Giveaway(i["ID"],i["Guild"],i["Temps"]-(time()-i["Start"]),i["Lot"],i["Gagnants"],i["Salon"])
         

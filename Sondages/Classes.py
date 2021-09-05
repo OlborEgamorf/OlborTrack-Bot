@@ -62,6 +62,7 @@ class Reminder():
         self.remind=remind
         self.start=time()
         self.active=True
+        self.option=option
 
     async def trigger(self,bot):
         if self.temps>0:
@@ -69,6 +70,20 @@ class Reminder():
         user=bot.get_user(self.user)
         embed=createEmbed("Rappel",self.remind,0xfc03d7,"reminder",user)
         await user.send(embed=embed)
+        self.active=False
+
+class ReminderGuild(Reminder):
+    def __init__(self,id,user,temps,remind,channel):
+        super().__init__(id,user,temps,remind)
+        self.chan=channel
+    
+    async def trigger(self,bot):
+        if self.temps>0:
+            await asyncio.sleep(self.temps)
+        user=bot.get_user(self.user)
+        chan=bot.get_channel(self.chan)
+        embed=createEmbed("Rappel",self.remind,0xfc03d7,"reminder",user)
+        await chan.send(embed=embed,content="Rappel pour <@{0}> :".format(self.user))
         self.active=False
 
 class Giveaway():
