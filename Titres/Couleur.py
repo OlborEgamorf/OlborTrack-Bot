@@ -5,11 +5,15 @@ from Stats.SQL.ConnectSQL import connectSQL
 
 async def setColor(ctx,bot,args):
     try:
-        assert len(args)>=3, "Pour définir votre couleur, vous devez fournir les valeurs Rouge, Verte et Bleu qui la compose. Les valeurs doivent être comprises entre 0 et 255."
-        try:
+        if len(args)==1:
+            r,g,b=tuple(int(args[0][i:i+2], 16) for i in (1, 3, 5))
+        elif len(args)>=3:
             r=int(args[0])
             g=int(args[1])
             b=int(args[2])
+        else:
+            raise AssertionError("Pour définir votre couleur, vous devez fournir une valeur hexadécimale, commençant par # ou alors les valeurs Rouge, Verte et Bleu qui la compose. Les valeurs doivent être comprises entre 0 et 255.")
+        try:
             assert r>=0 and r<=255
             assert g>=0 and g<=255
             assert b>=0 and b<=255
