@@ -23,7 +23,8 @@ async def graphScatterUsers(ligne,ctx,bot,option,guildOT):
         obj=""
     else:
         connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[ligne["Args1"]],ligne["Args2"])
-    table=curseur.execute("SELECT * FROM {0}{1}{2} WHERE Rank<=15 ORDER BY Rank DESC".format(ligne["Args1"],ligne["Args2"],obj)).fetchall()
+    table=curseur.execute("SELECT * FROM {0}{1}{2} WHERE Rank<=15 ORDER BY Rank ASC LIMIT 15".format(ligne["Args1"],ligne["Args2"],obj)).fetchall()
+    table.reverse()
     
     if ligne["Commande"]=="jeux":
         connexion,curseur=connectSQL(ligne["Args3"],dictOption[option],"Jeux","GL","")
@@ -38,7 +39,7 @@ async def graphScatterUsers(ligne,ctx,bot,option,guildOT):
             if guildOT.users[table[i]["ID"]]["Hide"]:
                 count+=1
                 continue 
-        listeX.append(len(table)-table[i]["Rank"]+1)
+        listeX.append(i+1)
         listeY.append(table[i]["Count"])
         try:
             if ligne["Args1"]=="to":
@@ -46,17 +47,14 @@ async def graphScatterUsers(ligne,ctx,bot,option,guildOT):
             else:
                 tablePerso=curseur.execute("SELECT * FROM persoM{0}{1}".format(table[i]["ID"],obj)).fetchall()
             for j in tablePerso:
-                listeXU.append(len(table)-table[i]["Rank"]+1)
+                listeXU.append(i+1)
                 listeYU.append(j["Count"])
         except sqlite3.OperationalError:
             pass
 
         try:
             if ligne["Commande"]=="jeux":
-                if ligne["Args3"]!="OT":
-                    listeN.append(getNomGraph(ctx,bot,"Messages",table[i]["ID"]).name)
-                else:
-                    listeN.append(getNomGraph(ctx,bot,option,table[i]["ID"]))
+                listeN.append(getNomGraph(ctx,bot,option,table[i]["ID"]))
             elif option in ("Messages","Mots","Voice","Voicechan") or obj!="":
                 nom=getNomGraph(ctx,bot,"Messages",table[i]["ID"]).name
                 nom=nom if len(nom)<=15 else "{0}...".format(nom[0:15])
@@ -78,7 +76,6 @@ async def graphScatterUsers(ligne,ctx,bot,option,guildOT):
     plt.plot("Count", "Rank", data=dfMois, linestyle="", marker="o", markersize=3, color="red", label="{0} 20{1}".format(ligne["Args1"],ligne["Args2"]))
 
     plt.yticks([i+1 for i in range(len(table)-count)], listeN)
-    plt.xlabel("Compteur")
     plt.xlim(left=0)
 
     if obj=="" or ligne["Commande"]=="jeux":

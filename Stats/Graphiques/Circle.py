@@ -32,9 +32,11 @@ async def graphCircle(ligne,ctx,bot,option,guildOT):
     elif ligne["Commande"]=="trivial":
         connexion,curseur=connectSQL("OT","ranks","Trivial",None,None)
         table=curseur.execute("SELECT * FROM {0} WHERE Count>0 ORDER BY Rank DESC LIMIT 100".format(ligne["Args2"])).fetchall()
+        connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
     elif ligne["Commande"]=="jeux":
         connexion,curseur=connectSQL(ligne["Args3"],dictOption[option],"Jeux",tableauMois[ligne["Args1"]],ligne["Args2"])
         table=curseur.execute("SELECT * FROM {0}{1} WHERE Count>0 ORDER BY Rank DESC LIMIT 100".format(ligne["Args1"],ligne["Args2"])).fetchall()
+        connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
     else:
         connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[ligne["Args1"]],ligne["Args2"])
         table=curseur.execute("SELECT * FROM {0}{1}{2} WHERE Count>0 ORDER BY Rank DESC LIMIT 100".format(ligne["Args1"],ligne["Args2"],obj)).fetchall()
@@ -55,6 +57,9 @@ async def graphCircle(ligne,ctx,bot,option,guildOT):
                     listeY.append(getNomGraph(ctx,bot,"Messages",table[i]["ID"]).name)
                 else:
                     listeY.append(getNomGraph(ctx,bot,option,table[i]["ID"]))
+                color=curseur.execute("SELECT * FROM couleurs WHERE ID={0}".format(table[i]["ID"])).fetchone()
+                if color!=None:
+                    listeC[i]=(color["R"]/256,color["G"]/256,color["B"]/256)
                 listeX[i]=int(listeX[i])
             elif option in ("Salons","Voicechan") and obj=="":
                 if guildOT.chan[table[i]["ID"]]["Hide"]:

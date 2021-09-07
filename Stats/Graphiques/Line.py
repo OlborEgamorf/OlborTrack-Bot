@@ -4,7 +4,8 @@ from math import inf
 from Core.Fonctions.VoiceAxe import voiceAxe
 from Core.Fonctions.GraphTheme import setThemeGraph
 from Stats.SQL.ConnectSQL import connectSQL
-from Core.Fonctions.GetNom import getNomGraph
+from Core.Fonctions.GetNom import getNomGraph, getTitre
+from Titres.Couleur import getColorJeux
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TOTAL","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
 colorOT=(110/256,200/256,250/256,1)
 dictOption={"tortues":"Tortues","tortuesduo":"TortuesDuo","trivialversus":"TrivialVersus","trivialbr":"TrivialBR","trivialparty":"TrivialParty","p4":"P4","bataillenavale":"BatailleNavale"}
@@ -67,24 +68,34 @@ async def graphLine(ligne,ctx,bot,option,guildOT):
     listeColors=[]
     dictLine={1:"-",2:"--",3:"-."}
 
+    connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
     for i in range(stop):
-        if option in ("Salons","Voicechan") and obj=="":
-            if guildOT.chan[table[i]["ID"]]["Hide"]:
-                continue
-        elif option in ("Messages","Mots","Voice","Mentions","Mentionne") or obj!="":
-            if guildOT.users[table[i]["ID"]]["Hide"]:
-                continue 
-        df=pd.DataFrame({"Date": listeX[i], "Count": listeY[i]})
-        user=ctx.guild.get_member(table[i]["ID"])
-        if user!=None:
-            listeColors.append((user.color.r/256,user.color.g/256,user.color.b/256,1))
-            plt.plot("Date", "Count", data=df, linestyle=dictLine[listeColors.count((user.color.r/256,user.color.g/256,user.color.b/256,1))], marker='o',color=(user.color.r/256,user.color.g/256,user.color.b/256,1),label=user.name)
+        if ligne["Commande"]=="jeux":
+            df=pd.DataFrame({"Date": listeX[i], "Count": listeY[i]})
+            color=curseur.execute("SELECT * FROM couleurs WHERE ID={0}".format(table[i]["ID"])).fetchone()
+            if color==None:
+                color={"R":110,"G":200,"B":250}
+            nom=getTitre(curseur,table[i]["ID"])
+            listeColors.append((color["R"]/256,color["G"]/256,color["B"]/256,1))
+            plt.plot("Date", "Count", data=df, linestyle=dictLine[listeColors.count((color["R"]/256,color["G"]/256,color["B"]/256,1))], marker='o',color=(color["R"]/256,color["G"]/256,color["B"]/256,1),label=nom)
         else:
-            try:
-                nom=getNomGraph(ctx,bot,option,table[i]["ID"])
-            except:
-                nom="Ancien membre"
-            plt.plot("Date", "Count", data=df, linestyle='-', marker='o',color=colorsBasic[i],label=nom)
+            if option in ("Salons","Voicechan") and obj=="":
+                if guildOT.chan[table[i]["ID"]]["Hide"]:
+                    continue
+            elif option in ("Messages","Mots","Voice","Mentions","Mentionne") or obj!="":
+                if guildOT.users[table[i]["ID"]]["Hide"]:
+                    continue 
+            df=pd.DataFrame({"Date": listeX[i], "Count": listeY[i]})
+            user=ctx.guild.get_member(table[i]["ID"])
+            if user!=None:
+                listeColors.append((user.color.r/256,user.color.g/256,user.color.b/256,1))
+                plt.plot("Date", "Count", data=df, linestyle=dictLine[listeColors.count((user.color.r/256,user.color.g/256,user.color.b/256,1))], marker='o',color=(user.color.r/256,user.color.g/256,user.color.b/256,1),label=user.name)
+            else:
+                try:
+                    nom=getNomGraph(ctx,bot,option,table[i]["ID"])
+                except:
+                    nom="Ancien membre"
+                plt.plot("Date", "Count", data=df, linestyle='-', marker='o',color=colorsBasic[i],label=nom)
         for j in range(len(listeY[i])):
             plt.text(x=listeDates.index(listeP[i][j]), y=listeY[i][j], s="{0}e".format(listeR[i][j]),size=10)
 

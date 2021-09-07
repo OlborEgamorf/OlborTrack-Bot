@@ -39,10 +39,14 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
             table=table[0:15]
     elif ligne["Commande"]=="jeux":
         connexion,curseur=connectSQL(ligne["Args3"],dictOption[option],"Jeux",tableauMois[mois],annee)
-        table=curseur.execute("SELECT * FROM {0}{1} WHERE Rank<=15 ORDER BY Rank DESC".format(mois,annee)).fetchall()
+        table=curseur.execute("SELECT * FROM {0}{1} WHERE Rank<=15 ORDER BY Rank ASC LIMIT 15".format(mois,annee)).fetchall()
+        table.reverse()
+        connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
     elif ligne["Commande"]=="trivial":
         connexion,curseur=connectSQL("OT","ranks","Trivial",None,None)
-        table=curseur.execute("SELECT * FROM {0} WHERE Rank<=15 ORDER BY Rank DESC".format(ligne["Args2"])).fetchall()
+        table=curseur.execute("SELECT * FROM {0} WHERE Rank<=15 ORDER BY Rank ASC LIMIT 15".format(ligne["Args2"])).fetchall()
+        table.reverse()
+        connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
     else:
         connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",mois,annee)
         table=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY Count DESC LIMIT 15".format(mois,annee,ligne["AuthorID"])).fetchall()
@@ -57,7 +61,7 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
     for i in range(borne):
         listeY.append(table[i]["Count"])
         listeC.append(colorBase)
-        try:
+        if True:
             if ligne["Commande"]=="roles" and ligne["Args4"]=="None":
                 role=ctx.guild.get_role(table[i]["ID"])
                 listeC[i]=(role.color.r/256,role.color.g/256,role.color.b/256,1)
@@ -66,10 +70,18 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
                 else:
                     listeN.append("{0}...".format(role.name[0:15]))
             elif ligne["Commande"] in ("jeux","trivial"):
-                if ligne["Commande"]=="jeux" and obj!="OT":
-                    listeN.append(getNomGraph(ctx,bot,"Messages",table[i]["ID"]).name)
-                else:
-                    listeN.append(getNomGraph(ctx,bot,option,table[i]["ID"]))
+                listeN.append(getNomGraph(ctx,bot,option,table[i]["ID"]))
+                emote=curseur.execute("SELECT * FROM emotes WHERE ID={0}".format(table[i]["ID"])).fetchone()
+                if emote!=None:
+                    try:
+                        open("PNG/{0}.png".format(emote["IDEmote"]))
+                    except:
+                        await getImage(emote["IDEmote"])
+                    addImage(table,ax,i,emote["IDEmote"])
+                color=curseur.execute("SELECT * FROM couleurs WHERE ID={0}".format(table[i]["ID"])).fetchone()
+                if color!=None:
+                    listeC[i]=(color["R"]/256,color["G"]/256,color["B"]/256)
+                
                 listeY[i]=int(listeY[i])
             elif option in ("Salons","Emotes","Reactions","Voicechan") and obj=="None":
                 if option in ("Emotes","Reactions"):
@@ -77,7 +89,7 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
                         open("PNG/{0}.png".format(table[i]["ID"]))
                     except:
                         await getImage(table[i]["ID"])
-                    addImage(table,ax,i)
+                    addImage(table,ax,i,table[i]["ID"])
                     color=ColorThief("PNG/{0}.png".format(table[i]["ID"])).get_color(quality=1)
                     listeC[i]=(color[0]/256,color[1]/256,color[2]/256,1)
                     listeN.append("{0}".format(getNomGraph(ctx,bot,option,table[i]["ID"])))
@@ -96,7 +108,7 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
                 else:
                     user=getNomGraph(ctx,bot,"Messages",table[i]["ID"])
                     await getAvatar(user)
-                    addImage(table,ax,i)
+                    addImage(table,ax,i,table[i]["ID"])
                     if len(user.name)<=15:
                         listeN.append("{0}".format(user.name))
                     else:
@@ -104,7 +116,7 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
                     listeC[i]=(user.color.r/256,user.color.g/256,user.color.b/256,1)
             else:
                 listeN.append(getNomGraph(ctx,bot,option,table[i]["ID"]))
-        except:
+        else:
             listeN.append("??")
     
     voiceAxe(option,listeY,plt,"x")
@@ -140,8 +152,8 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
     plt.clf()
     plt.close()
 
-def addImage(table,ax,i):
-    image = mpimg.imread("PNG/{0}.png".format(table[i]["ID"])) # Lecture
+def addImage(table,ax,i,id):
+    image = mpimg.imread("PNG/{0}.png".format(id)) # Lecture
     imagebox = OffsetImage(image, zoom=1.5/len(table)) # Zoom
     ab = AnnotationBbox(imagebox, (0,i), frameon=False, box_alignment=(0,0.5)) # Coordonnées
     ax.add_artist(ab)
