@@ -57,15 +57,19 @@ async def addYT(ctx,bot,args):
     mess=await bot.wait_for('message', check=checkChan, timeout=60)
     descip=createPhrase(mess.content.split(" "))
 
+    data=await webRequest("https://www.googleapis.com/youtube/v3/search?key={0}&channelId={1}&part=snippet,id&order=date&maxResults=7&type=video".format(ytKey,channelID))
+    if data!=False or len(data["items"])!=0:
+        last=data["items"][0]["id"]["videoId"]
+
     connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
     if True:
         num=curseur.execute("SELECT COUNT() as Nombre FROM youtube").fetchone()["Nombre"]+1
-        curseur.execute("INSERT INTO youtube VALUES({0},{1},'{2}','{3}','0','{4}')".format(num,salonID,channelID,descip,channelName))
+        curseur.execute("INSERT INTO youtube VALUES({0},{1},'{2}','{3}','{4}','{5}')".format(num,salonID,channelID,descip,last,channelName))
     else:
         raise AssertionError("Ce couple de chaîne YouTube et de salon existe déjà.")
     connexion.commit()
 
-    return createEmbed("Alerte YouTube créée","Numéro de l'alerte : {0}\Chaîne : {1}\nSalon : <#{2}>\nDescription : {3}".format(num,channelName,salonID,descip),0xFF0000,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
+    return createEmbed("Alerte YouTube créée","Numéro de l'alerte : `{0}`\nChaîne : {1}\nSalon : <#{2}>\nDescription : {3}".format(num,channelName,salonID,descip),0xFF0000,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
 
 
 async def chanYT(ctx,bot,args,curseur):
