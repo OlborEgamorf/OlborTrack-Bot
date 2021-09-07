@@ -115,7 +115,7 @@ async def miseCoins(message,user,reaction,inGame,dictJeux,bot):
                     await messMise.add_reaction(emotes[emotesIds.index(i)])
 
                 def checkJoueur(react,userReact):
-                    if type(reaction.emoji)==str:
+                    if type(reaction.emoji)==str or react(react.emoji)==str:
                         return False
                     return react.emoji.id in list(dictPari.keys()) and userReact.id==user.id and react.message.id==messMise.id
                 
