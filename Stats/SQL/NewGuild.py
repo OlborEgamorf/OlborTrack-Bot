@@ -43,11 +43,16 @@ def createDirSQL(guild):
     curseur.execute("CREATE TABLE IF NOT EXISTS imagesAD (Nombre INT, Path TEXT, Message TEXT, Couleur TEXT, Taille INT, Mode TEXT, Filtre BOOL)")
     curseur.execute("CREATE TABLE IF NOT EXISTS messagesAD (Nombre INT, Message TEXT)")
 
+    curseur.execute("CREATE TABLE IF NOT EXISTS etatAnniv (Statut BOOL, Salon INT, Message TEXT)")
+
     for i in ("BV","AD"):
         try:
             curseur.execute("INSERT INTO etatBVAD VALUES('{0}',0,0)".format(i))
         except:
             pass
+    
+    if curseur.execute("SELECT * FROM etatAnniv").fetchone()==None:
+        curseur.execute("INSERT INTO etatAnniv VALUES(False,0,'None')")
 
     curseur.execute("CREATE TABLE IF NOT EXISTS wikinsfw (Active BOOL)")
     try:

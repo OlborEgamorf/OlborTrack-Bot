@@ -19,45 +19,20 @@ class OTGuild:
         self.users=None
         self.mcmd=None
         self.mstats=None
-        self.wikinsfw=None
         self.stats=True
         self.gd=False
-        self.twitch=[]
-        self.yt=[]
-        self.snipe=OTSnipe()
-        self.starlist={}
-        self.stardict={}
-        self.voicehub={}
-        self.voiceephem=[]
-        self.bv=None
-        self.ad=None
-        self.auto=None
 
         if get:
             connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
-            self.getStar(curseur)
             self.getHBM(curseur)
             self.getPerms(curseur)
-            self.getAuto(curseur)
-            self.getWikiNSFW(curseur)
-            self.getTwitch(curseur)
             self.getStats(curseur)
-            self.getYouTube(curseur)
-            self.getHubs()
-            self.getChans()
-            self.getBV(curseur)
 
-    def getStar(self,curseur=None):
+    def getStats(self,curseur=None):
         if curseur==None:
             connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
-        self.stardict={}
-        self.starlist={}
-        for i in curseur.execute("SELECT * FROM sb").fetchall():
-            if i["ID"] not in self.starlist:
-                self.starlist[i["ID"]]=[]
-            self.starlist[i["ID"]].append(i["Nombre"])
-            self.stardict[i["Nombre"]]=OTTableau(i)
-    
+        self.stats=curseur.execute("SELECT * FROM stats").fetchone()["Active"]
+
     def getHBM(self,curseur=None):
         if curseur==None:
             connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
@@ -73,6 +48,45 @@ class OTGuild:
             connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
         self.mcmd=curseur.execute("SELECT * FROM modulesCMD").fetchall()
         self.mstats=curseur.execute("SELECT * FROM modulesStats").fetchall()
+
+class OTGuildCMD(OTGuild):
+    def __init__(self,id,get):
+        super().__init__(id,get)
+        self.wikinsfw=None
+        self.twitch=[]
+        self.yt=[]
+        self.snipe=OTSnipe()
+        self.starlist={}
+        self.stardict={}
+        self.voicehub={}
+        self.voiceephem=[]
+        self.bv=None
+        self.ad=None
+        self.auto=None
+        self.anniv=None
+
+        if get:
+            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+            self.getStar(curseur)
+            self.getAuto(curseur)
+            self.getWikiNSFW(curseur)
+            self.getTwitch(curseur)
+            self.getYouTube(curseur)
+            self.getHubs()
+            self.getChans()
+            self.getBV(curseur)
+            self.getAnniv()
+
+    def getStar(self,curseur=None):
+        if curseur==None:
+            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+        self.stardict={}
+        self.starlist={}
+        for i in curseur.execute("SELECT * FROM sb").fetchall():
+            if i["ID"] not in self.starlist:
+                self.starlist[i["ID"]]=[]
+            self.starlist[i["ID"]].append(i["Nombre"])
+            self.stardict[i["Nombre"]]=OTTableau(i)
     
     def getAuto(self,curseur=None):
         if curseur==None:
@@ -98,11 +112,6 @@ class OTGuild:
         for i in curseur.execute("SELECT * FROM youtube").fetchall():
             self.yt.append(OTYouTube(i))
 
-    def getStats(self,curseur=None):
-        if curseur==None:
-            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
-        self.stats=curseur.execute("SELECT * FROM stats").fetchone()["Active"]
-
     def getHubs(self,curseur=None):
         self.voicehub={}
         if curseur==None:
@@ -126,6 +135,14 @@ class OTGuild:
             self.bv=curseur.execute("SELECT * FROM etatBVAD WHERE Type='BV'").fetchone()["Salon"]
         if curseur.execute("SELECT * FROM etatBVAD WHERE Type='AD'").fetchone()["Statut"]==True:
             self.ad=curseur.execute("SELECT * FROM etatBVAD WHERE Type='AD'").fetchone()["Salon"]
+
+    def getAnniv(self,curseur=None):
+        self.anniv=None
+        if curseur==None:
+            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+        anniv=curseur.execute("SELECT * FROM etatAnniv").fetchone()
+        if anniv["Statut"]==True:
+            self.anniv=OTAnniv(anniv)
 
 class OTTableau:
     def __init__(self,star):
@@ -154,7 +171,6 @@ class OTTwitch:
         self.sent=infos["Sent"]
         self.numero=infos["Nombre"]
 
-
 class OTYouTube:
     def __init__(self,infos):
         self.chaine=infos["Chaine"]
@@ -162,3 +178,8 @@ class OTYouTube:
         self.descip=infos["Descip"]
         self.last=infos["LastID"]
         self.numero=infos["Nombre"]
+
+class OTAnniv:
+    def __init__(self,anniv):
+        self.chan=anniv["Salon"]
+        self.descip=anniv["Message"]
