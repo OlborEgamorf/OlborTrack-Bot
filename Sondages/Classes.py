@@ -62,7 +62,6 @@ class Reminder():
         self.remind=remind
         self.start=time()
         self.active=True
-        self.option=option
 
     async def trigger(self,bot):
         if self.temps>0:
@@ -83,7 +82,7 @@ class ReminderGuild(Reminder):
         user=bot.get_user(self.user)
         chan=bot.get_channel(self.chan)
         embed=createEmbed("Rappel",self.remind,0xfc03d7,"reminder",user)
-        await chan.send(embed=embed,content="Rappel pour <@{0}> :".format(self.user))
+        await chan.send(embed=embed,content=":alarm_clock: Rappel pour <@{0}> :".format(self.user))
         self.active=False
 
 class Giveaway():

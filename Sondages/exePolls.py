@@ -1,7 +1,7 @@
 
 from Core.Fonctions.Embeds import createEmbed, embedAssert, exeErrorExcept
 from Sondages.Temps import gestionTemps, footerTime
-from Sondages.Classes import Giveaway, PollTime, Reminder 
+from Sondages.Classes import Giveaway, PollTime, Reminder, ReminderGuild 
 from Core.Fonctions.TempsVoice import tempsVoice
 from Stats.SQL.ConnectSQL import connectSQL
 from Core.Fonctions.Phrase import createPhrase
@@ -103,11 +103,13 @@ async def exeReminder(ctx,bot,args,option):
             phrase+=" "+args[i]
         temps=gestionTemps(args[len(args)-1])
         tempsstr=tempsVoice(temps)
-        embed=createEmbed("Rappel","Très bien ! Je t'enverrai un message privé dans {0} pour te rappeler de {1} !".format(tempsstr,phrase),0xfc03d7,"reminder",ctx.author)
-        message=await ctx.send(embed=embed)
         if option=="mp":
+            embed=createEmbed("Rappel","Très bien ! Je t'enverrai un message privé dans {0} pour te rappeler de {1} !".format(tempsstr,phrase),0xfc03d7,"reminder",ctx.author)
+            message=await ctx.send(embed=embed)
             dictPolls[message.id]=Reminder(message.id,ctx.author.id,temps,phrase)
         else:
+            embed=createEmbed("Rappel","Très bien ! J'enverrai un message dans ce salon dans {0} pour te rappeler de {1} !".format(tempsstr,phrase),0xfc03d7,"reminder",ctx.author)
+            message=await ctx.send(embed=embed)
             dictPolls[message.id]=ReminderGuild(message.id,ctx.author.id,temps,phrase,ctx.message.channel.id)
         await dictPolls[message.id].trigger(bot)
         del dictPolls[message.id]
@@ -150,7 +152,7 @@ async def recupPoll(bot):
         for i in curseur.execute("SELECT * FROM Reminders").fetchall():
             dictPolls[i["ID"]]=Reminder(i["ID"],i["User"],i["Temps"]-(time()-i["Start"]),i["Remind"])
         for i in curseur.execute("SELECT * FROM RemindersGuild").fetchall():
-            dictPolls[i["ID"]]=Reminder(i["ID"],i["User"],i["Temps"]-(time()-i["Start"]),i["Remind"],i["Chan"])
+            dictPolls[i["ID"]]=ReminderGuild(i["ID"],i["User"],i["Temps"]-(time()-i["Start"]),i["Remind"],i["Chan"])
         for i in curseur.execute("SELECT * FROM Giveaways").fetchall():
             dictPolls[i["ID"]]=Giveaway(i["ID"],i["Guild"],i["Temps"]-(time()-i["Start"]),i["Lot"],i["Gagnants"],i["Salon"])
         
