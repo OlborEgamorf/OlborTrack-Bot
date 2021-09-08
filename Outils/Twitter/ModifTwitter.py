@@ -62,7 +62,7 @@ async def addTwitter(ctx,bot,args):
     connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
     if True:
         num=curseur.execute("SELECT COUNT() as Nombre FROM twitter").fetchone()["Nombre"]+1
-        curseur.execute("INSERT INTO twitter VALUES({0},{1},'{2}','{3}','{4}','{5}')".format(num,salonID,accountID,descip,last,accountName))
+        curseur.execute("INSERT INTO twitter VALUES({0},{1},'{2}','{3}',{4},'{5}')".format(num,salonID,accountID,descip,last,accountName))
     else:
         raise AssertionError("Ce couple de compte Twitter et de salon existe déjà.")
     connexion.commit()

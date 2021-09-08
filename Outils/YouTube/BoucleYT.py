@@ -15,10 +15,10 @@ async def boucleYT(bot,dictGuilds):
                     count=0
                     liste=[]
                     while data["items"][count]["id"]["videoId"]!=j.last:
-                        liste.append(data)
+                        liste.append(count)
                         count+=1
                     for i in liste.reverse():
-                        await bot.get_channel(j.salon).send(embed=await embedAlertYT(i,j),content=j.descip)
+                        await bot.get_channel(j.salon).send(embed=await embedAlertYT(data,j,i),content=j.descip)
                     connexion,curseur=connectSQL(dictGuilds[i].id,"Guild","Guild",None,None)
                     curseur.execute("UPDATE youtube SET LastID='{0}' WHERE Nombre={1}".format(data["items"][0]["id"]["videoId"],j.numero))
                     j.last=data["items"][0]["id"]["videoId"]
