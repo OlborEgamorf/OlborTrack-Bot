@@ -1,5 +1,15 @@
+import discord
+from Core.Fonctions.AuteurIcon import auteur
+from Core.Fonctions.Embeds import (addtoFields, createFields, embedAssert,
+                                   exeErrorExcept, sendEmbed)
+from Core.Fonctions.setMaxPage import setMax, setPage
+from Outils.Twitter.ModifTwitter import (addTwitter, chanTwitter, delTwitter,
+                                         descipTwitter)
+from Stats.SQL.ConnectSQL import connectSQL
+
+
 async def exeTwitterAlerts(ctx,bot,args,guildOT):
-    try:
+    if True:
         connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
         if ctx.invoked_with=="twitter":
             await commandeTwitter(ctx,None,False,None,bot,guildOT,curseur)
@@ -14,10 +24,10 @@ async def exeTwitterAlerts(ctx,bot,args,guildOT):
             embed=await descipTwitter(ctx,bot,args,curseur,guildOT)
         connexion.commit()
         guildOT.getTwitter()
-    except AssertionError as er:
+    """except AssertionError as er:
         embed=embedAssert(str(er))
     except:
-        embed=await exeErrorExcept(ctx,bot,args)
+        embed=await exeErrorExcept(ctx,bot,args)"""
     await ctx.send(embed=embed)
 
 
@@ -49,7 +59,7 @@ def embedTwitter(table,page,pagemax,mobile):
     field1,field2,field3="","",""
     for i in range(15*(page-1),stop):
         nombre="`{0}`".format(table[i]["Nombre"])
-        emote="[{0}]".format(table[i]["Nom"])
+        emote="[{0}](https://twitter.com/intent/user?user_id={1})".format(table[i]["Nom"],table[i]["Compte"])
         salon="<#{0}>".format(table[i]["Salon"])
 
         field1,field2,field3=addtoFields(field1,field2,field3,mobile,nombre,emote,salon)

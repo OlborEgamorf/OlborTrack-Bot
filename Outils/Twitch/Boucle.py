@@ -1,10 +1,19 @@
 import asyncio
+
 import aiohttp
-from Stats.SQL.ConnectSQL import connectSQL
-from Core.Fonctions.WebRequest import webRequestHD
-from Core.OS.Keys3 import headersTwitch
 import discord
+import requests
+from Core.Fonctions.WebRequest import webRequestHD
+from Core.OS.Keys3 import headersTwitch, idTwitch, secretTwitch
 from Outils.Twitch.EmbedsTwitch import embedAlert
+from Stats.SQL.ConnectSQL import connectSQL
+
+headers = {
+    'client_id': idTwitch,
+    "client_secret": secretTwitch,
+    "grant_type":"client_credentials",
+    "scope":""
+}
 
 async def boucleTwitch(bot,dictGuilds):
     while True:
@@ -13,7 +22,11 @@ async def boucleTwitch(bot,dictGuilds):
             for j in dictGuilds[i].twitch:
                 try:
                     data=await webRequestHD("https://api.twitch.tv/helix/streams",headersTwitch,(("user_login",j.stream),("first",1)))
-                    assert data!=False
+                    if data==None:
+                        response = requests.post('https://id.twitch.tv/oauth2/token', data=headers)
+                        headersTwitch["Authorization"]="Bearer {0}".format(response.json()["access_token"])
+                        await bot.get_channel(752150155276451993).send("TOKEN TWITCH : {0}".format(response.json()["access_token"]))
+                    assert data!=False and data!=None
                     if data["data"]!=[]:
                         live=True
                         if not j.sent:

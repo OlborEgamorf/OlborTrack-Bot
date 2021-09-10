@@ -7,17 +7,20 @@ from Core.OS.Keys3 import headerTwit
 async def addTwitter(ctx,bot,args):
     assert len(args)>0, "Vous devez me donner un compte Twitter !"
     chaine=createPhrase(args)[:-1]
-    infos=await webRequestHD("https://api.twitter.com/2/users/by/username/{0}".format("TwitterDev"),headerTwit,(("user.fields","id,name,profile_image_url,description")))
+    infos=await webRequestHD("https://api.twitter.com/2/users/by/username/{0}".format(chaine),headerTwit,(("user.fields","id,name,profile_image_url,description"),("tweet.fields","id,created_at")))
     assert infos!=False, "Il y a eu une erreur lors de la recherche du compte Twitter."
+    if infos==None:
+        await bot.get_channel(752150155276451993).send("PROBLEME AUTHENTIFICATION TWITTER. AGIR VITE.")
+        raise AssertionError("Il y a eu une erreur lors de l'authentification du bot envers Twitter. Réessayez plus tard.")
 
     accountName=infos["data"]["name"]
     accountUser=infos["data"]["username"]
     accountID=infos["data"]["id"]
     accountPicture=infos["data"]["profile_image_url"]
 
-    embed=createEmbed("{0} - Alertes Twitter étape 1/3".format(accountName),"{0} - @{1}\nEst-ce bien le compte que vous cherchez ?\nCliquez sur <:otVALIDER:772766033996021761> pour valider.".format(accountName,accountUser),0x00ACEE,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
+    embed=createEmbed("{0} - Alertes Twitter étape 1/3".format(accountName),"{0} - @{1}\n\nEst-ce bien le compte que vous cherchez ?\nCliquez sur <:otVALIDER:772766033996021761> pour valider.".format(accountName,accountUser),0x00ACEE,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
     embed.set_thumbnail(url=accountPicture)
-    embed.add_field(name="Biographie du compte",value=infos["data"][0]["description"])
+    embed.add_field(name="Biographie du compte",value=infos["data"]["description"])
     embed.url="https://twitter.com/{0}".format(accountUser)
 
     message=await ctx.reply(embed=embed)
@@ -56,15 +59,20 @@ async def addTwitter(ctx,bot,args):
     descip=createPhrase(mess.content.split(" "))
 
     data=await webRequestHD("https://api.twitter.com/2/tweets/search/recent",headerTwit,(("query","from:{0}".format(accountID)),("tweet.fields","id")))
-    if data!=False or len(data["items"])!=0:
+    if data["meta"]["result_count"]!=0:
         last=data["data"][0]["id"]
+    else:
+        last=0
 
     connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
-    if True:
+    try:
         num=curseur.execute("SELECT COUNT() as Nombre FROM twitter").fetchone()["Nombre"]+1
         curseur.execute("INSERT INTO twitter VALUES({0},{1},'{2}','{3}',{4},'{5}')".format(num,salonID,accountID,descip,last,accountName))
-    else:
+    except:
         raise AssertionError("Ce couple de compte Twitter et de salon existe déjà.")
+    if num==4:
+        connexion.close()
+        raise AssertionError("Désolé, mais vous êtes limité à 3 alertes Twitter par serveur. Cela est dû à un problème de rate limit de la part de Twitter. Si trop d'alertes sont configurées, alors le bot ne sera pas en mesure de toutes les faire fonctionner. Une solution sera trouvée un jour...")
     connexion.commit()
 
     return createEmbed("Alerte Twitter créée","Numéro de l'alerte : `{0}`\nChaîne : {1}\nSalon : <#{2}>\nDescription : {3}".format(num,accountName,salonID,descip),0x00ACEE,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
@@ -86,7 +94,7 @@ async def chanTwitter(ctx,bot,args,curseur):
     return createEmbed("Alerte Twitter modifiée","Numéro de l'alerte : {0}\nNouveau salon : <#{1}>".format(args[0],ctx.message.channel_mentions[0].id),0x00ACEE,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
 
 
-async def delYT(ctx,bot,args,curseur,guild):
+async def delTwitter(ctx,bot,args,curseur,guild):
     assert len(args)>=1, "Il manque le numéro de l'alerte pour la supprimer !"
     try:
         alert=curseur.execute("SELECT * FROM twitter WHERE Nombre={0}".format(args[0])).fetchone()
@@ -102,7 +110,7 @@ async def delYT(ctx,bot,args,curseur,guild):
     return createEmbed("Alerte Twitter supprimée","Numéro de l'alerte : {0}".format(args[0]),0x00ACEE,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
 
 
-async def descipYT(ctx,bot,args,curseur,guild):
+async def descipTwitter(ctx,bot,args,curseur,guild):
     assert len(args)>=1, "Il manque le numéro de l'alerte pour la modifier !"
     try:
         alert=curseur.execute("SELECT * FROM twitter WHERE Nombre={0}".format(args[0])).fetchone()

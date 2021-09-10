@@ -60,6 +60,7 @@ class OTGuildCMD(OTGuild):
         self.stardict={}
         self.voicehub={}
         self.voiceephem=[]
+        self.twitter=[]
         self.bv=None
         self.ad=None
         self.auto=None
@@ -76,6 +77,7 @@ class OTGuildCMD(OTGuild):
             self.getChans()
             self.getBV(curseur)
             self.getAnniv()
+            self.getTwitter(curseur)
 
     def getStar(self,curseur=None):
         if curseur==None:
@@ -111,6 +113,13 @@ class OTGuildCMD(OTGuild):
         self.yt=[]
         for i in curseur.execute("SELECT * FROM youtube").fetchall():
             self.yt.append(OTYouTube(i))
+    
+    def getTwitter(self,curseur=None):
+        if curseur==None:
+            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+        self.twitter=[]
+        for i in curseur.execute("SELECT * FROM twitter").fetchall():
+            self.twitter.append(OTTwitter(i))
 
     def getHubs(self,curseur=None):
         self.voicehub={}
@@ -178,6 +187,15 @@ class OTYouTube:
         self.descip=infos["Descip"]
         self.last=infos["LastID"]
         self.numero=infos["Nombre"]
+
+class OTTwitter:
+    def __init__(self,infos):
+        self.compte=infos["Compte"]
+        self.salon=infos["Salon"]
+        self.descip=infos["Descip"]
+        self.last=infos["LastID"]
+        self.numero=infos["Nombre"]
+        self.nom=infos["Nom"]
 
 class OTAnniv:
     def __init__(self,anniv):
