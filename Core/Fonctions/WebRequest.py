@@ -16,6 +16,8 @@ async def webRequestHD(link,head,data):
     """Effectue une requête Get sur un lien donné avec des arguments."""
     async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=3.0),headers=head) as session:
         async with session.get(link,params=data) as reponse:
+            if reponse.status==401:
+                return None
             if reponse.status!=200:
                 return False
             return await reponse.json()
