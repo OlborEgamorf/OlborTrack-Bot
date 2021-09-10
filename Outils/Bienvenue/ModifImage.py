@@ -27,12 +27,12 @@ async def modifImage(ctx,bot,args,option):
             texte,couleur,taille,mode=image["Message"],image["Couleur"],image["Taille"],image["Mode"]
 
             if option=="BV":
-                embed=createEmbed("Modification image {0}".format(dictTitres[option]),"Quelles modifications voulez vous effectuer sur votre image ?\n- <:ot1:705766186909958185> : Modifier le texte\n- <:ot2:705766186989912154> : Modifier la taille *(actuel : {0})*\n- <:ot3:705766186930929685> : Modifier la couleur *(actuel : {1})*\n- <:ot4:705766186947706934> Modifier le mode (heure d'activation de l'image) *(actuel : {2})*\n- <:otANNULER:811242376625782785> Ne plus rien faire".format(taille,couleur,mode),0xf54269,ctx.invoked_with.lower(),ctx.guild)
+                embed=createEmbed("Modification image {0}".format(dictTitres[option]),"Quelles modifications voulez vous effectuer sur votre image ?\n- <:ot1:705766186909958185> : Modifier le texte\n- <:ot2:705766186989912154> : Modifier la taille *(actuel : {0})*\n- <:ot3:705766186930929685> : Modifier la couleur *(actuel : {1})*\n- <:ot4:705766186947706934> Modifier le mode (heure d'activation de l'image) *(actuel : {2})*\n- <:otANNULER:811242376625782785> Ne plus rien faire".format(taille,couleur,mode),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
                 liste=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>","<:otANNULER:811242376625782785>"]
             else:
                 filtre=image["Filtre"]
                 dictFiltre={0:"Désactivé",1:"Activé"}
-                embed=createEmbed("Modification image {0}".format(dictTitres[option]),"Quelles modifications voulez vous effectuer sur votre image ?\n- <:ot1:705766186909958185> : Modifier le texte\n- <:ot2:705766186989912154> : Modifier la taille *(actuel : {0})*\n- <:ot3:705766186930929685> : Modifier la couleur *(actuel : {1})*\n- <:ot4:705766186947706934> Modifier le mode (heure d'activation de l'image) *(actuel : {2})*\n- <:ot5:705766186713088042> Activer/Désactiver le filtre gris *(actuel : {3})*\n- <:otANNULER:811242376625782785> Ne plus rien faire".format(taille,couleur,mode,dictFiltre[filtre]),0xf54269,ctx.invoked_with.lower(),ctx.guild)
+                embed=createEmbed("Modification image {0}".format(dictTitres[option]),"Quelles modifications voulez vous effectuer sur votre image ?\n- <:ot1:705766186909958185> : Modifier le texte\n- <:ot2:705766186989912154> : Modifier la taille *(actuel : {0})*\n- <:ot3:705766186930929685> : Modifier la couleur *(actuel : {1})*\n- <:ot4:705766186947706934> Modifier le mode (heure d'activation de l'image) *(actuel : {2})*\n- <:ot5:705766186713088042> Activer/Désactiver le filtre gris *(actuel : {3})*\n- <:otANNULER:811242376625782785> Ne plus rien faire".format(taille,couleur,mode,dictFiltre[filtre]),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
                 liste=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>","<:ot5:705766186713088042>","<:otANNULER:811242376625782785>"]
 
             message=await ctx.reply(embed=embed)
@@ -48,7 +48,7 @@ async def modifImage(ctx,bot,args,option):
             await message.clear_reactions()
 
             if reaction.emoji.id==705766186909958185:
-                embed=createEmbed("Modification image {0}".format(dictTitres[option]),"Pour ajouter un texte sur cette image, écrivez la phrase que vous voulez.\nPour afficher le nom du membre qui a rejoint, utilisez la balise `{name}`.\nPour écrire le nom de votre serveur, utilisez la balise `{guild}`.\nPour montrer le nombre de membre sur votre serveur, utilisez la balise `{number}`.",0xf54269,ctx.invoked_with.lower(),ctx.guild)
+                embed=createEmbed("Modification image {0}".format(dictTitres[option]),"Pour ajouter un texte sur cette image, écrivez la phrase que vous voulez.\nPour afficher le nom du membre qui a rejoint, utilisez la balise `{name}`.\nPour écrire le nom de votre serveur, utilisez la balise `{guild}`.\nPour montrer le nombre de membre sur votre serveur, utilisez la balise `{number}`.",0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
                 message=await ctx.reply(embed=embed)
 
                 def check(mess):
@@ -58,7 +58,7 @@ async def modifImage(ctx,bot,args,option):
 
                 texte=createPhrase(mess.content.split(" "))
             elif reaction.emoji.id==705766186989912154:
-                embed=createEmbed("Modification image {0}".format(dictTitres[option]),"Pour ajuster la taille du texte, donnez moi un nombre.\nLa taille actuelle est : **{0}**".format(taille),0xf54269,ctx.invoked_with.lower(),ctx.guild)
+                embed=createEmbed("Modification image {0}".format(dictTitres[option]),"Pour ajuster la taille du texte, donnez moi un nombre.\nLa taille actuelle est : **{0}**".format(taille),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
                 message=await ctx.reply(embed=embed)
 
                 def check(mess):
@@ -71,7 +71,7 @@ async def modifImage(ctx,bot,args,option):
                 mess=await bot.wait_for("message",check=check,timeout=60)
                 taille=int(mess.content)
             elif reaction.emoji.id==705766186930929685:
-                embed=createEmbed("Modification image {0}".format(dictTitres[option]),"Pour modifier la couleur du texte, choisissez entre : default (blanc ou noir en fonction du fond), blanc, noir, rouge, vert, bleu, jaune, cyan.\nLa couleur actuelle est : **{0}**".format(couleur),0xf54269,ctx.invoked_with.lower(),ctx.guild)
+                embed=createEmbed("Modification image {0}".format(dictTitres[option]),"Pour modifier la couleur du texte, choisissez entre : default (blanc ou noir en fonction du fond), blanc, noir, rouge, vert, bleu, jaune, cyan.\nLa couleur actuelle est : **{0}**".format(couleur),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
                 message=await ctx.reply(embed=embed)
                 dictColor=["blanc","noir","rouge","vert","bleu","jaune","cyan","default"]
                 def check(mess):
@@ -84,7 +84,7 @@ async def modifImage(ctx,bot,args,option):
                 mess=await bot.wait_for("message",check=check,timeout=60)
                 couleur=mess.content
             elif reaction.emoji.id==705766186947706934:
-                embed=createEmbed("Modification image {0}".format(dictTitres[option]),"Le mode détermine à quelle heure de la journée l'image peut être envoyée. Pour modifier le mode de l'image, choisissez entre : all (s'active tout le temps), jour (ne s'active qu'entre 9h et 22h), nuit (ne s'active qu'entre 22h et 9h).\nLa couleur actuelle est : **{0}**\n*Attention : aucune modification ne sera visible, le mode ne concerne que le déclenchement de la fonctionnalité*".format(mode),0xf54269,ctx.invoked_with.lower(),ctx.guild)
+                embed=createEmbed("Modification image {0}".format(dictTitres[option]),"Le mode détermine à quelle heure de la journée l'image peut être envoyée. Pour modifier le mode de l'image, choisissez entre : all (s'active tout le temps), jour (ne s'active qu'entre 9h et 22h), nuit (ne s'active qu'entre 22h et 9h).\nLa couleur actuelle est : **{0}**\n*Attention : aucune modification ne sera visible, le mode ne concerne que le déclenchement de la fonctionnalité*".format(mode),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
                 message=await ctx.reply(embed=embed)
                 dictMode=["all","jour","nuit"]
                 def check(mess):
@@ -97,7 +97,7 @@ async def modifImage(ctx,bot,args,option):
                 mess=await bot.wait_for("message",check=check,timeout=60)
                 mode=mess.content
             elif reaction.emoji.id==705766186713088042:
-                embed=createEmbed("Modification image {0}".format(dictTitres[option]),"Le filtre gris est automatiquement activé pour les images d'adieu. Actuellement il est : **{0}**\nAppuyez sur <:otVALIDER:772766033996021761> pour l'activer ou <:otANNULER:811242376625782785> pour le retirer.".format(dictFiltre[filtre]),0xf54269,ctx.invoked_with.lower(),ctx.guild)
+                embed=createEmbed("Modification image {0}".format(dictTitres[option]),"Le filtre gris est automatiquement activé pour les images d'adieu. Actuellement il est : **{0}**\nAppuyez sur <:otVALIDER:772766033996021761> pour l'activer ou <:otANNULER:811242376625782785> pour le retirer.".format(dictFiltre[filtre]),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
                 message=await ctx.reply(embed=embed)
                 await message.add_reaction("<:otVALIDER:772766033996021761>")
                 await message.add_reaction("<:otANNULER:811242376625782785>")
@@ -120,7 +120,7 @@ async def modifImage(ctx,bot,args,option):
                 fusion(image["Path"],ctx.author,texte,couleur,taille,ctx.guild)
             else:
                 fusionAdieu(image["Path"],ctx.author,texte,couleur,taille,ctx.guild,filtre)
-            embed=createEmbed("Modification image {0}".format(dictTitres[option]),"Voici le résultat final de votre image. Cela vous convient-il ?\nAppuyez sur <:otVALIDER:772766033996021761> pour valider ou <:otANNULER:811242376625782785> pour revenir en arrière.",0xf54269,ctx.invoked_with.lower(),ctx.guild)
+            embed=createEmbed("Modification image {0}".format(dictTitres[option]),"Voici le résultat final de votre image. Cela vous convient-il ?\nAppuyez sur <:otVALIDER:772766033996021761> pour valider ou <:otANNULER:811242376625782785> pour revenir en arrière.",0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
             message=await ctx.reply(embed=embed,file=discord.File("Temp/{0}{1}.png".format(option,ctx.author.id)))
             await message.add_reaction("<:otVALIDER:772766033996021761>")
             await message.add_reaction("<:otANNULER:811242376625782785>")

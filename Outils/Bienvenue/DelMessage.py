@@ -14,7 +14,7 @@ async def delMessage(ctx,bot,args,option):
         assert texte!=None, "Le numéro donné ne correspond à aucun message."
         connexion.close()
 
-        embed=createEmbed("Suppression message {0}".format(dictTitres[option]),"Voici le message que vous voulez supprimer : {0}.\nSi vous être sûr de votre choix, appuyez sur <:otVALIDER:772766033996021761>.".format(texte["Message"]),0xf54269,ctx.invoked_with.lower(),ctx.guild)
+        embed=createEmbed("Suppression message {0}".format(dictTitres[option]),"Voici le message que vous voulez supprimer : {0}.\nSi vous être sûr de votre choix, appuyez sur <:otVALIDER:772766033996021761>.".format(texte["Message"]),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
         message=await ctx.reply(embed=embed)
         await message.add_reaction("<:otVALIDER:772766033996021761>")
 
@@ -34,7 +34,7 @@ async def delMessage(ctx,bot,args,option):
 
         connexion.commit()
 
-        embed=createEmbed("Suppression message {0}".format(dictTitres[option]),"Le message a bien été supprimé.",0xf54269,ctx.invoked_with.lower(),ctx.guild)
+        embed=createEmbed("Suppression message {0}".format(dictTitres[option]),"Le message a bien été supprimé.",0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
         await ctx.reply(embed=embed)
 
     except AssertionError as er:

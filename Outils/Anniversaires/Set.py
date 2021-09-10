@@ -2,6 +2,8 @@ from Stats.SQL.ConnectSQL import connectSQL
 from Core.Fonctions.GetPeriod import getAnnee, getMois
 from Core.Fonctions.Embeds import createEmbed, embedAssert
 
+dictMax={"janvier":31,"février":29,"mars":31,"avril":30,"mai":31,"juin":30,"juillet":31,"aout":31,"septembre":30,"octobre":31,"novembre":30,"décembre":31}
+
 async def setAnniversaire(ctx,bot,args):
     try:
         connexion,curseur=connectSQL("OT","Guild","Guild",None,None)
@@ -17,12 +19,13 @@ async def setAnniversaire(ctx,bot,args):
                 raise AssertionError("Il y a eu une erreur dans l'entrée de la date.")
             jour,mois=getAnnee(args[0].lower()),getMois(args[1].lower())
             assert mois!=None, "Le mois n'a pas été reconnu."
+            assert jour<=dictMax[mois], "Le jour donné n'est pas possible dans le calendrier !"
             if user==None:
                 curseur.execute("INSERT INTO anniversaires VALUES({0},{1},'{2}',3)".format(ctx.author.id,jour,mois))
-                embed=createEmbed("Ajout d'anniversaire","Anniversaire ajouté ! Un message sera envoyé dans les serveurs où vous êtes et qui ont activé la fonctionnalité tous les {0} {1} !\nVous pouvez le changer 3 fois.".format(jour,mois),0xf54269,ctx.invoked_with.lower(),ctx.author)
+                embed=createEmbed("Ajout d'anniversaire","Anniversaire ajouté ! Un message sera envoyé dans les serveurs où vous êtes et qui ont activé la fonctionnalité tous les **{0} {1}** !\nVous pouvez le changer 3 fois.".format(jour,mois),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
             else:
                 curseur.execute("UPDATE anniversaires SET Jour={0}, Mois='{1}', Nombre=Nombre-1 WHERE ID={2}".format(jour,mois,ctx.author.id))
-                embed=createEmbed("Mise à jour d'anniversaire","Anniversaire mis à jour ! Un message sera envoyé dans les serveurs où vous êtes et qui ont activé la fonctionnalité tous les {0} {1} !\nVous pouvez le changer encore {2} fois.".format(jour,mois,user["Nombre"]-1),0xf54269,ctx.invoked_with.lower(),ctx.author)
+                embed=createEmbed("Mise à jour d'anniversaire","Anniversaire mis à jour ! Un message sera envoyé dans les serveurs où vous êtes et qui ont activé la fonctionnalité tous les **{0} {1}** !\nVous pouvez le changer encore {2} fois.".format(jour,mois,user["Nombre"]-1),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
         else:
             raise AssertionError("Vous avez trop mis à jour votre anniversaire !")
         connexion.commit()

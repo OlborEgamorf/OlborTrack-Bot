@@ -21,7 +21,7 @@ async def delImage(ctx,bot,args,option):
 
         fusion(image["Path"],ctx.author,image["Message"],image["Couleur"],image["Taille"],ctx.guild)
 
-        embed=createEmbed("Suppression image {0}".format(dictTitres[option]),"Voici l'image que vous voulez supprimer.\nSi vous être sûr de votre choix, appuyez sur <:otVALIDER:772766033996021761>.",0xf54269,ctx.invoked_with.lower(),ctx.guild)
+        embed=createEmbed("Suppression image {0}".format(dictTitres[option]),"Voici l'image que vous voulez supprimer.\nSi vous être sûr de votre choix, appuyez sur <:otVALIDER:772766033996021761>.",0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
         message=await ctx.reply(embed=embed,file=discord.File("Temp/{0}{1}.png".format(option,ctx.author.id)))
         await message.add_reaction("<:otVALIDER:772766033996021761>")
 
@@ -41,7 +41,7 @@ async def delImage(ctx,bot,args,option):
 
         connexion.commit()
 
-        embed=createEmbed("Suppression image {0}".format(dictTitres[option]),"L'image a bien été supprimée.",0xf54269,ctx.invoked_with.lower(),ctx.guild)
+        embed=createEmbed("Suppression image {0}".format(dictTitres[option]),"L'image a bien été supprimée.",0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
         await ctx.reply(embed=embed)
 
     except AssertionError as er:
