@@ -7,7 +7,7 @@ tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai",
 
 def dailyCoins():
     dictRank={5:2,4:4,3:6,2:8,1:10}
-    liste=["P4","BatailleNavale","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR"]
+    liste=["P4","BatailleNavale","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR","Matrice"]
     for i in liste:
         connexion,curseur=connectSQL("OT",i,"Jeux","GL","")
         try:
@@ -19,9 +19,9 @@ def dailyCoins():
 
 async def monthlyTitles(mois,annee,bot):
     dictCoins={3:50,2:100,1:200}
-    dictTitres={"P4":"des Puissants","BatailleNavale":"des Mers","Tortues":"des Tortues","TortuesDuo":"de la Co-Op","TrivialVersus":"des Questions","TrivialParty":"de la Fête","TrivialBR":"de la Survie"}
-    dictID={"P4":76,"BatailleNavale":11,"Tortues":90,"TortuesDuo":95,"TrivialVersus":136,"TrivialParty":131,"TrivialBR":126}
-    liste=["P4","BatailleNavale","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR"]
+    dictTitres={"P4":"des Puissants","BatailleNavale":"des Mers","Tortues":"des Tortues","TortuesDuo":"de la Co-Op","TrivialVersus":"des Questions","TrivialParty":"de la Fête","TrivialBR":"de la Survie","Matrice":"de la Matrice"}
+    dictID={"P4":76,"BatailleNavale":11,"Tortues":90,"TortuesDuo":95,"TrivialVersus":136,"TrivialParty":131,"TrivialBR":126,"Matrice":168}
+    liste=["P4","BatailleNavale","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR","Matrice"]
     for i in liste:
         connexion,curseur=connectSQL("OT",i,"Jeux",mois,annee)
         try:
@@ -77,9 +77,9 @@ async def monthlyTitles(mois,annee,bot):
 
 async def annualyTitles(annee,bot):
     dictCoins={3:250,2:500,1:1000}
-    dictTitres={"P4":"des Puissants","BatailleNavale":"des Mers","Tortues":"des Tortues","TortuesDuo":"de la Co-Op","TrivialVersus":"des Questions","TrivialParty":"de la Fête","TrivialBR":"de la Survie"}
-    dictID={"P4":77,"BatailleNavale":12,"Tortues":91,"TortuesDuo":96,"TrivialVersus":137,"TrivialParty":132,"TrivialBR":127}
-    liste=["P4","BatailleNavale","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR"]
+    dictTitres={"P4":"des Puissants","BatailleNavale":"des Mers","Tortues":"des Tortues","TortuesDuo":"de la Co-Op","TrivialVersus":"des Questions","TrivialParty":"de la Fête","TrivialBR":"de la Survie","Matrice":"de la Matrice"}
+    dictID={"P4":77,"BatailleNavale":12,"Tortues":91,"TortuesDuo":96,"TrivialVersus":137,"TrivialParty":132,"TrivialBR":127,"Matrice":169}
+    liste=["P4","BatailleNavale","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR","Matrice"]
     for i in liste:
         connexion,curseur=connectSQL("OT",i,"Jeux","TO",annee)
         try:
