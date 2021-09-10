@@ -8,35 +8,23 @@ dictJeux={1:[],2:["trivial","trivialversus","trivialbr","trivialparty","trivials
 
 dictSV={1:[],2:["savezvous","savezvous add","savezvous del","savezvous edit"],3:["savezvous list","savezvous modo"]}
 
-dictUtile={1:["help","about","invite","support","test","feedback","perms","servcount","credits","reseaux"]}
-
-dictMAL={1:[],2:["maluser","mallist","malcompare","malsearch"]}
-
-dictWiki={1:[],2:["wikipedia","events","wikinsfw"],3:["wikiquote","wikiqotd"]}
-
-dictSpotify={1:[],2:["spoartiste","spoalbum","spoplaylist","spopodcast","spotitre"]}
-
-dictGeo={1:[],2:["iss","nasaphoto"]}
-
 dictAdmin={1:[],2:["hide","blind","mute"],3:["modulestat","modulecmd"],4:["delstats","statson","statsoff"],5:["zip","wikinsfw"]}
 
-dictAutre={1:["roulette","dice","snipe","avatar","say","zeynah"]}
+dictAutre={1:["help","about","invite","support","test","feedback","perms","servcount","credits","reseaux"],2:["roulette","dice","snipe","avatar","say"]}
 
 dictTitres={1:[],2:["titre","titre liste","titre perso","titre set","titre infos","titre profil"],3:["titre achat","titre vente","titre cadeau","titre trade","titre pack"],4:["titre custom","titre emote","titre couleur"]}
+
+dictInteract={1:[],2:["wikipedia","events","wikinsfw","wikiquote","wikiqotd"],3:["maluser","mallist","malcompare","malsearch"],4:["spoartiste","spoalbum","spoplaylist","spopodcast","spotitre"],5:["zeynah","iss","nasaphoto"]}
 
 dictPStats={1:"Olbor Track est capable de capter différentes statistiques comme les messages envoyés par chaque membre du serveur, le temps passé en vocal, les emotes utilisées par exemple.\nCes statistiques sont stockées sous plusieurs formes, et consultables avec ces commandes.\nLes administrateurs peuvent les configurer (voir OT!help admin).\n\n**Sous les commandes apparaitront des réactions :**\n <:otGAUCHE:772766034335236127> / <:otDROITE:772766034376523776> : changer de page\n<:otGRAPH:772766034558058506> : afficher les graphiques\n<:otTRI:833666016491864114> : changer le tri\n<:otMOBILE:833736320919797780> : changer l'affichage : classique ou mobile",13:"**OT!messganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les messages.\n**OT!saloganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les salons.\n**OT!freqganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les heures d'activité.\n**OT!voicganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour le temps passé en vocal.\n**OT!vchaganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les salons vocaux.\n**OT!emotganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les emotes.\n**OT!reacganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les réactions.\n**OT!motsganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les mots envoyés."}
 dictPPoll={1:"Olbor Track dispose de plusieurs commandes pour faire des sondages et giveaway.\nPour pouvoir les lancer, il faut avoir la permission 'gestion des messages' sur le serveur.\nLa commande OT!reminder ne nécessite aucune permission spéciale."}
 dictPJeux={1:"Olbor Track possède plusieurs jeux qui se jouent à plusieurs, de 2 à 15 joueurs !\nEssayez des jeux Trivial, la Course des Tortues, le Puissance 4 ou la Bataille Navale !\nTous les jeux possèdent des classements par serveurs et mondial !",2:"Vous pouvez proposer de nouvelles questions pour étoffer les jeux Trivial [en cliquant ici !](https://docs.google.com/forms/d/e/1FAIpQLSc6d3fHx95m5pRnCYMfcFg7Ng0eeEhXl4aS87Hb0cupA_NvOg/viewform)\n",6:"Pour voir si des parties en attente, rejoignez le serveur de tests et consultez le salon #parties-cross-serveur. (OT!tests)"}
 dictPOutils={1:"Olbor Track peut améliorer votre serveur avec des outils pratiques !\nEssayez les tableaux d'emotes, les commandes personnalisées, les alertes Twitch et les commandes automatiques !\nIl faut avoir la permission 'gestion des messages' sur le serveur pour pouvoir les configurer.",2:"**Les tableaux c'est quoi?**\nLes tableaux d'emotes sont des outils que propose OlborTrack. On les active en donnant *une emote*, *un nombre*, et un *salon*. Quand cette emote atteint le nombre donné de réactions sur un message, le message est copié dans le salon !\n",3:"**Des alertes Twitch ??**\nConfigurez des alertes Twitch, pour que quand votre streamer préfèré passe en live, un message est envoyé dans le salon de votre choix, avec la description de votre choix !\n",5:"**Comment fonctionnent les commandes automatiques ??**\nLes commandes automatiques, quand elles sont activées, se déclenchent tous les jours à minuit dans le salon de votre choix. Pour les commandes 'mois' et 'annee', elles se déclenchent respectivement quand commence un nouveau mois et une nouvelle année.\n"}
 dictPSV={1:"Olbor Track vous permet d'avoir une boîte de connaissance commune à votre serveur !\nN'importe qui peut y ajouter des phrases et/ou des images, qui sortent ensuite aléatoirement avec la commande OT!savezvous.\nLes modérateurs peuvent supprimer des phrases de la boîte."}
-dictPUtile={}
-dictPMAL={1:"Olbor Track possède des intéractions avec MyAnimeList, pour faire des recherches sur des mangas ou animes et sur des utilisateurs du site !"}
-dictPWiki={1:"Olbor Track possède des intéractions avec Wikipedia, pour faire des recherches sur un article, ou alors regarder les événements qui se sont passés aujourd'hui à cette date !"}
-dictPSpotify={1:"Olbor Track possède des intéractions avec Wikipedia, pour faire des recherches sur des artistes/albums/titres et + !"}
-dictPGeo={1:"Olbor Track possède quelques commandes liées à l'espace : une qui vous donne la photo astronomique du jour, et une autre qui vous montre où se trouve l'ISS en orbite actuellement !"}
 dictPAdmin={1:"Les administrateurs du serveur peuvent configurer Olbor Track afin d'avoir une utilisation personnalisée du bot.\nIls peuvent moduler les statistiques traquées, les commandes activées, le statut des salons, et +...",4:"**OT!getdata** : [ADMIN] Initialise toutes les statistiques de votre serveur."}
 dictPAutre={}
 dictPTitres={1:"Les titres sont des cosmétiques qui s'affichent sur les classements mondiaux des jeux, et que vous pouvez acheter/vendre/débloquer/échanger, à l'aide d'une monnaie spéciale : les OT Coins <:otCOINS:873226814527520809>.\nCette monnaie se gagne en jouant à n'importe lequel de mes jeux ou en devenant un donateur (OT!support).\nCertains titres sont déblocables en jouant, ou en étant dans les premières places des classements !"}
+dictPInteract={1:"Olbor Track permet de faire des recherches sur d'autres sites internet, via quelques commandes !\nDécouvrez les intéractions possibles avec Wikipedia, MyAnimeList et Spotify !",2:"Olbor Track possède des intéractions avec Wikipedia, pour faire des recherches sur un article, ou alors regarder les événements qui se sont passés aujourd'hui à cette date !",3:"Olbor Track possède des intéractions avec MyAnimeList, pour faire des recherches sur des mangas ou animes et sur des utilisateurs du site !",4:"Olbor Track possède des intéractions avec Wikipedia, pour faire des recherches sur des artistes/albums/titres et + !"}
 
 dictFStats={1:[],2:["periodes","usage"],3:["periodes","roles","usage"],4:["periodes","roles","usage"],5:["periodes","salons","roles","usage"],6:["periodes","heure","roles","usage"],7:["periodes","voice","roles","usage"],8:["periodes","emote","roles","usage"],9:["periodes","emote","roles","usage"],10:["periodes","roles","usage"],11:["periodes","divers","roles","usage"],12:["periodes","usage"],13:["periodes","usage"],14:["periodes","usage"],15:["periodes","usage"],16:["periodes","usage"],17:["periodes","usage"]}
 
@@ -48,21 +36,13 @@ dictFJeux={1:[],2:["trivial","usage"],3:[],4:[],5:["periodes","jeux","trivial","
 
 dictFSV={1:[],2:["usage"],3:[]}
 
-dictFUtile={1:[]}
-
-dictFMAL={1:[],2:["mal","usage"]}
-
-dictFWiki={1:[],2:["usage"],3:["usage"]}
-
-dictFSpotify={1:[],2:["usage"]}
-
-dictFGeo={1:[],2:[]}
-
 dictFAdmin={1:[],2:["salons","usage"],3:["usage"],4:["usage"],5:[]}
 
-dictFAutre={1:["texte","usage"]}
+dictFAutre={1:[],2:["texte","usage"]}
 
 dictFTitres={1:[],2:["usage"],3:["usage"],4:["usage"]}
+
+dictFInteract={1:[],2:["usage"],3:["mal","usage"],4:["usage"],5:[]}
 
 dictFields={
     "periodes":{"name":"Gestion des périodes","value":"'mois' : donne le mois actuel\n'annee' : donne l'année actuelle\n[mois] [année] : donne le mois que l'on veut *(ex : février 2020)*\n[année] : donne l'année que l'on veut *(ex : 2021)*"},
@@ -92,18 +72,10 @@ dictTJeux={1:"Jeux",2:"Jeux Trivial",3:"Jeux Tortues",4:"BN et P4",5:"Classement
 
 dictTSV={1:"Savez-vous ?",2:"Gestion de la boite",3:"Affichage des élèments"}
 
-dictTUtile={1:"Commandes utiles"}
-
-dictTMAL={1:"Olbor Track x MyAnimeList",2:"Commandes MyAnimeList"}
-
-dictTWiki={1:"Olbor Track x Wikipedia",2:"Recherches Wikipedia",3:"Recherches Wikiquote"}
-
-dictTSpotify={1:"Olbor Track x Spotify",2:"Commandes Spotify"}
-
-dictTGeo={1:"Commandes spatiales",2:"Commandes spatiales"}
-
 dictTAdmin={1:"Commandes administrateur",2:"Gestion des salons",3:"Gestion des modules",4:"Gestion des stats",5:"Autres paramètres"}
 
-dictTAutre={1:"Autres commandes"}
+dictTAutre={1:"Commandes utiles",2:"Autres commandes"}
 
 dictTTitres={1:"[BETA] Les Titres",2:"[BETA] Listes et équipement",3:"[BETA] Achat, vente et échange",4:"[BETA] Autres outils de personnalisation"}
+
+dictTInteract={1:"Intéractions avec d'autres sites",2:"Olbor Track x Wikipedia",3:"Olbor Track x MyAnimeList",4:"Olbor Track x Spotify",5:"Autres intéractions"}

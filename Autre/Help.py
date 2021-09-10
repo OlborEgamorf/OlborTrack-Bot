@@ -18,7 +18,7 @@ async def commandeHelp(ctx,turn,react,ligne,bot,guildOT):
             if ctx.args[2].lower()=="serv":
                 await commandeCMD(ctx,None,False,None)
                 return
-            elif ctx.args[2].lower() in ("polls","stats","jeux","utile","autre","sv","outils","wiki","spotify","mal","admin","geo","titres"):
+            elif ctx.args[2].lower() in ("polls","stats","jeux","autre","sv","outils","admin","titres","interact"):
                 option=ctx.args[2].lower()
             else:
                 option="home"
@@ -43,20 +43,20 @@ async def commandeHelp(ctx,turn,react,ligne,bot,guildOT):
     message=await sendEmbed(ctx,embed,react,False,curseurCMD,connexionCMD,page,pagemax)
 
 def embedHelp30(option,guildOT,page,bot):
-    dictColor={"home":0x6EC8FA,"stats":0x3498db,"polls":0xfc03d7,"jeux":0xad917b,"outils":0xf54269,"utile":0xfcfc03,"autre":0x6EC8FA,"sv":0x00ffd0,"wiki":0xfcfcfc,"mal":0x7C0CB0,"admin":0x220cc9,"spotify":0x1DB954,"geo":0xa83e32,"titres":0xf58d1d}
+    dictColor={"home":0x6EC8FA,"stats":0x3498db,"polls":0xfc03d7,"jeux":0xad917b,"outils":0xf54269,"autre":0x6EC8FA,"sv":0x00ffd0,"admin":0x220cc9,"titres":0xf58d1d,"interact":0xfcfc03}
 
-    dictLinks={"home":"https://cdn.discordapp.com/attachments/726034739550486618/870604901334536192/NEW.png","polls":"https://cdn.discordapp.com/attachments/726034739550486618/870604052315136050/poll.png","jeux":"https://cdn.discordapp.com/attachments/726034739550486618/870604061739732992/jeux.png","utile":"https://cdn.discordapp.com/attachments/726034739550486618/870604901334536192/NEW.png","autre":"https://cdn.discordapp.com/attachments/726034739550486618/870604901334536192/NEW.png","sv":"https://cdn.discordapp.com/attachments/726034739550486618/870604056203231252/sv.png","outils":"https://cdn.discordapp.com/attachments/726034739550486618/870604051069407272/outils.png","wiki":"https://cdn.discordapp.com/attachments/726034739550486618/870604057537019924/wiki.png","mal":"https://cdn.discordapp.com/attachments/726034739550486618/870604050041810984/mal.png","admin":"https://cdn.discordapp.com/attachments/726034739550486618/870604058883420170/admin.png","spotify":"https://cdn.discordapp.com/attachments/726034739550486618/870604053586010152/spotify.png","stats":"https://cdn.discordapp.com/attachments/726034739550486618/870604054831714344/stats.png","geo":"https://cdn.discordapp.com/attachments/726034739550486618/870604060494012436/geo.png","titres":"https://cdn.discordapp.com/attachments/726034739550486618/870604901334536192/NEW.png"}
+    dictLinks={"home":"https://cdn.discordapp.com/attachments/726034739550486618/870604901334536192/NEW.png","polls":"https://cdn.discordapp.com/attachments/726034739550486618/870604052315136050/poll.png","jeux":"https://cdn.discordapp.com/attachments/726034739550486618/870604061739732992/jeux.png","utile":"https://cdn.discordapp.com/attachments/726034739550486618/870604901334536192/NEW.png","autre":"https://cdn.discordapp.com/attachments/726034739550486618/870604901334536192/NEW.png","sv":"https://cdn.discordapp.com/attachments/726034739550486618/870604056203231252/sv.png","outils":"https://cdn.discordapp.com/attachments/726034739550486618/870604051069407272/outils.png","admin":"https://cdn.discordapp.com/attachments/726034739550486618/870604058883420170/admin.png","titres":"https://cdn.discordapp.com/attachments/726034739550486618/870604901334536192/NEW.png","interact":"https://cdn.discordapp.com/attachments/726034739550486618/885879620157730886/globe.png"}
 
-    dictAuthor={"home":"Bienvenue sur la page d’aide de Olbor Track !","stats":"Aide - Statistiques","polls":"Aide - Sondages, giweaway et rappels","jeux":"Aide - Jeux","utile":"Aide - Commandes utiles","autre":"Aide - Autres commandes","sv":"Aide - Boite de connaissances","outils":"Aide - Outils","wiki":"Aide - Wikipedia","mal":"Aide - MyAnimeList","admin":"Aide - Commandes admin","spotify":"Aide - Spotify","geo":"Aide - Géographie et Espace","titres":"Aide - Système de titres"}
-    dictLen={"home":3,"stats":len(dictStats),"polls":len(dictPoll),"jeux":len(dictJeux),"utile":len(dictUtile),"autre":len(dictAutre),"sv":len(dictSV),"outils":len(dictOutils),"wiki":len(dictWiki),"mal":len(dictMAL),"admin":len(dictAdmin),"spotify":len(dictSpotify),"geo":len(dictGeo),"titres":len(dictTitres)}
+    dictAuthor={"home":"Bienvenue sur la page d’aide de Olbor Track !","stats":"Aide - Statistiques","polls":"Aide - Sondages, giweaway et rappels","jeux":"Aide - Jeux","autre":"Aide - Autres commandes","sv":"Aide - Boite de connaissances","outils":"Aide - Outils","admin":"Aide - Commandes admin","titres":"Aide - Système de titres","interact":"Aide - Interactions"}
+    dictLen={"home":3,"stats":len(dictStats),"polls":len(dictPoll),"jeux":len(dictJeux),"autre":len(dictAutre),"sv":len(dictSV),"outils":len(dictOutils),"admin":len(dictAdmin),"titres":len(dictTitres),"interact":len(dictInteract)}
 
-    dictDescipPlus={"home":{},"stats":dictPStats,"polls":dictPPoll,"jeux":dictPJeux,"utile":dictPUtile,"autre":dictPAutre,"sv":dictPSV,"outils":dictPOutils,"wiki":dictPWiki,"mal":dictPMAL,"admin":dictPAdmin,"spotify":dictPSpotify,"geo":dictPGeo,"titres":dictPTitres}
-    dictDescipFields={"home":{},"stats":dictFStats,"polls":dictFPoll,"jeux":dictFJeux,"utile":dictFUtile,"autre":dictFAutre,"sv":dictFSV,"outils":dictFOutils,"wiki":dictFWiki,"mal":dictFMAL,"admin":dictFAdmin,"spotify":dictFSpotify,"geo":dictFGeo,"titres":dictFTitres}
-    dictDescipTitres={"home":{},"stats":dictTStats,"polls":dictTPoll,"jeux":dictTJeux,"utile":dictTUtile,"autre":dictTAutre,"sv":dictTSV,"outils":dictTOutils,"wiki":dictTWiki,"mal":dictTMAL,"admin":dictTAdmin,"spotify":dictTSpotify,"geo":dictTGeo,"titres":dictTTitres}
+    dictDescipPlus={"home":{},"stats":dictPStats,"polls":dictPPoll,"jeux":dictPJeux,"autre":dictPAutre,"sv":dictPSV,"outils":dictPOutils,"admin":dictPAdmin,"titres":dictPTitres,"interact":dictPInteract}
+    dictDescipFields={"home":{},"stats":dictFStats,"polls":dictFPoll,"jeux":dictFJeux,"autre":dictFAutre,"sv":dictFSV,"outils":dictFOutils,"admin":dictFAdmin,"titres":dictFTitres}
+    dictDescipTitres={"home":{},"stats":dictTStats,"polls":dictTPoll,"jeux":dictTJeux,"autre":dictTAutre,"sv":dictTSV,"outils":dictTOutils,"admin":dictTAdmin,"titres":dictTTitres}
 
-    listeName=["<:OTHstats:859840446901649459> OT!help stats","<:OTHoutils:859840447126700083> OT!help outils","<:OTHjeux:859840446675419167> OT!help jeux","<:OTHpoll:859840447210848306> OT!help polls","<:OTHsv:859840446780145665> OT!help savezvous","<:ot30:845649462918512671> OT!help utile","<:OTHmal:859840447367348284> OT!help mal","<:OTHwiki:859840446800592937> OT!help wiki","<:OTHspotify:859840447048712201> OT!help spotify","<:OTHgeo:859840447073878036> OT!help geo","<:OTHadmin:859840446984486972> OT!help admin","<:ot30:845649462918512671> OT!help autre","<:ot30:845649462918512671> OT!help serv","<:ot30:845649462918512671> OT!help titres"]
-    listeValue=["Statistiques de l'activité de votre serveur !","Gérez vos outils !","Questions de culture, Tortues et plus !","Sondages, giveaway et rappels !","Créez une boîte de connaissances commune !","Les commandes utilitaires.","Intéractions avec MyAnimeList !","Intéractions avec Wikipédia !","Intéractions avec Spotify !","Géographie et espace !","Toutes les commandes pour les administrateurs.","Autres commandes.","Les commandes personnalisées de votre serveur (s'il y en a)","Gestion des titres !"]
-    listeOptions=["stats","jeux","outils","polls","sv","utile","mal","wiki","spotify","geo","admin","autre","serv","titres"]
+    listeName=["<:OTHstats:859840446901649459> OT!help stats","<:OTHoutils:859840447126700083> OT!help outils","<:OTHjeux:859840446675419167> OT!help jeux","<:OTHpoll:859840447210848306> OT!help polls","<:OTHsv:859840446780145665> OT!help savezvous","<:OTHadmin:859840446984486972> OT!help admin","<:ot30:845649462918512671> OT!help autre","<:OTHinteract:885883292593827842> OT!help interact","<:ot30:845649462918512671> OT!help serv","<:ot30:845649462918512671> OT!help titres"]
+    listeValue=["Statistiques de l'activité de votre serveur !","Gérez vos outils !","Questions de culture, Tortues et plus !","Sondages, giveaway et rappels !","Créez une boîte de connaissances commune !","Les intéreactions avec d'autres sites","Toutes les commandes pour les administrateurs.","Autres commandes.","Les commandes personnalisées de votre serveur (s'il y en a)","Gestion des titres !"]
+    listeOptions=["stats","jeux","outils","polls","sv","interact","admin","autre","serv","titres"]
 
     embedHelp=discord.Embed(color=dictColor[option])
     embedHelp.set_author(icon_url=dictLinks[option],name=dictAuthor[option])
@@ -64,10 +64,10 @@ def embedHelp30(option,guildOT,page,bot):
         embedHelp.description="Effectuez une de ces commandes pour avoir plus d'infos sur mes commandes !\n**Mon préfixe est OT!**\nVous pouvez aussi faire **OT!help [nom d'une commande]** pour avoir directement les infos d'une commande.\n[Invitez moi !](https://discord.com/oauth2/authorize?client_id=699728606493933650&permissions=120259472576&scope=bot) - [Faites une donation !](https://paypal.me/OlborTrack) - [Serveur de test](https://discord.com/invite/kMQz7nF) - [Twitter](https://twitter.com/olbortrack) - [Instagram](https://www.instagram.com/OlborTrack/)"
         if page==1 or page==2:
             if guildOT.mcmd!=None:
-                dictPerms={"Stats":0,"Sondages":3,"Outils":1,"Savezvous":4,"Jeux":2,"MAL":6,"Wiki":7,"Spotify":8,"Geo":9}
+                dictPerms={"Stats":0,"Sondages":3,"Outils":1,"Savezvous":4,"Jeux":2}
                 nb=0
                 for i in guildOT.mcmd:
-                    if i["Statut"]==False:
+                    if i["Statut"]==False and i["Module"] in dictPerms:
                         del listeName[dictPerms[i["Module"]]-nb]
                         del listeValue[dictPerms[i["Module"]]-nb]
                         del listeOptions[dictPerms[i["Module"]]-nb]
