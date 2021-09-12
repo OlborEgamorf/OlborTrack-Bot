@@ -1,5 +1,8 @@
 from colorthief import ColorThief
 from PIL import ImageDraw, ImageFont, ImageOps, Image
+from math import pi
+from Stats.SQL.ConnectSQL import connectSQL
+from random import choice
 
 
 def squaretoround(user):
@@ -11,26 +14,6 @@ def squaretoround(user):
     output.putalpha(mask)
 
     output.save('PNG/Round{0}.png'.format(user))
-
-def carteVictoire():
-    im=Image.open("Images/K2tortues.png")
-    imPP=Image.open("PNG/Round309032693499297802.png")
-    imBadge=Image.open("Images/Sans_titre_3.png")
-
-    im.paste(imPP, ((im.size[0]-imPP.size[0])//2,(im.size[1]-imPP.size[1])//2), mask = imPP)
-    im.paste(imBadge, ((im.size[0]-imBadge.size[0])//2-50,500),mask=imBadge)
-    im.paste(imBadge, ((im.size[0]-imBadge.size[0])//2+50,500),mask=imBadge)
-
-    font1 = ImageFont.truetype("Font/RobotoCondensed-Regular.ttf", 25)
-    font2 = ImageFont.truetype("Font/RobotoCondensed-Regular.ttf", 40)
-    draw=ImageDraw.Draw(im)
-    draw.text((im.size[0]//2,700),"25e victoire pour OlborEgamorf !",(255,255,255),font=font1,anchor="mm",align="center")
-    draw.text((im.size[0]//2,620),'"EZ CLAP"',(255,255,255),font=font2,anchor="mm",align="center")
-
-    im.save("TEST.png")
-    im.show()
-
-#carteVictoire()
 
 def fusion(back,user,text,couleur,taille,guild):
     

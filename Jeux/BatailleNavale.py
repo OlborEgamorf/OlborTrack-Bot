@@ -8,6 +8,7 @@ from Core.Fonctions.Embeds import (createEmbed, embedAssert,
                                    exeErrorExcept)
 from Stats.Tracker.Jeux import exeStatsJeux
 from Titres.Outils import gainCoins
+from Titres.Carte import sendCarte
 
 listeJoueurs={}
 listeJeux={}
@@ -536,11 +537,12 @@ async def endGame(game,option):
         await i.user.send(embed=game.createEmbedBN(True,i,True))
         await i.user.send(embed=game.createEmbedBN(True,game.getOther(i),True))
         await i.user.send("<:otVERT:868535645897912330> Victoire de {0} !".format(game.getPlaying().nom))
-    exeStatsJeux(game.getPlaying().id,game.getWaiting().id,game.guild,"BatailleNavale",0,option)
+    wins=exeStatsJeux(game.getPlaying().id,game.getWaiting().id,game.guild,"BatailleNavale",0,option)
     gainCoins(game.getPlaying().id,50)
     await game.message.channel.send(embed=game.createEmbedBN(True,game.getWaiting(),True))
     await game.message.channel.send(embed=game.createEmbedBN(True,game.getPlaying(),True))
     await game.message.channel.send("<:otVERT:868535645897912330> Victoire de {0} !".format(game.getPlaying().nom))
+    await sendCarte(game.getPlaying().user,"BatailleNavale",wins,"classic",game.message.channel)
     await game.message.delete()
     del listeJoueurs[game.J1.id]
     del listeJoueurs[game.J2.id]

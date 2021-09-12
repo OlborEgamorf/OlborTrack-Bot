@@ -8,6 +8,7 @@ from Titres.Outils import gainCoins
 from Jeux.ClasseP4 import JeuP4
 from Jeux.Paris import Pari
 from Core.Fonctions.Unpin import pin, unpin
+from Titres.Carte import sendCarte
 
 emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>","<:ot5:705766186713088042>","<:ot6:705766187182850148>","<:ot7:705766187115741246>"]
 dictCo={705766186909958185:0,705766186989912154:1,705766186930929685:2,705766186947706934:3,705766186713088042:4,705766187182850148:5,705766187115741246:6}
@@ -61,10 +62,11 @@ async def startGameP4(ctx,bot,inGame,gamesP4):
                     await message.edit(embed=game.createEmbedP4(turn))
                     if turn==0: lose=1
                     else: lose=0
-                    exeStatsJeux(game.joueurs[turn].id,game.joueurs[lose].id,game.guild.id,"P4",game.tours,"win")
+                    wins=exeStatsJeux(game.joueurs[turn].id,game.joueurs[lose].id,game.guild.id,"P4",game.tours,"win")
                     gainCoins(game.joueurs[turn].id,50+sum(game.paris.mises.values()))
                     game.paris.distribParis(game.joueurs[turn].id)
                     await message.channel.send(embed=game.embedWin(turn,False))
+                    await sendCarte(bot.get_user(game.joueurs[turn].id),"P4",wins,"classic",message.channel)
                     game.playing=False
                     await unpin(message)
                 else:

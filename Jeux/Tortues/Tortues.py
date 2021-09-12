@@ -64,7 +64,7 @@ async def startGameTortues(ctx,bot,inGame,gamesTortues):
                 game.playing=False
                 await message.edit(embed=game.embedGame(game.joueurs[turn].user))
                 embed=game.embedWin(game.getWinner())
-                game.stats(game.getWinner())
+                await game.stats(game.getWinner(),message.channel)
                 await message.channel.send(embed=embed)
                 await message.clear_reactions()
                 await message.unpin()

@@ -95,9 +95,12 @@ def exeJeuxSQL(id,idObj,state,guild,curseurGuild,count,option,tours):
         compteurJeuxSQL(curseurGL,"glob"+str(idObj),id,(0,id,idObj,"TO","GL",dictW[state],dictL[state],dictCount[state],0),dictCount[state],(strftime("%d"),strftime("%m"),strftime("%y")),("TO","GL"),"persoA",True,state,5,curseurGL)
         histoSQLJeux(curseurGL,id,tours,strftime("%d")+"/"+strftime("%m")+"/"+strftime("%y"),idObj,state)
     if guild=="OT" and state=="W":
-        count=curseurGL.execute("SELECT Count FROM glob WHERE ID= {0}".format(id)).fetchone()["Count"]
-        if count in (5,10):
-            titresJeux(count,option,id)
+        countW=curseurGL.execute("SELECT W FROM glob WHERE ID= {0}".format(id)).fetchone()["W"]
+        if countW in (5,10):
+            titresJeux(countW,option,id)
     connexionGL.commit()
 
     dailySQL(int(strftime("%y")+strftime("%m")+strftime("%d")),(strftime("%d"),strftime("%m"),strftime("%y")),option,curseurGuild,guild,"Jeux")
+
+    if "countW" in locals():
+        return countW

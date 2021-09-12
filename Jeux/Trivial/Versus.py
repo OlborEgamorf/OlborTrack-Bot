@@ -10,6 +10,7 @@ from Titres.Outils import gainCoins
 from Jeux.Trivial.Classic import Question
 from math import inf
 from Jeux.Paris import Pari
+from Titres.Carte import sendCarte
 
 listeNoms=["Culture","Divertissement","Sciences","Mythologie","Sport","Géographie","Histoire","Politique","Art","Célébrités","Animaux","Véhicules","Global"]
 dictCateg={9:0,10:1,11:1,12:1,13:1,14:1,15:1,16:1,17:2,18:2,19:2,20:3,21:4,22:5,23:6,24:7,25:8,26:9,27:10,28:11,29:1,30:2,31:1,32:1}
@@ -172,7 +173,7 @@ class Versus(Question):
         await self.endGame(message,inGame,gamesTrivial)
         await message.unpin()
 
-    def stats(self,win,option):
+    async def stats(self,win,option,chan,bot):
         connexionGuild,curseurGuild=connectSQL(self.guild.id,"Guild","Guild",None,None)
         connexionOT,curseurOT=connectSQL("OT","Guild","Guild",None,None)
         for i in self.ids:
@@ -182,7 +183,9 @@ class Versus(Question):
             else:
                 count,state=-1,"L"
             exeJeuxSQL(i,None,state,self.guild.id,curseurGuild,count,option,None)
-            exeJeuxSQL(i,None,state,"OT",curseurOT,count,option,None)
+            wins=exeJeuxSQL(i,None,state,"OT",curseurOT,count,option,None)
+            if state=="W":
+                await sendCarte(bot.get_user(i),option,wins,"classic",chan)
         connexionGuild.commit()
         connexionOT.commit()
 
@@ -249,7 +252,7 @@ async def trivialVersus(ctx,bot,inGame,gamesTrivial):
                 await message.channel.send(embed=game.embedResults(count[0]))
                 await message.unpin()
                 game.playing=False
-                game.stats(count[0],"TrivialVersus")
+                await game.stats(count[0],"TrivialVersus",message.channel,bot)
                 game.paris.distribParis(count[0].id)
             elif len(count)>1:
                 game.max+=1

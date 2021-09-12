@@ -83,7 +83,7 @@ class TabMatrice:
                         break
                 if count==4:
                     return True, "Colonne {0}".format(dictYReverse[y]), i, cara
-        return False, None, None
+        return False, None, None, None, None
     
     def checkNul(self):
         for i in self.tableau:

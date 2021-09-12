@@ -145,7 +145,7 @@ async def trivialBattleRoyale(ctx,bot,inGame,gamesTrivial):
                 await message.channel.send(embed=game.embedResults(game.guild.get_member(game.restants[0])))
                 await message.unpin()
                 game.playing=False
-                game.stats(game.guild.get_member(game.restants[0]),"TrivialBR")
+                await game.stats(game.guild.get_member(game.restants[0]),"TrivialBR",message.channel,bot)
                 game.paris.distribParis(game.restants[0])
             game.fermeture()
             game.tour+=1

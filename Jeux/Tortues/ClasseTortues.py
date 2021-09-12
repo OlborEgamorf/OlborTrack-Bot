@@ -8,6 +8,7 @@ from Jeux.Tortues.ClassesAutres import Carte, Pile
 from Stats.SQL.ConnectSQL import connectSQL
 from Stats.SQL.Execution import exeJeuxSQL
 from Titres.Outils import gainCoins
+from Titres.Carte import sendCarte
 
 listeCouleurs=("rouge","jaune","bleue","verte","violette")
 dictEmote={0:"<:otBlank:828934808200937492>","rouge":"<:OTTrouge:860119157495693343>","verte":"<:OTTvert:860119157331853333>","bleue":"<:OTTbleu:860119157491892255>","jaune":"<:OTTjaune:860119157688631316>","violette":"<:OTTviolet:860119157672247326>","last":"*dernière tortue*","multi":"*au choix*"}
@@ -219,7 +220,7 @@ class JeuTortues:
         embed.description+="\n\n"+descip
         return embed
 
-    def stats(self,win):
+    async def stats(self,win,chan):
         connexionGuild,curseurGuild=connectSQL(self.guild.id,"Guild","Guild",None,None)
         connexionOT,curseurOT=connectSQL("OT","Guild","Guild",None,None)
         for i in self.joueurs:
@@ -230,7 +231,9 @@ class JeuTortues:
             else:
                 count,state=-1,"L"
             exeJeuxSQL(i.userid,None,state,self.guild.id,curseurGuild,count,"Tortues",None)
-            exeJeuxSQL(i.userid,None,state,"OT",curseurOT,count,"Tortues",None)
+            wins=exeJeuxSQL(i.userid,None,state,"OT",curseurOT,count,"Tortues",None)
+            if state=="W": 
+                await sendCarte(i.user,"Tortues",wins,"classic",chan)
         connexionGuild.commit()
         connexionOT.commit()
 

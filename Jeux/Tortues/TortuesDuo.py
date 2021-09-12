@@ -84,7 +84,7 @@ async def startGameTortuesDuo(ctx,bot,inGame,gamesTortues):
                                 await message.channel.send(embed=embed)
                                 await message.clear_reactions()
                                 await message.unpin()
-                                game.stats(win.equipe)
+                                await game.stats(win.equipe,message.channel)
                                 for j in range(2):
                                     game.paris.distribParis(game.equipe[win.equipe][j].userid)
                                 break

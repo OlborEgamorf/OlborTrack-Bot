@@ -10,6 +10,7 @@ from Titres.Outils import gainCoins
 
 from Jeux.ClasseMatrice import JeuMatrice
 from Jeux.Paris import Pari
+from Titres.Carte import sendCarte
 
 dictEmotes={("B","C","C","P"):878357453828411392,("B","C","P","P"):878357453534801921,("B","C","P","G"):878357453576732692,("B","R","C","G"):878357453526401055,("B","R","C","P"):878357453400592455,("B","R","P","P"):878357453660643359,("B","R","P","G"):878357453614506025,("B","C","C","G"):878357453702561863,
 ("R","C","C","P"):878357454008774686,("R","C","P","P"):878357453450907710,("R","C","P","G"):878357453660643358,("R","R","C","G"):878357453656428605,("R","R","C","P"):878357453757108275,("R","R","P","P"):878357453614506026,("R","R","P","G"):878357453660643360,("R","C","C","G"):878357453673234522}
@@ -75,7 +76,7 @@ async def startGameMatrice(ctx,bot,inGame,gamesMatrice):
             x,y=await game.play(turn,message,bot)
 
             win=game.tab.checkTab(x,y)
-            if win[0] or game.tab.checkNul():            
+            if win[0]:            
                 game.playing=False
                 await message.edit(embed=game.embedGame(turn))
                 embed=game.embedWin(turn,game.tab.checkNul(),win[1],win[3],win[2])
@@ -84,9 +85,16 @@ async def startGameMatrice(ctx,bot,inGame,gamesMatrice):
                 await unpin(message)
                 if turn==0: lose=1
                 else: lose=0
-                exeStatsJeux(game.joueurs[turn].userid,game.joueurs[lose].userid,game.guild.id,"Matrice",game.tours,"win")
+                wins=exeStatsJeux(game.joueurs[turn].userid,game.joueurs[lose].userid,game.guild.id,"Matrice",game.tours,"win")
+                await sendCarte(bot.get_user(game.joueurs[turn].id),"Matrice",wins,"classic",message.channel)
                 gainCoins(game.joueurs[turn].userid,50+sum(game.paris.mises.values()))
                 game.paris.distribParis(game.joueurs[turn].userid)
+            elif game.tab.checkNul():
+                await message.edit(embed=game.embedGame(turn))
+                embed=game.embedWin(turn,game.tab.checkNul(),win[1],win[3],win[2])
+                await message.clear_reactions()
+                await unpin(message)
+                game.playing=False
             
             game.fermeture()
             turn+=1

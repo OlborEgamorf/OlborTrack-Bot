@@ -12,12 +12,14 @@ def exeStatsJeux(idW,idL,guild,option,tours,statut):
         exeJeuxSQL(idL,idW,"L","OT",curseurOT,-1,option,tours)
     else:
         exeJeuxSQL(idW,idL,"W",guild,curseurGuild,2,option,tours)
-        exeJeuxSQL(idW,idL,"W","OT",curseurOT,2,option,tours)
+        countW=exeJeuxSQL(idW,idL,"W","OT",curseurOT,2,option,tours)
         exeJeuxSQL(idL,idW,"L",guild,curseurGuild,-1,option,tours)
         exeJeuxSQL(idL,idW,"L","OT",curseurOT,-1,option,tours)
 
     connexionGuild.commit()
     connexionOT.commit()
+    if "countW" in locals():
+        return countW
 
 
 def statsServ(game,win):
