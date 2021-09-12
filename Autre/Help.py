@@ -6,7 +6,7 @@ from Core.Fonctions.setMaxPage import setPage
 from Core.Fonctions.Embeds import embedAssert, exeErrorExcept, sendEmbed
 from Outils.CustomCMD.ListeCMD import commandeCMD
 
-dictDescip={"home":{},"stats":dictStats,"polls":dictPoll,"jeux":dictJeux,"utile":dictUtile,"autre":dictAutre,"sv":dictSV,"outils":dictOutils,"wiki":dictWiki,"mal":dictMAL,"admin":dictAdmin,"spotify":dictSpotify,"geo":dictGeo,"titres":dictTitres}
+dictDescip={"home":{},"stats":dictStats,"polls":dictPoll,"jeux":dictJeux,"autre":dictAutre,"sv":dictSV,"outils":dictOutils,"admin":dictAdmin,"titres":dictTitres}
 
 async def commandeHelp(ctx,turn,react,ligne,bot,guildOT):
     connexionCMD,curseurCMD=connectSQL(guildOT.id,"Commandes","Guild",None,None)
@@ -54,7 +54,7 @@ def embedHelp30(option,guildOT,page,bot):
     dictDescipFields={"home":{},"stats":dictFStats,"polls":dictFPoll,"jeux":dictFJeux,"autre":dictFAutre,"sv":dictFSV,"outils":dictFOutils,"admin":dictFAdmin,"titres":dictFTitres}
     dictDescipTitres={"home":{},"stats":dictTStats,"polls":dictTPoll,"jeux":dictTJeux,"autre":dictTAutre,"sv":dictTSV,"outils":dictTOutils,"admin":dictTAdmin,"titres":dictTTitres}
 
-    listeName=["<:OTHstats:859840446901649459> OT!help stats","<:OTHoutils:859840447126700083> OT!help outils","<:OTHjeux:859840446675419167> OT!help jeux","<:OTHpoll:859840447210848306> OT!help polls","<:OTHsv:859840446780145665> OT!help savezvous","<:OTHadmin:859840446984486972> OT!help admin","<:ot30:845649462918512671> OT!help autre","<:OTHinteract:885883292593827842> OT!help interact","<:ot30:845649462918512671> OT!help serv","<:ot30:845649462918512671> OT!help titres"]
+    listeName=["<:OTHstats:859840446901649459> OT!help stats","<:OTHoutils:859840447126700083> OT!help outils","<:OTHjeux:859840446675419167> OT!help jeux","<:OTHpoll:859840447210848306> OT!help polls","<:OTHsv:859840446780145665> OT!help savezvous","<:OTHinteract:885883292593827842> OT!help interact","<:OTHadmin:859840446984486972> OT!help admin","<:ot30:845649462918512671> OT!help autre","<:ot30:845649462918512671> OT!help serv","<:ot30:845649462918512671> OT!help titres"]
     listeValue=["Statistiques de l'activité de votre serveur !","Gérez vos outils !","Questions de culture, Tortues et plus !","Sondages, giveaway et rappels !","Créez une boîte de connaissances commune !","Les intéreactions avec d'autres sites","Toutes les commandes pour les administrateurs.","Autres commandes.","Les commandes personnalisées de votre serveur (s'il y en a)","Gestion des titres !"]
     listeOptions=["stats","jeux","outils","polls","sv","interact","admin","autre","serv","titres"]
 
