@@ -12,6 +12,7 @@ async def setEmote(ctx,bot,args):
         assert emoteBot!=None, "Vous devez me donner une emote que je connais et qui est visible à mes yeux !\nAttention : si vous venez de la créer, il est possible qu'il y est des soucis de synchronisation."
 
         connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
+        assert curseur.execute("SELECT * FROM custombans WHERE ID={0}".format(ctx.author.id)).fetchone()==None, "Vous êtes banni des outils de personnalisation."
         if curseur.execute("SELECT * FROM emotes WHERE ID={0}".format(ctx.author.id)).fetchone()==None:
             curseur.execute("INSERT INTO emotes VALUES({0},'{1}',{2})".format(ctx.author.id,str(emoteBot),emoteBot.id))
         else:

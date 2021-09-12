@@ -72,6 +72,7 @@ async def achatCustom(ctx,bot):
         connexionUser.commit()
 
         connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
+        assert curseur.execute("SELECT * FROM custombans WHERE ID={0}".format(ctx.author.id)).fetchone()==None, "Vous êtes banni des outils de personnalisation."
         if curseur.execute("SELECT * FROM custom WHERE ID={0}".format(ctx.author.id)).fetchone()==None:
             curseur.execute("INSERT INTO custom VALUES({0},'{1}')".format(ctx.author.id,newCustom))
         else:

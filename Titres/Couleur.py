@@ -21,6 +21,7 @@ async def setColor(ctx,bot,args):
             raise AssertionError("Les valeurs données doivent être des nombres, compris entre 0 et 255.")
 
         connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
+        assert curseur.execute("SELECT * FROM custombans WHERE ID={0}".format(ctx.author.id)).fetchone()==None, "Vous êtes banni des outils de personnalisation."
         if curseur.execute("SELECT * FROM couleurs WHERE ID={0}".format(ctx.author.id)).fetchone()==None:
             curseur.execute("INSERT INTO couleurs VALUES({0},{1},{2},{3})".format(ctx.author.id,r,g,b))
         else:
