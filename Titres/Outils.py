@@ -43,6 +43,7 @@ def setMarketPlace():
 def createAccount(connexion,curseur):
     curseur.execute("CREATE TABLE IF NOT EXISTS titresUser (ID INT, Nom TEXT, Rareté INT, PRIMARY KEY(ID))")
     curseur.execute("CREATE TABLE IF NOT EXISTS coins (Coins INT)")
+    curseur.execute("CREATE TABLE IF NOT EXISTS badges (Type TEXT, Période TEXT, Rang INT, Valeur INT, PRIMARY KEY(Type,Période,Rang))")
     if curseur.execute("SELECT * FROM coins").fetchone()==None:
         curseur.execute("INSERT INTO coins VALUES(0)")
     connexion.commit()

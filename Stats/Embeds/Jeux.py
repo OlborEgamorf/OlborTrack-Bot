@@ -3,6 +3,9 @@ from Core.Fonctions.Embeds import addtoFields, createFields, defEvol
 from Core.Fonctions.DichoTri import dichotomieID, triID
 from Stats.SQL.ConnectSQL import connectSQL
 from Core.Fonctions.GetNom import getTitre
+from Titres.Badges import getBadges
+
+dictOption={"tortues":"Tortues","tortuesduo":"TortuesDuo","trivialversus":"TrivialVersus","trivialbr":"TrivialBR","trivialparty":"TrivialParty","p4":"P4","bataillenavale":"BatailleNavale","cross":"Cross","trivial":"trivial"}
 
 def embedJeux(table,guild,page,mobile,id,evol,option):
     embed=discord.Embed()
@@ -17,7 +20,7 @@ def embedJeux(table,guild,page,mobile,id,evol,option):
             wl="({0}/{1})".format(table[i]["W"],table[i]["L"])
         count="{0} {1}".format(int(table[i]["Count"]),wl)
 
-        nom=getTitre(curseur,table[i]["ID"])
+        nom="{0} {1}".format(getBadges(table[i]["ID"],dictOption[option]),getTitre(curseur,table[i]["ID"]))
         if type(guild.get_member(table[i]["ID"]))==discord.Member and nom=="Inconnu":
             nom="<@{0}>".format(table[i]["ID"])
         
@@ -35,7 +38,7 @@ def embedJeux(table,guild,page,mobile,id,evol,option):
         if etat[0]:
             rank="\n**__{0}__**".format(table[etat[1]]["Rank"])
 
-            nom="**__{0}__**".format(getTitre(curseur,id))
+            nom="**__{0} {1}__**".format(getBadges(id,dictOption[option]),getTitre(curseur,id))
             if nom=="**__Inconnu__**":
                 nom="**__<@{0}>__**".format(id)
 
