@@ -12,7 +12,7 @@ dictAdmin={1:[],2:["hide","blind","mute"],3:["modulestat","modulecmd"],4:["delst
 
 dictAutre={1:["help","about","invite","support","test","feedback","perms","servcount","credits","reseaux"],2:["roulette","dice","snipe","avatar","say"]}
 
-dictTitres={1:[],2:["titre","titre liste","titre perso","titre set","titre infos"],3:["titre achat","titre vente","titre cadeau","titre trade","titre pack"],4:["profil","profil custom","profil emote","profil couleur","indic"]}
+dictTitres={1:[],2:["titre","titre liste","titre perso","titre set","titre infos"],3:["titre achat","titre vente","titre cadeau","titre trade","titre pack"],4:["profil","profil custom","profil emote","profil couleur","profil fond","profil texte","profil badges"],5:["indic","fondsubmit"]}
 
 dictInteract={1:[],2:["wikipedia","events","wikinsfw","wikiquote","wikiqotd"],3:["maluser","mallist","malcompare","malsearch"],4:["spoartiste","spoalbum","spoplaylist","spopodcast","spotitre"],5:["zeynah","iss","nasaphoto"]}
 
@@ -23,18 +23,20 @@ dictAnniv={1:[],2:["anniversaire","anniversaire set"],3:["anniversaire active","
 dictPStats={1:"Olbor Track est capable de capter différentes statistiques comme les messages envoyés par chaque membre du serveur, le temps passé en vocal, les emotes utilisées par exemple.\nCes statistiques sont stockées sous plusieurs formes, et consultables avec ces commandes.\nLes administrateurs peuvent les configurer (voir OT!help admin).\n\n**Sous les commandes apparaitront des réactions :**\n <:otGAUCHE:772766034335236127> / <:otDROITE:772766034376523776> : changer de page\n<:otGRAPH:772766034558058506> : afficher les graphiques\n<:otTRI:833666016491864114> : changer le tri\n<:otMOBILE:833736320919797780> : changer l'affichage : classique ou mobile",13:"**OT!messganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les messages.\n**OT!saloganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les salons.\n**OT!freqganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les heures d'activité.\n**OT!voicganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour le temps passé en vocal.\n**OT!vchaganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les salons vocaux.\n**OT!emotganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les emotes.\n**OT!reacganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les réactions.\n**OT!motsganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les mots envoyés."}
 dictPPoll={1:"Olbor Track dispose de plusieurs commandes pour faire des sondages et giveaway.\nPour pouvoir les lancer, il faut avoir la permission 'gestion des messages' sur le serveur.\nLa commande OT!reminder ne nécessite aucune permission spéciale."}
 dictPJeux={1:"Olbor Track possède plusieurs jeux qui se jouent à plusieurs, de 2 à 15 joueurs !\nEssayez des jeux Trivial, la Course des Tortues, le Puissance 4 ou la Bataille Navale !\nTous les jeux possèdent des classements par serveurs et mondial !",2:"Vous pouvez proposer de nouvelles questions pour étoffer les jeux Trivial [en cliquant ici !](https://docs.google.com/forms/d/e/1FAIpQLSc6d3fHx95m5pRnCYMfcFg7Ng0eeEhXl4aS87Hb0cupA_NvOg/viewform)\n",6:"Pour voir si des parties en attente, rejoignez le serveur de tests et consultez le salon #parties-cross-serveur. (OT!tests)"}
-dictPOutils={1:"Olbor Track peut améliorer votre serveur avec des outils pratiques !\nEssayez les tableaux d'emotes, les commandes personnalisées, les alertes Twitch et les commandes automatiques !\nIl faut avoir la permission 'gestion des messages' sur le serveur pour pouvoir les configurer.",2:"**Les tableaux c'est quoi?**\nLes tableaux d'emotes sont des outils que propose OlborTrack. On les active en donnant *une emote*, *un nombre*, et un *salon*. Quand cette emote atteint le nombre donné de réactions sur un message, le message est copié dans le salon !\n",3:"**Des alertes Twitch ??**\nConfigurez des alertes Twitch, pour que quand votre streamer préfèré passe en live, un message est envoyé dans le salon de votre choix, avec la description de votre choix !\n",5:"**Comment fonctionnent les commandes automatiques ??**\nLes commandes automatiques, quand elles sont activées, se déclenchent tous les jours à minuit dans le salon de votre choix. Pour les commandes 'mois' et 'annee', elles se déclenchent respectivement quand commence un nouveau mois et une nouvelle année.\n"}
+dictPOutils={1:"Olbor Track peut améliorer votre serveur avec des outils pratiques !\nEssayez les messages de bienvenue, les salons vocaux éphémères, les tableaux d'emotes, les commandes personnalisées et les commandes automatiques !\nIl faut avoir la permission 'gestion des messages' sur le serveur pour pouvoir les configurer.",2:"Les messages de bienvenue s'affichent quand un nouveau membre rejoint votre serveur. Vous pouvez configurer des messages et/ou des images. Si vous en configurez plusieurs messages ou images, le bot choisira aléatoirement ce qui sera envoyé !\n",3:"Pareil que les messages de bienvenue, sauf qu'ils sont activés quand un membre s'en va !\n",4:"**Les tableaux c'est quoi?**\nLes tableaux d'emotes sont des outils que propose OlborTrack. On les active en donnant *une emote*, *un nombre*, et un *salon*. Quand cette emote atteint le nombre donné de réactions sur un message, le message est copié dans le salon !\n",7:"**Comment fonctionnent les commandes automatiques ??**\nLes commandes automatiques, quand elles sont activées, se déclenchent tous les jours à minuit dans le salon de votre choix. Pour les commandes 'mois' et 'annee', elles se déclenchent respectivement quand commence un nouveau mois et une nouvelle année.\n",5:"Les salons vocaux éphémères est une fonctionnalité qui permet de créer des salons vocaux en fonction de la demande des utilisateurs. Ajoutez un hub, et dès qu'un membre s'y connectera, un nouveau salon vocal sera créé pour lui et son groupe ! Quand tout le monde est déconnecté, le salon vocal est supprimé.\n"}
 dictPSV={1:"Olbor Track vous permet d'avoir une boîte de connaissance commune à votre serveur !\nN'importe qui peut y ajouter des phrases et/ou des images, qui sortent ensuite aléatoirement avec la commande OT!savezvous.\nLes modérateurs peuvent supprimer des phrases de la boîte."}
 dictPAdmin={1:"Les administrateurs du serveur peuvent configurer Olbor Track afin d'avoir une utilisation personnalisée du bot.\nIls peuvent moduler les statistiques traquées, les commandes activées, le statut des salons, et +...",4:"**OT!getdata** : [ADMIN] Initialise toutes les statistiques de votre serveur."}
 dictPAutre={}
 dictPTitres={1:"Les titres sont des cosmétiques qui s'affichent sur les classements mondiaux des jeux, et que vous pouvez acheter/vendre/débloquer/échanger, à l'aide d'une monnaie spéciale : les OT Coins <:otCOINS:873226814527520809>.\nCette monnaie se gagne en jouant à n'importe lequel de mes jeux ou en devenant un donateur (OT!support).\nCertains titres sont déblocables en jouant, ou en étant dans les premières places des classements !"}
 dictPInteract={1:"Olbor Track permet de faire des recherches sur d'autres sites internet, via quelques commandes !\nDécouvrez les intéractions possibles avec Wikipedia, MyAnimeList et Spotify !",2:"Olbor Track possède des intéractions avec Wikipedia, pour faire des recherches sur un article, ou alors regarder les événements qui se sont passés aujourd'hui à cette date !",3:"Olbor Track possède des intéractions avec MyAnimeList, pour faire des recherches sur des mangas ou animes et sur des utilisateurs du site !",4:"Olbor Track possède des intéractions avec Wikipedia, pour faire des recherches sur des artistes/albums/titres et + !"}
+dictPAlertes={1:"Olbor Track peut fournir des alertes liées à YouTube, Twitter et Twitch !\nDès que votre créateur préféré publie une nouvelle vidéo/un nouveau Tweet/un nouveau stream, un message est envoyé dans le salon de votre choix !\nPour les configurer, vous devez avoir la permission 'gestion des messages'."}
+dictPAnniv={1:"Les anniversaires sont une fonctionnalité globale et cross-serveur.\nAjoutez votre date d'anniversaire dans le bot, et le jour venu dans les serveurs ayant activé la fonctionnalité et où vous êtes, un message sera envoyé !"}
 
 dictFStats={1:[],2:["periodes","usage"],3:["periodes","roles","usage"],4:["periodes","roles","usage"],5:["periodes","salons","roles","usage"],6:["periodes","heure","roles","usage"],7:["periodes","voice","roles","usage"],8:["periodes","emote","roles","usage"],9:["periodes","emote","roles","usage"],10:["periodes","roles","usage"],11:["periodes","divers","roles","usage"],12:["periodes","usage"],13:["periodes","usage"],14:["periodes","usage"],15:["periodes","usage"],16:["periodes","usage"],17:["periodes","usage"]}
 
 dictFPoll={1:[],2:["temps","texte","usage"],3:["temps","gagnants","usage"],4:["temps","usage"]}
 
-dictFOutils={1:[],2:["salons","usage"],3:["salons","usage"],4:["usage"],5:["salons","auto","usage"],6:["salons","usage"],7:["voice","usage"]}
+dictFAdmin={1:[],2:["salons","usage"],3:["salons","usage"],4:["usage","salons"],5:["voice","usage"],6:["usage"],7:["usage","auto","salons"]}
 
 dictFJeux={1:[],2:["trivial","usage"],3:[],4:[],5:["periodes","jeux","trivial","usage"],6:[]}
 
@@ -47,6 +49,10 @@ dictFAutre={1:[],2:["texte","usage"]}
 dictFTitres={1:[],2:["usage"],3:["usage"],4:["usage"]}
 
 dictFInteract={1:[],2:["usage"],3:["mal","usage"],4:["usage"],5:[]}
+
+dictFAlertes={1:[],2:["salons","usage"],3:["salons","usage"],4:["salons","usage"]}
+
+dictFAnniv={1:[],2:["periodes","usage"],3:["usage"]}
 
 dictFields={
     "periodes":{"name":"Gestion des périodes","value":"'mois' : donne le mois actuel\n'annee' : donne l'année actuelle\n[mois] [année] : donne le mois que l'on veut *(ex : février 2020)*\n[année] : donne l'année que l'on veut *(ex : 2021)*"},
@@ -70,9 +76,9 @@ dictTStats={1:"Statistiques",2:"Commandes diverses",3:"Statistiques de messages"
 
 dictTPoll={1:"Sondages, giveaway et rappels",2:"Sondages",3:"Giveaway",4:"Rappels"}
 
-dictTOutils={1:"Outils",2:"Tableaux d'emotes",3:"Alertes Twitch",4:"Commandes personnalisées",5:"Commandes automatiques",6:"[BETA] Alertes YouTube",7:"[BETA] Salons vocaux éphémères"}
+dictTOutils={1:"Outils",2:"Messages de bienvenue",3:"Messages d'adieu",4:"Tableaux",5:"Salons vocaux éphémères",6:"Commandes personnalisées",7:"Commandes automatiques"}
 
-dictTJeux={1:"Jeux",2:"Jeux Trivial",3:"Jeux Tortues",4:"BN et P4",5:"Classements",6:"[BETA] Jeux Cross-Serveur"}
+dictTJeux={1:"Jeux",2:"Jeux Trivial",3:"Jeux Tortues",4:"Autres jeux",5:"Classements",6:"Jeux Cross-Serveur"}
 
 dictTSV={1:"Savez-vous ?",2:"Gestion de la boite",3:"Affichage des élèments"}
 
@@ -80,6 +86,6 @@ dictTAdmin={1:"Commandes administrateur",2:"Gestion des salons",3:"Gestion des m
 
 dictTAutre={1:"Commandes utiles",2:"Autres commandes"}
 
-dictTTitres={1:"[BETA] Les Titres",2:"[BETA] Listes et équipement",3:"[BETA] Achat, vente et échange",4:"[BETA] Autres outils de personnalisation"}
+dictTTitres={1:"Titres et personnalisation",2:"Listes et équipement de titre",3:"Achat, vente et échange de titre",4:"Profil de joueur et options de personnalisation",5:"Options pour les serveurs"}
 
 dictTInteract={1:"Intéractions avec d'autres sites",2:"Olbor Track x Wikipedia",3:"Olbor Track x MyAnimeList",4:"Olbor Track x Spotify",5:"Autres intéractions"}
