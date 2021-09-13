@@ -99,7 +99,12 @@ async def annualyTitles(annee,bot):
             pass
 
 
-async def badgesSimu(mois,annee,bot):
+"""listeDates=[("06","20"),("07","20"),("08","20"),("09","20"),("10","20"),("11","20"),("12","20"),("01","21"),("02","21"),("03","21"),("04","21"),("05","21"),("06","21"),("07","21"),("08","21")]
+for i in listeDates:
+    asyncio.run(badgesSimu(i[0],i[1],None))"""
+
+
+async def monthlyBadges(mois,annee):
     dictValue={3:1,2:2,1:3}
     liste=["P4","BatailleNavale","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR","Matrice"]
     for i in liste:
@@ -110,28 +115,35 @@ async def badgesSimu(mois,annee,bot):
                 try:
                     curseurUser.execute("CREATE TABLE IF NOT EXISTS badges (Type TEXT, Période TEXT, Rang INT, Valeur INT, PRIMARY KEY(Type,Période,Rang))")
                     curseurUser.execute("INSERT INTO badges VALUES('{0}','{1}',{2},{3})".format(i,"mois",j["Rank"],dictValue[j["Rank"]]))
-                    #curseurUser.execute("DROP TABLE badges")
                     connexionUser.commit()
                 except sqlite3.IntegrityError:
                     pass
         except sqlite3.OperationalError:
             pass
         
-
         connexion,curseur=connectSQL("OT",i,"Jeux","GL","")
+        connexionTitres,curseurTitres=connectSQL("OT","Titres","Titres",None,None)
+        for j in curseurTitres.execute("SELECT * FROM badges WHERE Jeu='{0}'".format(i)).fetchall():
+            connexionUser,curseurUser=connectSQL("OT",j["ID"],"Titres",None,None)
+            curseurUser.execute("DELETE FROM badges WHERE Type='{0}' AND Valeur={1}".format(i,100+dictValue[j["Rank"]]))
+            connexionUser.commit()
         try:
             for j in curseur.execute("SELECT * FROM glob WHERE Rank<=3").fetchall():
                 connexionUser,curseurUser=connectSQL("OT",j["ID"],"Titres",None,None)
                 try:
                     curseurUser.execute("CREATE TABLE IF NOT EXISTS badges (Type TEXT, Période TEXT, Rang INT, Valeur INT, PRIMARY KEY(Type,Période,Rang))")
                     curseurUser.execute("INSERT INTO badges VALUES('{0}','{1}',{2},{3})".format(i,"global",j["Rank"],100+dictValue[j["Rank"]]))
-                    #curseurUser.execute("DROP TABLE badges")
                     connexionUser.commit()
                 except sqlite3.IntegrityError:
                     pass
         except sqlite3.OperationalError:
             pass
 
+
+async def annualyBadges(annee):
+    dictValue={3:1,2:2,1:3}
+    liste=["P4","BatailleNavale","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR","Matrice"]
+    for i in liste:
         connexion,curseur=connectSQL("OT",i,"Jeux","TO",annee)
         try:
             for j in curseur.execute("SELECT * FROM to{0} WHERE Rank<=3".format(annee)).fetchall():
@@ -139,32 +151,8 @@ async def badgesSimu(mois,annee,bot):
                 try:
                     curseurUser.execute("CREATE TABLE IF NOT EXISTS badges (Type TEXT, Période TEXT, Rang INT, Valeur INT, PRIMARY KEY(Type,Période,Rang))")
                     curseurUser.execute("INSERT INTO badges VALUES('{0}','{1}',{2},{3})".format(i,"annee",j["Rank"],10+dictValue[j["Rank"]]))
-                    #curseurUser.execute("DROP TABLE badges")
                     connexionUser.commit()
                 except sqlite3.IntegrityError:
                     pass
         except sqlite3.OperationalError:
             pass
-    
-    for i in (128523828329578496,236142110355488768,422708715419074561,385108888330043393,233322552167104512,254731377013030914,417676325227331585,309320824891113473,520243182924070915,375632632244994048,216578161289330691,520243182924070915,309032693499297802):
-        try:
-            connexionUser,curseurUser=connectSQL("OT",i,"Titres",None,None)
-            curseurUser.execute("CREATE TABLE IF NOT EXISTS badges (Type TEXT, Période TEXT, Rang INT, Valeur INT, PRIMARY KEY(Type,Période,Rang))")
-            curseurUser.execute("INSERT INTO badges VALUES('{0}','{1}',{2},{3})".format("Special","VIP",0,0))
-            connexionUser.commit()
-        except sqlite3.IntegrityError:
-            pass
-    
-    for i in (128523828329578496,151803910514933760,410535340542001172,774688029956243457,258593598860165120,227800236356009987,319931472058515476,417676325227331585,254731377013030914,233322552167104512,385108888330043393):
-        try:
-            connexionUser,curseurUser=connectSQL("OT",i,"Titres",None,None)
-            curseurUser.execute("CREATE TABLE IF NOT EXISTS badges (Type TEXT, Période TEXT, Rang INT, Valeur INT, PRIMARY KEY(Type,Période,Rang))")
-            curseurUser.execute("INSERT INTO badges VALUES('{0}','{1}',{2},{3})".format("Special","Testeur",0,0))
-            connexionUser.commit()
-        except sqlite3.IntegrityError:
-            pass
-
-
-"""listeDates=[("06","20"),("07","20"),("08","20"),("09","20"),("10","20"),("11","20"),("12","20"),("01","21"),("02","21"),("03","21"),("04","21"),("05","21"),("06","21"),("07","21"),("08","21")]
-for i in listeDates:
-    asyncio.run(badgesSimu(i[0],i[1],None))"""
