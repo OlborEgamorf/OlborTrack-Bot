@@ -117,7 +117,7 @@ async def startGameTortuesCross(ctx,bot,inGame,gamesTortues):
                     await i.channel.send(embed=embed)
                     await i.clear_reactions()
                     await i.unpin()
-                game.stats(win)
+                await game.stats(win)
                 
                 for i in game.joueurs:
                     if i.couleur==win:

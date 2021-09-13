@@ -19,6 +19,7 @@ import asyncio
 from Titres.Outils import gainCoins
 from Stats.SQL.Execution import exeJeuxSQL
 from Core.Fonctions.Unpin import pin, unpin
+from Titres.Carte import newCarte
 
 
 class VersusCross(Versus):
@@ -196,7 +197,7 @@ class VersusCross(Versus):
             await unpin(i)
         await self.endGame(message,inGame,gamesTrivial)
 
-    def stats(self,win,option):
+    async def stats(self,win,option):
         connexionOT,curseurOT=connectSQL("OT","Guild","Guild",None,None)
         for i in self.ids:
             if i==win.id:
@@ -204,5 +205,9 @@ class VersusCross(Versus):
                 gainCoins(i,25*len(self.ids)+sum(self.paris.mises.values()))
             else:
                 count,state=-1,"L"
-            exeJeuxSQL(i,None,state,"OT",curseurOT,count,option,None)
+            wins=exeJeuxSQL(i,None,state,"OT",curseurOT,count,option,None)
+            if state=="W":
+                await newCarte(win,option,wins,"cross")
+                for j in self.messages:
+                    await j.channel.send(file=discord.File("Images/ExFond/{0}.png".format(win.id)))
         connexionOT.commit()

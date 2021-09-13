@@ -88,7 +88,7 @@ async def trivialBattleRoyaleCross(ctx,bot,inGame,gamesTrivial):
                     await i.channel.send(embed=game.embedResults(bot.get_user(game.restants[0]),i.guild.id))
                     await unpin(i)
                 game.playing=False
-                game.stats(bot.get_user(game.restants[0]),"TrivialBR")
+                await game.stats(bot.get_user(game.restants[0]),"TrivialBR")
                 statsServ(game,game.restants[0])
                 game.paris.distribParis(game.restants[0])
             game.fermeture()

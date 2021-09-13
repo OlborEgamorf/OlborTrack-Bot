@@ -111,7 +111,7 @@ class Versus(Question):
     def addPlayer(self,joueur):
         self.joueurs.append(joueur)
         self.reponses[joueur.id]=None
-        self.scores[joueur.id]=0
+        self.scores[joueur.id]=4
         self.histo[joueur.id]=""
     
     def setDiff(self):
@@ -173,7 +173,7 @@ class Versus(Question):
         await self.endGame(message,inGame,gamesTrivial)
         await message.unpin()
 
-    async def stats(self,win,option,chan,bot):
+    async def stats(self,win,option,chan):
         connexionGuild,curseurGuild=connectSQL(self.guild.id,"Guild","Guild",None,None)
         connexionOT,curseurOT=connectSQL("OT","Guild","Guild",None,None)
         for i in self.ids:
@@ -185,7 +185,7 @@ class Versus(Question):
             exeJeuxSQL(i,None,state,self.guild.id,curseurGuild,count,option,None)
             wins=exeJeuxSQL(i,None,state,"OT",curseurOT,count,option,None)
             if state=="W":
-                await sendCarte(bot.get_user(i),option,wins,"classic",chan)
+                await sendCarte(win,option,wins,"classic",chan)
         connexionGuild.commit()
         connexionOT.commit()
 
@@ -252,7 +252,7 @@ async def trivialVersus(ctx,bot,inGame,gamesTrivial):
                 await message.channel.send(embed=game.embedResults(count[0]))
                 await message.unpin()
                 game.playing=False
-                await game.stats(count[0],"TrivialVersus",message.channel,bot)
+                await game.stats(count[0],"TrivialVersus",message.channel)
                 game.paris.distribParis(count[0].id)
             elif len(count)>1:
                 game.max+=1

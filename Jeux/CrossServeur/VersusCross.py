@@ -88,7 +88,7 @@ async def trivialVersusCross(ctx,bot,inGame,gamesTrivial):
                     await i.channel.send(embed=game.embedResults(count[0],i.guild.id))
                     await unpin(i)
                 game.playing=False
-                game.stats(count[0],"TrivialVersus")
+                await game.stats(count[0],"TrivialVersus")
                 statsServ(game,count[0].id)
                 game.paris.distribParis(count[0].id)
             elif len(count)>1:

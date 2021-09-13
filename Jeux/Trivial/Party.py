@@ -299,7 +299,7 @@ async def trivialParty(ctx,bot,inGame,gamesTrivial):
                 await message.channel.send(embed=game.embedResults(end[0]))
                 await message.unpin()
                 game.playing=False
-                await game.stats(end[0],"TrivialParty",message.channel,bot)
+                await game.stats(end[0],"TrivialParty",message.channel)
                 game.paris.distribParis(end[0].id)
 
             game.fermeture()

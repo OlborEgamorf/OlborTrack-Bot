@@ -10,6 +10,7 @@ from Core.Fonctions.AuteurIcon import auteur
 from Jeux.Tortues.ClasseTortues import JeuTortues, Tortue
 from Stats.SQL.Execution import exeJeuxSQL
 from Titres.Outils import gainCoins
+from Titres.Carte import newCarte
 
 dictEmote={0:"<:otBlank:828934808200937492>","rouge":"<:OTTrouge:860119157495693343>","verte":"<:OTTvert:860119157331853333>","bleue":"<:OTTbleu:860119157491892255>","jaune":"<:OTTjaune:860119157688631316>","violette":"<:OTTviolet:860119157672247326>","last":"*dernière tortue*","multi":"*au choix*"}
 dictColor={"bleue":0x00CCFF,"violette":0x993366,"rouge":0xFF0000,"verte":0x77B255,"jaune":0xFFFF00}
@@ -129,7 +130,7 @@ class JeuTortuesCross(JeuTortues):
             emote=getEmoteJeux(i.userid)
             self.emotesCustom[i.userid]=emote
 
-    def stats(self,win):
+    async def stats(self,win):
         connexionOT,curseurOT=connectSQL("OT","Guild","Guild",None,None)
         for i in self.joueurs:
             if i.couleur==win:
@@ -138,7 +139,11 @@ class JeuTortuesCross(JeuTortues):
                 count,state=2,"W"
             else:
                 count,state=-1,"L"
-            exeJeuxSQL(i.userid,None,state,"OT",curseurOT,count,"Tortues",None)
+            wins=exeJeuxSQL(i.userid,None,state,"OT",curseurOT,count,"Tortues",None)
+            if state=="W":
+                await newCarte(i.user,"Tortues",wins,"cross")
+                for j in self.messages:
+                    await j.channel.send(file=discord.File("Images/ExFond/{0}.png".format(i.userid)))
         connexionOT.commit()
 
 

@@ -12,6 +12,7 @@ from Core.Fonctions.Unpin import pin, unpin
 from Stats.SQL.Execution import exeJeuxSQL
 from Stats.SQL.ConnectSQL import connectSQL
 from Jeux.Paris import Pari
+from Titres.Carte import sendCarte
 
 emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>","<:ot5:705766186713088042>","<:ot6:705766187182850148>","<:ot7:705766187115741246>"]
 dictCo={705766186909958185:0,705766186989912154:1,705766186930929685:2,705766186947706934:3,705766186713088042:4,705766187182850148:5,705766187115741246:6}
@@ -120,10 +121,10 @@ async def startGameP4Cross(ctx,bot,inGame,gamesP4):
                     else: lose=0
 
                     connexionOT,curseurOT=connectSQL("OT","Guild","Guild",None,None)
-                    exeJeuxSQL(game.joueurs[turn].id,game.joueurs[lose].id,"W","OT",curseurOT,2,"P4",game.tours)
+                    wins=exeJeuxSQL(game.joueurs[turn].id,game.joueurs[lose].id,"W","OT",curseurOT,2,"P4",game.tours)
                     exeJeuxSQL(game.joueurs[lose].id,game.joueurs[turn].id,"L","OT",curseurOT,-1,"P4",game.tours)
                     connexionOT.commit()
-
+                    
                     statsServ(game,game.joueurs[turn].id)
                     gainCoins(game.joueurs[turn].id,50+sum(game.paris.mises.values()))
                     game.paris.distribParis(game.joueurs[turn].id)
@@ -132,6 +133,7 @@ async def startGameP4Cross(ctx,bot,inGame,gamesP4):
                         await i.clear_reactions()
                         await i.edit(embed=game.createEmbedP4(game.joueurs[turn],i.guild.id))
                         await i.channel.send(embed=game.embedWin(turn,False,i.guild.id))
+                        await sendCarte(bot.get_user(game.joueurs[turn].id),"P4",wins,"cross",i.channel)
                         await unpin(i)
                     game.playing=False
                 else:

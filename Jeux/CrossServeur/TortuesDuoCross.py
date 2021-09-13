@@ -135,7 +135,7 @@ async def startGameTortuesDuoCross(ctx,bot,inGame,gamesTortues):
                                 for j in range(2):
                                     statsServ(game,game.equipe[win.equipe][j].userid)
                                     game.paris.distribParis(game.equipe[win.equipe][j].userid)
-                                game.stats(win.equipe)
+                                await game.stats(win.equipe)
                                 break
             
             game.fermeture()
