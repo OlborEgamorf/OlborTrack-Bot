@@ -9,6 +9,7 @@ from Stats.SQL.ConnectSQL import connectSQL
 from Outils.Bienvenue.Manipulation import squaretoround
 from Titres.Listes import commandeTMP
 from Titres.Outils import createAccount
+import asyncio
 
 
 async def sendCarte(user,jeu,wins,option,chan):
@@ -192,3 +193,27 @@ async def texteFond(ctx,bot,args):
         await bot.get_channel(750803643820802100).send("Phrase : {0} - {1}".format(ctx.author.id,clean))
     except AssertionError as er:
         await ctx.send(embed=embedAssert(er))
+
+
+async def submitFond(ctx,bot):
+    try:
+        connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
+        if curseur.execute("SELECT * FROM custombans WHERE ID={0}".format(ctx.guild.id)).fetchone()!=None:
+            await ctx.reply(embed=embedAssert("Votre serveur est banni de cette procédure."))
+            return
+
+        embed=createEmbed("Proposition de fond","Pour augmenter la boutique de fond, vous pouvez proposer des fonds personnalisés pour votre serveur, et qui seront proposés uniquement aux membres de votre serveur.\n\nLa vérification et la validation des fonds et soumis à plusieurs critères : \n- La taille de l'image doit être 1280x720\n- Votre serveur doit avoir un certain nombre de membres\n- Votre serveur doit être connu comme utilisant souvent le bot\n- Aucune publicité explicite n'est acceptée, exemple : lien d'invitation du serveur affiché\n- Aucune image choquante ou provocante ne sera validée, et pourra même venir à un bannissement de votre serveur pour cette procédure.\n\nSi tout est bon, envoyez l'image que vous souhaitez.",0xf58d1d,ctx.invoked_with.lower(),ctx.guild)
+        await ctx.reply(embed=embed)
+
+        def check(mess):
+            return mess.author.id==ctx.author.id and mess.channel.id==ctx.message.channel.id and mess.attachments!=[]
+        
+        message=await bot.wait_for("message",check=check,timeout=60)
+
+        await bot.get_channel(886911788938035260).send("{0} - {1}\n{2} - {3}\n{4}".format(ctx.guild.name,ctx.guild.id,ctx.author.name,ctx.author.id,message.attachments[0].url))
+
+        embed=createEmbed("Proposition de fond","Votre image a été envoyée ! Vous receverez un message privé lorsqu'elle sera revue.",0xf58d1d,ctx.invoked_with.lower(),ctx.guild)
+        await ctx.reply(embed=embed)
+    except asyncio.exceptions.TimeoutError:
+        await message.reply(embed=embedAssert("Une minute s'est écoulée et vous n'avez pas envoyé d'image. L'opération a été annulée."))
+        await message.clear_reactions()
