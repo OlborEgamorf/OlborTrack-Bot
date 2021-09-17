@@ -6,7 +6,7 @@ from Core.Fonctions.setMaxPage import setPage
 from Core.Fonctions.Embeds import embedAssert, exeErrorExcept, sendEmbed
 from Outils.CustomCMD.ListeCMD import commandeCMD
 
-dictDescip={"home":{},"stats":dictStats,"polls":dictPoll,"jeux":dictJeux,"autre":dictAutre,"sv":dictSV,"outils":dictOutils,"admin":dictAdmin,"titres":dictTitres}
+dictDescip={"home":{},"stats":dictStats,"polls":dictPoll,"jeux":dictJeux,"autre":dictAutre,"sv":dictSV,"outils":dictOutils,"admin":dictAdmin,"titres":dictTitres,"interact":dictInteract,"alertes":dictAlertes,"anniv":dictAnniv}
 
 async def commandeHelp(ctx,turn,react,ligne,bot,guildOT):
     connexionCMD,curseurCMD=connectSQL(guildOT.id,"Commandes","Guild",None,None)
@@ -18,7 +18,7 @@ async def commandeHelp(ctx,turn,react,ligne,bot,guildOT):
             if ctx.args[2].lower()=="serv":
                 await commandeCMD(ctx,None,False,None)
                 return
-            elif ctx.args[2].lower() in ("polls","stats","jeux","autre","sv","outils","admin","titres","interact"):
+            elif ctx.args[2].lower() in ("polls","stats","jeux","autre","sv","outils","admin","titres","interact","alertes","anniv"):
                 option=ctx.args[2].lower()
             else:
                 option="home"
@@ -43,20 +43,20 @@ async def commandeHelp(ctx,turn,react,ligne,bot,guildOT):
     message=await sendEmbed(ctx,embed,react,False,curseurCMD,connexionCMD,page,pagemax)
 
 def embedHelp30(option,guildOT,page,bot):
-    dictColor={"home":0x6EC8FA,"stats":0x3498db,"polls":0xfc03d7,"jeux":0xad917b,"outils":0xf54269,"autre":0x6EC8FA,"sv":0x00ffd0,"admin":0x220cc9,"titres":0xf58d1d,"interact":0xfcfc03}
+    dictColor={"home":0x6EC8FA,"stats":0x3498db,"polls":0xfc03d7,"jeux":0xad917b,"outils":0xf54269,"autre":0x6EC8FA,"sv":0x00ffd0,"admin":0x220cc9,"titres":0xf58d1d,"interact":0xfcfc03,"alertes":0xf54269,"anniv":0x11f738}
 
-    dictLinks={"home":"https://cdn.discordapp.com/attachments/726034739550486618/870604901334536192/NEW.png","polls":"https://cdn.discordapp.com/attachments/726034739550486618/870604052315136050/poll.png","jeux":"https://cdn.discordapp.com/attachments/726034739550486618/870604061739732992/jeux.png","utile":"https://cdn.discordapp.com/attachments/726034739550486618/870604901334536192/NEW.png","autre":"https://cdn.discordapp.com/attachments/726034739550486618/870604901334536192/NEW.png","sv":"https://cdn.discordapp.com/attachments/726034739550486618/870604056203231252/sv.png","outils":"https://cdn.discordapp.com/attachments/726034739550486618/870604051069407272/outils.png","admin":"https://cdn.discordapp.com/attachments/726034739550486618/870604058883420170/admin.png","titres":"https://cdn.discordapp.com/attachments/726034739550486618/870604901334536192/NEW.png","interact":"https://cdn.discordapp.com/attachments/726034739550486618/885879620157730886/globe.png"}
+    dictLinks={"home":"https://cdn.discordapp.com/attachments/726034739550486618/870604901334536192/NEW.png","polls":"https://cdn.discordapp.com/attachments/726034739550486618/870604052315136050/poll.png","jeux":"https://cdn.discordapp.com/attachments/726034739550486618/870604061739732992/jeux.png","utile":"https://cdn.discordapp.com/attachments/726034739550486618/870604901334536192/NEW.png","autre":"https://cdn.discordapp.com/attachments/726034739550486618/870604901334536192/NEW.png","sv":"https://cdn.discordapp.com/attachments/726034739550486618/870604056203231252/sv.png","outils":"https://cdn.discordapp.com/attachments/726034739550486618/870604051069407272/outils.png","admin":"https://cdn.discordapp.com/attachments/726034739550486618/870604058883420170/admin.png","titres":"https://cdn.discordapp.com/attachments/726034739550486618/870604901334536192/NEW.png","interact":"https://cdn.discordapp.com/attachments/726034739550486618/885879620157730886/globe.png","alertes":"https://cdn.discordapp.com/attachments/726034739550486618/888141463421071420/alertes.png","anniv":"https://cdn.discordapp.com/attachments/726034739550486618/888141462066303056/anniv.png","stats":"https://media.discordapp.net/attachments/726034739550486618/870604054831714344/stats.png"}
 
-    dictAuthor={"home":"Bienvenue sur la page d’aide de Olbor Track !","stats":"Aide - Statistiques","polls":"Aide - Sondages, giweaway et rappels","jeux":"Aide - Jeux","autre":"Aide - Autres commandes","sv":"Aide - Boite de connaissances","outils":"Aide - Outils","admin":"Aide - Commandes admin","titres":"Aide - Système de titres","interact":"Aide - Interactions"}
-    dictLen={"home":3,"stats":len(dictStats),"polls":len(dictPoll),"jeux":len(dictJeux),"autre":len(dictAutre),"sv":len(dictSV),"outils":len(dictOutils),"admin":len(dictAdmin),"titres":len(dictTitres),"interact":len(dictInteract)}
+    dictAuthor={"home":"Bienvenue sur la page d’aide de Olbor Track !","stats":"Aide - Statistiques","polls":"Aide - Sondages, giweaway et rappels","jeux":"Aide - Jeux","autre":"Aide - Autres commandes","sv":"Aide - Boite de connaissances","outils":"Aide - Outils","admin":"Aide - Commandes admin","titres":"Aide - Système de titres","interact":"Aide - Interactions","alertes":"Aide - Alertes","anniv":"Aide - Anniversaires"}
+    dictLen={"home":3,"stats":len(dictStats),"polls":len(dictPoll),"jeux":len(dictJeux),"autre":len(dictAutre),"sv":len(dictSV),"outils":len(dictOutils),"admin":len(dictAdmin),"titres":len(dictTitres),"interact":len(dictInteract),"alertes":len(dictAlertes),"anniv":len(dictAnniv)}
 
-    dictDescipPlus={"home":{},"stats":dictPStats,"polls":dictPPoll,"jeux":dictPJeux,"autre":dictPAutre,"sv":dictPSV,"outils":dictPOutils,"admin":dictPAdmin,"titres":dictPTitres,"interact":dictPInteract}
-    dictDescipFields={"home":{},"stats":dictFStats,"polls":dictFPoll,"jeux":dictFJeux,"autre":dictFAutre,"sv":dictFSV,"outils":dictFOutils,"admin":dictFAdmin,"titres":dictFTitres}
-    dictDescipTitres={"home":{},"stats":dictTStats,"polls":dictTPoll,"jeux":dictTJeux,"autre":dictTAutre,"sv":dictTSV,"outils":dictTOutils,"admin":dictTAdmin,"titres":dictTTitres}
+    dictDescipPlus={"home":{},"stats":dictPStats,"polls":dictPPoll,"jeux":dictPJeux,"autre":dictPAutre,"sv":dictPSV,"outils":dictPOutils,"admin":dictPAdmin,"titres":dictPTitres,"interact":dictPInteract,"alertes":dictPAlertes,"anniv":dictPAnniv}
+    dictDescipFields={"home":{},"stats":dictFStats,"polls":dictFPoll,"jeux":dictFJeux,"autre":dictFAutre,"sv":dictFSV,"outils":dictFOutils,"admin":dictFAdmin,"titres":dictFTitres,"interact":dictFInteract,"alertes":dictFAlertes,"anniv":dictFAnniv}
+    dictDescipTitres={"home":{},"stats":dictTStats,"polls":dictTPoll,"jeux":dictTJeux,"autre":dictTAutre,"sv":dictTSV,"outils":dictTOutils,"admin":dictTAdmin,"titres":dictTTitres,"interact":dictTInteract,"alertes":dictTAlertes,"anniv":dictTAnniv}
 
-    listeName=["<:OTHstats:859840446901649459> OT!help stats","<:OTHoutils:859840447126700083> OT!help outils","<:OTHjeux:859840446675419167> OT!help jeux","<:OTHpoll:859840447210848306> OT!help polls","<:OTHsv:859840446780145665> OT!help savezvous","<:OTHinteract:885883292593827842> OT!help interact","<:OTHadmin:859840446984486972> OT!help admin","<:ot30:845649462918512671> OT!help autre","<:ot30:845649462918512671> OT!help serv","<:ot30:845649462918512671> OT!help titres"]
-    listeValue=["Statistiques de l'activité de votre serveur !","Gérez vos outils !","Questions de culture, Tortues et plus !","Sondages, giveaway et rappels !","Créez une boîte de connaissances commune !","Les intéreactions avec d'autres sites","Toutes les commandes pour les administrateurs.","Autres commandes.","Les commandes personnalisées de votre serveur (s'il y en a)","Gestion des titres !"]
-    listeOptions=["stats","jeux","outils","polls","sv","interact","admin","autre","serv","titres"]
+    listeName=["<:OTHstats:859840446901649459> OT!help stats","<:OTHoutils:859840447126700083> OT!help outils","<:OTHjeux:859840446675419167> OT!help jeux","<:OTHpoll:859840447210848306> OT!help polls","<:OTHsv:859840446780145665> OT!help savezvous","<:OTHalertes:888140611469844510> OT!help alertes","<:OTHanniv:888140611750854697> OT!help anniv","<:OTHinteract:885883292593827842> OT!help interact","<:OTHadmin:859840446984486972> OT!help admin","<:ot30:845649462918512671> OT!help autre","<:ot30:845649462918512671> OT!help serv","<:ot30:845649462918512671> OT!help titres"]
+    listeValue=["Statistiques de l'activité de votre serveur ! Messages, temps en vocal, emotes, ...","Gérez vos outils : messages de bienvenue, commandes personnalisée, tableaux, ...","Questions de culture, Tortues et plus !","Sondages, giveaway et rappels !","Créez une boîte de connaissances commune !","Gérez vos alertes YouTube, Twitch et Twitter !","Activez les anniversaires sur votre serveur !","Les intéreactions avec d'autres sites ! MyAnimeList, Wikipedia, Spotify, ...","Toutes les commandes pour les administrateurs.","Autres commandes.","Les commandes personnalisées de votre serveur (s'il y en a)","Gestion des titres, badges et personnalisation !"]
+    listeOptions=["stats","outils","jeux","polls","sv","alertes","anniv","interact","admin","autre","serv","titres"]
 
     embedHelp=discord.Embed(color=dictColor[option])
     embedHelp.set_author(icon_url=dictLinks[option],name=dictAuthor[option])
@@ -84,7 +84,7 @@ def embedHelp30(option,guildOT,page,bot):
                         embedHelp.add_field(name=listeName[i], value="`"+descip[0:-2]+"`", inline=False)
         else:
             embedHelp.set_image(url="https://cdn.discordapp.com/attachments/726034739550486618/870617284920619058/unknown.png")
-            #embedHelp.description="**Commandes actuellement en bêta :**\n\n**Jeux Cross-Serveurs** :\nVous pouvez désormais jouer avec des personnes hors de votre serveur !\n- OT!tortuescross\n- OT!tortuesduocross\n- OT!p4cross\n- OT!trivialversuscross\n- OT!trivialbrcross\n- OT!trivialpartycross\n\n**Titres** :\nRetour du système de titres !\nVoir OT!help titres\n\n**Alertes YouTube** :\nRecevez un message quand votre créateur favori poste une vidéo !\nVoir OT!help youtube\n\n**Salons vocaux éphémères**\nCréez des hubs de salons éphémères, qui disparaissent quand plus personne n'est connecté !\nVoir OT!help voiceephem"
+            embedHelp.description="Merci d'avoir ajouté Olbor Track sur votre serveur ! Voici une petite liste de gens qui ont aidé à ce que le projet perdure :\nDonateurs : Alfashield, NatG34, Zey\nContributeurs : Tonton Mathias, Zey, ZAGUE, Lexadi, Souaip\nRéalisation badges : Shimi\n\n***Vous savez pas quoi faire ?***\nVous avez déjà joué à la courses de tortues ? Commencez dès maintenant avec **OT!tortues** !\nVous avez déjà joué à la courses de tortues ? Commencez dès maintenant avec **OT!tortues** !\nVous voulez savoir qui passe le plus de temps en vocal ? Faites **OT!vocal** !\nA votre avis, qui est le plus gros spammeur de votre serveur ? Découvrez le avec **OT!messages** !\nApprenez des choses aux autres avec **OT!savezvous add** !"
     else:
         descip=""
         for i in dictDescip[option][page]:
@@ -100,13 +100,22 @@ def embedHelp30(option,guildOT,page,bot):
             embedHelp.description=descip
         for i in dictDescipFields[option][page]:
             embedHelp.add_field(name=dictFields[i]["name"],value=dictFields[i]["value"],inline=True)
+        if dictDescip[option][page]==[]:
+            descip=""
+            for i in range(1,len(dictDescipTitres[option])+1):
+                descip+="*Page {0} :* {1}\n".format(i,dictDescipTitres[option][i])
+                if i==8:
+                    embedHelp.add_field(name="Sommaire",value=descip)
+                    descip=""
+            if descip!="":
+                embedHelp.add_field(name="Sommaire",value=descip)
         embedHelp.title=dictDescipTitres[option][page]
     embedHelp.set_footer(text=("Page {0}/{1}".format(page,dictLen[option])))
     
     if option=="outils":
-        if page==2:
+        if page==4:
             embedHelp.set_image(url="https://media.discordapp.net/attachments/726034739550486618/872435056533184512/sb.gif")
-        elif page==3:
+        elif page==7:
             embedHelp.set_image(url="https://media.discordapp.net/attachments/726034739550486618/872776089678778399/cmd.gif")
 
     return embedHelp, dictLen[option]
