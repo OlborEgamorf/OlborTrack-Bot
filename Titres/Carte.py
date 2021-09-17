@@ -178,7 +178,7 @@ async def fondsUser(ctx,bot,args):
 async def texteFond(ctx,bot,args):
     try:
         assert len(args)!=0, "Vous devez me donner l'emote que vous voulez équiper !"
-        clean=createPhrase(args)
+        clean=createPhrase(args)[:-1]
         assert len(clean)<35, "Votre phrase ne doit pas dépasser les 35 caractères !"
 
         connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
