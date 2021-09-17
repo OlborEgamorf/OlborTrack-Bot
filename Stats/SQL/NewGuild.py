@@ -88,6 +88,14 @@ def createDirSQL(guild):
         except:
             pass
 
+    curseur.execute("CREATE TABLE IF NOT EXISTS alertesot (Type TEXT PRIMARY KEY, Webhook BIGINT, Salon BIGINT, Active BOOL)")
+    listeA=["github","updates","cross"]
+    for i in listeA:
+        try:
+            curseur.execute("INSERT INTO auto VALUES('{0}',0,0,False)".format(i))
+        except:
+            pass
+
     connexion.commit()
 
     connexion,curseur = connectSQL(guild.id,"CustomCMD","Guild",None,None)
