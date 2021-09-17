@@ -154,11 +154,11 @@ async def sendEmbed(ctx:commands.Context,embed:discord.Embed,react:bool,boutons:
             if pagemax!=1:
                 await message.add_reaction("<:otGAUCHE:772766034335236127>")
                 await message.add_reaction("<:otDROITE:772766034376523776>")
+                await message.add_reaction("<:otCHOIXPAGE:887022335578767420>")
             if boutons:
                 await message.add_reaction("<:otGRAPH:772766034558058506>")
                 await message.add_reaction("<:otTRI:833666016491864114>")
                 await message.add_reaction("<:otMOBILE:833736320919797780>")
-                await message.add_reaction("<:otCHOIXPAGE:887022335578767420>")
             curseurCMD.execute("UPDATE commandes SET Page={0}, PageMax={1}, MessageID={2} WHERE MessageID={3}".format(page,pagemax,message.id,ctx.message.id))
             connexionCMD.commit()
             return message

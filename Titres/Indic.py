@@ -5,7 +5,7 @@ import asyncio
 
 async def setServer(ctx,bot):
     try:
-        embed=createEmbed("Indicatif de serveur","Donnez moi l'indicatif que vous voulez donner à votre serveur. Il ne doit pas dépasser 4 caractères et être unique. Il sera affiché dans le classement des jeux Cross-Serveurs.",0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
+        embed=createEmbed("Indicatif de serveur","Donnez moi l'indicatif que vous voulez donner à votre serveur. Il ne doit pas dépasser 4 caractères et être unique. Il sera affiché dans le classement des jeux Cross-Serveurs.",0xf58d1d,ctx.invoked_with.lower(),ctx.guild)
 
         message=await ctx.reply(embed=embed)
 

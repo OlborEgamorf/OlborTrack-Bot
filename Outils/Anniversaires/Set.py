@@ -22,10 +22,10 @@ async def setAnniversaire(ctx,bot,args):
             assert jour<=dictMax[mois], "Le jour donné n'est pas possible dans le calendrier !"
             if user==None:
                 curseur.execute("INSERT INTO anniversaires VALUES({0},{1},'{2}',3)".format(ctx.author.id,jour,mois))
-                embed=createEmbed("Ajout d'anniversaire","Anniversaire ajouté ! Un message sera envoyé dans les serveurs où vous êtes et qui ont activé la fonctionnalité tous les **{0} {1}** !\nVous pouvez le changer 3 fois.".format(jour,mois),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
+                embed=createEmbed("Ajout d'anniversaire","Anniversaire ajouté ! Un message sera envoyé dans les serveurs où vous êtes et qui ont activé la fonctionnalité tous les **{0} {1}** !\nVous pouvez le changer 3 fois.".format(jour,mois),0x11f738,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
             else:
                 curseur.execute("UPDATE anniversaires SET Jour={0}, Mois='{1}', Nombre=Nombre-1 WHERE ID={2}".format(jour,mois,ctx.author.id))
-                embed=createEmbed("Mise à jour d'anniversaire","Anniversaire mis à jour ! Un message sera envoyé dans les serveurs où vous êtes et qui ont activé la fonctionnalité tous les **{0} {1}** !\nVous pouvez le changer encore {2} fois.".format(jour,mois,user["Nombre"]-1),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
+                embed=createEmbed("Mise à jour d'anniversaire","Anniversaire mis à jour ! Un message sera envoyé dans les serveurs où vous êtes et qui ont activé la fonctionnalité tous les **{0} {1}** !\nVous pouvez le changer encore {2} fois.".format(jour,mois,user["Nombre"]-1),0x11f738,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
         else:
             raise AssertionError("Vous avez trop mis à jour votre anniversaire !")
         connexion.commit()
