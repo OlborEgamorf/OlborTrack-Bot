@@ -99,10 +99,6 @@ async def annualyTitles(annee,bot):
             pass
 
 
-"""listeDates=[("06","20"),("07","20"),("08","20"),("09","20"),("10","20"),("11","20"),("12","20"),("01","21"),("02","21"),("03","21"),("04","21"),("05","21"),("06","21"),("07","21"),("08","21")]
-for i in listeDates:
-    asyncio.run(badgesSimu(i[0],i[1],None))"""
-
 
 async def monthlyBadges(mois,annee):
     dictValue={3:1,2:2,1:3}
@@ -123,21 +119,30 @@ async def monthlyBadges(mois,annee):
         
         connexion,curseur=connectSQL("OT",i,"Jeux","GL","")
         connexionTitres,curseurTitres=connectSQL("OT","Titres","Titres",None,None)
+        curseurTitres.execute("CREATE TABLE IF NOT EXISTS badges (Jeu TEXT, Rank INT, ID BIGINT)")
         for j in curseurTitres.execute("SELECT * FROM badges WHERE Jeu='{0}'".format(i)).fetchall():
             connexionUser,curseurUser=connectSQL("OT",j["ID"],"Titres",None,None)
             curseurUser.execute("DELETE FROM badges WHERE Type='{0}' AND Valeur={1}".format(i,100+dictValue[j["Rank"]]))
             connexionUser.commit()
+        curseurTitres.execute("DELETE FROM badges WHERE Jeu='{0}'".format(i))
+        
         try:
             for j in curseur.execute("SELECT * FROM glob WHERE Rank<=3").fetchall():
                 connexionUser,curseurUser=connectSQL("OT",j["ID"],"Titres",None,None)
                 try:
                     curseurUser.execute("CREATE TABLE IF NOT EXISTS badges (Type TEXT, Période TEXT, Rang INT, Valeur INT, PRIMARY KEY(Type,Période,Rang))")
                     curseurUser.execute("INSERT INTO badges VALUES('{0}','{1}',{2},{3})".format(i,"global",j["Rank"],100+dictValue[j["Rank"]]))
+                    curseurTitres.execute("INSERT INTO badges VALUES ('{0}',{1},{2})".format(i,j["Rank"],j["ID"]))
                     connexionUser.commit()
                 except sqlite3.IntegrityError:
                     pass
         except sqlite3.OperationalError:
             pass
+        connexionTitres.commit()
+
+"""listeDates=[("06","20"),("07","20"),("08","20"),("09","20"),("10","20"),("11","20"),("12","20"),("01","21"),("02","21"),("03","21"),("04","21"),("05","21"),("06","21"),("07","21"),("08","21")]
+for i in listeDates:
+    asyncio.run(monthlyBadges(i[0],i[1]))"""
 
 
 async def annualyBadges(annee):
@@ -156,3 +161,5 @@ async def annualyBadges(annee):
                     pass
         except sqlite3.OperationalError:
             pass
+
+"""asyncio.run(annualyBadges("20"))"""

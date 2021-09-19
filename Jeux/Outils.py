@@ -11,7 +11,7 @@ from Jeux.CrossServeur.ClasseTrivialVSCross import VersusCross
 from Jeux.P4 import JeuP4
 from Jeux.Tortues.ClasseTortues import JeuTortues
 from Jeux.Tortues.ClasseTortuesDuo import JeuTortuesDuo
-from Jeux.Trivial import Versus
+from Jeux.Trivial.Versus import Versus
 from Jeux.Trivial.BattleRoyale import BattleRoyale
 from Jeux.Trivial.Party import Party
 from Jeux.CrossServeur.ClasseTrivialBRCross import BattleRoyaleCross

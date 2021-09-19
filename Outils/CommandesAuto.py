@@ -86,7 +86,6 @@ def checkSoloEmotes(guild,mois,annee):
             curseur.execute("DROP TABLE {0}{1}{2}".format(tableauMois[mois],annee,i["ID"]))
     connexion.commit()
 
-
 async def boucleAutoCMD(bot,dictGuilds):
     while True:
         minute,heure=strftime("%M"),strftime("%H")

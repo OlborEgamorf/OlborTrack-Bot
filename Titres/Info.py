@@ -42,12 +42,12 @@ async def profilUser(ctx,bot):
         embed.color=color
         embed.add_field(name="Couleur",value="#{0}".format(hex(color)[2:]))
     else:
-        embed.add_field(name="Couleur",value="*Configurez avec OT!titre couleur*",inline=True)
+        embed.add_field(name="Couleur",value="*Configurez avec OT!profil couleur*",inline=True)
 
     if emote!=None:
         embed.add_field(name="Emote",value=emote,inline=True)
     else:
-        embed.add_field(name="Emote",value="*Configurez avec OT!titre emote*",inline=True)
+        embed.add_field(name="Emote",value="*Configurez avec OT!profil emote*",inline=True)
 
     embed.add_field(name="OT Coins",value="{0} <:otCOINS:873226814527520809>".format(int(coins["Coins"])),inline=True)
     embed.add_field(name="Titres possédés",value=str(count),inline=True)

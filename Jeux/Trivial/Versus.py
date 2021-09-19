@@ -111,7 +111,7 @@ class Versus(Question):
     def addPlayer(self,joueur):
         self.joueurs.append(joueur)
         self.reponses[joueur.id]=None
-        self.scores[joueur.id]=4
+        self.scores[joueur.id]=0
         self.histo[joueur.id]=""
     
     def setDiff(self):

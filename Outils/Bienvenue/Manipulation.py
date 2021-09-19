@@ -40,7 +40,7 @@ def fusionAdieu(back,user,text,couleur,taille,guild,filtre):
     img1.paste(img2, ((img1.size[0]-img2.size[0])//2,(img1.size[1]-img2.size[1])//2), mask = img2)
     img1.paste(img3, ((img1.size[0]-img3.size[0])//2,(img1.size[1]-img3.size[1])//2), mask = img3)
     
-    if text!=None:
+    if text not in (None,"None"):
         setText(img1,img2,back,user,text,couleur,taille,guild)
     
     if filtre==True:
