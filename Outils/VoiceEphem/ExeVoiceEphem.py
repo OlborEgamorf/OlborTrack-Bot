@@ -6,7 +6,7 @@ from Core.Fonctions.setMaxPage import setMax, setPage
 from Core.Fonctions.AuteurIcon import auteur
 
 async def exeVoiceEphem(ctx,bot,args,guildOT):
-    if True:
+    try:
         connexion,curseur=connectSQL(ctx.guild.id,"VoiceEphem","Guild",None,None)
         if ctx.invoked_with=="hubs":
             await commandeVoiceEphem(ctx,None,False,None,bot,guildOT,curseur,"hubs")
@@ -24,10 +24,10 @@ async def exeVoiceEphem(ctx,bot,args,guildOT):
             embed=await voiceEphemEdit(ctx,args,curseur)
         guildOT.getHubs(curseur)
         connexion.commit()
-    """except AssertionError as er:
+    except AssertionError as er:
         embed=embedAssert(str(er))
     except:
-        embed=await exeErrorExcept(ctx,bot,args)"""
+        embed=await exeErrorExcept(ctx,bot,args)
     await ctx.send(embed=embed)
 
 

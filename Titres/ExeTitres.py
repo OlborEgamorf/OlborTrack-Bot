@@ -21,7 +21,6 @@ async def exeTitres(ctx,bot,args):
         elif ctx.invoked_with=="infos":
             await infosTitre(ctx,args[0],bot)
     except AssertionError as er:
-        embed=embedAssert(str(er))
+        await ctx.send(embed=embedAssert(str(er)))
     except:
-        embed=await exeErrorExcept(ctx,bot,args)
-    await ctx.send(embed=embed)
+        await ctx.send(embed=await exeErrorExcept(ctx,bot,args))

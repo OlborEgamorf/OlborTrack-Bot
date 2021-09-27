@@ -82,7 +82,7 @@ class VersusCross(Versus):
             await self.memmess[i].clear_reactions()
         if len(self.ids)<2:
             for i in self.memmess:
-                await i.edit(embed=createEmbed("Trivial {0}".format(self.option.upper()),"Une minute s'est écoulée et personne n'a répondu à l'invitation.",0xad917b,ctx.invoked_with.lower(),ctx.guild))
+                await self.memmess[i].edit(embed=createEmbed("Trivial {0}".format(self.option.upper()),"Une minute s'est écoulée et personne n'a répondu à l'invitation.",0xad917b,ctx.invoked_with.lower(),ctx.guild))
             for i in self.ids:
                 inGame.remove(i)
             return False
