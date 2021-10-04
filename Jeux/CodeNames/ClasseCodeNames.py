@@ -139,7 +139,7 @@ class JeuCN:
 
     def generateGame(self):
         connexion,curseur=connectSQL("OT","Codenames","Titres",None,None)
-        liste=curseur.execute("SELECT Mots FROM code ORDER BY Usage ASC LIMIT 60").fetchall()
+        liste=curseur.execute("SELECT Mots FROM code ORDER BY RANDOM() ASC LIMIT 60").fetchall()
         mots=[]
         final=[]
         for i in liste:
