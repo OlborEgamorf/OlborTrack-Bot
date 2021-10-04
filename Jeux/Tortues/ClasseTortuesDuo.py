@@ -38,7 +38,7 @@ class JeuTortuesDuo(JeuTortues):
         for i in self.joueurs:
             descip+="{0} : <@{1}>\n".format(dictEmote[i.couleur],i.userid)
         
-        embed.add_field(name="<:otCOINS:873226814527520809> gagnés par chacun des gagnants",value="{0} <:otCOINS:873226814527520809>".format(75+sum(self.mises.values())/2))
+        embed.add_field(name="<:otCOINS:873226814527520809> gagnés par chacun des gagnants",value="{0} <:otCOINS:873226814527520809>".format(75+sum(self.paris.mises.values())/2))
 
         embed=auteur(self.guild.id,self.guild.name,self.guild.icon,embed,"guild")
         embed.set_footer(text="OT!tortuesduo")
@@ -70,7 +70,7 @@ class JeuTortuesDuo(JeuTortues):
         connexionOT,curseurOT=connectSQL("OT","Guild","Guild",None,None)
         for i in self.joueurs:
             if i.equipe==team:
-                gainCoins(i.userid,75+sum(self.mises.values())/2)
+                gainCoins(i.userid,75+sum(self.paris.mises.values())/2)
                 count,state=2,"W"
             else:
                 count,state=-1,"L"
