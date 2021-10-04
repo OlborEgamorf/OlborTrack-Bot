@@ -17,8 +17,9 @@ from Jeux.Trivial.Party import Party
 from Jeux.CrossServeur.ClasseTrivialBRCross import BattleRoyaleCross
 from Jeux.CrossServeur.ClasseTrivialPartyCross import PartyCross
 from Jeux.Matrice import JeuMatrice
+from Jeux.CodeNames.ClasseCodeNames import JeuCN
 
-dictMax={JeuTortues:5,JeuTortuesDuo:4,Versus:5,BattleRoyale:15,Party:15,JeuP4:2,JeuTortuesCross:5,JeuP4Cross:2,JeuTortuesDuoCross:4,VersusCross:5,BattleRoyaleCross:7,PartyCross:7,JeuMatrice:2}
+dictMax={JeuTortues:5,JeuTortuesDuo:4,Versus:5,BattleRoyale:15,Party:15,JeuP4:2,JeuTortuesCross:5,JeuP4Cross:2,JeuTortuesDuoCross:4,VersusCross:5,BattleRoyaleCross:7,PartyCross:7,JeuMatrice:2,JeuCN:4}
 emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>","<:ot5:705766186713088042>","<:ot6:705766187182850148>","<:ot7:705766187115741246>","<:ot8:705766187132256308>","<:ot9:705766187145101363>","<:ot10:705766186909958206>"]
 emotesIds=[705766186909958185,705766186989912154,705766186930929685,705766186947706934,705766186713088042,705766187182850148,705766187115741246,705766187132256308,705766187145101363,705766186909958206]
 
