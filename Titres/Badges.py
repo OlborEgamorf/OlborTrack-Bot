@@ -40,9 +40,10 @@ def getBadges(user,jeu):
     try:
         connexionUser,curseurUser=connectSQL("OT",user,"Titres",None,None)
         descip=""
-        main=curseurUser.execute("SELECT * FROM badges WHERE Type='{0}' ORDER BY Valeur DESC".format(jeu)).fetchone()
-        if main!=None:
-            descip+=dictValues[main["Valeur"]]
+        if jeu!=None:
+            main=curseurUser.execute("SELECT * FROM badges WHERE Type='{0}' ORDER BY Valeur DESC".format(jeu)).fetchone()
+            if main!=None:
+                descip+=dictValues[main["Valeur"]]
         if curseurUser.execute("SELECT * FROM badges WHERE Période='VIP'").fetchone()!=None:
             descip+="<:VIP:886707613667049533>"
         if curseurUser.execute("SELECT * FROM badges WHERE Période='Testeur'").fetchone()!=None:

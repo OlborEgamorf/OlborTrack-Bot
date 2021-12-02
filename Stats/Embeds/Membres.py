@@ -2,6 +2,7 @@ import discord
 from Core.Fonctions.Embeds import addtoFields, createFields, defEvol
 from Core.Fonctions.TempsVoice import formatCount, tempsVoice
 from Core.Fonctions.DichoTri import dichotomieID, triID
+from Titres.Badges import getBadges
 
 dictNameF3={"Messages":"Messages","Salons":"Messages","Freq":"Messages","Mots":"Mots","Emotes":"Utilisations","Reactions":"Utilisations","Voice":"Temps","Voicechan":"Temps","Mentions":"Mentions","Mentionne":"Mentions","Divers":"Nombre"}
 
@@ -22,7 +23,7 @@ def embedMembre(table,guildOT,page,mobile,id,evol,option):
         elif guildOT.users[table[i]["ID"]]["Leave"]:
             nom="*Ancien membre*"
         else:
-            nom="<@{0}>".format(table[i]["ID"])
+            nom="{0}<@{1}>".format(getBadges(table[i]["ID"],None),table[i]["ID"])
         
         if table[i]["ID"]==id:
             rank="**__{0}__**".format(rank)
