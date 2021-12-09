@@ -6,7 +6,6 @@ from Core.Fonctions.setMaxPage import setPage
 from Core.OTGuild import OTGuild
 from Core.Reactions.Outils import getTurn, removeReact
 from discord.ext import commands
-from MAL.exeMAL import exeMAL
 from Savezvous.ListModo import commandeSV
 from Sondages.GAReroll import commandeGAR
 from Stats.Commandes.Classements import statsRank
@@ -27,12 +26,11 @@ from Stats.Compare.CompareUser import compareUser
 from Stats.Rapports.exeRapports import changePage, switchRapport
 from Stats.RapportsUsers.exeRapports import changePageUser, switchRapportUser
 from Stats.SQL.ConnectSQL import connectSQL
-from Wiki.exeWikipedia import exeWikipedia
+from Titres.Listes import commandeTMP
 
+from Outils.Bienvenue.Listes import commandeImageBV, commandeMessBV
 from Outils.Tableaux.EmbedsTab import commandeSB
 from Outils.Twitch.ExeTwitch import commandeTwitch
-from Titres.Listes import commandeTMP
-from Outils.Bienvenue.Listes import commandeImageBV, commandeMessBV
 
 
 async def reactStats(message:int,reaction:discord.Reaction,bot:commands.Bot,guildOT:OTGuild,payload):
@@ -60,8 +58,6 @@ async def reactStats(message:int,reaction:discord.Reaction,bot:commands.Bot,guil
             await statsPerso(ctx,ligne["Option"],getTurn(reaction),True,ligne,guildOT,bot)
         elif ligne["Commande"]=="wikipedia":
             await exeWikipedia(ctx,bot,ligne["Option"],getTurn(reaction),ligne)
-        elif ligne["Commande"]=="mal":
-            await exeMAL(ctx,bot,ligne["Option"],getTurn(reaction),ligne)
         elif ligne["Commande"]=="moy":
             await statsMoy(ctx,ligne["Option"],getTurn(reaction),True,ligne,guildOT,bot)
         elif ligne["Commande"]=="day":
