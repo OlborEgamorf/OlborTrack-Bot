@@ -7,7 +7,6 @@ from Core.Reactions.ChangePage import reactStats
 from Core.Reactions.ChoixPage import choosePage
 from Core.Reactions.Graphiques import reactGraph
 from Core.Reactions.Mobile import changeMobile
-from Core.Reactions.Plus import reactPlus
 from Core.Reactions.Tri import changeTri
 from discord.ext import commands
 
@@ -19,10 +18,6 @@ async def exeReactOT(emoji:discord.Reaction, message:discord.Message, bot:comman
             await reactStats(message,emoji,bot,guildOT,payload)
         elif emoji.id==772766034558058506:
             await reactGraph(message,bot,guildOT,payload,emoji)
-        elif emoji.id==772766034163400715:
-            message,user=await seekMessage(bot,message)
-            await reactPlus(message,user)
-            await message.clear_reaction(emoji)
         elif emoji.id==833666016491864114:
             await changeTri(message,emoji,bot,guildOT,payload)
         elif emoji.id==833736320919797780:
