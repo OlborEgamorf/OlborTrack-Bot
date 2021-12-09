@@ -1,4 +1,5 @@
 import discord
+from Autre.Events import exeWikipedia
 from Autre.Help import commandeHelp
 from Core.Fonctions.SeekMessage import seekMessage
 from Core.Fonctions.setMaxPage import setPage

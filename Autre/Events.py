@@ -1,10 +1,18 @@
+import asyncio
 from random import randint
-import discord
-from Core.Fonctions.WebRequest import webRequest
-from Core.Fonctions.AuteurIcon import auteur
 from time import strftime
+
+import discord
+from Core.Fonctions.AuteurIcon import auteur
+from Core.Fonctions.Embeds import embedAssert, exeErrorExcept
+from Core.Fonctions.Phrase import createPhrase
+from Core.Fonctions.WebRequest import webRequest
 from Stats.SQL.ConnectSQL import connectSQL
+
+from Wiki.Events import embedWikiEvents
+
 tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai","06":"Juin","07":"Juillet","08":"Aout","09":"Septembre","10":"Octobre","11":"Novembre","12":"Décembre","TO":"Année","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
+dictOption={"deaths":"deaths","morts":"deaths","death":"deaths","décès":"deaths","births":"births","naissances":"births","anniv":"births","birth":"births"}
 
 async def embedWikiEvents(option,jour,mois):
     descip,hyper="",""
@@ -31,3 +39,30 @@ async def autoEvents(bot,channel,guild):
     await message.add_reaction("<:otRELOAD:772766034356076584>")
     curseurCMD.execute("INSERT INTO commandes VALUES({0},{1},'wikipedia','events','events','{2}','{3}','None',1,1,'None',False)".format(message.id,bot.user.id,strftime("%d"),strftime("%m")))
     connexionCMD.commit()
+
+async def exeWikipedia(ctx,bot,option,turn,ligne):
+    if option in ("events","search"):
+        connexionCMD,curseurCMD=connectSQL(ctx.guild.id,"Commandes","Guild",None,None)
+    try:
+        if ligne==None:
+            args=createPhrase(ctx.args[2:len(ctx.args)])[0:-1]
+            try:
+                args=dictOption[args]
+            except:
+                args="events"
+            embedF=await embedWikiEvents(args,strftime("%d"),strftime("%m"))
+
+            message=await ctx.send(embed=embedF)
+            await message.add_reaction("<:otRELOAD:772766034356076584>")
+            curseurCMD.execute("INSERT INTO commandes VALUES({0},{1},'wikipedia','events','{2}','{3}','{4}','None',1,1,'None',False)".format(message.id,ctx.author.id,args,strftime("%d"),strftime("%m")))
+            connexionCMD.commit()
+        else:
+            embedF=await embedWikiEvents(ligne["Args1"],ligne["Args2"],ligne["Args3"])
+            await ctx.message.edit(embed=embedF)
+        
+    except AssertionError as er:
+        await ctx.send(embed=embedAssert(str(er)))
+    except asyncio.exceptions.TimeoutError:
+        await ctx.send(embed=embedAssert("Temps de requête écoulé, veuillez réessayer."))
+    except:
+        await ctx.send(embed=await exeErrorExcept(ctx,bot,""))
