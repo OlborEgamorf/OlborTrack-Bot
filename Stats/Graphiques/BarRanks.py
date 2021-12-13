@@ -89,9 +89,12 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
                         open("PNG/{0}.png".format(table[i]["ID"]))
                     except:
                         await getImage(table[i]["ID"])
-                    addImage(table,ax,i,table[i]["ID"])
-                    color=ColorThief("PNG/{0}.png".format(table[i]["ID"])).get_color(quality=1)
-                    listeC[i]=(color[0]/256,color[1]/256,color[2]/256,1)
+                    try:
+                        addImage(table,ax,i,table[i]["ID"])
+                        color=ColorThief("PNG/{0}.png".format(table[i]["ID"])).get_color(quality=1)
+                        listeC[i]=(color[0]/256,color[1]/256,color[2]/256,1)
+                    except:
+                        pass
                     listeN.append("{0}".format(getNomGraph(ctx,bot,option,table[i]["ID"])))
                 else:
                     if guildOT.chan[table[i]["ID"]]["Hide"]:
@@ -153,7 +156,7 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
     plt.close()
 
 def addImage(table,ax,i,id):
-    image = mpimg.imread("PNG/{0}.png".format(id)) # Lecture
-    imagebox = OffsetImage(image, zoom=1.5/len(table)) # Zoom
-    ab = AnnotationBbox(imagebox, (0,i), frameon=False, box_alignment=(0,0.5)) # Coordonnées
+    image = mpimg.imread("PNG/{0}.png".format(id))
+    imagebox = OffsetImage(image, zoom=1.5/len(table))
+    ab = AnnotationBbox(imagebox, (0,i), frameon=False, box_alignment=(0,0.5))
     ax.add_artist(ab)

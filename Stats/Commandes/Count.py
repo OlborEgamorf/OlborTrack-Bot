@@ -48,7 +48,7 @@ async def jeuxPerso(ctx):
     for i in ["P4","BatailleNavale","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR","Matrice"]:
         descip=""
         try:
-            connexion,curseur=connectSQL(ctx.guild.id,i,"Jeux","GL","")
+            connexion,curseur=connectSQL("OT",i,"Jeux","GL","")
             glob=curseur.execute("SELECT * FROM glob WHERE ID={0}".format(ctx.author.id)).fetchone()
             if glob!=None:
                 descip+="**Global** : {0} - {1}e {2}\n".format(glob["Count"],glob["Rank"],defEvol(glob,True))
@@ -56,7 +56,7 @@ async def jeuxPerso(ctx):
             pass
 
         try:
-            connexion,curseur=connectSQL(ctx.guild.id,i,"Jeux","TO",strftime("%y"))
+            connexion,curseur=connectSQL("OT",i,"Jeux","TO",strftime("%y"))
             annee=curseur.execute("SELECT * FROM to{0} WHERE ID={1}".format(strftime("%y"),ctx.author.id)).fetchone()
             if annee!=None:
                 descip+="**20{0}** : {1} - {2}e {3}\n".format(strftime("%y"),annee["Count"],annee["Rank"],defEvol(annee,True))
@@ -64,7 +64,7 @@ async def jeuxPerso(ctx):
             pass
 
         try:
-            connexion,curseur=connectSQL(ctx.guild.id,i,"Jeux",strftime("%m"),strftime("%y"))
+            connexion,curseur=connectSQL("OT",i,"Jeux",strftime("%m"),strftime("%y"))
             mois=curseur.execute("SELECT * FROM {0}{1} WHERE ID={2}".format(tableauMois[strftime("%m")].lower(),strftime("%y"),ctx.author.id)).fetchone()
             if mois!=None:
                 descip+="**{0} 20{1}** : {2} - {3}e {4}\n".format(tableauMois[strftime("%m")],strftime("%y"),mois["Count"],mois["Rank"],defEvol(mois,True))

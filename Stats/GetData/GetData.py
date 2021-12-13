@@ -1,25 +1,26 @@
-import discord
+import asyncio
 import os
+import shutil
+import sys
 from time import time
-from Stats.GetData.EmbedGetData import embedCreate
-from Stats.GetData.Createurs import primeAll
-from Stats.SQL.EmoteDetector import emoteDetector
-from Stats.GetData.Compteurs import compteurGD28
-from Stats.SQL.ConnectSQL import connectSQL
-from Stats.GetData.Outils import sommeTable, hideGD
+
+import discord
+from Core.Fonctions.AuteurIcon import auteur
+from Core.Fonctions.DichoTri import dichotomieID, dichotomiePlage, triID
+from Core.Fonctions.Embeds import embedAssert
+from Core.Fonctions.RankingClassic import rankingClassic
+from Core.Fonctions.TempsVoice import tempsVoice
+from Core.OTGuild import OTGuild
 from Stats.GetData.Agregator import agregatorEvol
 from Stats.GetData.AgregatorMoyennes import agregatorMoy
-from Core.Fonctions.RankingClassic import rankingClassic
+from Stats.GetData.Compteurs import compteurGD28
+from Stats.GetData.Createurs import primeAll
 from Stats.GetData.Ecriture import ecritureSQL
-import sys
-import shutil
+from Stats.GetData.EmbedGetData import embedCreate
+from Stats.GetData.Outils import hideGD, sommeTable
+from Stats.SQL.ConnectSQL import connectSQL
+from Stats.SQL.EmoteDetector import emoteDetector
 from Stats.SQL.Verification import verifExecGD
-from Core.Fonctions.DichoTri import dichotomieID, dichotomiePlage, triID
-from Core.Fonctions.TempsVoice import tempsVoice
-from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.Embeds import embedAssert
-import asyncio
-from Core.OTGuild import OTGuild
 
 
 async def newGetData(guild,channel,bot,guildOT):
@@ -58,7 +59,7 @@ async def newGetData(guild,channel,bot,guildOT):
                 if verifExecGD(guildOT,guildChan,bot.user)==False:
                     continue
                 async for message in guildChan.history(limit=None,oldest_first=True):
-                    if verifExecGD(guildOT,guildChan,message.author)==False or message.author.bot==True:
+                    if message.author.bot==True or verifExecGD(guildOT,guildChan,message.author)==False:
                         continue
                     if message.author.bot==False:
                         if len(str(message.created_at.month))==1:

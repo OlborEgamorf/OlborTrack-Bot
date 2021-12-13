@@ -26,7 +26,11 @@ class PollTime():
         if self.temps>0:
             await asyncio.sleep(self.temps)
         channel=bot.get_channel(self.chan)
-        message=await channel.fetch_message(self.id)
+        try:
+            message=await channel.fetch_message(self.id)
+        except:
+            self.active=False
+            return
         for i in range(len(message.reactions)):
             for j in reacts:
                 if message.reactions[i].emoji.id==j["ID"]:
@@ -100,7 +104,11 @@ class Giveaway():
         if self.temps>0:
             await asyncio.sleep(self.temps)
         channel=bot.get_channel(self.chan)
-        message=await channel.fetch_message(self.id)
+        try:
+            message=await channel.fetch_message(self.id)
+        except:
+            self.active=False
+            return
         for i in range(len(message.reactions)):
             if message.reactions[i].emoji.id==711222160982540380:
                 users=await message.reactions[i].users().flatten()

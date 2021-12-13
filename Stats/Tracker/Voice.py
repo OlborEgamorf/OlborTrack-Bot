@@ -101,7 +101,7 @@ async def reconnect(client,dictGuilds):
         for j in i.voice_channels:
             for h in j.voice_states:
                 member=i.get_member(h)
-                if member.bot==False and verifExecSQL(dictGuilds[member.guild.id],member,j)==True:
+                if member.bot==False and verifExecSQL(dictGuilds[member.guild.id],j,member)==True:
                     listeCo[member.id]=Voice(member,j,i,client)
     await client.get_channel(705390619538882641).send("Voice : Utilisateurs Connectés.")
     return

@@ -76,7 +76,10 @@ def getNomGraph(ctx:commands.Context,bot:commands.Bot,option:str,id:int) -> (str
         nom=nom if len(nom)<=15 else "{0}...".format(nom[0:15])
         return nom
     elif option in ("Emotes","Reactions"):
-        return bot.get_emoji(id).name
+        emote=bot.get_emoji(id)
+        if emote!=None:
+            return emote.name
+        return "??"
     elif option=="Freq":
         return "{0}h-{1}h".format(id,id+1)
     elif option=="Divers":

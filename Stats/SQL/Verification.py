@@ -11,6 +11,8 @@ def verifExecSQL(guild,channel,author):
         if guild.users[author.id]["Blind"]:
             return False
     except:
+        if author.bot:
+            return False
         leaveUser(guild,author,False)
     try:
         if guild.chan[channel.id]["Blind"]:
@@ -24,6 +26,8 @@ def verifExecGD(guild,channel,author):
         if guild.users[author.id]["Blind"]==True:
             return False
     except:
+        if author.bot:
+            return False
         leaveUser(guild,author,False)
     try:
         if guild.chan[channel.id]["Blind"]==True:
