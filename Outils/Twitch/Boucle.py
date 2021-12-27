@@ -1,7 +1,5 @@
 import asyncio
 
-import aiohttp
-import discord
 import requests
 from Core.Fonctions.WebRequest import webRequestHD
 from Core.OS.Keys3 import headersTwitch, idTwitch, secretTwitch

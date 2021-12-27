@@ -1,5 +1,4 @@
 from time import strftime
-from random import choice
 
 def setThemeGraph(plt):
     """Change le thème du graphique en fonction de s'il fait nuit ou jour"""

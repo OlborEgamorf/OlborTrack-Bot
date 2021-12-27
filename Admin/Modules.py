@@ -1,7 +1,8 @@
 import discord
-from Stats.SQL.ConnectSQL import connectSQL
-from Core.Fonctions.Embeds import createEmbed, exeErrorExcept, embedAssert
 from Core.Fonctions.AuteurIcon import auteur
+from Core.Fonctions.Embeds import createEmbed, embedAssert, exeErrorExcept
+from Stats.SQL.ConnectSQL import connectSQL
+
 
 async def exeModules(ctx,bot,args,guild):
     """Fonction qui permet d'activer et de désactiver des modules de stats ou de commandes. Pour un serveur
@@ -18,7 +19,7 @@ async def exeModules(ctx,bot,args,guild):
         dictCommande={"modulestat":"modulesStats","modulecmd":"modulesCMD"}
         dictBool={False:"désactivé",True:"activé"}
         listeN=["Salons","Moyennes","Fréquences","Réactions","Mentions","Voice","Mots","Roles","Emojis","Messages","Autre"]
-        listeC=["Stats","Sondages","Outils","Savezvous","Jeux","MAL","Wiki","Spotify","Geo"]
+        listeC=["Stats","Sondages","Outils","Savezvous","Jeux"]
         connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
         if len(args)==0:
             embedTable=commandePerms(ctx,ctx.command.name,guild)

@@ -1,6 +1,7 @@
 import discord
 from Core.Fonctions.Embeds import createEmbed
 
+
 async def exePermsChan(ctx,bot):
     """Cette fonction renvoie tous les salons textuels auquel le bot a accès, qu'ils soient blind ou non"""
     quote=""

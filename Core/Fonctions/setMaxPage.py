@@ -29,11 +29,3 @@ def setPage(page:int,pagemax:int,turn:(str or None)) -> int:
     elif page>pagemax:
         page=1 
     return page
-
-def bornesReport(table:list,but:int) -> int:
-    """Je sais plus"""
-    if len(table)>but:
-        borne=but
-    else:
-        borne=len(table)
-    return borne

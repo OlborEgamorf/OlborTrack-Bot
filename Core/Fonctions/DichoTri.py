@@ -32,8 +32,6 @@ def dichotomiePlage(tableau,valeur):
 ### Tri
 def nombre(element):
     return element["Count"]
-def heure(element):
-    return element["Heure"]
 def triID(element):
     return element["ID"]
 def triVal(element):

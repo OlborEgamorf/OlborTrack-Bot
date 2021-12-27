@@ -1,6 +1,7 @@
-from Stats.SQL.ConnectSQL import connectSQL
-from Core.Fonctions.Embeds import createEmbed, exeErrorExcept,embedAssert
+from Core.Fonctions.Embeds import createEmbed, embedAssert, exeErrorExcept
 from Core.Fonctions.GetNom import getAuthor
+from Stats.SQL.ConnectSQL import connectSQL
+
 
 async def exeHBM(ctx,bot,option,guild):
     """Fonction qui permet de rendre masqué, bloqué ou muet des salons textuels pour un serveur.

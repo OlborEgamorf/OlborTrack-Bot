@@ -1,5 +1,6 @@
+from Core.Fonctions.Embeds import createEmbed, embedAssert, exeErrorExcept
 from Stats.SQL.ConnectSQL import connectSQL
-from Core.Fonctions.Embeds import createEmbed, exeErrorExcept,embedAssert
+
 
 async def exeHBUser(ctx,bot,option,guild):
     """Cette fonction permet à un utilisateur de se rendre masqué ou bloqué aux yeux du bot sur un serveur.

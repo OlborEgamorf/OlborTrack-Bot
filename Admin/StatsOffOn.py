@@ -1,5 +1,6 @@
-from Stats.SQL.ConnectSQL import connectSQL
 from Core.Fonctions.Embeds import createEmbed, embedAssert
+from Stats.SQL.ConnectSQL import connectSQL
+
 
 async def statsOffOn(ctx,bot,guild,state):
     connexion,curseur=connectSQL(guild.id,"Guild","Guild",None,None)

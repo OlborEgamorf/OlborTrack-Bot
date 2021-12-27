@@ -1,7 +1,8 @@
-import discord
 from random import choice
+
+import discord
 from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.Embeds import exeErrorExcept, embedAssert
+from Core.Fonctions.Embeds import embedAssert, exeErrorExcept
 
 
 async def exeRoulette(ctx,bot,args):

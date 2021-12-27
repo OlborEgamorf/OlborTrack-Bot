@@ -1,8 +1,8 @@
-import aiohttp
-import aiofiles
-from numpy.random.mtrand import randint
-from PIL import Image
 import os
+
+import aiofiles
+import aiohttp
+
 
 async def webRequest(link):
     """Effectue une requête Get sur un lien donné."""

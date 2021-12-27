@@ -1,4 +1,3 @@
-dictTrivia={3:"Images",2:"GIFs",1:"Fichiers",4:"Liens",5:"Réponse",6:"Réactions",7:"Edits",8:"Emotes",9:"Messages",10:"Mots",11:"Vocal","images":3,"gifs":2,"fichiers":1,"liens":4,"réponse":5,"réactions":6,"edits":7,"emotes":8,"messages":9,"mots":10,"vocal":11}
 from math import inf
 
 import discord
@@ -6,9 +5,10 @@ from Core.Fonctions.AligneText import aligne
 from Core.Fonctions.Phrase import createPhrase
 from Core.OTGuild import OTGuild
 from discord.ext import commands
-from Stats.SQL.EmoteDetector import emoteDetector
 from Stats.SQL.ConnectSQL import connectSQL
+from Stats.SQL.EmoteDetector import emoteDetector
 
+dictTrivia={3:"Images",2:"GIFs",1:"Fichiers",4:"Liens",5:"Réponse",6:"Réactions",7:"Edits",8:"Emotes",9:"Messages",10:"Mots",11:"Vocal","images":3,"gifs":2,"fichiers":1,"liens":4,"réponse":5,"réactions":6,"edits":7,"emotes":8,"messages":9,"mots":10,"vocal":11}
 
 def nomsOptions(option:str,id:int,guildOT:OTGuild,bot:commands.Bot) -> str:
     """A partir d'une option et d'un ID, donne le formatage qu'il faut pour s'afficher normalement dans un embed.

@@ -1,6 +1,8 @@
 import asyncio
+
 import discord
 from Core.Fonctions.Phrase import createPhrase
+
 
 async def exeSay(ctx,bot,args):
     """Cette fonction fait réécrire au bot un message donné par un utilisateur.

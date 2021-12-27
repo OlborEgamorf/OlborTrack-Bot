@@ -33,27 +33,3 @@ def auteur(id,nom,avatar,embed,option):
             embed.set_author(name=nom, icon_url=('https://cdn.discordapp.com/icons/'+str(id)+"/"+avatar+sufx))
     return embed
 #####
-
-
-### Icon pour affichage log
-def icon(id,avatar,option):
-    if option=="emote":
-        if avatar==None:
-            link="https://cdn.discordapp.com/emojis/"+str(id)+".png"
-        elif avatar.animated==True:
-            link="https://cdn.discordapp.com/emojis/"+str(id)+".gif"
-        else:
-            link="https://cdn.discordapp.com/emojis/"+str(id)+".png"
-    elif avatar==None:
-        link=('https://cdn.discordapp.com/avatars/'+str(id))
-    else:
-        if avatar[1]=="_":
-            sufx=".gif"
-        else:
-            sufx=".png"
-        if option=="guild":
-            link=('https://cdn.discordapp.com/icons/'+str(id)+"/"+avatar+sufx)
-        else:
-            link=('https://cdn.discordapp.com/avatars/'+str(id)+"/"+avatar+sufx)
-    return link
-#####

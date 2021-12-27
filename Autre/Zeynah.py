@@ -1,8 +1,9 @@
-import rule34
 from random import choice
+
 import discord
+import rule34
 from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.Embeds import exeErrorExcept, embedAssert
+from Core.Fonctions.Embeds import embedAssert, exeErrorExcept
 
 
 async def exeNeko(ctx,bot):

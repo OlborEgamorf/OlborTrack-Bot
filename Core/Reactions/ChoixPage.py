@@ -1,6 +1,8 @@
-from Stats.SQL.ConnectSQL import connectSQL
-from Core.Reactions.ChangePage import reactStats
 import asyncio
+
+from Core.Reactions.ChangePage import reactStats
+from Stats.SQL.ConnectSQL import connectSQL
+
 
 async def choosePage(message:int,reaction,bot,guildOT,payload):
     """Permet de choisir rapidement quelle page consulter"""

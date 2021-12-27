@@ -43,7 +43,7 @@ async def exePolltime(ctx,args,bot):
         descip=""
         for i in range(1,len(args)-1):
             descip=descip+emotes[i-1]+" "+args[i]+"\n"
-        tempo=args[len(args)-1]
+        tempo=args[-1]
         somme=gestionTemps(tempo)
         foot=footerTime(somme)
         embedPoll=createEmbed(args[0],descip,0xfc03d7,"{0} | {1}".format(ctx.invoked_with.lower(),foot),ctx.guild)

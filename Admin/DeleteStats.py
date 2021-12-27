@@ -1,6 +1,8 @@
-from Core.Fonctions.Embeds import createEmbed, exeErrorExcept,embedAssert
 import os
 import shutil
+
+from Core.Fonctions.Embeds import createEmbed, embedAssert, exeErrorExcept
+
 listeDel={}
 
 async def deleteStats(ctx,bot):

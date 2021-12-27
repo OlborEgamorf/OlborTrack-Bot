@@ -1,9 +1,5 @@
 from colorthief import ColorThief
-from PIL import ImageDraw, ImageFont, ImageOps, Image
-from math import pi
-from Stats.SQL.ConnectSQL import connectSQL
-from random import choice
-
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 def squaretoround(user):
     

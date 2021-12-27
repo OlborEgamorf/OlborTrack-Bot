@@ -1,8 +1,9 @@
-from Stats.SQL.ConnectSQL import connectSQL
-from Core.Reactions.ChangePage import reactStats
 import discord
-from discord.ext import commands
 from Core.OTGuild import OTGuild
+from Core.Reactions.ChangePage import reactStats
+from discord.ext import commands
+from Stats.SQL.ConnectSQL import connectSQL
+
 
 async def changeTri(message:int,reaction:discord.Reaction,bot:commands.Bot,guildOT:OTGuild,payload):
     """Modifie le tri d'une commande en fonction de son type, et de la boucle d'où elle se trouve.

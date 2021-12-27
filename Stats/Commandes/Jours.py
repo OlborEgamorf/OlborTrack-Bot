@@ -46,7 +46,7 @@ async def statsJours(ctx,option,turn,react,ligne,guildOT,bot):
         elif mois=="to":
             title="Classement jours {0} 20{1}".format(option.lower(),annee)
         else:
-            title="Classement jours {0} {1} 20{2}".format(option.lower(),mois,annee)
+            title="Classement jours {0} {1} 20{2}".format(option.lower(),tableauMois[mois],annee)
 
         embed=embedEvol(table,page,ligne["Mobile"],False,False,option)
         embed.title=title

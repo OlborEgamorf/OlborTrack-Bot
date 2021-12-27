@@ -4,9 +4,9 @@ import sys
 import discord
 from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.GetNom import nomsOptions
+from Core.Fonctions.TempsVoice import formatCount
 from Core.OTGuild import OTGuild
 from discord.ext import commands
-from Core.Fonctions.TempsVoice import formatCount
 
 
 def defEvol(ligne:dict,evol:bool) -> str: 

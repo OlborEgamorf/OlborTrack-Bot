@@ -1,9 +1,11 @@
-import discord
-from Core.OS.Keys3 import NASAKey
-from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.WebRequest import webRequest
-from Core.Fonctions.Embeds import embedAssert, exeErrorExcept
 import asyncio
+
+import discord
+from Core.Fonctions.AuteurIcon import auteur
+from Core.Fonctions.Embeds import embedAssert, exeErrorExcept
+from Core.Fonctions.WebRequest import webRequest
+from Core.OS.Keys3 import NASAKey
+
 
 async def embedNasaPhoto() -> discord.Embed:
     """Se sert de l'API de la NASA et de APOD pour obtenir la 'photo du jour'.

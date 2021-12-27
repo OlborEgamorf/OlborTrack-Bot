@@ -1,10 +1,9 @@
 import discord
 from Core.Fonctions.Help3 import *
-from Core.Fonctions.AuteurIcon import auteur
-from Stats.SQL.ConnectSQL import connectSQL
 from Core.Fonctions.setMaxPage import setPage
-from Core.Fonctions.Embeds import embedAssert, exeErrorExcept, sendEmbed
+from Core.Fonctions.Embeds import sendEmbed
 from Outils.CustomCMD.ListeCMD import commandeCMD
+from Stats.SQL.ConnectSQL import connectSQL
 
 dictDescip={"home":{},"stats":dictStats,"polls":dictPoll,"jeux":dictJeux,"autre":dictAutre,"sv":dictSV,"outils":dictOutils,"admin":dictAdmin,"titres":dictTitres,"interact":dictInteract,"alertes":dictAlertes,"anniv":dictAnniv}
 

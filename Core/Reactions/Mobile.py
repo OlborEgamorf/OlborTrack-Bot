@@ -1,8 +1,9 @@
-from Stats.SQL.ConnectSQL import connectSQL
-from Core.Reactions.ChangePage import reactStats
 import discord
-from discord.ext import commands
 from Core.OTGuild import OTGuild
+from Core.Reactions.ChangePage import reactStats
+from discord.ext import commands
+from Stats.SQL.ConnectSQL import connectSQL
+
 
 async def changeMobile(message:int,reaction:discord.Reaction,bot:commands.Bot,guildOT:OTGuild,payload):
     """Chnage l'affichage d'une commande pour le passer en version mobile"""

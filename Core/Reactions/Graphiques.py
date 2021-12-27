@@ -1,27 +1,34 @@
-from Stats.SQL.ConnectSQL import connectSQL
+import discord
+from Core.Fonctions.AuteurIcon import auteur
+from Core.Fonctions.SeekMessage import seekMessage
+from Core.OTGuild import OTGuild
+from discord.ext import commands
 from Stats.Graphiques.BarRanks import graphRank
+from Stats.Graphiques.Circle import graphCircle
+from Stats.Graphiques.Compare.GroupedCompare import (graphGroupedCompare,
+                                                     graphGroupedComparePerso,
+                                                     graphGroupedCompareRank)
+from Stats.Graphiques.Compare.PersoCompare import graphPersoComp
+from Stats.Graphiques.Compare.SpiderCompare import (graphSpiderCompare,
+                                                    graphSpiderComparePerso)
+from Stats.Graphiques.Evol import (graphEvol, graphEvolAA, graphEvolAutour,
+                                   graphEvolBest, graphEvolBestUser,
+                                   graphEvolJoursAA, graphEvolRank)
+from Stats.Graphiques.Grouped import graphGroupedMois
+from Stats.Graphiques.Heat.HeatAnnee import graphHeatAnnee
+from Stats.Graphiques.Heat.HeatGlobal import graphHeatGlobal
+from Stats.Graphiques.Heat.HeatMois import graphHeat
+from Stats.Graphiques.Line import graphLine
+from Stats.Graphiques.Moyennes import (graphGroupedMoy, graphHeatMoy,
+                                       graphPersoMoy)
+from Stats.Graphiques.Perso import graphPerso
+from Stats.Graphiques.Pie import graphPie
 from Stats.Graphiques.Scatter.ScatterPerso import graphScatterPerso
 from Stats.Graphiques.Scatter.ScatterPositions import graphScatter
 from Stats.Graphiques.Scatter.ScatterUsers import graphScatterUsers
-from Stats.Graphiques.Heat.HeatMois import graphHeat
-from Stats.Graphiques.Heat.HeatAnnee import graphHeatAnnee
-from Stats.Graphiques.Heat.HeatGlobal import graphHeatGlobal
-from Stats.Graphiques.Pie import graphPie
-from Stats.Graphiques.Line import graphLine
-from Stats.Graphiques.Circle import graphCircle
-from Stats.Graphiques.Perso import graphPerso
-from Stats.Graphiques.Grouped import graphGroupedMois
-from Stats.Graphiques.Moyennes import graphGroupedMoy, graphHeatMoy, graphPersoMoy 
-import discord
-from discord.ext import commands
-from Stats.Graphiques.Evol import graphEvol, graphEvolAA, graphEvolAutour, graphEvolBest, graphEvolBestUser, graphEvolJoursAA, graphEvolRank
-from Core.Fonctions.AuteurIcon import auteur
-from Core.OTGuild import OTGuild
 from Stats.Graphiques.Spider import graphSpider
-from Stats.Graphiques.Compare.PersoCompare import graphPersoComp
-from Stats.Graphiques.Compare.SpiderCompare import graphSpiderCompare, graphSpiderComparePerso
-from Stats.Graphiques.Compare.GroupedCompare import graphGroupedCompare, graphGroupedComparePerso, graphGroupedCompareRank
-from Core.Fonctions.SeekMessage import seekMessage
+from Stats.SQL.ConnectSQL import connectSQL
+
 
 async def reactGraph(message:int,bot:commands.Bot,guildOT:OTGuild,payload,emoji):
     """Génère et envoie les graphiques pour toutes les commandes du bot.
