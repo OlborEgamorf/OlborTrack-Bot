@@ -84,12 +84,6 @@ def agregatorEvol(liste,guild,autho,id,option,dictConnexion,dictCurseur,curRap):
         if id!="":
             if option in ("Emotes","Reactions") and dictCurseur["GL"].execute("SELECT Rank FROM glob WHERE ID={0}".format(id)).fetchone()["Rank"]>400:
                 perso=False
-        if perso:
-            for i in listePersoA:
-                ecritureSQL("persoA{0}{1}".format(i.id,id),i.table,dictCurseur["GL"],5)
-            for i in listePersoM:
-                i.table.sort(key=nombre)
-                ecritureSQL("persoM{0}{1}".format(i.id,id),i.table,dictCurseur["GL"],5)
 
         for i in listeUser:
             for j in i.mois:

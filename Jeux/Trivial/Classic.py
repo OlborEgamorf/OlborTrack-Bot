@@ -172,8 +172,8 @@ class Question:
             connexion.commit()
 
             connexion,curseur=connectSQL("OT","ranks","Trivial",None,None)
-            compteurSQL(curseur,"trivial{0}".format(categ),author,(0,author,categ,"TO","GL",points[diff]*multi),points[diff]*multi,None,None,None,None,None,2,None)
-            compteurSQL(curseur,"trivial12",author,(0,author,12,"TO","GL",points[diff]*multi),points[diff]*multi,None,None,None,None,None,2,None)
+            compteurSQL(curseur,"trivial{0}".format(categ),author,(0,author,categ,"TO","GL",points[diff]*multi),points[diff]*multi,None,None,None,None,2,None)
+            compteurSQL(curseur,"trivial12",author,(0,author,12,"TO","GL",points[diff]*multi),points[diff]*multi,None,None,None,None,2,None)
         else:
             curseur.execute("UPDATE trivial{0} SET Multi=0 WHERE IDCateg={1}".format(author,categ))
             curseur.execute("UPDATE trivial{0} SET Multi=0 WHERE IDCateg=12".format(author))

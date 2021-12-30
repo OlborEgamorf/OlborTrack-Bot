@@ -3,9 +3,11 @@ import sqlite3
 import discord
 from Core.Fonctions.DichoTri import dichotomieID, nombre, triID
 from Core.Fonctions.RankingClassic import rankingClassic
+from Stats.SQL.ConnectSQL import connectSQL
 
 dictTriArg={"countAsc":"Count","rankAsc":"Rank","countDesc":"Count","rankDesc":"Rank","dateAsc":"DateID","dateDesc":"DateID","periodAsc":"None","periodDesc":"None","moyDesc":"Moyenne","nombreDesc":"Nombre"}
 dictTriSens={"countAsc":"ASC","rankAsc":"ASC","countDesc":"DESC","rankDesc":"DESC","dateAsc":"ASC","dateDesc":"DESC","periodAsc":"None","periodDesc":"None","moyDesc":"DESC","nombreDesc":"DESC"}
+tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"to","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","to":"to","glob":"GL","GL":"glob"}
 
 def getTableDay(curseur:sqlite3.Cursor,mois:str,annee:str,tri:str) -> list:
     """Permet d'extraire une liste des jours d'activité selon les critères de période que l'on veut.
@@ -104,3 +106,27 @@ def collapseEvol(table:list) -> list:
         newTable.append(table[i+1])
         return newTable
     return table
+
+def getTablePerso(guild,option,id,idobj,period,tri):
+    liste=[]
+    connectionF,curseurF=connectSQL(guild,option,"Stats","GL","")
+    for i in curseurF.execute("SELECT Mois,Annee FROM first{0}".format(period)).fetchall():
+        try:
+            connection,curseur=connectSQL(guild,option,"Stats",i["Mois"],i["Annee"])
+            if not idobj:
+                stat=curseur.execute("SELECT Rank,Count,Mois,Annee,ID FROM {0}{1} WHERE ID={2}".format(tableauMois[i["Mois"]],i["Annee"],id)).fetchone()
+            else:
+                stat=curseur.execute("SELECT Rank,Count,Mois,Annee,ID FROM perso{0}{1}{2} WHERE ID={3}".format(i["Mois"],i["Annee"],id,idobj)).fetchone()
+            if stat!=None:
+                liste.append(stat)
+        except:
+            pass
+    if tri=="countDesc":
+        liste.sort(key=lambda x:x["Count"],reverse=True)
+    elif tri=="periodAsc":
+        liste.sort(key=lambda x:x["Annee"]+x["Mois"])
+    elif tri=="periodDesc":
+        liste.sort(key=lambda x:x["Annee"]+x["Mois"],reverse=True)
+    elif tri=="rankAsc":
+        liste.sort(key=lambda x:x["Rank"])
+    return liste

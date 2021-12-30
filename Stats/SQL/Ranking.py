@@ -1,9 +1,8 @@
 from Stats.SQL.First import firstSQL
-from Stats.SQL.Periods import periodsSQL
 from Stats.SQL.Perso import persoSQL
 from Stats.SQL.Evolutions import evolSQL
 
-def rankingSQL(base,table,countB,countN,id,baseRank,date,period,perso,obj,evol,baseGL):
+def rankingSQL(base,table,countB,countN,id,baseRank,date,period,obj,evol,baseGL):
     rank=base.execute("SELECT COUNT() AS nombre FROM {0} WHERE Count> {1}".format(table,countN)).fetchone()["nombre"]
     equal=base.execute("SELECT COUNT() AS nombre FROM {0} WHERE Rank= {1}".format(table,baseRank)).fetchone()["nombre"]
     newRank=rank+1
@@ -14,7 +13,7 @@ def rankingSQL(base,table,countB,countN,id,baseRank,date,period,perso,obj,evol,b
         if obj==False and newRank==1:
             firstSQL(baseGL,id,countN,period)
         idObj=None
-    evolRank=rankingPlus(base,table,perso,id,rank+1,countN,period,date,obj,idObj,baseGL)
+    evolRank=rankingPlus(base,table,id,rank+1,countN,period,date,obj,idObj,baseGL)
 
     if newRank!=baseRank or equal!=0:
         if evol==True and evolRank!=None:
@@ -46,9 +45,9 @@ def rankingSQL(base,table,countB,countN,id,baseRank,date,period,perso,obj,evol,b
                     countE=etat[i]["Count"]
                 if evol==True:
                     if obj==True:
-                        evolRank=rankingPlus(base,table,perso,etat[i]["ID"],newRank,countE,period,date,obj,etat[i]["IDComp"],baseGL)
+                        evolRank=rankingPlus(base,table,etat[i]["ID"],newRank,countE,period,date,obj,etat[i]["IDComp"],baseGL)
                     else:
-                        evolRank=rankingPlus(base,table,perso,etat[i]["ID"],newRank,countE,period,date,obj,None,baseGL)
+                        evolRank=rankingPlus(base,table,etat[i]["ID"],newRank,countE,period,date,obj,None,baseGL)
                     base.execute("UPDATE {0} SET Rank= {1}, Evol={2} WHERE ID = {3}".format(table,newRank,evolRank,etat[i]["ID"]))  
                 else:
                     base.execute("UPDATE {0} SET Rank= {1} WHERE ID = {2}".format(table,newRank,etat[i]["ID"]))   
@@ -57,12 +56,10 @@ def rankingSQL(base,table,countB,countN,id,baseRank,date,period,perso,obj,evol,b
         return base.execute(exe).fetchall()
     return [{"ID":id,"Rank":baseRank}]
 
-def rankingPlus(base,table,perso,id,rank,countN,period,date,obj,idObj,baseGL):
+def rankingPlus(base,table,id,rank,countN,period,date,obj,idObj,baseGL):
     if obj==False:
-        periodsSQL(baseGL,perso,id,rank,countN,period)
         evol=evolSQL(base,table,rank,countN,id,date)
     elif obj==True:
-        periodsSQL(baseGL,perso,str(id)+str(idObj),rank,countN,period)
         persoSQL(base,idObj,id,rank,countN,period)
         evol=None
     else:

@@ -1,15 +1,16 @@
-
-
-from Stats.SQL.ConnectSQL import connectSQL
-from Core.Fonctions.GetNom import getAuthor
-from Core.Fonctions.setMaxPage import setMax, setPage
-from Stats.Embeds.Central import statsEmbed
-from Core.Fonctions.Embeds import embedAssert, newDescip, sendEmbed
 from Core.Fonctions.AuteurIcon import auteur
+from Core.Fonctions.Embeds import embedAssert, newDescip, sendEmbed
+from Core.Fonctions.GetNom import getAuthor
+from Core.Fonctions.GetTable import getTablePerso
+from Core.Fonctions.setMaxPage import setMax, setPage
+from Stats.Embeds.Mois import embedMois
+from Stats.SQL.ConnectSQL import connectSQL
 from Stats.SQL.Verification import verifCommands
 
+dictTriField={"countAsc":"Compteur croissant","rankAsc":"Rang croissant","countDesc":"Compteur décroissant","rankDesc":"Rang décroissant","dateAsc":"Date croissante","dateDesc":"Date décroissante","periodAsc":"Date croissante","periodDesc":"Date décroissante","moyDesc":"Moyenne décroissante","nombreDesc":"Compteur décroissant","winAsc":"Victoires croissant","winDesc":"Victoires décroissant","loseAsc":"Défaites croissant","loseDesc":"Défaites décroissant","expDesc":"Expérience décroissant","expAsc":"Expérience croissant"}
+
 async def statsPeriodsInter(ctx,option,turn,react,ligne,guildOT,bot):
-    try:
+    if True:
         assert verifCommands(guildOT,option)
         connexionCMD,curseurCMD=connectSQL(ctx.guild.id,"Commandes","Guild",None,None)
         connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
@@ -25,17 +26,19 @@ async def statsPeriodsInter(ctx,option,turn,react,ligne,guildOT,bot):
 
         if option in ("Salons","Voicechan"):
             assert not guildOT.chan[int(obj)]["Hide"]
-        pagemax=setMax(curseur.execute("SELECT COUNT() as Nombre FROM persoM{0}{1}".format(author,obj)).fetchone()["Nombre"])+1
+        table=getTablePerso(ctx.guild.id,option,author,obj,"M",ligne["Tri"])
+        pagemax=setMax(len(table))+1
         page=setPage(ligne["Page"],pagemax,turn)
 
-
-
         if page==pagemax:
-            ligne["Tri"]="countDesc"
-            embed=await statsEmbed("persoA{0}{1}".format(author,obj),ligne,1,pagemax,"Mois",guildOT,bot,False,False,curseur)
+            table=getTablePerso(ctx.guild.id,option,author,obj,"A","countDesc")
+            embed=embedMois(table,1,ligne["Mobile"],ligne["Option"])
+            embed.add_field(name="Tri <:otTRI:833666016491864114>",value=dictTriField["countDesc"],inline=True)
             embed.set_footer(text="Page {0}/{1}".format(page,pagemax))
         else:
-            embed=await statsEmbed("persoM{0}{1}".format(author,obj),ligne,page,pagemax,"Mois",guildOT,bot,False,False,curseur)
+            embed=embedMois(table,page,ligne["Mobile"],ligne["Option"])
+            embed.add_field(name="Tri <:otTRI:833666016491864114>",value=dictTriField[ligne["Tri"]],inline=True)
+            embed.set_footer(text="Page {0}/{1}".format(page,pagemax))
             
         embed.title="Périodes {0}".format(option.lower())
         embed.description=newDescip(embed.description,option,obj,guildOT,bot)
@@ -50,7 +53,7 @@ async def statsPeriodsInter(ctx,option,turn,react,ligne,guildOT,bot):
 
         await sendEmbed(ctx,embed,react,True,curseurCMD,connexionCMD,page,pagemax)
         
-    except:
+    else:
         if react:
             await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée n'existe plus ou alors est masqué par un administrateur."))
         else:

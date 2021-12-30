@@ -1,6 +1,4 @@
 def firstSQL(base,id,count,period):
-    if period[1]=="GL":
-        return
     if period[0]=="TO":
         detail="A"
     else:

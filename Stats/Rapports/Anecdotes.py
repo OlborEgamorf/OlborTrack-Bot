@@ -1,11 +1,13 @@
-from Stats.SQL.ConnectSQL import connectSQL
-import discord
 from random import choice
-from Stats.Rapports.OlderEarlier import getOlderJour, hierMAG
-from Stats.Rapports.CreateEmbed import embedRapport
-from Stats.Rapports.Description import descipGlobal
+
+import discord
 from Core.Fonctions.GetNom import nomsOptions
+from Core.Fonctions.GetTable import getTablePerso
 from Core.Fonctions.TempsVoice import formatCount
+from Stats.Rapports.CreateEmbed import embedRapport
+from Stats.Rapports.OlderEarlier import getOlderJour, hierMAG
+from Stats.SQL.ConnectSQL import connectSQL
+
 dictSection={"Voice":"vocal","Reactions":"réactions","Emotes":"emotes","Salons":"salons","Freq":"heures","Messages":"salons","Voicechan":"vocal"}
 dictTrivia={3:"Images",2:"GIFs",1:"Fichiers",4:"Liens",5:"Réponses",6:"Réactions",7:"Edits",8:"Emotes",9:"Messages",10:"Mots",11:"Vocal"}
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TOTAL","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","to":"TO","glob":"GL"}
@@ -137,16 +139,21 @@ def anecdotesSpe(date,guildOT,bot,guild,option,page,pagemax,period):
         elif period=="mois":
             for i in result:
                 try:
+                    tablePerso=getTablePerso(guild.id,option,i["ID"],False,"M","countDesc")
+                    tablePerso=list(filter(lambda x:x["Annee"]+x["Mois"]<=date[1]+tableauMois[date[0]]))
+                    tablePerso.sort(key=lambda x:x["Count"], reverse=True)
                     tablePerso=curGL.execute("SELECT Mois, Annee, Annee || '' || Mois AS DateID, Count FROM persoM{0} WHERE DateID<='{1}{2}' ORDER BY Count DESC".format(i["ID"],date[1],tableauMois[date[0]])).fetchone()
-                    if tablePerso["Mois"]==tableauMois[date[0]] and tablePerso["Annee"]==date[1]:
+                    if tablePerso[0]["Mois"]==tableauMois[date[0]] and tablePerso[0]["Annee"]==date[1]:
                         records.append({"ID":i["ID"],"Count":formatCount(option,tablePerso["Count"])})
                 except:
                     continue
         elif period=="annee":
             for i in result:
                 try:
-                    tablePerso=curGL.execute("SELECT Mois, Annee, Count FROM persoA{0} WHERE Annee<='{1}' ORDER BY Count DESC".format(i["ID"],date[1])).fetchone()
-                    if tablePerso["Annee"]==date[1]:
+                    tablePerso=getTablePerso(guild.id,option,i["ID"],False,"A","countDesc")
+                    tablePerso=list(filter(lambda x:x["Annee"]<=date[1] and x["Annee"]!="GL"))
+                    tablePerso.sort(key=lambda x:x["Count"], reverse=True)
+                    if tablePerso[0]["Annee"]==date[1]:
                         records.append({"ID":i["ID"],"Count":formatCount(option,tablePerso["Count"])})
                 except:
                     continue

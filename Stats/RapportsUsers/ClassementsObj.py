@@ -1,9 +1,9 @@
 import discord
-from Stats.RapportsUsers.Description import descipGlobal
+from Core.Fonctions.GetNom import nomsOptions
+from Core.Fonctions.GetTable import getTablePerso
+from Core.Fonctions.TempsVoice import formatCount
 from Stats.RapportsUsers.CreateEmbed import embedRapport
 from Stats.SQL.ConnectSQL import connectSQL
-from Core.Fonctions.GetNom import nomsOptions
-from Core.Fonctions.TempsVoice import formatCount
 
 dictSection={"Voice":"vocal","Reactions":"réactions","Emotes":"emotes","Salons":"salons","Freq":"heures","Messages":"salons","Voicechan":"vocal"}
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TOTAL","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","to":"TO","glob":"GL","TO":""}
@@ -28,7 +28,7 @@ def ranksIntoSpes(date,guildOT,bot,guild,option,page,pagenorm,pagemax,period,use
                 elif period=="mois":
                     obj=curseur.execute("SELECT Count,Rank,ID,Mois,Annee, Annee || '' || Mois AS DateID FROM persoM{0}{1} WHERE DateID<='{2}' ORDER BY DateID DESC".format(user,result[i]["ID"],date[1]+tableauMois[date[0]])).fetchall()
                 else:
-                    obj=curseur.execute("SELECT * FROM persoA{0}{1} ORDER BY Count DESC".format(user,result[i]["ID"])).fetchall()
+                    obj=getTablePerso(guild.id,option,user,result[i]["ID"],"A","countDesc")
             except:
                 embed.add_field(name="Introuvable",value="La table de cet objet est introuvable.",inline=True)
                 continue

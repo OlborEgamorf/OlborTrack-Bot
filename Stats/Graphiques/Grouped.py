@@ -1,39 +1,45 @@
-import sys
-
-import matplotlib.patches as mpatches
 from Core.Fonctions.GetNom import getNomGraph
+from Core.Fonctions.GetTable import getTablePerso
 from Core.Fonctions.GraphTheme import setThemeGraph
 from Core.Fonctions.VoiceAxe import voiceAxe
 from matplotlib import pyplot as plt
-from Stats.SQL.ConnectSQL import connectSQL
 
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TOTAL","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12"}
 
-def graphGroupedMois(ligne,ctx,option,bot,guildOT,curseur):
+def graphGroupedMois(ligne,ctx,option,bot):
     colors={"15":"grey","16":"pink","17":"purple","18":"orange","19":"green","20":"red","21":"blue"}
-    author,table=ligne["AuthorID"],ligne["AuthorID"]
-    if ligne["Args1"]!="None":
-        table="{0}{1}".format(ligne["AuthorID"],ligne["Args1"])
-    annees=curseur.execute("SELECT DISTINCT Annee FROM persoM{0} ORDER BY Annee ASC".format(table)).fetchall()
-    mois=curseur.execute("SELECT DISTINCT Mois FROM persoM{0} ORDER BY Mois ASC".format(table)).fetchall()
+    author=ligne["AuthorID"]
+    if ligne["Args1"]=="None":
+        table=getTablePerso(ctx.guild.id,option,author,False,"M","periodAsc")
+    else:
+        table=getTablePerso(ctx.guild.id,option,author,ligne["Args1"],"M","periodAsc")
+    annees,mois=[],[]
+    for i in table:
+        if i["Mois"] not in mois:
+            mois.append(i["Mois"])
+        if i["Annee"] not in annees:
+            annees.append(i["Annee"]) 
+    annees.sort()
+    mois.sort()
+    dictTable={i["Annee"]+i["Mois"]:i for i in table}
     listeX,listeY,listeSN,listeSX,listeA=[],[],[],[],[]
     pos=0
     setThemeGraph(plt)
     plt.subplots(figsize=(6.4,4.8))
-    for i in range(len(mois)):
+    for i in mois:
         center=0
-        for j in range(len(annees)):
-            count=curseur.execute("SELECT * FROM persoM{0} WHERE Mois='{1}' AND Annee='{2}'".format(table,mois[i]["Mois"],annees[j]["Annee"])).fetchone()
-            if count==None:
+        for j in annees:
+            try:
+                count=dictTable[j+i]
+            except:
                 continue
-            else:
-                listeY.append(count["Count"])
+            listeY.append(count["Count"])
             listeX.append(pos)
-            listeA.append(annees[j]["Annee"])
+            listeA.append(j)
             pos+=1
             center+=1
         listeSX.append(pos-center//2-1)
-        listeSN.append(tableauMois[mois[i]["Mois"]])
+        listeSN.append(tableauMois[i])
         pos+=0.75
 
     voiceAxe(option,listeY,plt,"y")

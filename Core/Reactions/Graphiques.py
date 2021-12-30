@@ -46,27 +46,26 @@ async def reactGraph(message:int,bot:commands.Bot,guildOT:OTGuild,payload,emoji)
         ctx=await bot.get_context(message)            
         if ligne["Commande"] in ("periods","periodsInter"):
             ligne["Args3"]=ligne["AuthorID"]
-            connexion,curseur=connectSQL(ctx.guild.id,ligne["Option"],"Stats","GL","")
 
             if ligne["Option"] not in ("Divers","Mentions","Mentionne"):
                 liste=[1,2,3,4,5]
             else:
                 liste=[1,2,3,4]
 
-            graphPerso(ligne,ctx,ligne["Option"],bot,"mois",guildOT,"Compteur",curseur)
+            graphPerso(ligne,ctx,ligne["Option"],bot,"mois","Compteur")
             messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
             embedM,embed=await embedGraph(liste,messageGraph,ctx,message)
             listeG.append(messageGraph.attachments[0].url)
 
-            graphGroupedMois(ligne,ctx,ligne["Option"],bot,guildOT,curseur)
+            graphGroupedMois(ligne,ctx,ligne["Option"],bot)
             messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
             listeG.append(messageGraph.attachments[0].url)
 
-            graphPerso(ligne,ctx,ligne["Option"],bot,"annee",guildOT,"Compteur",curseur)
+            graphPerso(ligne,ctx,ligne["Option"],bot,"annee","Compteur")
             messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
             listeG.append(messageGraph.attachments[0].url)
 
-            graphPerso(ligne,ctx,ligne["Option"],bot,"mois",guildOT,"Rang",curseur)
+            graphPerso(ligne,ctx,ligne["Option"],bot,"mois","Rang")
             messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
             listeG.append(messageGraph.attachments[0].url)
 

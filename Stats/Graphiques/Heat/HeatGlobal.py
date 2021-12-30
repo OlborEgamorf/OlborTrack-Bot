@@ -5,6 +5,7 @@ from Core.Fonctions.GetNom import getNomGraph
 from Core.Fonctions.GraphTheme import setThemeGraph
 from Core.Fonctions.TempsVoice import formatCount
 from matplotlib import pyplot as plt
+from Core.Fonctions.GetTable import getTablePerso
 from Stats.SQL.ConnectSQL import connectSQL
 import os
 
@@ -15,12 +16,24 @@ async def graphHeatGlobal(ligne,ctx,bot,option,guildOT):
     connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
     obj="" if ligne["Args3"]=="None" else ligne["Args3"]
     setThemeGraph(plt)
+
     if ligne["Commande"]=="periodsInter":
-        dates=curseur.execute("SELECT DISTINCT Annee FROM persoA{0}{1} WHERE Annee<>'GL' ORDER BY Annee ASC".format(ligne["AuthorID"],ligne["Args1"])).fetchall()
+        table=getTablePerso(ctx.guild.id,option,ligne["AuthorID"],ligne["Args1"],"A","periodAsc")
+        dates=[]
+        for i in table:
+            if i["Annee"] not in dates and i["Annee"]!="GL":
+                dates.append({"Annee":i["Annee"]}) 
+        dates.sort(key=lambda x:x["Annee"])
     elif obj=="":
         dates=curseur.execute("SELECT DISTINCT Annee FROM firstA ORDER BY Annee ASC").fetchall()
     else:
-        dates=curseur.execute("SELECT DISTINCT Annee FROM persoA{0} WHERE Annee<>'GL' ORDER BY Annee ASC".format(obj)).fetchall()
+        table=getTablePerso(ctx.guild.id,option,ligne["AuthorID"],False,"A","periodAsc")
+        dates=[]
+        for i in table:
+            if i["Annee"] not in dates and i["Annee"]!="GL":
+                dates.append({"Annee":i["Annee"]}) 
+        dates.sort(key=lambda x:x["Annee"])
+
     listeHeat=[[0]*12 for i in range(len(dates))]
     labels=[[""]*12 for i in range(len(dates))]
     listeMois=["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Aout","Septembre","Octobre","Novembre","Décembre"]

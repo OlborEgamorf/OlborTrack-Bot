@@ -1,8 +1,9 @@
 import discord
+from Core.Fonctions.GetTable import getTablePerso
+from Stats.RapportsUsers.CreateEmbed import embedRapport
 from Stats.RapportsUsers.Description import descipGlobal
 from Stats.RapportsUsers.Moyennes import descipMoyennes
-from Stats.RapportsUsers.Paliers import paliers 
-from Stats.RapportsUsers.CreateEmbed import embedRapport
+from Stats.RapportsUsers.Paliers import paliers
 from Stats.SQL.ConnectSQL import connectSQL
 
 dictSection={"Voicechan":"vocal","Reactions":"réactions","Emotes":"emotes","Salons":"salons","Freq":"heures","Messages":"salons"}
@@ -34,9 +35,11 @@ def homeSpe(date,guildOT,bot,guild,option,pagemax,period,user):
         elif period in ("mois","annee"):
             connexion,curseur=connectSQL(guild.id,"Messages","Stats","GL","")
             if period=="mois":
-                table=curseur.execute("SELECT DISTINCT * FROM persoM{0} WHERE Mois='{1}' ORDER BY Annee ASC".format(user,tableauMois[date[0]])).fetchall()
+                table=getTablePerso(guild.id,option,user,False,"M","periodAsc")
+                table=list(filter(lambda x:x["Mois"]==tableauMois[date[0]], table))
             elif period=="annee":
-                table=curseur.execute("SELECT DISTINCT * FROM persoA{0} WHERE Annee<>'GL' ORDER BY Annee ASC".format(user)).fetchall()
+                table=getTablePerso(guild.id,option,user,False,"A","periodAsc")
+                table=list(filter(lambda x:x["Annee"]!="GL", table))
             for j in table:
                 connexion,curseur=connectSQL(guild.id,option,"Stats",j["Mois"],j["Annee"])
                 try:

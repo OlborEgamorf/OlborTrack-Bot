@@ -1,24 +1,31 @@
-from matplotlib import pyplot as plt
 import pandas as pd
-from Stats.SQL.ConnectSQL import connectSQL
-from Core.Fonctions.GraphTheme import setThemeGraph
 from Core.Fonctions.DichoTri import triPeriod
 from Core.Fonctions.GetNom import getNomGraph
-from Core.Fonctions.VoiceAxe import voiceAxe
+from Core.Fonctions.GetTable import getTablePerso
+from Core.Fonctions.GraphTheme import setThemeGraph
 from Core.Fonctions.TempsVoice import formatCount
+from Core.Fonctions.VoiceAxe import voiceAxe
+from matplotlib import pyplot as plt
+
 colorOT=(110/256,200/256,250/256,1)
 dictNameAxis={"Messages":"Messages","Salons":"Messages","Freq":"Messages","Mots":"Mots","Emotes":"Utilisations","Reactions":"Utilisations","Mentions":"Mentions","Mentionne":"Mentions","Divers":"Nombre","Voice":"Temps en vocal","Voicechan":"Temps en vocal"}
 
-def graphPerso(ligne,ctx,option,bot,period,guildOT,categ,curseur):
-    author,nomTable=ligne["AuthorID"],ligne["AuthorID"]
-    if ligne["Args1"]!="None":
-        nomTable="{0}{1}".format(ligne["AuthorID"],ligne["Args1"])
+def graphPerso(ligne,ctx,option,bot,period,categ):
+    
+    author=ligne["AuthorID"]
+    if period=="mois":
+        if ligne["Args1"]=="None":
+            table=getTablePerso(ctx.guild.id,option,author,False,"M","periodAsc")
+        else:
+            table=getTablePerso(ctx.guild.id,option,author,ligne["Args1"],"M","periodAsc")
+    else:
+        if ligne["Args1"]=="None":
+            table=getTablePerso(ctx.guild.id,option,author,False,"A","periodAsc")
+        else:
+            table=getTablePerso(ctx.guild.id,option,author,ligne["Args1"],"A","periodAsc")
+            table=list(filter(lambda x:x["Annee"]!="GL", table))
     plt.subplots(figsize=(6.4,4.8))
     theme=setThemeGraph(plt)
-    if period=="mois":
-        table=triPeriod(curseur,"persoM{0}".format(nomTable),"periodAsc")
-    else:
-        table=curseur.execute("SELECT * FROM persoA{0} WHERE Annee<>'GL' ORDER BY Annee ASC".format(nomTable)).fetchall()
     listeX,listeY=[],[]
     somme=0
 
