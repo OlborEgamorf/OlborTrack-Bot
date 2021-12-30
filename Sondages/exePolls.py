@@ -84,7 +84,7 @@ async def exeGiveaway(ctx,args,bot):
         embedPoll=createEmbed("Giveaway : {0}".format(descip),"Cliquez sur la réaction <a:MusicMakeYouLoseControl:711222160982540380> pour tenter d'être tiré au sort !\nNombre de gagnants : {0}".format(gagnants),0xfc03d7,"{0} | {1}".format(ctx.invoked_with.lower(),foot),ctx.guild)
         await ctx.message.delete()
         message=await ctx.send(embed=embedPoll)
-        dictPolls[message.id]=Giveaway(message.id,ctx.guild.id,somme,descip,gagnants,message.channel.id)
+        dictPolls[message.id]=Giveaway(message.id,ctx.guild.id,somme,createPhrase([descip])[0:-1],gagnants,message.channel.id)
         await message.add_reaction("<a:MusicMakeYouLoseControl:711222160982540380>")
         await dictPolls[message.id].trigger(bot)
         del dictPolls[message.id]

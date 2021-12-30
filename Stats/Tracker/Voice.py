@@ -1,83 +1,56 @@
+import time
 from time import strftime
+
+import discord
+
+from Core.OTGuild import OTGuild
 from Stats.SQL.ConnectSQL import connectSQL
 from Stats.SQL.Execution import exeClassic, exeObj
-from Stats.SQL.Compteur import compteurSQL
 from Stats.SQL.Historique import histoSQL
 from Stats.SQL.Verification import verifExecSQL
 from Stats.Tracker.Divers import exeDiversSQL
-from Core.OTGuild import OTGuild
+
 listeCo={}
 dictMois={1:31,2:28,3:31,4:30,5:31,6:30,7:31,8:31,9:30,10:31,11:30,12:31}
 
 class Voice:
-    def __init__(self,member,chan,guild,client):
+    """Classe qui régit les statistiques vocales. Chaque membre connecté à un salon vocal possède son objet Voice. Elle contient les informations sur le membre, le serveur et le salon où il est connecté, et le moment où il s'est connecté. Elle possède une méthode qui enregistre les stats quand elle est appelée."""
+    def __init__(self,member:discord.Member,chan:discord.VoiceChannel,guild:discord.Guild):
+        """
+        Entrées :
+            member : l'objet discord.Member du membre
+            chan : l'objet discord.VoiceChannel du salon connecté
+            guild : l'objet discord.Guild du serveur connecté"""
         self.user=member
         self.userid=member.id
         self.channelid=chan.id
         self.guildid=guild.id
         self.guild=guild
-        self.trigsec=int(strftime("%S"))
-        self.trigmin=int(strftime("%M"))
-        self.trigheu=int(strftime("%H"))
-        self.trigjou=int(strftime("%d"))
-        self.trigmoi=int(strftime("%m"))
-        self.trigann=int(strftime("%y"))
-        self.client=client
+        self.time=time.time()
         self.connect=True
 
-    def calcul(self):
-        endann,endmoi,endjou,endheu,endmin,endsec=int(strftime("%y")),int(strftime("%m")),int(strftime("%d")),int(strftime("%H")),int(strftime("%M")),int(strftime("%S"))
-        if endann-self.trigann!=0:
-            count=(endann-self.trigann)*31536000
-            count+=(endmoi-self.trigmoi)*dictMois[self.trigmoi]*86400
-            count+=(endjou-self.trigjou)*86400
-            count+=(endheu-self.trigheu)*3600
-            count+=(endmin-self.trigmin)*60
-            count+=endsec-self.trigsec 
-        elif endmoi-self.trigmoi!=0:
-            count=(endmoi-self.trigmoi)*dictMois[self.trigmoi]*86400
-            count+=(endjou-self.trigjou)*86400
-            count+=(endheu-self.trigheu)*3600
-            count+=(endmin-self.trigmin)*60
-            count+=endsec-self.trigsec
-        elif endjou-self.trigjou!=0:
-            count=(endjou-self.trigjou)*86400
-            count+=(endheu-self.trigheu)*3600
-            count+=(endmin-self.trigmin)*60
-            count+=endsec-self.trigsec
-        elif endheu-self.trigheu!=0:
-            count=(endheu-self.trigheu)*3600
-            count+=(endmin-self.trigmin)*60
-            count+=endsec-self.trigsec
-        elif endmin-self.trigmin!=0:
-            count=(endmin-self.trigmin)*60
-            count+=endsec-self.trigsec
-        elif endsec-self.trigsec!=0:
-            count=endsec-self.trigsec
-        else:
-            count=0
-        return count
-
-    async def exeStat(self,guild):
+    async def exeStat(self,guild:OTGuild):
+        """Méthode qui calcule le temps passé en vocal, déclare l'utilisateur comme déconnecté et enregistre les stats.
+        
+        Entrée :
+            guild : l'objet OTGuild du serveur concerné"""
         self.connect=False
-        count=self.calcul()
+        count=int(time.time()-self.time)
         if count!=0:
             exeVoiceSQL(self.userid,self.channelid,count,guild)
 
 
-async def voiceConnect(member,before,after,client,guild):
+async def voiceConnect(member,before,after,guild):
     if member.bot==False and guild.mstats[5]["Statut"]==True:
         if before.channel==None:
             if verifExecSQL(guild,after.channel,member)==True:
-                listeCo[member.id]=Voice(member,after.channel,member.guild,client)
+                listeCo[member.id]=Voice(member,after.channel,member.guild)
         elif after.channel==None:
-            if verifExecSQL(guild,before.channel,member)==True:
-                await listeCo[member.id].exeStat(guild)
+            await listeCo[member.id].exeStat(guild)
         elif after.channel.id!=before.channel.id:
-            if verifExecSQL(guild,before.channel,member)==True:
-                await listeCo[member.id].exeStat(guild)
+            await listeCo[member.id].exeStat(guild)
             if verifExecSQL(guild,after.channel,member)==True:
-                listeCo[member.id]=Voice(member,after.channel,member.guild,client)
+                listeCo[member.id]=Voice(member,after.channel,member.guild)
     return
 
 def exeVoiceSQL(id,chan,count,guild):
@@ -102,7 +75,11 @@ async def reconnect(client,dictGuilds):
             for h in j.voice_states:
                 member=i.get_member(h)
                 if member.bot==False and verifExecSQL(dictGuilds[member.guild.id],j,member)==True:
-                    listeCo[member.id]=Voice(member,j,i,client)
+                    if member.id in listeCo and listeCo[member.id].guildid!=i.id and listeCo[member.id].connect:
+                        listeCo[member.id].exestat(dictGuilds[listeCo[member.id].guildid])
+                    elif member.id in listeCo and listeCo[member.id].connect:
+                        continue
+                    listeCo[member.id]=Voice(member,j,i)
     await client.get_channel(705390619538882641).send("Voice : Utilisateurs Connectés.")
     return
 

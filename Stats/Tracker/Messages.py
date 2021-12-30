@@ -96,5 +96,4 @@ def exeStatsSQL(id,guild,chan,mots,option,content):
     exeDiversSQL(id,dictDivers,option,guild,connexionGuild,curseurGuild)
 
     connexionGuild.commit()
-    #print(time()-temps)
     return time()-temps
