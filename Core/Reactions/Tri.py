@@ -14,7 +14,7 @@ async def changeTri(message:int,reaction:discord.Reaction,bot:commands.Bot,guild
     if ligne!=None:
         if ligne["Commande"] in ("rank","roles"):
             dictNext={"countDesc":"countAsc","countAsc":"countDesc"}
-        elif ligne["Commande"] in ("periods","periodsInter"):
+        elif ligne["Commande"] in ("periods","periodsInter","first"):
             dictNext={"countDesc":"periodAsc","periodAsc":"periodDesc","periodDesc":"rankAsc","rankAsc":"countDesc"}
         elif ligne["Commande"]=="perso":
             dictNext={"countDesc":"rankAsc","rankAsc":"countAsc","countAsc":"rankDesc","rankDesc":"countDesc"}

@@ -2,7 +2,6 @@ from time import strftime
 from Stats.SQL.ConnectSQL import connectSQL
 from Core.Fonctions.GetPeriod import getAnnee, getMois
 from Core.Fonctions.GetNom import getObj
-from Stats.Commandes.FirstAnnee import statsFirst
 from Core.Fonctions.setMaxPage import setMax, setPage
 from Stats.Embeds.Central import statsEmbed
 from Core.Fonctions.AuteurIcon import auteur
@@ -22,13 +21,9 @@ async def statsRank(ctx,option,turn,react,ligne,guildOT,bot):
                     mois,annee,obj=getMois(ctx.args[2].lower()),getAnnee(ctx.args[3].lower()),getObj(option,ctx,4)
                 except:
                     try:
-                        await statsFirst(ctx,option,guildOT,bot)
-                        return
+                        mois,annee,obj="to",getAnnee(ctx.args[2].lower()),getObj(option,ctx,3)
                     except:
-                        try:
-                            mois,annee,obj="to",getAnnee(ctx.args[2].lower()),getObj(option,ctx,3)
-                        except:
-                            mois,annee,obj="glob","",getObj(option,ctx,2)
+                        mois,annee,obj="glob","",getObj(option,ctx,2)
             elif ctx.args[2].lower()=="mois":
                 mois,annee,obj=tableauMois[strftime("%m")].lower(),strftime("%y"),getObj(option,ctx,3)
             elif ctx.args[2].lower()=="annee":

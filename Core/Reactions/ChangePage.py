@@ -10,6 +10,7 @@ from Savezvous.ListModo import commandeSV
 from Sondages.GAReroll import commandeGAR
 from Stats.Commandes.Classements import statsRank
 from Stats.Commandes.Evol import statsEvol
+from Stats.Commandes.First import statsFirstPeriods
 from Stats.Commandes.Jeux import statsJeux
 from Stats.Commandes.Jours import statsJours
 from Stats.Commandes.Moyennes import statsMoy
@@ -46,50 +47,33 @@ async def reactStats(message:int,reaction:discord.Reaction,bot:commands.Bot,guil
         if message==None:
             return
         ctx=await bot.get_context(message)
-        if ligne["Commande"]=="rank":
-            await statsRank(ctx,ligne["Option"],getTurn(reaction),True,ligne,guildOT,bot)
-        elif ligne["Commande"]=="periods":
-            await statsPeriods(ctx,ligne["Option"],getTurn(reaction),True,ligne,guildOT,bot)
-        elif ligne["Commande"]=="periodsInter":
-            await statsPeriodsInter(ctx,ligne["Option"],getTurn(reaction),True,ligne,guildOT,bot)
-        elif ligne["Commande"]=="evol":
-            await statsEvol(ctx,ligne["Option"],getTurn(reaction),True,ligne,guildOT,bot)
-        elif ligne["Commande"]=="perso":
-            await statsPerso(ctx,ligne["Option"],getTurn(reaction),True,ligne,guildOT,bot)
+
+        if ligne["Commande"] in ("rank","periods","periodsInter","evol","perso","moy","day","roles","compareUser","comparePerso","compareRank","compareServ","first"):
+            dictFonction={
+                "rank":statsRank,"periods":statsPeriods,"periodsInter":statsPeriodsInter,"evol":statsEvol,"perso":statsPerso,"moy":statsMoy,
+                "day":statsJours,"roles":statsRoles,"compareUser":compareUser,"comparePerso":comparePerso,"compareRank":compareRank,
+                "compareServ":compareServ,"first":statsFirstPeriods
+                }
+            await dictFonction[ligne["Commande"]](ctx,ligne["Option"],getTurn(reaction),True,ligne,guildOT,bot)
+
+        elif ligne["Commande"] in ("savezvous","imagesBV","messagesBV"):
+            dictFonction={"savezvous":commandeSV,"imagesBV":commandeImageBV,"messagesBV":commandeMessBV}
+            await dictFonction[ligne["Commande"]](ctx,ligne["Option"],getTurn(reaction),True,ligne,bot)
+
+        elif ligne["Commande"] in ("tableau","twitch"):
+            dictFonction={"tableau":commandeSB,"twitch":commandeTwitch}
+            await dictFonction[ligne["Commande"]](ctx,getTurn(reaction),True,ligne,bot,guildOT,None)
+
         elif ligne["Commande"]=="wikipedia":
             await exeWikipedia(ctx,bot,ligne["Option"],getTurn(reaction),ligne)
-        elif ligne["Commande"]=="moy":
-            await statsMoy(ctx,ligne["Option"],getTurn(reaction),True,ligne,guildOT,bot)
-        elif ligne["Commande"]=="day":
-            await statsJours(ctx,ligne["Option"],getTurn(reaction),True,ligne,guildOT,bot)
-        elif ligne["Commande"]=="savezvous":
-            await commandeSV(ctx,ligne["Option"],getTurn(reaction),True,ligne,bot)
-        elif ligne["Commande"]=="roles":
-            await statsRoles(ctx,ligne["Option"],getTurn(reaction),True,ligne,guildOT,bot)
         elif ligne["Commande"]=="jeux":
             await statsJeux(ctx,getTurn(reaction),True,ligne,guildOT,bot,ligne["Args3"])
         elif ligne["Commande"]=="trivial":
             await statsTrivial(ctx,getTurn(reaction),True,ligne,guildOT,bot,ligne["Option"])
-        elif ligne["Commande"]=="tableau":
-            await commandeSB(ctx,getTurn(reaction),True,ligne,bot,guildOT,None)
-        elif ligne["Commande"]=="twitch":
-            await commandeTwitch(ctx,getTurn(reaction),True,ligne,bot,guildOT,None)
-        elif ligne["Commande"]=="compareUser":
-            await compareUser(ctx,ligne["Option"],getTurn(reaction),True,ligne,guildOT,bot)
-        elif ligne["Commande"]=="comparePerso":
-            await comparePerso(ctx,ligne["Option"],getTurn(reaction),True,ligne,guildOT,bot)
-        elif ligne["Commande"]=="compareRank":
-            await compareRank(ctx,ligne["Option"],getTurn(reaction),True,ligne,guildOT,bot)
-        elif ligne["Commande"]=="compareServ":
-            await compareServ(ctx,ligne["Option"],getTurn(reaction),True,ligne,guildOT,bot)
         elif ligne["Commande"]=="gareroll":
             await commandeGAR(ctx,getTurn(reaction),True,ligne)
         elif ligne["Commande"]=="help":
             await commandeHelp(ctx,getTurn(reaction),True,ligne,bot,guildOT)
-        elif ligne["Commande"]=="imagesBV":
-            await commandeImageBV(ctx,ligne["Option"],getTurn(reaction),True,ligne,bot)
-        elif ligne["Commande"]=="messagesBV":
-            await commandeMessBV(ctx,ligne["Option"],getTurn(reaction),True,ligne,bot)
         elif ligne["Commande"]=="titres":
             await commandeTMP(ctx,getTurn(reaction),True,ligne,ligne["Option"])
         elif ligne["Commande"]=="rapport":
@@ -105,6 +89,7 @@ async def reactStats(message:int,reaction:discord.Reaction,bot:commands.Bot,guil
         elif ligne["Commande"]=="random":
             await commandeRandom(ctx,ligne,True,guildOT,bot)
         await removeReact(message,reaction.id,user)
+
     else:
         ligne=curseurCMD.execute("SELECT * FROM graphs WHERE MessageID={0}".format(message)).fetchone()
         if ligne!=None:

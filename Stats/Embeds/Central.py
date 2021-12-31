@@ -70,6 +70,8 @@ async def statsEmbed(nom,ligne,page,pagemax,option,guildOT,bot,evol,collapse,cur
         embed=embedTrivialPerso(table,page,mobile)
     elif option=="cross":
         embed=embedServeurs(table,guildOT,page,mobile,evol)
+    elif option=="First":
+        embed=embedFirst(table,page,ligne["Option"],guildOT,bot,mobile)
     
     embed.add_field(name="Tri <:otTRI:833666016491864114>",value=dictTriField[tri],inline=True)
     embed.set_footer(text="Page {0}/{1} | {2}".format(page,pagemax,choice(liste)))

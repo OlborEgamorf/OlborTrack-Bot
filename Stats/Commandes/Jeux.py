@@ -1,7 +1,6 @@
 from time import strftime
 from Stats.SQL.ConnectSQL import connectSQL
 from Core.Fonctions.GetPeriod import getAnnee, getMois
-from Stats.Commandes.FirstAnnee import statsFirst
 from Core.Fonctions.setMaxPage import setMax, setPage
 from Stats.Embeds.Central import statsEmbed
 from Core.Fonctions.AuteurIcon import auteur
@@ -21,13 +20,9 @@ async def statsJeux(ctx,turn,react,ligne,guildOT,bot,mode):
                     mois,annee=getMois(ctx.args[3].lower()),getAnnee(ctx.args[4].lower())
                 except:
                     try:
-                        await statsFirst(ctx,option,guildOT,bot)
-                        return
+                        mois,annee="to",getAnnee(ctx.args[3].lower())
                     except:
-                        try:
-                            mois,annee="to",getAnnee(ctx.args[3].lower())
-                        except:
-                            mois,annee="glob",""
+                        mois,annee="glob",""
             elif ctx.args[3].lower()=="mois":
                 mois,annee=tableauMois[strftime("%m")].lower(),strftime("%y")
             elif ctx.args[3].lower()=="annee":

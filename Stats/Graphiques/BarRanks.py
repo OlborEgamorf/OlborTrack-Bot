@@ -47,6 +47,13 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
         table=curseur.execute("SELECT * FROM {0} WHERE Rank<=15 ORDER BY Rank ASC LIMIT 15".format(ligne["Args2"])).fetchall()
         table.reverse()
         connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
+    elif ligne["Commande"]=="first":
+        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
+        first=curseur.execute("SELECT DISTINCT ID FROM firstM").fetchall()
+        table=[]
+        for i in first:
+            table.append({"ID":i["ID"],"Count":curseur.execute("SELECT Count() AS Nombre FROM firstM WHERE ID={0}".format(i["ID"])).fetchone()["Nombre"]})
+        table.sort(key=lambda x:x["Count"])
     else:
         connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",mois,annee)
         table=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY Count DESC LIMIT 15".format(mois,annee,ligne["AuthorID"])).fetchall()
@@ -132,6 +139,8 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
             titre="Classement global - Mondial - {0}".format(option)   
         else:
             titre="Classement {0} 20{1} - Mondial - {2}".format(tableauMois[table[0]["Mois"]],table[0]["Annee"],option)
+    elif ligne["Commande"]=="first":
+        titre="Nombre de fois premier dans les classements - {0}".format(option)
     else:
         if table[0]["Annee"]=="GL":
             titre="Classement global - {0} - {1}".format(ctx.guild.name,option)   

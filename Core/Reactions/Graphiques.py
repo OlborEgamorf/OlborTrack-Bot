@@ -200,6 +200,9 @@ async def reactGraph(message:int,bot:commands.Bot,guildOT:OTGuild,payload,emoji)
             elif ligne["Commande"] in ("jeux","trivial"):
                 await ctx.reply("Les graphiques pour les classements de jeux ne sont pas encore disponible ! Il manque des choses à régler pour cela...")
                 return
+
+            elif ligne["Commande"]=="first":
+                listeFonc=[graphRank,graphCircle]
             
             for fonc in range(len(listeFonc)):
                 await listeFonc[fonc](ligne,ctx,bot,ligne["Option"],guildOT)

@@ -37,6 +37,11 @@ async def graphCircle(ligne,ctx,bot,option,guildOT):
         connexion,curseur=connectSQL(ligne["Args3"],dictOption[option],"Jeux",tableauMois[ligne["Args1"]],ligne["Args2"])
         table=curseur.execute("SELECT * FROM {0}{1} WHERE Count>0 ORDER BY Rank DESC LIMIT 100".format(ligne["Args1"],ligne["Args2"])).fetchall()
         connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
+    elif ligne["Commande"]=="first":
+        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
+        table=curseur.execute("SELECT * FROM firstM ORDER BY Count ASC").fetchall()
+        for i in table:
+            i["Rank"]=1
     else:
         connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[ligne["Args1"]],ligne["Args2"])
         table=curseur.execute("SELECT * FROM {0}{1}{2} WHERE Count>0 ORDER BY Rank DESC LIMIT 100".format(ligne["Args1"],ligne["Args2"],obj)).fetchall()
@@ -88,7 +93,9 @@ async def graphCircle(ligne,ctx,bot,option,guildOT):
             else:
                 listeY.append(getNomGraph(ctx,bot,option,table[i]["ID"]))  
             if len(listeY[i-delete])>15:
-                listeY[i-delete]="{0}...".format(listeY[i-delete][0:15])     
+                listeY[i-delete]="{0}...".format(listeY[i-delete][0:15])  
+            if ligne["Commande"]=="first":
+                listeY[i-delete]+="\n{0} 20{1}".format(tableauMois[table[i]["Mois"]],table[i]["Annee"])
         except:
             listeY.append("??")
 
