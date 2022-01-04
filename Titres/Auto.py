@@ -1,14 +1,15 @@
-from Stats.SQL.ConnectSQL import connectSQL
-from Titres.Outils import createAccount, gainCoins
-from Core.Fonctions.Embeds import createEmbed
 import sqlite3
-import asyncio
+
+from Core.Fonctions.Embeds import createEmbed
+from Stats.SQL.ConnectSQL import connectSQL
+
+from Titres.Outils import createAccount, gainCoins
 
 tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai","06":"Juin","07":"Juillet","08":"Aout","09":"Septembre","10":"Octobre","11":"Novembre","12":"Décembre","TO":"Année","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
 
 def dailyCoins():
     dictRank={5:2,4:4,3:6,2:8,1:10}
-    liste=["P4","BatailleNavale","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR","Matrice"]
+    liste=["P4","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR","Matrice","CodeNames"]
     for i in liste:
         connexion,curseur=connectSQL("OT",i,"Jeux","GL","")
         try:
@@ -20,9 +21,9 @@ def dailyCoins():
 
 async def monthlyTitles(mois,annee,bot):
     dictCoins={3:50,2:100,1:200}
-    dictTitres={"P4":"des Puissants","BatailleNavale":"des Mers","Tortues":"des Tortues","TortuesDuo":"de la Co-Op","TrivialVersus":"des Questions","TrivialParty":"de la Fête","TrivialBR":"de la Survie","Matrice":"de la Matrice"}
-    dictID={"P4":76,"BatailleNavale":11,"Tortues":90,"TortuesDuo":95,"TrivialVersus":136,"TrivialParty":131,"TrivialBR":126,"Matrice":168}
-    liste=["P4","BatailleNavale","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR","Matrice"]
+    dictTitres={"P4":"des Puissants","BatailleNavale":"des Mers","Tortues":"des Tortues","TortuesDuo":"de la Co-Op","TrivialVersus":"des Questions","TrivialParty":"de la Fête","TrivialBR":"de la Survie","Matrice":"de la Matrice","CodeNames":"des Espions"}
+    dictID={"P4":76,"BatailleNavale":11,"Tortues":90,"TortuesDuo":95,"TrivialVersus":136,"TrivialParty":131,"TrivialBR":126,"Matrice":168,"CodeNames":173}
+    liste=["P4","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR","Matrice","CodeNames"]
     for i in liste:
         connexion,curseur=connectSQL("OT",i,"Jeux",mois,annee)
         try:
@@ -78,9 +79,9 @@ async def monthlyTitles(mois,annee,bot):
 
 async def annualyTitles(annee,bot):
     dictCoins={3:250,2:500,1:1000}
-    dictTitres={"P4":"des Puissants","BatailleNavale":"des Mers","Tortues":"des Tortues","TortuesDuo":"de la Co-Op","TrivialVersus":"des Questions","TrivialParty":"de la Fête","TrivialBR":"de la Survie","Matrice":"de la Matrice"}
-    dictID={"P4":77,"BatailleNavale":12,"Tortues":91,"TortuesDuo":96,"TrivialVersus":137,"TrivialParty":132,"TrivialBR":127,"Matrice":169}
-    liste=["P4","BatailleNavale","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR","Matrice"]
+    dictTitres={"P4":"des Puissants","BatailleNavale":"des Mers","Tortues":"des Tortues","TortuesDuo":"de la Co-Op","TrivialVersus":"des Questions","TrivialParty":"de la Fête","TrivialBR":"de la Survie","Matrice":"de la Matrice","CodeNames":"des Espions"}
+    dictID={"P4":77,"BatailleNavale":12,"Tortues":91,"TortuesDuo":96,"TrivialVersus":137,"TrivialParty":132,"TrivialBR":127,"Matrice":169,"CodeNames":174}
+    liste=["P4","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR","Matrice","CodeNames"]
     for i in liste:
         connexion,curseur=connectSQL("OT",i,"Jeux","TO",annee)
         try:
@@ -102,7 +103,7 @@ async def annualyTitles(annee,bot):
 
 async def monthlyBadges(mois,annee):
     dictValue={3:1,2:2,1:3}
-    liste=["P4","BatailleNavale","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR","Matrice"]
+    liste=["P4","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR","Matrice","CodeNames"]
     for i in liste:
         connexion,curseur=connectSQL("OT",i,"Jeux",mois,annee)
         try:
@@ -140,14 +141,10 @@ async def monthlyBadges(mois,annee):
             pass
         connexionTitres.commit()
 
-"""listeDates=[("06","20"),("07","20"),("08","20"),("09","20"),("10","20"),("11","20"),("12","20"),("01","21"),("02","21"),("03","21"),("04","21"),("05","21"),("06","21"),("07","21"),("08","21")]
-for i in listeDates:
-    asyncio.run(monthlyBadges(i[0],i[1]))"""
-
 
 async def annualyBadges(annee):
     dictValue={3:1,2:2,1:3}
-    liste=["P4","BatailleNavale","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR","Matrice"]
+    liste=["P4","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR","Matrice","CodeNames"]
     for i in liste:
         connexion,curseur=connectSQL("OT",i,"Jeux","TO",annee)
         try:
@@ -161,5 +158,3 @@ async def annualyBadges(annee):
                     pass
         except sqlite3.OperationalError:
             pass
-
-"""asyncio.run(annualyBadges("20"))"""

@@ -64,7 +64,7 @@ async def statsEmbed(nom,ligne,page,pagemax,option,guildOT,bot,evol,collapse,cur
         embed=embedEvol(table,page,mobile,collapse,evol,ligne["Option"])
     elif option=="Moy":
         embed=embedMoy(table,page,mobile)
-    elif option in ("tortues","tortuesduo","p4","bataillenavale","trivialversus","trivialbr","trivialparty","trivial"):
+    elif option in ("tortues","tortuesduo","p4","bataillenavale","trivialversus","trivialbr","trivialparty","trivial","codenames"):
         embed=embedJeux(table,guildOT,page,mobile,author,evol,option)
     elif option=="trivialperso":
         embed=embedTrivialPerso(table,page,mobile)

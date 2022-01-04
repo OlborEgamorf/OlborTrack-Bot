@@ -5,7 +5,7 @@ from Stats.SQL.ConnectSQL import connectSQL
 from Core.Fonctions.GetNom import getTitre
 from Titres.Badges import getBadges
 
-dictOption={"tortues":"Tortues","tortuesduo":"TortuesDuo","trivialversus":"TrivialVersus","trivialbr":"TrivialBR","trivialparty":"TrivialParty","p4":"P4","bataillenavale":"BatailleNavale","cross":"Cross","trivial":"trivial"}
+dictOption={"tortues":"Tortues","tortuesduo":"TortuesDuo","trivialversus":"TrivialVersus","trivialbr":"TrivialBR","trivialparty":"TrivialParty","p4":"P4","bataillenavale":"BatailleNavale","cross":"Cross","trivial":"trivial","codenames":"CodeNames"}
 
 def embedJeux(table,guild,page,mobile,id,evol,option):
     embed=discord.Embed()

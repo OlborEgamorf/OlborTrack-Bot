@@ -1,11 +1,11 @@
 import discord
 from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.GetNom import getTitre
+from Jeux.P4.ClasseP4 import JeuP4, JoueurP4
 from Stats.SQL.ConnectSQL import connectSQL
 from Stats.SQL.EmoteDetector import emoteDetector
 from Titres.Couleur import getColorJeux
 from Titres.Emote import getEmoteJeux
-from Jeux.ClasseP4 import JeuP4, JoueurP4
 
 
 class JeuP4Cross(JeuP4):

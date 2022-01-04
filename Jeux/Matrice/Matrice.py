@@ -2,15 +2,13 @@ import asyncio
 from random import choice, randint
 
 import discord
-from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.Embeds import createEmbed, embedAssert, exeErrorExcept
 from Core.Fonctions.Unpin import pin, unpin
-from Stats.Tracker.Jeux import exeStatsJeux
-from Titres.Outils import gainCoins
-
-from Jeux.ClasseMatrice import JeuMatrice
+from Jeux.Matrice.ClasseMatrice import JeuMatrice
 from Jeux.Paris import Pari
+from Stats.Tracker.Jeux import exeStatsJeux
 from Titres.Carte import sendCarte
+from Titres.Outils import gainCoins
 
 dictEmotes={("B","C","C","P"):878357453828411392,("B","C","P","P"):878357453534801921,("B","C","P","G"):878357453576732692,("B","R","C","G"):878357453526401055,("B","R","C","P"):878357453400592455,("B","R","P","P"):878357453660643359,("B","R","P","G"):878357453614506025,("B","C","C","G"):878357453702561863,
 ("R","C","C","P"):878357454008774686,("R","C","P","P"):878357453450907710,("R","C","P","G"):878357453660643358,("R","R","C","G"):878357453656428605,("R","R","C","P"):878357453757108275,("R","R","P","P"):878357453614506026,("R","R","P","G"):878357453660643360,("R","C","C","G"):878357453673234522}
