@@ -15,7 +15,7 @@ async def exeHBM(ctx,bot,option,guild):
     Commande Admin."""
     try:
         connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
-        dictEmbed={"Hide":"masqués","Blind":"bloqués","Mute":"muets"}
+        dictEmbed={"Hide":"masqués","Blind":"bloqués","Mute":"muets","Tab":"tableau-masqués"}
         dictBool={False:"",True:"dé"}
         descip=""
 

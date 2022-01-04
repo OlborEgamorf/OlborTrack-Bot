@@ -27,6 +27,7 @@ async def checkTabReact(message,emoji,count,bot,guild):
         if 0 in guild.starlist:
             id=0
         assert id in guild.starlist
+        assert not guild.chan[message.channel.id]["Tab"]
         connexion,curseur=connectSQL(guild.id,"Guild","Guild",None,None)
         for i in guild.starlist[id]:
             if count>=guild.stardict[i].count:
