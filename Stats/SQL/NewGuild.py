@@ -67,13 +67,13 @@ def createDirSQL(guild):
     except:
         pass
 
-    curseur.execute("CREATE TABLE IF NOT EXISTS chans (ID BIGINT PRIMARY KEY, Hide BOOL, Blind BOOL, Mute BOOL)")
+    curseur.execute("CREATE TABLE IF NOT EXISTS chans (ID BIGINT PRIMARY KEY, Hide BOOL, Blind BOOL, Mute BOOL, Tab BOOL)")
     for i in guild.text_channels:
         if curseur.execute("SELECT * FROM chans WHERE ID={0}".format(i.id)).fetchone()==None:
-            curseur.execute("INSERT INTO chans VALUES({0},{1},{2},{3})".format(i.id,False,False,False))
+            curseur.execute("INSERT INTO chans VALUES({0},{1},{2},{3},{4})".format(i.id,False,False,False,False))
     for i in guild.voice_channels:
         if curseur.execute("SELECT * FROM chans WHERE ID={0}".format(i.id)).fetchone()==None:
-            curseur.execute("INSERT INTO chans VALUES({0},{1},{2},{3})".format(i.id,False,False,False))
+            curseur.execute("INSERT INTO chans VALUES({0},{1},{2},{3},{4})".format(i.id,False,False,False,False))
     
     curseur.execute("CREATE TABLE IF NOT EXISTS users (ID BIGINT PRIMARY KEY, Hide BOOL, Blind BOOL, Leave BOOL)")
     for i in guild.members:
@@ -121,3 +121,11 @@ def createDirSQL(guild):
         except:
             pass
     connexion.commit()
+
+
+def alterHBM(bot):
+    for i in bot.guilds:
+        connexion,curseur = connectSQL(i.id,"Guild","Guild",None,None)
+        curseur.execute("ALTER TABLE chans ADD COLUMN Tab BOOL")
+        curseur.execute("UPDATE chans SET Tab=False")
+        connexion.commit()

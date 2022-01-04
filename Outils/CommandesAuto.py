@@ -51,6 +51,7 @@ def embedAuto(ctx,guildOT):
 
 def archivesSave(guild,jour,mois,annee):
     connexion,curseur=connectSQL(guild,"Rapports","Stats","GL","")
+    curseur.execute("CREATE TABLE archives (Rank INT, ID BIGINT, Jour TEXT, Mois TEXT, Annee TEXT, DateID INT, Periode TEXT, Count INT, Evol INT, Type TEXT, PRIMARY KEY(Jour,Mois,Annee,ID,Type,Periode))")
     if curseur.execute("SELECT * FROM ranks WHERE Jour='{0}' AND Mois='{1}' AND Annee='{2}'".format(jour,mois,annee)).fetchone()==None:
         return
     for i in ("Salons","Freq","Messages","Emotes","Reactions","Voice","Voicechan"):

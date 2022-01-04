@@ -42,6 +42,7 @@ async def getAvatar(user):
 
 
 async def getAttachment(message):
+    assert message.attachments[0].filename[-4:].lower() in ("jpg","png","jpeg"), "Le format de l'image n'est pas bon, veuillez me donner un PNG ou un JPG !"
     async with aiohttp.ClientSession() as session:
         async with session.get(message.attachments[0].url) as resp:
             if resp.status == 200:

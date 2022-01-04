@@ -109,12 +109,16 @@ class Giveaway():
         except:
             self.active=False
             return
+        users=None
         for i in range(len(message.reactions)):
             if message.reactions[i].emoji.id==711222160982540380:
                 users=await message.reactions[i].users().flatten()
                 if bot.user in users:
                     users.remove(bot.user)
         await message.clear_reactions()
+        if users==None:
+            self.active=False
+            return
         if len(users)<self.gagnants:
             embed=createEmbed(self.lot,"<:otROUGE:868535622237818910> Il y a eu moins de participants ({0}) que de gagnants ({1}), le tirage est donc invalidé.".format(len(users),self.gagnants),0xff0000,"giveaway",message.guild)
             await message.edit(embed=embed)

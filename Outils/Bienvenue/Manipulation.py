@@ -4,7 +4,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageOps
 def squaretoround(user):
     
     mask = Image.open('Images/mask.png').convert('L')
-    im = Image.open('PNG/{0}.png'.format(user))
+    im = Image.open('PNG/{0}.png'.format(user)).convert("RGBA")
 
     output = ImageOps.fit(im, mask.size, centering=(0.5, 0.5))
     output.putalpha(mask)

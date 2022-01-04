@@ -1,3 +1,4 @@
+from typing import Tuple
 import discord
 from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.SeekMessage import seekMessage
@@ -226,7 +227,7 @@ async def reactGraph(message:int,bot:commands.Bot,guildOT:OTGuild,payload,emoji)
         await message.clear_reaction(emoji)
         
 
-async def embedGraph(listeFonc:list,messageGraph:discord.Message,ctx:commands.Context,message:discord.Message) -> (discord.Message, discord.Embed):
+async def embedGraph(listeFonc:list,messageGraph:discord.Message,ctx:commands.Context,message:discord.Message) -> Tuple(discord.Message, discord.Embed):
     """Crée et envoie l'embed qui affichera les graphiques"""
     embed=discord.Embed(title="Graphiques",description="Tous vos graphiques sont en cours de préparation...",color=0x3498db)
     embed.set_footer(text="Page 1/{0}".format(len(listeFonc)))
