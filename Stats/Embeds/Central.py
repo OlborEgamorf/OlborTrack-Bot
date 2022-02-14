@@ -1,17 +1,20 @@
 from random import choice
 
 from Core.Fonctions.DichoTri import triPeriod
+from FocusTest.EmbedStatus import (embedFocusDevice, embedFocusFreq,
+                                   embedFocusGame, embedFocusStatus)
 from Stats.Embeds.Divers import embedDivers
 from Stats.Embeds.Emotes import embedEmote
 from Stats.Embeds.Evol import embedEvol
+from Stats.Embeds.First import embedFirst
 from Stats.Embeds.Freq import embedFreq
 from Stats.Embeds.Jeux import embedJeux
 from Stats.Embeds.Membres import embedMembre
 from Stats.Embeds.Mois import embedMois
 from Stats.Embeds.Moyennes import embedMoy
 from Stats.Embeds.Salons import embedSalon
-from Stats.Embeds.Trivialperso import embedTrivialPerso
 from Stats.Embeds.Serveur import embedServeurs
+from Stats.Embeds.Trivialperso import embedTrivialPerso
 
 dictTriArg={"countAsc":"Count","rankAsc":"Rank","countDesc":"Count","rankDesc":"Rank","dateAsc":"DateID","dateDesc":"DateID","periodAsc":"None","periodDesc":"None","moyDesc":"Moyenne","nombreDesc":"Nombre","winAsc":"W","winDesc":"W","loseAsc":"L","loseDesc":"L","expDesc":"Exp","expAsc":"Exp"}
 dictTriSens={"countAsc":"ASC","rankAsc":"ASC","countDesc":"DESC","rankDesc":"DESC","dateAsc":"ASC","dateDesc":"DESC","periodAsc":"None","periodDesc":"None","moyDesc":"DESC","nombreDesc":"DESC","winAsc":"ASC","winDesc":"DESC","loseAsc":"ASC","loseDesc":"DESC","expDesc":"DESC","expAsc":"ASC"}
@@ -64,12 +67,20 @@ async def statsEmbed(nom,ligne,page,pagemax,option,guildOT,bot,evol,collapse,cur
         embed=embedEvol(table,page,mobile,collapse,evol,ligne["Option"])
     elif option=="Moy":
         embed=embedMoy(table,page,mobile)
-    elif option in ("tortues","tortuesduo","p4","bataillenavale","trivialversus","trivialbr","trivialparty","trivial","codenames"):
+    elif option in ("tortues","tortuesduo","p4","bataillenavale","trivialversus","trivialbr","trivialparty","trivial","codenames","morpion"):
         embed=embedJeux(table,guildOT,page,mobile,author,evol,option)
     elif option=="trivialperso":
         embed=embedTrivialPerso(table,page,mobile)
     elif option=="cross":
         embed=embedServeurs(table,guildOT,page,mobile,evol)
+    elif option=="Status":
+        embed=embedFocusStatus(table,page,mobile,evol)
+    elif option=="Device":
+        embed=embedFocusDevice(table,page,mobile,evol)
+    elif option=="Game":
+        embed=embedFocusGame(table,page,mobile,evol)
+    elif option=="FreqFocus":
+        embed=embedFocusFreq(table,page,mobile)
     elif option=="First":
         embed=embedFirst(table,page,ligne["Option"],guildOT,bot,mobile)
     

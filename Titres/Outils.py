@@ -69,12 +69,12 @@ def titresTrivial(niveau,categ,user):
 def titresJeux(wins,option,user):
     connexionUser,curseurUser=connectSQL("OT",user,"Titres",None,None)
     if wins==5:
-        dict5={"P4":"Aligné","BatailleNavale":"Navire","Tortues":"Empilé","TortuesDuo":"Équipier","TrivialVersus":"Vainqueur","TrivialParty":"Fêtard","TrivialBR":"Vivant","Matrice":"Inversé","CodeNames":"Espion"}
-        dict5ID={"P4":74,"BatailleNavale":9,"Tortues":88,"TortuesDuo":93,"TrivialVersus":134,"TrivialParty":129,"TrivialBR":124,"Matrice":166,"CodeNames":171}
+        dict5={"P4":"Aligné","BatailleNavale":"Navire","Tortues":"Empilé","TortuesDuo":"Équipier","TrivialVersus":"Vainqueur","TrivialParty":"Fêtard","TrivialBR":"Vivant","Matrice":"Inversé","CodeNames":"Espion","Morpion":"Rond"}
+        dict5ID={"P4":74,"BatailleNavale":9,"Tortues":88,"TortuesDuo":93,"TrivialVersus":134,"TrivialParty":129,"TrivialBR":124,"Matrice":166,"CodeNames":171,"Morpion":176}
         curseurUser.execute("INSERT INTO titresUser VALUES({0},'{1}',0)".format(dict5ID[option],dict5[option]))
     else:
-        dict10={"P4":"Puissance 10","BatailleNavale":"Flotte Armée","Tortues":"Tortue de Sport","TortuesDuo":"Co-Pilote","TrivialVersus":"Médaillé","TrivialParty":"Bourré","TrivialBR":"Survivant","Matrice":"Matrixé","CodeNames":"Agent Secret"}
-        dict10ID={"P4":75,"BatailleNavale":10,"Tortues":89,"TortuesDuo":94,"TrivialVersus":135,"TrivialParty":130,"TrivialBR":125,"Matrice":167,"CodeNames":172}
+        dict10={"P4":"Puissance 10","BatailleNavale":"Flotte Armée","Tortues":"Tortue de Sport","TortuesDuo":"Co-Pilote","TrivialVersus":"Médaillé","TrivialParty":"Bourré","TrivialBR":"Survivant","Matrice":"Matrixé","CodeNames":"Agent Secret","Morpion":"Croix"}
+        dict10ID={"P4":75,"BatailleNavale":10,"Tortues":89,"TortuesDuo":94,"TrivialVersus":135,"TrivialParty":130,"TrivialBR":125,"Matrice":167,"CodeNames":172,"Morpion":177}
         curseurUser.execute("INSERT INTO titresUser VALUES({0},'{1}',0)".format(dict10ID[option],dict10[option]))
     connexionUser.commit()
 

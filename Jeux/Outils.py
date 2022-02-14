@@ -4,22 +4,23 @@ from Core.Fonctions.Embeds import createEmbed, embedAssert
 from Stats.SQL.ConnectSQL import connectSQL
 from Titres.Outils import createAccount
 
+from Jeux.CodeNames.ClasseCodeNames import JeuCN
 from Jeux.CrossServeur.ClasseP4Cross import JeuP4Cross
 from Jeux.CrossServeur.ClasseTDCross import JeuTortuesDuoCross
 from Jeux.CrossServeur.ClasseTortuesCross import JeuTortuesCross
-from Jeux.CrossServeur.ClasseTrivialVSCross import VersusCross
-from Jeux.P4 import JeuP4
-from Jeux.Tortues.ClasseTortues import JeuTortues
-from Jeux.Tortues.ClasseTortuesDuo import JeuTortuesDuo
-from Jeux.Trivial.Versus import Versus
-from Jeux.Trivial.BattleRoyale import BattleRoyale
-from Jeux.Trivial.Party import Party
 from Jeux.CrossServeur.ClasseTrivialBRCross import BattleRoyaleCross
 from Jeux.CrossServeur.ClasseTrivialPartyCross import PartyCross
-from Jeux.Matrice import JeuMatrice
-from Jeux.CodeNames.ClasseCodeNames import JeuCN
+from Jeux.CrossServeur.ClasseTrivialVSCross import VersusCross
+from Jeux.Matrice.Matrice import JeuMatrice
+from Jeux.P4.P4 import JeuP4
+from Jeux.Morpion.ClasseMorpion import JeuMorpion
+from Jeux.Tortues.ClasseTortues import JeuTortues
+from Jeux.Tortues.ClasseTortuesDuo import JeuTortuesDuo
+from Jeux.Trivial.BattleRoyale import BattleRoyale
+from Jeux.Trivial.Party import Party
+from Jeux.Trivial.Versus import Versus
 
-dictMax={JeuTortues:5,JeuTortuesDuo:4,Versus:5,BattleRoyale:15,Party:15,JeuP4:2,JeuTortuesCross:5,JeuP4Cross:2,JeuTortuesDuoCross:4,VersusCross:5,BattleRoyaleCross:7,PartyCross:7,JeuMatrice:2,JeuCN:4}
+dictMax={JeuTortues:5,JeuTortuesDuo:4,Versus:5,BattleRoyale:15,Party:15,JeuP4:2,JeuTortuesCross:5,JeuP4Cross:2,JeuTortuesDuoCross:4,VersusCross:5,BattleRoyaleCross:7,PartyCross:7,JeuMatrice:2,JeuCN:4,JeuMorpion:2}
 emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>","<:ot5:705766186713088042>","<:ot6:705766187182850148>","<:ot7:705766187115741246>","<:ot8:705766187132256308>","<:ot9:705766187145101363>","<:ot10:705766186909958206>"]
 emotesIds=[705766186909958185,705766186989912154,705766186930929685,705766186947706934,705766186713088042,705766187182850148,705766187115741246,705766187132256308,705766187145101363,705766186909958206]
 
@@ -68,7 +69,7 @@ async def checkReactDel(message,reaction,dictJeux):
         await message.add_reaction(str(reaction))
 
 
-async def miseCoins(message,user,reaction,inGame,dictJeux,bot):
+async def miseCoins(message,user,reaction,dictJeux,bot):
     try:
         if user.bot:
             return
@@ -116,7 +117,7 @@ async def miseCoins(message,user,reaction,inGame,dictJeux,bot):
                     await messMise.add_reaction(emotes[emotesIds.index(i)])
 
                 def checkJoueur(react,userReact):
-                    if type(reaction.emoji)==str or react(react.emoji)==str:
+                    if type(reaction.emoji)==str or type(react.emoji)==str:
                         return False
                     return react.emoji.id in list(dictPari.keys()) and userReact.id==user.id and react.message.id==messMise.id
                 
