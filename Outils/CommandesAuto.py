@@ -1,9 +1,9 @@
 import asyncio
 from time import strftime
 
-import discord
-from Core.Fonctions.Embeds import createEmbed, embedAssert, exeErrorExcept
+from Autre.Events import autoEvents
 from Autre.PhotoNASA import embedNasaPhoto
+from Core.Fonctions.Embeds import createEmbed, embedAssert, exeErrorExcept
 from Savezvous.exeSavezVous import autoSV
 from Stats.Rapports.exeRapports import autoRapport
 from Stats.SQL.ConnectSQL import connectSQL
@@ -11,7 +11,6 @@ from Stats.Tracker.Voice import endNight
 from Titres.Auto import (annualyBadges, annualyTitles, dailyCoins,
                          monthlyBadges, monthlyTitles)
 from Titres.Outils import setMarketPlace
-from Autre.Events import autoEvents
 
 from Outils.Anniversaires.Auto import autoAnniv
 

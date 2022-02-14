@@ -44,9 +44,9 @@ async def autoSV(channel,guild,bot):
     assert liste!=[]
     user=guild.get_member(ligne["ID"])
     if user==None:
-        embed=createEmbed("","`{0}` : {1}".format(ligne["Count"],ligne["Texte"]),guild.get_member(bot.user.id).color.value,"OT!savezvous",bot.user)
+        embed=createEmbed("","`{0}` : {1}".format(ligne["Count"],ligne["Texte"]),guild.get_member(bot.user.id).color.value,"savezvous",bot.user)
     else:
-        embed=createEmbed("","`{0}` : {1}".format(ligne["Count"],ligne["Texte"]),user.color.value,"OT!savezvous",user)
+        embed=createEmbed("","`{0}` : {1}".format(ligne["Count"],ligne["Texte"]),user.color.value,"savezvous",user)
     if ligne["Image"]!="None":
         embed.set_image(url=ligne["Image"])
     await bot.get_channel(channel).send(embed=embed)

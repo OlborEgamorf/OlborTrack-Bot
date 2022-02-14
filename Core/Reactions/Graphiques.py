@@ -153,9 +153,9 @@ async def reactGraph(message:int,bot:commands.Bot,guildOT:OTGuild,payload,emoji)
                 if ligne["Args1"]=="glob":
                     listeFonc=[graphRank,graphHeatGlobal,graphCircle]
                 elif ligne["Args1"]=="to":
-                    listeFonc=[graphRank,graphScatter,graphScatterUsers,graphHeatAnnee,graphCircle]
+                    listeFonc=[graphRank,graphHeatAnnee,graphCircle,graphScatter,graphScatterUsers]
                 else:
-                    listeFonc=[graphRank,graphScatter,graphScatterUsers,graphHeat,graphCircle,graphLine]
+                    listeFonc=[graphRank,graphHeat,graphCircle,graphLine,graphScatter,graphScatterUsers]
                 if ligne["Option"] in ("Divers","Mentions","Mentionne") or ligne["Commande"]=="jeux":
                     if graphScatter in listeFonc and ligne["Commande"]!="jeux":
                         listeFonc.remove(graphScatter)
@@ -227,7 +227,7 @@ async def reactGraph(message:int,bot:commands.Bot,guildOT:OTGuild,payload,emoji)
         await message.clear_reaction(emoji)
         
 
-async def embedGraph(listeFonc:list,messageGraph:discord.Message,ctx:commands.Context,message:discord.Message) -> Tuple(discord.Message, discord.Embed):
+async def embedGraph(listeFonc:list,messageGraph:discord.Message,ctx:commands.Context,message:discord.Message) -> (discord.Message, discord.Embed):
     """Crée et envoie l'embed qui affichera les graphiques"""
     embed=discord.Embed(title="Graphiques",description="Tous vos graphiques sont en cours de préparation...",color=0x3498db)
     embed.set_footer(text="Page 1/{0}".format(len(listeFonc)))

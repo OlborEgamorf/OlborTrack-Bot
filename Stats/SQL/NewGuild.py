@@ -77,8 +77,9 @@ def createDirSQL(guild):
     
     curseur.execute("CREATE TABLE IF NOT EXISTS users (ID BIGINT PRIMARY KEY, Hide BOOL, Blind BOOL, Leave BOOL)")
     for i in guild.members:
-        if curseur.execute("SELECT * FROM users WHERE ID={0}".format(i.id)).fetchone()==None:
-            curseur.execute("INSERT INTO users VALUES({0},{1},{2},{3})".format(i.id,False,False,False))
+        if not i.bot:
+            if curseur.execute("SELECT * FROM users WHERE ID={0}".format(i.id)).fetchone()==None:
+                curseur.execute("INSERT INTO users VALUES({0},{1},{2},{3})".format(i.id,False,False,False))
     
     curseur.execute("CREATE TABLE IF NOT EXISTS auto (Commande TEXT PRIMARY KEY, Salon BIGINT, Active BOOL)")
     listeA=["savezvous","nasaphoto","jour","mois","annee","events"]

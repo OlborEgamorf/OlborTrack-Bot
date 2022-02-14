@@ -51,7 +51,6 @@ async def voiceConnect(member,before,after,guild):
             await listeCo[member.id].exeStat(guild)
             if verifExecSQL(guild,after.channel,member)==True:
                 listeCo[member.id]=Voice(member,after.channel,member.guild)
-    return
 
 def exeVoiceSQL(id,chan,count,guild):
     connexionGuild,curseurGuild=connectSQL(guild.id,"Guild","Guild",None,None)

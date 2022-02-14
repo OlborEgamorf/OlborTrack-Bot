@@ -25,7 +25,7 @@ async def exeMessageClient(option,message,client,guild):
     
     if bool(guild.mstats[10]["Statut"])==True:
         count=0
-        dictType={"Images":0,"GIFs":0,"Fichiers":0,"Liens":0,"Réponse":0}
+        dictType={"Images":0,"GIFs":0,"Fichiers":0,"Liens":0,"Réponse":0,"Stickers":0}
         for i in message.attachments:
             count+=1
             lien=i.url
@@ -44,6 +44,9 @@ async def exeMessageClient(option,message,client,guild):
         if message.reference!=None:
             count+=1
             dictType["Réponse"]+=1
+        for i in message.stickers:
+            count+=1
+            dictType["Stickers"]+=1
         if count!=0:
             exeDiversSQL(message.author.id,dictType,option,guild,None,None)
 
