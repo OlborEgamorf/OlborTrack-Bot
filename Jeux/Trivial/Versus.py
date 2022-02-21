@@ -1,16 +1,17 @@
 import asyncio
+from math import inf
 from random import choice
 
 import discord
+from Core.Decorator import OTJeux
 from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.Embeds import embedAssert, exeErrorExcept, createEmbed
+from Core.Fonctions.Embeds import createEmbed
+from Jeux.Paris import Pari
+from Jeux.Trivial.Classic import Question
 from Stats.SQL.ConnectSQL import connectSQL
 from Stats.SQL.Execution import exeJeuxSQL
-from Titres.Outils import gainCoins
-from Jeux.Trivial.Classic import Question
-from math import inf
-from Jeux.Paris import Pari
 from Titres.Carte import sendCarte
+from Titres.Outils import gainCoins
 
 listeNoms=["Culture","Divertissement","Sciences","Mythologie","Sport","Géographie","Histoire","Politique","Art","Célébrités","Animaux","Véhicules","Global"]
 dictCateg={9:0,10:1,11:1,12:1,13:1,14:1,15:1,16:1,17:2,18:2,19:2,20:3,21:4,22:5,23:6,24:7,25:8,26:9,27:10,28:11,29:1,30:2,31:1,32:1}
@@ -168,11 +169,6 @@ class Versus(Question):
         embedT.add_field(name="<:otCOINS:873226814527520809> gagnés par {0}".format(winner.name),value="{0} <:otCOINS:873226814527520809>".format(len(self.ids)*25+sum(self.paris.mises.values())))
         return embedT
 
-    async def error(self,ctx,bot,message,inGame,gamesTrivial):
-        await ctx.send(embed=await exeErrorExcept(ctx,bot,""))
-        await self.endGame(message,inGame,gamesTrivial)
-        await message.unpin()
-
     async def stats(self,win,option,chan):
         connexionGuild,curseurGuild=connectSQL(self.guild.id,"Guild","Guild",None,None)
         connexionOT,curseurOT=connectSQL("OT","Guild","Guild",None,None)
@@ -194,75 +190,70 @@ class Versus(Question):
             if self.scores[i]==3:
                 self.paris.ouvert=False 
 
-
-async def trivialVersus(ctx,bot,inGame,gamesTrivial):
-    try:
-        assert ctx.author.id not in inGame, "Terminez votre question en cours avant de lancer ou rejoindre une partie."
-        game=Versus(ctx.guild,"versus")
-        message=await game.startGame(ctx,bot,inGame,gamesTrivial)
-        if message==False:
-            return
-        messAd=await bot.get_channel(870598360296488980).send("{0} - {1} : partie OT!trivialversus débutée\n{2} joueurs".format(ctx.guild.name,ctx.guild.id,len(game.joueurs)))
-        game.paris=Pari(game.ids,"TrivialVersus")
-        while game.playing:
-            game.reponses={i:None for i in game.ids}
-            game.setCateg(None)
-            game.setDiff()
-            game.newQuestion()
-            embedT=game.createEmbed(False)
-            await message.edit(embed=embedT)
-            time,done=0,False
-            while time!=20 and not done:
-                await asyncio.sleep(1)
-                done=True
-                for j in game.reponses:
-                    if game.reponses[j]==None:
-                        done=False
-                time+=1
-            count=[]
-            good=0
-            for i in game.joueurs:
-                if game.reponses[i.id]==game.vrai-1:
-                    good+=1
-                    game.scores[i.id]+=1
-                    game.histo[i.id]+=emotesTrue[game.reponses[i.id]]
-                    if game.scores[i.id]==game.max:
-                        count.append(i)
-                elif game.reponses[i.id]==None:
-                    game.histo[i.id]+="<:otBlank:828934808200937492>"
-                else:
-                    game.histo[i.id]+=emotesFalse[game.reponses[i.id]]
-            
-            embedT=game.createEmbed(True)
-            if good>0:
-                embedT.colour=0x47b03c
-                embedT.description="**{0} personnes ont eu juste !** {1}".format(good,game.affichageWin()[20:-1])
+@OTJeux
+async def trivialVersus(ctx,bot,game,inGame,gamesTrivial):
+    assert ctx.author.id not in inGame, "Terminez votre question en cours avant de lancer ou rejoindre une partie."
+    game=Versus(ctx.guild,"versus")
+    message=await game.startGame(ctx,bot,inGame,gamesTrivial)
+    if message==False:
+        return
+    messAd=await bot.get_channel(870598360296488980).send("{0} - {1} : partie OT!trivialversus débutée\n{2} joueurs".format(ctx.guild.name,ctx.guild.id,len(game.joueurs)))
+    game.paris=Pari(game.ids,"TrivialVersus")
+    while game.playing:
+        game.reponses={i:None for i in game.ids}
+        game.setCateg(None)
+        game.setDiff()
+        game.newQuestion()
+        embedT=game.createEmbed(False)
+        await message.edit(embed=embedT)
+        time,done=0,False
+        while time!=20 and not done:
+            await asyncio.sleep(1)
+            done=True
+            for j in game.reponses:
+                if game.reponses[j]==None:
+                    done=False
+            time+=1
+        count=[]
+        good=0
+        for i in game.joueurs:
+            if game.reponses[i.id]==game.vrai-1:
+                good+=1
+                game.scores[i.id]+=1
+                game.histo[i.id]+=emotesTrue[game.reponses[i.id]]
+                if game.scores[i.id]==game.max:
+                    count.append(i)
+            elif game.reponses[i.id]==None:
+                game.histo[i.id]+="<:otBlank:828934808200937492>"
             else:
-                embedT.colour=0xcf1742
-                embedT.description="**Tout le monde s'est trompé...** {0}".format(game.affichageLose(None)[10:-1])
-            await message.edit(embed=embedT)
-            if game.maxTour():
-                maxi,maxiJoueur=-inf,None
-                for i in game.joueurs:
-                    if game.scores[i.id]>maxi:
-                        maxi,maxiJoueur=game.scores[i.id],i
-                count=[maxiJoueur]
-            if len(count)==1:
-                await message.clear_reactions()
-                await message.channel.send(embed=game.embedResults(count[0]))
-                await message.unpin()
-                game.playing=False
-                await game.stats(count[0],"TrivialVersus",message.channel)
-                game.paris.distribParis(count[0].id)
-            elif len(count)>1:
-                game.max+=1
-            game.fermeture()
-            game.tour+=1
-            await asyncio.sleep(7)
-        await game.endGame(message,inGame,gamesTrivial)
-    except AssertionError as er:
-        await ctx.send(embed=embedAssert(er))
-    except:
-        await game.error(ctx,bot,message,inGame,gamesTrivial)
+                game.histo[i.id]+=emotesFalse[game.reponses[i.id]]
+        
+        embedT=game.createEmbed(True)
+        if good>0:
+            embedT.colour=0x47b03c
+            embedT.description="**{0} personnes ont eu juste !** {1}".format(good,game.affichageWin()[20:-1])
+        else:
+            embedT.colour=0xcf1742
+            embedT.description="**Tout le monde s'est trompé...** {0}".format(game.affichageLose(None)[10:-1])
+        await message.edit(embed=embedT)
+        if game.maxTour():
+            maxi,maxiJoueur=-inf,None
+            for i in game.joueurs:
+                if game.scores[i.id]>maxi:
+                    maxi,maxiJoueur=game.scores[i.id],i
+            count=[maxiJoueur]
+        if len(count)==1:
+            await message.clear_reactions()
+            await message.channel.send(embed=game.embedResults(count[0]))
+            await message.unpin()
+            game.playing=False
+            await game.stats(count[0],"TrivialVersus",message.channel)
+            game.paris.distribParis(count[0].id)
+        elif len(count)>1:
+            game.max+=1
+        game.fermeture()
+        game.tour+=1
+        await asyncio.sleep(7)
+
     if "messAd" in locals():
         await messAd.delete()

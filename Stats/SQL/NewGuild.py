@@ -23,7 +23,7 @@ def createDirSQL(guild):
 
     
     curseur.execute("CREATE TABLE IF NOT EXISTS modulesCMD (Module TEXT PRIMARY KEY, Statut BOOL)")
-    listeC=["Stats","Sondages","Outils","Savezvous","Jeux","MAL","Wiki","Spotify","Geo"]
+    listeC=["Stats","Sondages","Outils","Savezvous","Jeux"]
     for i in listeC:
         try:
             curseur.execute("INSERT INTO modulesCMD VALUES('{0}',{1})".format(i,True))
@@ -129,4 +129,5 @@ def alterHBM(bot):
         connexion,curseur = connectSQL(i.id,"Guild","Guild",None,None)
         curseur.execute("ALTER TABLE chans ADD COLUMN Tab BOOL")
         curseur.execute("UPDATE chans SET Tab=False")
+        curseur.execute("DELETE FROM modulesCMD WHERE Module='{0}' OR Module='{1}' OR Module='{2}' OR Module='{3}'".format("MAL","Wiki","Spotify","Geo"))
         connexion.commit()

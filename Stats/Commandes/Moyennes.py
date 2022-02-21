@@ -1,9 +1,10 @@
-from Stats.SQL.ConnectSQL import connectSQL
-from Core.Fonctions.setMaxPage import setMax, setPage
-from Stats.Embeds.Central import statsEmbed 
 from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.Embeds import embedAssert, sendEmbed
+from Core.Fonctions.Embeds import embedAssertClassic, sendEmbed
+from Core.Fonctions.setMaxPage import setMax, setPage
+from Stats.Embeds.Central import statsEmbed
+from Stats.SQL.ConnectSQL import connectSQL
 from Stats.SQL.Verification import verifCommands
+
 
 async def statsMoy(ctx,option,turn,react,ligne,guildOT,bot):
     try:
@@ -33,6 +34,6 @@ async def statsMoy(ctx,option,turn,react,ligne,guildOT,bot):
         
     except:
         if react:
-            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée n'existe plus."))
+            await ctx.reply(embed=embedAssertClassic("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée n'existe plus."))
         else:
-            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée cherché n'existe pas.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))
+            await ctx.reply(embed=embedAssertClassic("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée cherché n'existe pas.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))

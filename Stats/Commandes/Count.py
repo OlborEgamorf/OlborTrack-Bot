@@ -79,7 +79,7 @@ async def jeuxPerso(ctx):
 async def jeuxBoard(ctx,bot):
     embed=createEmbed("Tableau jeux - premiers","",0x3498db,ctx.invoked_with.lower(),bot.user)
     connexionTitres,curseurTitres=connectSQL("OT","Titres","Titres",None,None)
-    for i in ["P4","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR","Matrice","BatailleNavale"]:
+    for i in ["P4","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR","Matrice","Morpion","CodeNames"]:
         descip=""
         try:
             connexion,curseur=connectSQL("OT",i,"Jeux","GL","")

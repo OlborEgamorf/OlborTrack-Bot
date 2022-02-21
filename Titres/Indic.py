@@ -1,7 +1,9 @@
-from Stats.SQL.ConnectSQL import connectSQL
+import asyncio
+
 from Core.Fonctions.Embeds import createEmbed, embedAssert
 from Core.Fonctions.Phrase import createPhrase
-import asyncio
+from Stats.SQL.ConnectSQL import connectSQL
+
 
 async def setServer(ctx,bot):
     try:
@@ -55,7 +57,7 @@ async def setServer(ctx,bot):
         await bot.get_channel(750803643820802100).send("Serveur : {0} - {1}".format(ctx.guild.id,newCustom))
 
     except AssertionError as er:
-        await ctx.reply(embed=embedAssert(er))
+        await embedAssert(ctx,er,True)
     except asyncio.exceptions.TimeoutError:
-        await message.reply(embed=embedAssert("Une minute s'est écoulée et vous n'avez pas confirmé la configuration. L'opération est annulée."))
+        await embedAssert(ctx,"Une minute s'est écoulée et vous n'avez pas confirmé la configuration. L'opération a été annulée",True)
         await message.clear_reactions()

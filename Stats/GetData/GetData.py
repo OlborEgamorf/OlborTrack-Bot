@@ -7,10 +7,9 @@ from time import time
 import discord
 from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.DichoTri import dichotomieID, dichotomiePlage, triID
-from Core.Fonctions.Embeds import embedAssert
+from Core.Fonctions.Embeds import embedAssertClassic
 from Core.Fonctions.RankingClassic import rankingClassic
 from Core.Fonctions.TempsVoice import tempsVoice
-from Core.OTGuild import OTGuild
 from Stats.GetData.Agregator import agregatorEvol
 from Stats.GetData.AgregatorMoyennes import agregatorMoy
 from Stats.GetData.Compteurs import compteurGD28
@@ -26,15 +25,15 @@ from Stats.SQL.Verification import verifExecGD
 async def newGetData(guild,channel,bot,guildOT):
     messEdit=await channel.send(embed=discord.Embed(title="Olbor Track GetData - Lancement", description="Patientez... Les anciennes données de votre serveur vont être supprimées.", color=0x220cc9))
     if guildOT.gd or os.path.exists("SQL/{0}/GETING".format(guild.id)):
-        embedT=embedAssert("Vous avez déjà lancé la procédure GetData !")
+        embedT=embedAssertClassic("Vous avez déjà lancé la procédure GetData !")
         await messEdit.edit(embed=embedT)
         return
     if not guildOT.stats:
-        embedT=embedAssert("Vous avez désactivé les statistiques pour votre serveur. Utilisez la commande OT!statson pour les réactiver.")
+        embedT=embedAssertClassic("Vous avez désactivé les statistiques pour votre serveur. Utilisez la commande OT!statson pour les réactiver.")
         await messEdit.edit(embed=embedT)
         return
     if guild.get_member(699728606493933650).guild_permissions.read_message_history==False:
-        embedT=embedAssert("Je ne peux pas accèder au passé de votre serveur. Donnez moi la permission 'lire l'historique des messages' pour pouvoir lancer la procédure.")
+        embedT=embedAssertClassic("Je ne peux pas accèder au passé de votre serveur. Donnez moi la permission 'lire l'historique des messages' pour pouvoir lancer la procédure.")
         await messEdit.edit(embed=embedT)
         return
     os.makedirs("SQL/{0}/GETING".format(guild.id))

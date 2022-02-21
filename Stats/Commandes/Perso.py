@@ -1,12 +1,12 @@
 from time import strftime
-from Stats.SQL.ConnectSQL import connectSQL
+
+from Core.Fonctions.AuteurIcon import auteur
+from Core.Fonctions.Embeds import embedAssertClassic, sendEmbed
 from Core.Fonctions.GetPeriod import getAnnee, getMois
 from Core.Fonctions.setMaxPage import setMax, setPage
 from Stats.Embeds.Central import statsEmbed
-from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.Embeds import embedAssert, sendEmbed
+from Stats.SQL.ConnectSQL import connectSQL
 from Stats.SQL.Verification import verifCommands
-
 
 tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai","06":"Juin","07":"Juillet","08":"Aout","09":"Septembre","10":"Octobre","11":"Novembre","12":"Décembre","TO":"Année","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
 
@@ -59,6 +59,6 @@ async def statsPerso(ctx,option,turn,react,ligne,guildOT,bot):
         
     except:
         if react:
-            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée n'existe plus."))
+            await ctx.reply(embed=embedAssertClassic("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée n'existe plus."))
         else:
-            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée cherché n'existe pas.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))
+            await ctx.reply(embed=embedAssertClassic("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée cherché n'existe pas.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))

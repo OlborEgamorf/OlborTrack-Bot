@@ -3,7 +3,8 @@ from time import strftime
 
 from Autre.Events import autoEvents
 from Autre.PhotoNASA import embedNasaPhoto
-from Core.Fonctions.Embeds import createEmbed, embedAssert, exeErrorExcept
+from Core.Decorator import OTCommand
+from Core.Fonctions.Embeds import createEmbed
 from Savezvous.exeSavezVous import autoSV
 from Stats.Rapports.exeRapports import autoRapport
 from Stats.SQL.ConnectSQL import connectSQL
@@ -16,26 +17,22 @@ from Outils.Anniversaires.Auto import autoAnniv
 
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"to","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","to":"TO","glob":"GL"}
 
+@OTCommand
 async def addAuto(ctx,bot,args,guildOT):
-    try:
-        connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
-        if ctx.invoked_with in ("add", "edit"):
-            assert len(ctx.message.channel_mentions)!=0, "Vous devez me donner un salon valide !"
-            assert args[0].lower() in ("jour","mois","annee","nasaphoto","savezvous","events"), "Vous devez me donner un nom de commande compatible !\nCommandes automatiques disponibles : jour, mois, annee, nasaphoto, savezvous, events"
-            curseur.execute("UPDATE auto SET Active=True, Salon={0} WHERE Commande='{1}'".format(ctx.message.channel_mentions[0].id,args[0].lower()))
-            embed=createEmbed("Commande automatique activée ou modifiée","Commande : {0}\nSalon : <#{1}>".format(args[0].lower(),ctx.message.channel_mentions[0].id),0x220cc9,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
-        elif ctx.invoked_with=="del":
-            assert args[0].lower() in ("jour","mois","annee","nasaphoto","savezvous"), "Vous devez me donner un nom de commande compatible !"
-            curseur.execute("UPDATE auto SET Active=False, Salon=0 WHERE Commande='{0}'".format(args[0].lower()))
-            embed=createEmbed("Commande automatique supprimée","Commande : {0}".format(args[0].lower()),0x220cc9,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
-        else:
-            embed=embedAuto(ctx,guildOT)
-        connexion.commit()
-        guildOT.getAuto()
-    except AssertionError as er:
-        embed=embedAssert(str(er))
-    except:
-        embed=await exeErrorExcept(ctx,bot,args)
+    connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
+    if ctx.invoked_with in ("add", "edit"):
+        assert len(ctx.message.channel_mentions)!=0, "Vous devez me donner un salon valide !"
+        assert args[0].lower() in ("jour","mois","annee","nasaphoto","savezvous","events"), "Vous devez me donner un nom de commande compatible !\nCommandes automatiques disponibles : jour, mois, annee, nasaphoto, savezvous, events"
+        curseur.execute("UPDATE auto SET Active=True, Salon={0} WHERE Commande='{1}'".format(ctx.message.channel_mentions[0].id,args[0].lower()))
+        embed=createEmbed("Commande automatique activée ou modifiée","Commande : {0}\nSalon : <#{1}>".format(args[0].lower(),ctx.message.channel_mentions[0].id),0x220cc9,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
+    elif ctx.invoked_with=="del":
+        assert args[0].lower() in ("jour","mois","annee","nasaphoto","savezvous"), "Vous devez me donner un nom de commande compatible !"
+        curseur.execute("UPDATE auto SET Active=False, Salon=0 WHERE Commande='{0}'".format(args[0].lower()))
+        embed=createEmbed("Commande automatique supprimée","Commande : {0}".format(args[0].lower()),0x220cc9,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
+    else:
+        embed=embedAuto(ctx,guildOT)
+    connexion.commit()
+    guildOT.getAuto()
     await ctx.send(embed=embed)
 
 def embedAuto(ctx,guildOT):

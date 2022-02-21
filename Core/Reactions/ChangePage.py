@@ -20,10 +20,6 @@ from Stats.Commandes.Perso import statsPerso
 from Stats.Commandes.Random import commandeRandom
 from Stats.Commandes.Roles import statsRoles
 from Stats.Commandes.Trivial import statsTrivial
-from Stats.Compare.ComparePerso import comparePerso
-from Stats.Compare.CompareRank import compareRank
-from Stats.Compare.CompareServ import compareServ
-from Stats.Compare.CompareUser import compareUser
 from Stats.Rapports.exeRapports import changePage, switchRapport
 from Stats.RapportsUsers.exeRapports import changePageUser, switchRapportUser
 from Stats.SQL.ConnectSQL import connectSQL
@@ -51,8 +47,7 @@ async def reactStats(message:int,reaction:discord.Reaction,bot:commands.Bot,guil
         if ligne["Commande"] in ("rank","periods","periodsInter","evol","perso","moy","day","roles","compareUser","comparePerso","compareRank","compareServ","first"):
             dictFonction={
                 "rank":statsRank,"periods":statsPeriods,"periodsInter":statsPeriodsInter,"evol":statsEvol,"perso":statsPerso,"moy":statsMoy,
-                "day":statsJours,"roles":statsRoles,"compareUser":compareUser,"comparePerso":comparePerso,"compareRank":compareRank,
-                "compareServ":compareServ,"first":statsFirstPeriods
+                "day":statsJours,"roles":statsRoles,"first":statsFirstPeriods
                 }
             await dictFonction[ligne["Commande"]](ctx,ligne["Option"],getTurn(reaction),True,ligne,guildOT,bot)
 
@@ -65,11 +60,11 @@ async def reactStats(message:int,reaction:discord.Reaction,bot:commands.Bot,guil
             await dictFonction[ligne["Commande"]](ctx,getTurn(reaction),True,ligne,bot,guildOT,None)
 
         elif ligne["Commande"]=="wikipedia":
-            await exeWikipedia(ctx,bot,ligne["Option"],getTurn(reaction),ligne)
+            await exeWikipedia(ctx,bot,ligne["Args1"],ligne)
         elif ligne["Commande"]=="jeux":
             await statsJeux(ctx,getTurn(reaction),True,ligne,guildOT,bot,ligne["Args3"])
         elif ligne["Commande"]=="trivial":
-            await statsTrivial(ctx,getTurn(reaction),True,ligne,guildOT,bot,ligne["Option"])
+            await statsTrivial(ctx,getTurn(reaction),True,ligne,bot,ligne["Option"])
         elif ligne["Commande"]=="gareroll":
             await commandeGAR(ctx,getTurn(reaction),True,ligne)
         elif ligne["Commande"]=="help":

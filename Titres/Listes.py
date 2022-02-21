@@ -1,8 +1,8 @@
+import discord
 from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.Embeds import addtoFields, createEmbed, createFields, embedAssert, newDescip, sendEmbed
+from Core.Fonctions.Embeds import addtoFields, createFields, sendEmbed
 from Core.Fonctions.setMaxPage import setMax, setPage
 from Stats.SQL.ConnectSQL import connectSQL
-import discord
 
 dictSell={1:150,2:400,3:2000,0:"Inestimable"}
 dictValue={0:"Inestimable",1:300,2:800,3:4000}
@@ -106,7 +106,7 @@ def embedFonds(table,page,mobile):
     for i in range(15*(page-1),stop):
         idFond=table[i]["ID"]
         nom="[{0}]({1})".format(table[i]["Nom"],table[i]["Lien"])
-        value="{0} <:otCOINS:873226814527520809>".format(table[i]["Prix"])
+        value="250 <:otCOINS:873226814527520809>"
 
         field1,field2,field3=addtoFields(field1,field2,field3,mobile,idFond,nom,value)
     

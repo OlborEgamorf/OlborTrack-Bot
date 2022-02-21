@@ -1,6 +1,8 @@
+import asyncio
+
 from Core.Fonctions.Embeds import createEmbed, embedAssert
 from Stats.SQL.ConnectSQL import connectSQL
-import asyncio
+
 from Titres.Outils import createAccount
 
 dictSell={1:150,2:400,3:2000}
@@ -35,10 +37,8 @@ async def venteTitre(ctx,idtitre,bot):
 
         embed=createEmbed("Vente de Titre","Titre vendu avec succès !\nVous possèdez désormais **{0} <:otCOINS:873226814527520809>**.".format(int(coins+valeur)),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
         await message.reply(embed=embed)
-    except AssertionError as er:
-        await ctx.reply(embed=embedAssert(er))
     except asyncio.exceptions.TimeoutError:
-        await message.reply(embed=embedAssert("Une minute s'est écoulée et vous n'avez pas confirmé la vente. La transaction a été annulée."))
+        await embedAssert(ctx,"Une minute s'est écoulée et vous n'avez pas confirmé la vente. L'opération a été annulée",True)
         await message.clear_reactions()
 
 def verifVente(user,idtitre):

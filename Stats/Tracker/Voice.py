@@ -1,5 +1,4 @@
-import time
-from time import strftime
+from time import strftime,time
 
 import discord
 
@@ -26,30 +25,27 @@ class Voice:
         self.channelid=chan.id
         self.guildid=guild.id
         self.guild=guild
-        self.time=time.time()
+        self.time=time()
         self.connect=True
 
-    async def exeStat(self,guild:OTGuild):
+    def exeStat(self,guild:OTGuild):
         """Méthode qui calcule le temps passé en vocal, déclare l'utilisateur comme déconnecté et enregistre les stats.
         
         Entrée :
             guild : l'objet OTGuild du serveur concerné"""
         self.connect=False
-        count=int(time.time()-self.time)
+        count=int(time()-self.time)
         if count!=0:
             exeVoiceSQL(self.userid,self.channelid,count,guild)
 
 
 async def voiceConnect(member,before,after,guild):
-    if member.bot==False and guild.mstats[5]["Statut"]==True:
-        if before.channel==None:
-            if verifExecSQL(guild,after.channel,member)==True:
-                listeCo[member.id]=Voice(member,after.channel,member.guild)
-        elif after.channel==None:
-            await listeCo[member.id].exeStat(guild)
-        elif after.channel.id!=before.channel.id:
-            await listeCo[member.id].exeStat(guild)
-            if verifExecSQL(guild,after.channel,member)==True:
+    if member.bot==False and guild.mstats[5]["Statut"]==True and guild.stats:
+        if before.channel!=None:
+            if verifExecSQL(guild,before.channel,member):
+                listeCo[member.id].exeStat(guild)
+        if after.channel!=None:
+            if verifExecSQL(guild,after.channel,member):
                 listeCo[member.id]=Voice(member,after.channel,member.guild)
 
 def exeVoiceSQL(id,chan,count,guild):
@@ -73,25 +69,23 @@ async def reconnect(client,dictGuilds):
         for j in i.voice_channels:
             for h in j.voice_states:
                 member=i.get_member(h)
-                if member.bot==False and verifExecSQL(dictGuilds[member.guild.id],j,member)==True:
+                if not member.bot and verifExecSQL(dictGuilds[member.guild.id],j,member):
                     if member.id in listeCo and listeCo[member.id].guildid!=i.id and listeCo[member.id].connect:
                         listeCo[member.id].exestat(dictGuilds[listeCo[member.id].guildid])
                     elif member.id in listeCo and listeCo[member.id].connect:
                         continue
                     listeCo[member.id]=Voice(member,j,i)
     await client.get_channel(705390619538882641).send("Voice : Utilisateurs Connectés.")
-    return
 
 async def disconnect(client):
     listeDeco=list(listeCo)
     for i in listeDeco:
         try:
             if listeCo[i].connect==True:
-                await listeCo[i].exeStat(OTGuild(listeCo[i].guildid,True))
+                listeCo[i].exeStat(OTGuild(listeCo[i].guildid,True))
         except:
             pass
     await client.get_channel(705390619538882641).send("Voice : Utilisateurs Déconnectés.")
-    return
 
 async def endNight(client,dictGuilds):
     await disconnect(client)

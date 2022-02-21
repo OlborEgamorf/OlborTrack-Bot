@@ -1,6 +1,7 @@
 import asyncio
 
 import discord
+from Core.Decorator import OTCommand
 from Core.Fonctions.Embeds import createEmbed, embedAssert
 from Core.Fonctions.Phrase import createPhrase
 from Core.Fonctions.WebRequest import getAvatar
@@ -8,6 +9,7 @@ from Outils.Bienvenue.Manipulation import fusion, fusionAdieu, squaretoround
 from Stats.SQL.ConnectSQL import connectSQL
 
 
+@OTCommand
 async def modifImage(ctx,bot,args,option):
     dictTitres={"BV":"de bienvenue","AD":"d'adieu"}
     try:
@@ -138,8 +140,6 @@ async def modifImage(ctx,bot,args,option):
                 else:
                     curseur.execute("UPDATE imagesAD SET Message='{0}', Couleur='{1}', Taille={2}, Mode='{3}', Filtre={4} WHERE Nombre={5}".format(texte,couleur,taille,mode,filtre,args[0]))
                 connexion.commit()
-    except AssertionError as er:
-        await ctx.reply(embed=embedAssert(er))
     except asyncio.exceptions.TimeoutError:
-        await message.reply(embed=embedAssert("Une minute s'est écoulée et vous n'avez pas confirmé la modification. L'opération a été annulée"))
+        await embedAssert(ctx,"Une minute s'est écoulée et vous n'avez pas confirmé la modification. L'opération a été annulée",True)
         await message.clear_reactions()

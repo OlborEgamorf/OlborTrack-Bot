@@ -1,10 +1,14 @@
-from Stats.SQL.ConnectSQL import connectSQL
-from Core.Fonctions.Embeds import createEmbed, embedAssert
 import asyncio
-import discord
-from Outils.Bienvenue.Manipulation import fusion, squaretoround
-from Core.Fonctions.WebRequest import getAvatar
 
+import discord
+from Core.Decorator import OTCommand
+from Core.Fonctions.Embeds import createEmbed, embedAssert
+from Core.Fonctions.WebRequest import getAvatar
+from Outils.Bienvenue.Manipulation import fusion, squaretoround
+from Stats.SQL.ConnectSQL import connectSQL
+
+
+@OTCommand
 async def delImage(ctx,bot,args,option):
     dictTitres={"BV":"de bienvenue","AD":"d'adieu"}
     try:
@@ -44,8 +48,6 @@ async def delImage(ctx,bot,args,option):
         embed=createEmbed("Suppression image {0}".format(dictTitres[option]),"L'image a bien été supprimée.",0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
         await ctx.reply(embed=embed)
 
-    except AssertionError as er:
-        await ctx.reply(embed=embedAssert(er))
     except asyncio.exceptions.TimeoutError:
-        await message.reply(embed=embedAssert("Une minute s'est écoulée et vous n'avez pas confirmé la suppression. L'opération a été annulée"))
+        await embedAssert(ctx,"Une minute s'est écoulée et vous n'avez pas confirmé la suppression. L'opération a été annulée",True)
         await message.clear_reactions()

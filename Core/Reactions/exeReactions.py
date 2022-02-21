@@ -1,6 +1,6 @@
 import discord
 from Admin.DeleteStats import confirmDel
-from Core.Fonctions.Embeds import embedAssert
+from Core.Fonctions.Embeds import embedAssertClassic
 from Core.Fonctions.SeekMessage import seekMessage
 from Core.OTGuild import OTGuild
 from Core.Reactions.ChangePage import reactStats
@@ -31,4 +31,4 @@ async def exeReactOT(emoji:discord.Reaction, message:discord.Message, bot:comman
         else:
             return
     except discord.errors.Forbidden:
-        await message.channel.send(embed=embedAssert("Je ne peux pas retirer automatiquement votre réaction ! Donnez moi la permission 'gestion des messages' pour que je puisse le faire et ne plus voir ce message."),delete_after=10)
+        await message.channel.send(embed=embedAssertClassic("Je ne peux pas retirer automatiquement votre réaction ! Donnez moi la permission 'gestion des messages' pour que je puisse le faire et ne plus voir ce message."),delete_after=10)

@@ -1,12 +1,12 @@
 import asyncio
+from math import inf
 
 import discord
+from Core.Decorator import OTJeux
 from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.Embeds import embedAssert
+from Jeux.Paris import Pari
 from Jeux.Trivial.Attente import attente
 from Jeux.Trivial.Versus import Versus
-from math import inf
-from Jeux.Paris import Pari
 
 listeNoms=["Culture","Divertissement","Sciences","Mythologie","Sport","Géographie","Histoire","Politique","Art","Célébrités","Animaux","Véhicules","Global"]
 dictCateg={9:0,10:1,11:1,12:1,13:1,14:1,15:1,16:1,17:2,18:2,19:2,20:3,21:4,22:5,23:6,24:7,25:8,26:9,27:10,28:11,29:1,30:2,31:1,32:1}
@@ -85,77 +85,72 @@ class BattleRoyale(Versus):
             if self.scores[i]==1:
                 self.paris.ouvert=False 
 
+@OTJeux
+async def trivialBattleRoyale(ctx,bot,game,inGame,gamesTrivial):
+    assert ctx.author.id not in inGame, "Terminez votre question en cours avant de lancer ou rejoindre une partie."
+    game=BattleRoyale(ctx.guild,"br")
+    message=await game.startGame(ctx,bot,inGame,gamesTrivial)
+    if message==False:
+        return
+    messAd=await bot.get_channel(870598360296488980).send("{0} - {1} : partie OT!trivialbr débutée\n{2} joueurs".format(ctx.guild.name,ctx.guild.id,len(game.joueurs)))
+    game.restants=game.ids.copy()
+    game.paris=Pari(game.ids,"TrivialBR")
+    while game.playing:
+        listeDel=[]
+        game.reponses={i:None for i in game.restants}
+        game.setCateg(None)
+        game.setDiff()
+        game.newQuestion()
+        embedT=game.createEmbed(False)
+        await message.edit(embed=embedT)
+        await attente(game,20,None)
 
-async def trivialBattleRoyale(ctx,bot,inGame,gamesTrivial):
-    try:
-        assert ctx.author.id not in inGame, "Terminez votre question en cours avant de lancer ou rejoindre une partie."
-        game=BattleRoyale(ctx.guild,"br")
-        message=await game.startGame(ctx,bot,inGame,gamesTrivial)
-        if message==False:
-            return
-        messAd=await bot.get_channel(870598360296488980).send("{0} - {1} : partie OT!trivialbr débutée\n{2} joueurs".format(ctx.guild.name,ctx.guild.id,len(game.joueurs)))
-        game.restants=game.ids.copy()
-        game.paris=Pari(game.ids,"TrivialBR")
-        while game.playing:
-            listeDel=[]
-            game.reponses={i:None for i in game.restants}
-            game.setCateg(None)
-            game.setDiff()
-            game.newQuestion()
-            embedT=game.createEmbed(False)
-            await message.edit(embed=embedT)
-            await attente(game,20,None)
-
-            count,left,good=0,len(game.restants),0
+        count,left,good=0,len(game.restants),0
+        for i in game.restants:
+            if game.reponses[i]!=game.vrai-1:
+                game.scores[i]-=1
+                if game.scores[i]==0:
+                    count+=1
+            else:
+                good+=1
+        if count==left:
             for i in game.restants:
-                if game.reponses[i]!=game.vrai-1:
-                    game.scores[i]-=1
-                    if game.scores[i]==0:
-                        count+=1
-                else:
-                    good+=1
-            if count==left:
-                for i in game.restants:
-                    game.scores[i]+=1
-            else:
-                for i in game.restants:
-                    if game.scores[i]==0:
-                        game.histo[i]=left-count+1
-                        listeDel.append(i)
-                for i in listeDel:
-                    game.restants.remove(i)
-            
-            embedT=game.createEmbed(True)
-            if good>0:
-                embedT.colour=0x47b03c
-                embedT.description="**{0} personne*(s)* a *(ont)* eu juste !** {1}".format(good,game.affichageWin()[20:-1])
-            else:
-                embedT.colour=0xcf1742
-                embedT.description="**Tout le monde s'est trompé...** {0}".format(game.affichageLose(None)[10:-1])
-            await message.edit(embed=embedT)
-            if game.maxTour():
-                maxi,maxiJoueur=-inf,None
-                for i in game.joueurs:
-                    if game.scores[i.id]>maxi:
-                        maxi,maxiJoueur=game.scores[i.id],i.id
-                game.restants=[maxiJoueur]
-            if len(game.restants)==1:
-                game.histo[game.restants[0]]=1
-                await message.clear_reactions()
-                await message.channel.send(embed=game.embedResults(game.guild.get_member(game.restants[0])))
-                await message.unpin()
-                game.playing=False
-                await game.stats(game.guild.get_member(game.restants[0]),"TrivialBR",message.channel)
-                game.paris.distribParis(game.restants[0])
-            game.fermeture()
-            game.tour+=1
-            await asyncio.sleep(5)
-            await message.edit(embed=game.embedHub())
-            await asyncio.sleep(5)
-        await game.endGame(message,inGame,gamesTrivial)
-    except AssertionError as er:
-        await ctx.send(embed=embedAssert(er))
-    except:
-        await game.error(ctx,bot,message,inGame,gamesTrivial)
+                game.scores[i]+=1
+        else:
+            for i in game.restants:
+                if game.scores[i]==0:
+                    game.histo[i]=left-count+1
+                    listeDel.append(i)
+            for i in listeDel:
+                game.restants.remove(i)
+        
+        embedT=game.createEmbed(True)
+        if good>0:
+            embedT.colour=0x47b03c
+            embedT.description="**{0} personne*(s)* a *(ont)* eu juste !** {1}".format(good,game.affichageWin()[20:-1])
+        else:
+            embedT.colour=0xcf1742
+            embedT.description="**Tout le monde s'est trompé...** {0}".format(game.affichageLose(None)[10:-1])
+        await message.edit(embed=embedT)
+        if game.maxTour():
+            maxi,maxiJoueur=-inf,None
+            for i in game.joueurs:
+                if game.scores[i.id]>maxi:
+                    maxi,maxiJoueur=game.scores[i.id],i.id
+            game.restants=[maxiJoueur]
+        if len(game.restants)==1:
+            game.histo[game.restants[0]]=1
+            await message.clear_reactions()
+            await message.channel.send(embed=game.embedResults(game.guild.get_member(game.restants[0])))
+            await message.unpin()
+            game.playing=False
+            await game.stats(game.guild.get_member(game.restants[0]),"TrivialBR",message.channel)
+            game.paris.distribParis(game.restants[0])
+        game.fermeture()
+        game.tour+=1
+        await asyncio.sleep(5)
+        await message.edit(embed=game.embedHub())
+        await asyncio.sleep(5)
+
     if "messAd" in locals():
         await messAd.delete()

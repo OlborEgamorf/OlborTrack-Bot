@@ -1,14 +1,14 @@
-from matplotlib import pyplot as plt
 import matplotlib.image as mpimg
-from time import strftime
-from matplotlib.offsetbox import AnnotationBbox, OffsetImage
 from colorthief import ColorThief
-from Core.Fonctions.GraphTheme import setThemeGraph
-from Stats.SQL.ConnectSQL import connectSQL
-from Core.Fonctions.GetTable import getTableRoles, getTableRolesMem
 from Core.Fonctions.GetNom import getNomGraph
-from Core.Fonctions.WebRequest import getAvatar, getImage
+from Core.Fonctions.GetTable import getTableRoles, getTableRolesMem
+from Core.Fonctions.GraphTheme import setThemeGraph
 from Core.Fonctions.VoiceAxe import voiceAxe
+from Core.Fonctions.WebRequest import getAvatar, getImage
+from matplotlib import pyplot as plt
+from matplotlib.offsetbox import AnnotationBbox, OffsetImage
+from Stats.SQL.ConnectSQL import connectSQL
+
 colorOT=(110/256,200/256,250/256,1)
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TO","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
 dictOption={"tortues":"Tortues","tortuesduo":"TortuesDuo","trivialversus":"TrivialVersus","trivialbr":"TrivialBR","trivialparty":"TrivialParty","p4":"P4","bataillenavale":"BatailleNavale","cross":"Cross","trivial":"trivial","codenames":"CodeNames"}
@@ -68,7 +68,7 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
     for i in range(borne):
         listeY.append(table[i]["Count"])
         listeC.append(colorBase)
-        if True:
+        try:
             if ligne["Commande"]=="roles" and ligne["Args4"]=="None":
                 role=ctx.guild.get_role(table[i]["ID"])
                 listeC[i]=(role.color.r/256,role.color.g/256,role.color.b/256,1)
@@ -126,7 +126,7 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
                     listeC[i]=(user.color.r/256,user.color.g/256,user.color.b/256,1)
             else:
                 listeN.append(getNomGraph(ctx,bot,option,table[i]["ID"]))
-        else:
+        except:
             listeN.append("??")
     
     voiceAxe(option,listeY,plt,"x")

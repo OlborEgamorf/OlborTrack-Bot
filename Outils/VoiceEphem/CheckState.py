@@ -1,5 +1,5 @@
+from Core.Fonctions.Embeds import embedAssertClassic
 from Stats.SQL.ConnectSQL import connectSQL
-from Core.Fonctions.Embeds import embedAssert
 
 async def connectionVoiceEphem(guildOT,before,after,member):
     try:
@@ -8,7 +8,7 @@ async def connectionVoiceEphem(guildOT,before,after,member):
             connexion,curseur=connectSQL(member.guild.id,"VoiceEphem","Guild",None,None)
             chan=curseur.execute("SELECT * FROM salons WHERE ID=0 ORDER BY Nombre ASC").fetchone()
             if chan==None:
-                await member.send(embed=embedAssert("Désolé, il n'y a plus de salon éphémère disponible sur le serveur {0}. Veuillez réessayer plus tard.".format(member.guild.name)))
+                await member.send(embed=embedAssertClassic("Désolé, il n'y a plus de salon éphémère disponible sur le serveur {0}. Veuillez réessayer plus tard.".format(member.guild.name)))
             else:
                 if guildOT.voicehub[after.channel.id]==0:
                     limite=None

@@ -1,8 +1,10 @@
-from Stats.SQL.ConnectSQL import connectSQL
-from Titres.Outils import createAccount
-from Core.Fonctions.Embeds import createEmbed, embedAssert
-from random import randint
 import asyncio
+from random import randint
+
+from Core.Fonctions.Embeds import createEmbed, embedAssert
+from Stats.SQL.ConnectSQL import connectSQL
+
+from Titres.Outils import createAccount
 
 listeReact=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>"]
 dictValuePack={705766186909958185:500,705766186989912154:1500,705766186930929685:3000}
@@ -98,6 +100,7 @@ async def packTitre(ctx,bot):
         embed=createEmbed("Packs de Titres acheté !",descip,0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
         message=await ctx.reply(embed=embed)
     except AssertionError as er:
-        await ctx.reply(embed=embedAssert(er))
+        await embedAssert(ctx,er,True)
     except asyncio.exceptions.TimeoutError:
+        await embedAssert(ctx,"Une minute s'est écoulée et vous n'avez pas confirmé l'achat. L'opération a été annulée",True)
         await message.clear_reactions()

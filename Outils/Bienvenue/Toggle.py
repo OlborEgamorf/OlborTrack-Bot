@@ -1,9 +1,10 @@
 import asyncio
 
 from Core.Fonctions.Embeds import createEmbed, embedAssert
+from Core.Decorator import OTCommand
 from Stats.SQL.ConnectSQL import connectSQL
 
-
+@OTCommand
 async def toggleBienvenue(ctx,bot,chan,guild,option):
     dictTitres={"BV":"de bienvenue","AD":"d'adieu"}
     try:
@@ -61,8 +62,6 @@ async def toggleBienvenue(ctx,bot,chan,guild,option):
             embed=createEmbed("Désactivation messages {0}".format(dictTitres[option]),"Opération validée !",0xf54269,ctx.invoked_with.lower(),ctx.guild)
             await ctx.reply(embed=embed)
         guild.getBV()
-    except AssertionError as er:
-        await ctx.reply(embed=embedAssert(er))
     except asyncio.exceptions.TimeoutError:
-        await message.reply(embed=embedAssert("Une minute s'est écoulée et vous n'avez pas confirmé l'activation. L'opération a été annulée"))
+        await embedAssert(ctx,"Une minute s'est écoulée et vous n'avez pas confirmé l'activation. L'opération a été annulée",True)
         await message.clear_reactions()

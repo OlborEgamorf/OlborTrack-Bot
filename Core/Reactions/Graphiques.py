@@ -1,4 +1,3 @@
-from typing import Tuple
 import discord
 from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.SeekMessage import seekMessage
@@ -6,12 +5,6 @@ from Core.OTGuild import OTGuild
 from discord.ext import commands
 from Stats.Graphiques.BarRanks import graphRank
 from Stats.Graphiques.Circle import graphCircle
-from Stats.Graphiques.Compare.GroupedCompare import (graphGroupedCompare,
-                                                     graphGroupedComparePerso,
-                                                     graphGroupedCompareRank)
-from Stats.Graphiques.Compare.PersoCompare import graphPersoComp
-from Stats.Graphiques.Compare.SpiderCompare import (graphSpiderCompare,
-                                                    graphSpiderComparePerso)
 from Stats.Graphiques.Evol import (graphEvol, graphEvolAA, graphEvolAutour,
                                    graphEvolBest, graphEvolBestUser,
                                    graphEvolJoursAA, graphEvolRank)
@@ -23,7 +16,6 @@ from Stats.Graphiques.Line import graphLine
 from Stats.Graphiques.Moyennes import (graphGroupedMoy, graphHeatMoy,
                                        graphPersoMoy)
 from Stats.Graphiques.Perso import graphPerso
-from Stats.Graphiques.Pie import graphPie
 from Stats.Graphiques.Scatter.ScatterPerso import graphScatterPerso
 from Stats.Graphiques.Scatter.ScatterPositions import graphScatter
 from Stats.Graphiques.Scatter.ScatterUsers import graphScatterUsers
@@ -99,54 +91,10 @@ async def reactGraph(message:int,bot:commands.Bot,guildOT:OTGuild,payload,emoji)
                 messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
                 embedM,embed=await embedGraph([1],messageGraph,ctx,message)
                 listeG.append(messageGraph.attachments[0].url)
+
             else:
                 await ctx.reply("Cette commande ne dispose pas de graphiques.")
                 return
-
-        elif ligne["Commande"]=="compareUser":
-            if ligne["Args1"] in ("user","userObj"):
-                connexion,curseur=connectSQL(ctx.guild.id,ligne["Option"],"Stats","GL","")
-
-                graphPersoComp(ligne,ctx,ligne["Option"],bot,"mois",guildOT,"Compteur",curseur)
-                messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
-                embedM,embed=await embedGraph([1,2,3],messageGraph,ctx,message)
-                listeG.append(messageGraph.attachments[0].url)
-
-                graphPersoComp(ligne,ctx,ligne["Option"],bot,"annee",guildOT,"Compteur",curseur)
-                messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
-                listeG.append(messageGraph.attachments[0].url)
-
-                graphPersoComp(ligne,ctx,ligne["Option"],bot,"mois",guildOT,"Rang",curseur)
-                messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
-                listeG.append(messageGraph.attachments[0].url)
-            
-            elif ligne["Args1"]=="userPeriod":
-                connexion,curseur=connectSQL(ctx.guild.id,ligne["Option"],"Stats",ligne["Args2"],ligne["Args3"])
-
-                graphGroupedCompare(ligne,ctx,ligne["Option"],bot,guildOT,curseur)
-                messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
-                embedM,embed=await embedGraph([1,2],messageGraph,ctx,message)
-                listeG.append(messageGraph.attachments[0].url)
-
-                await graphSpiderCompare(ligne,ctx,bot,ligne["Option"],guildOT,curseur)
-                messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
-                listeG.append(messageGraph.attachments[0].url)
-        
-        elif ligne["Commande"] in ("comparePerso","compareServ"):
-            graphGroupedComparePerso(ligne,ctx,ligne["Option"],bot,guildOT)
-            messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
-            embedM,embed=await embedGraph([1,2],messageGraph,ctx,message)
-            listeG.append(messageGraph.attachments[0].url)
-
-            await graphSpiderComparePerso(ligne,ctx,bot,ligne["Option"],guildOT)
-            messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
-            listeG.append(messageGraph.attachments[0].url)
-        
-        elif ligne["Commande"]=="compareRank":
-            graphGroupedCompareRank(ligne,ctx,ligne["Option"],bot,guildOT)
-            messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
-            embedM,embed=await embedGraph([1],messageGraph,ctx,message)
-            listeG.append(messageGraph.attachments[0].url)
 
         else:
             if ligne["Commande"] in ("rank","jeux"):
@@ -205,11 +153,11 @@ async def reactGraph(message:int,bot:commands.Bot,guildOT:OTGuild,payload,emoji)
             elif ligne["Commande"]=="first":
                 listeFonc=[graphRank,graphCircle]
             
-            for fonc in range(len(listeFonc)):
-                await listeFonc[fonc](ligne,ctx,bot,ligne["Option"],guildOT)
+            for i,fonc in enumerate(listeFonc):
+                await fonc(ligne,ctx,bot,ligne["Option"],guildOT)
                 messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
                 listeG.append(messageGraph.attachments[0].url)
-                if fonc==0:
+                if i==0:
                     embedM,embed=await embedGraph(listeFonc,messageGraph,ctx,message)
 
         descip=""

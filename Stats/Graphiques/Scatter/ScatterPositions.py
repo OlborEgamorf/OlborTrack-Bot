@@ -46,7 +46,7 @@ async def graphScatter(ligne,ctx,bot,option,guildOT):
         connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
         
     if ligne["Args1"]=="to":
-        allMois=curseur.execute("SELECT Mois,Annee FROM firstA").fetchall()
+        allMois=curseur.execute("SELECT Mois,Annee FROM firstA WHERE Annee<>'GL'").fetchall()
         labelO="Autre année"
     else:
         allMois=curseur.execute("SELECT Mois,Annee FROM firstM").fetchall()

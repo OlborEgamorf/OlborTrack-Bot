@@ -1,16 +1,17 @@
+from random import choice
+
+import discord
+from Core.Fonctions.AuteurIcon import auteur
+from Core.Fonctions.Embeds import createEmbed
+from Core.Fonctions.GetNom import getTitre
+from Jeux.Tortues.ClasseTortues import JeuTortues, Tortue
+from Stats.SQL.ConnectSQL import connectSQL
+from Stats.SQL.EmoteDetector import emoteDetector
+from Stats.SQL.Execution import exeJeuxSQL
+from Titres.Carte import newCarte
 from Titres.Couleur import getColorJeux
 from Titres.Emote import getEmoteJeux
-from Stats.SQL.EmoteDetector import emoteDetector
-from Core.Fonctions.GetNom import getTitre
-from Core.Fonctions.Embeds import createEmbed
-from Stats.SQL.ConnectSQL import connectSQL
-import discord
-from random import choice
-from Core.Fonctions.AuteurIcon import auteur
-from Jeux.Tortues.ClasseTortues import JeuTortues, Tortue
-from Stats.SQL.Execution import exeJeuxSQL
 from Titres.Outils import gainCoins
-from Titres.Carte import newCarte
 
 dictEmote={0:"<:otBlank:828934808200937492>","rouge":"<:OTTrouge:860119157495693343>","verte":"<:OTTvert:860119157331853333>","bleue":"<:OTTbleu:860119157491892255>","jaune":"<:OTTjaune:860119157688631316>","violette":"<:OTTviolet:860119157672247326>","last":"*dernière tortue*","multi":"*au choix*"}
 dictColor={"bleue":0x00CCFF,"violette":0x993366,"rouge":0xFF0000,"verte":0x77B255,"jaune":0xFFFF00}

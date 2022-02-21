@@ -1,40 +1,39 @@
 from random import choice
-from Savezvous.ListModo import commandeSV
-from Core.Fonctions.Embeds import createEmbed, embedAssert, exeErrorExcept
-from Stats.SQL.ConnectSQL import connectSQL
+
+from Core.Decorator import OTCommand
+from Core.Fonctions.Embeds import createEmbed
 from Core.Fonctions.Phrase import createPhrase
+from Stats.SQL.ConnectSQL import connectSQL
+
+from Savezvous.ListModo import commandeSV
 
 
+@OTCommand
 async def exeSavezVous(ctx,bot,args):
-    try:
-        args=args.split(" ")
-        connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
-        if len(args)==0 or args[0]=="" or ctx.invoked_with not in ("add", "del", "list", "modo", "edit"):
-            liste=curseur.execute("SELECT * FROM savezvous").fetchall()
-            assert liste!=[], "Vous devez commencer par ajouter une phrase avec `OT!savezvous add` !"
-            ligne=choice(liste)
-            user=ctx.guild.get_member(ligne["ID"])
-            if user==None:
-                embed=createEmbed("","`{0}` : {1}".format(ligne["Count"],ligne["Texte"]),ctx.guild.get_member(bot.user.id).color.value,ctx.invoked_with.lower(),bot.user)
-            else:
-                embed=createEmbed("","`{0}` : {1}".format(ligne["Count"],ligne["Texte"]),user.color.value,ctx.invoked_with.lower(),user)
-            if ligne["Image"]!="None":
-                embed.set_image(url=ligne["Image"])
+    args=args.split(" ")
+    connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
+    if len(args)==0 or args[0]=="" or ctx.invoked_with not in ("add", "del", "list", "modo", "edit"):
+        liste=curseur.execute("SELECT * FROM savezvous").fetchall()
+        assert liste!=[], "Vous devez commencer par ajouter une phrase avec `OT!savezvous add` !"
+        ligne=choice(liste)
+        user=ctx.guild.get_member(ligne["ID"])
+        if user==None:
+            embed=createEmbed("","`{0}` : {1}".format(ligne["Count"],ligne["Texte"]),ctx.guild.get_member(bot.user.id).color.value,ctx.invoked_with.lower(),bot.user)
         else:
-            if ctx.invoked_with=="add":
-                embed=addSV(ctx,args,curseur)
-            elif ctx.invoked_with=="del":
-                embed=deleteSV(ctx,args,curseur)
-            elif ctx.invoked_with=="edit":
-                embed=editSV(ctx,args,curseur)
-            else:
-                await commandeSV(ctx,ctx.invoked_with,None,False,None,bot)
-                return
-        connexion.commit()
-    except AssertionError as er:
-        embed=embedAssert(str(er))
-    except:
-        embed=await exeErrorExcept(ctx,bot,args)
+            embed=createEmbed("","`{0}` : {1}".format(ligne["Count"],ligne["Texte"]),user.color.value,ctx.invoked_with.lower(),user)
+        if ligne["Image"]!="None":
+            embed.set_image(url=ligne["Image"])
+    else:
+        if ctx.invoked_with=="add":
+            embed=addSV(ctx,args,curseur)
+        elif ctx.invoked_with=="del":
+            embed=deleteSV(ctx,args,curseur)
+        elif ctx.invoked_with=="edit":
+            embed=editSV(ctx,args,curseur)
+        else:
+            await commandeSV(ctx,ctx.invoked_with,None,False,None,bot)
+            return
+    connexion.commit()
     await ctx.reply(embed=embed)
 
 async def autoSV(channel,guild,bot):

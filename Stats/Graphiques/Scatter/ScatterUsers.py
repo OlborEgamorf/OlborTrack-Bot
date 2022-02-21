@@ -1,10 +1,12 @@
+import sqlite3
+
+import pandas as pd
+from Core.Fonctions.GetNom import getNomGraph
+from Core.Fonctions.GetTable import getTablePerso
 from Core.Fonctions.GraphTheme import setThemeGraph
+from Core.Fonctions.VoiceAxe import voiceAxe
 from matplotlib import pyplot as plt
 from Stats.SQL.ConnectSQL import connectSQL
-import sqlite3
-from Core.Fonctions.GetNom import getNomGraph
-from Core.Fonctions.VoiceAxe import voiceAxe
-import pandas as pd
 
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TOTAL","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","to":"to"}
 dictColor={"light":"grey","dark":(200/256, 210/256, 227/256)}
@@ -17,25 +19,24 @@ async def graphScatterUsers(ligne,ctx,bot,option,guildOT):
     listeX,listeY,listeXU,listeYU=[],[],[],[]
     listeN=[]
     count=0
-    obj="" if ligne["Args3"]=="None" else ligne["Args3"]
+    obj=False if ligne["Args3"]=="None" else ligne["Args3"]
     if ligne["Commande"]=="jeux":
         connexion,curseur=connectSQL(ligne["Args3"],dictOption[option],"Jeux",tableauMois[ligne["Args1"]],ligne["Args2"])
-        obj=""
+        obj=False
     else:
         connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[ligne["Args1"]],ligne["Args2"])
-    table=curseur.execute("SELECT * FROM {0}{1}{2} WHERE Rank<=15 ORDER BY Rank ASC LIMIT 15".format(ligne["Args1"],ligne["Args2"],obj)).fetchall()
+    if obj==False:
+        table=curseur.execute("SELECT * FROM {0}{1} WHERE Rank<=15 ORDER BY Rank ASC LIMIT 15".format(ligne["Args1"],ligne["Args2"])).fetchall()
+    else:
+        table=curseur.execute("SELECT * FROM {0}{1}{2} WHERE Rank<=15 ORDER BY Rank ASC LIMIT 15".format(ligne["Args1"],ligne["Args2"],obj)).fetchall()
     table.reverse()
     
-    if ligne["Commande"]=="jeux":
-        connexion,curseur=connectSQL(ligne["Args3"],dictOption[option],"Jeux","GL","")
-    else:
-        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
     for i in range(len(table)):
-        if option in ("Salons","Voicechan") and obj=="":
+        if option in ("Salons","Voicechan") and obj==False:
             if guildOT.chan[table[i]["ID"]]["Hide"]:
                 count+=1
                 continue
-        elif option in ("Messages","Mots","Voice","Voicechan") or obj!="":
+        elif option in ("Messages","Mots","Voice","Voicechan") or obj!=False:
             if guildOT.users[table[i]["ID"]]["Hide"]:
                 count+=1
                 continue 
@@ -43,9 +44,10 @@ async def graphScatterUsers(ligne,ctx,bot,option,guildOT):
         listeY.append(table[i]["Count"])
         try:
             if ligne["Args1"]=="to":
-                tablePerso=curseur.execute("SELECT * FROM persoA{0}{1} WHERE Annee<>'GL'".format(table[i]["ID"],obj)).fetchall()
+                tablePerso=getTablePerso(ctx.guild.id,option,table[i]["ID"],obj,"A","periodAsc")
+                tablePerso=list(filter(lambda x:x["Annee"]!="GL", tablePerso))
             else:
-                tablePerso=curseur.execute("SELECT * FROM persoM{0}{1}".format(table[i]["ID"],obj)).fetchall()
+                tablePerso=getTablePerso(ctx.guild.id,option,table[i]["ID"],obj,"M","periodAsc")
             for j in tablePerso:
                 listeXU.append(i+1)
                 listeYU.append(j["Count"])
@@ -55,7 +57,7 @@ async def graphScatterUsers(ligne,ctx,bot,option,guildOT):
         try:
             if ligne["Commande"]=="jeux":
                 listeN.append(getNomGraph(ctx,bot,option,table[i]["ID"]))
-            elif option in ("Messages","Mots","Voice","Voicechan") or obj!="":
+            elif option in ("Messages","Mots","Voice","Voicechan") or obj!=False:
                 nom=getNomGraph(ctx,bot,"Messages",table[i]["ID"]).name
                 nom=nom if len(nom)<=15 else "{0}...".format(nom[0:15])
                 listeN.append(nom)
@@ -78,7 +80,7 @@ async def graphScatterUsers(ligne,ctx,bot,option,guildOT):
     plt.yticks([i+1 for i in range(len(table)-count)], listeN)
     plt.xlim(left=0)
 
-    if obj=="" or ligne["Commande"]=="jeux":
+    if obj==False or ligne["Commande"]=="jeux":
         plt.title("Compteur par personne - {0}".format(option))
     else:
         plt.title("Compteur par personne - {0}\n{1}".format(option,getNomGraph(ctx,bot,option,int(obj))))

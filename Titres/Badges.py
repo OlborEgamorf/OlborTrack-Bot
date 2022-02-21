@@ -33,7 +33,7 @@ async def showBadges(ctx,bot):
 
         await ctx.reply(embed=createEmbed("Vos badges",descip,ctx.author.color.value,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author))
     except:
-        await ctx.reply(embed=embedAssert("Vous n'avez aucun badge visiblement..."))
+        await embedAssert(ctx,"Vous n'avez aucun badge visiblement...",True)
 
 
 def getBadges(user,jeu):

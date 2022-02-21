@@ -1,33 +1,29 @@
 import discord
+from Core.Decorator import OTCommand
 from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.Embeds import (addtoFields, createFields, embedAssert,
-                                   exeErrorExcept, sendEmbed)
+from Core.Fonctions.Embeds import addtoFields, createFields, sendEmbed
 from Core.Fonctions.setMaxPage import setMax, setPage
 from Outils.Twitter.ModifTwitter import (addTwitter, chanTwitter, delTwitter,
                                          descipTwitter)
 from Stats.SQL.ConnectSQL import connectSQL
 
 
+@OTCommand
 async def exeTwitterAlerts(ctx,bot,args,guildOT):
-    if True:
-        connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
-        if ctx.invoked_with=="twitter":
-            await commandeTwitter(ctx,None,False,None,bot,guildOT,curseur)
-            return
-        elif ctx.invoked_with=="add":
-            embed=await addTwitter(ctx,bot,args)
-        elif ctx.invoked_with=="chan":
-            embed=await chanTwitter(ctx,bot,args,curseur)
-        elif ctx.invoked_with=="del":
-            embed=await delTwitter(ctx,bot,args,curseur,guildOT)
-        elif ctx.invoked_with=="edit":
-            embed=await descipTwitter(ctx,bot,args,curseur,guildOT)
-        connexion.commit()
-        guildOT.getTwitter()
-    """except AssertionError as er:
-        embed=embedAssert(str(er))
-    except:
-        embed=await exeErrorExcept(ctx,bot,args)"""
+    connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
+    if ctx.invoked_with=="twitter":
+        await commandeTwitter(ctx,None,False,None,bot,guildOT,curseur)
+        return
+    elif ctx.invoked_with=="add":
+        embed=await addTwitter(ctx,bot,args)
+    elif ctx.invoked_with=="chan":
+        embed=await chanTwitter(ctx,bot,args,curseur)
+    elif ctx.invoked_with=="del":
+        embed=await delTwitter(ctx,bot,args,curseur,guildOT)
+    elif ctx.invoked_with=="edit":
+        embed=await descipTwitter(ctx,bot,args,curseur,guildOT)
+    connexion.commit()
+    guildOT.getTwitter()
     await ctx.send(embed=embed)
 
 

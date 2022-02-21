@@ -1,31 +1,28 @@
+from Core.Decorator import OTCommand
 from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.Embeds import embedAssert, exeErrorExcept, sendEmbed
+from Core.Fonctions.Embeds import sendEmbed
 from Core.Fonctions.setMaxPage import setMax, setPage
 from Outils.YouTube.EmbedsYT import embedYT
 from Outils.YouTube.ModifYT import addYT, chanYT, delYT, descipYT
 from Stats.SQL.ConnectSQL import connectSQL
 
 
+@OTCommand
 async def exeYTAlerts(ctx,bot,args,guildOT):
-    try:
-        connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
-        if ctx.invoked_with=="youtube":
-            await commandeYT(ctx,None,False,None,bot,guildOT,curseur)
-            return
-        elif ctx.invoked_with=="add":
-            embed=await addYT(ctx,bot,args)
-        elif ctx.invoked_with=="chan":
-            embed=await chanYT(ctx,bot,args,curseur)
-        elif ctx.invoked_with=="del":
-            embed=await delYT(ctx,bot,args,curseur,guildOT)
-        elif ctx.invoked_with=="edit":
-            embed=await descipYT(ctx,bot,args,curseur,guildOT)
-        connexion.commit()
-        guildOT.getYouTube()
-    except AssertionError as er:
-        embed=embedAssert(str(er))
-    except:
-        embed=await exeErrorExcept(ctx,bot,args)
+    connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
+    if ctx.invoked_with=="youtube":
+        await commandeYT(ctx,None,False,None,bot,guildOT,curseur)
+        return
+    elif ctx.invoked_with=="add":
+        embed=await addYT(ctx,bot,args)
+    elif ctx.invoked_with=="chan":
+        embed=await chanYT(ctx,bot,args,curseur)
+    elif ctx.invoked_with=="del":
+        embed=await delYT(ctx,bot,args,curseur,guildOT)
+    elif ctx.invoked_with=="edit":
+        embed=await descipYT(ctx,bot,args,curseur,guildOT)
+    connexion.commit()
+    guildOT.getYouTube()
     await ctx.send(embed=embed)
 
 

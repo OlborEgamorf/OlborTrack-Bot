@@ -1,31 +1,29 @@
-from Stats.SQL.ConnectSQL import connectSQL
 import random
-from Core.Fonctions.Embeds import createEmbed, embedAssert, exeErrorExcept, sendEmbed
-from Core.Fonctions.setMaxPage import setMax, setPage
 
+from Core.Decorator import OTCommand
+from Core.Fonctions.Embeds import createEmbed, sendEmbed
+from Core.Fonctions.setMaxPage import setMax, setPage
+from Stats.SQL.ConnectSQL import connectSQL
+
+
+@OTCommand
 async def exeGaReroll(ctx,args,bot):
-    if True:
-        if len(args)==0:
-            await commandeGAR(ctx,None,False,None)
-            return
-            
-        connexion,curseur=connectSQL(ctx.guild.id,"Giveaway","Guild",None,None)
-        try:
-            etat=curseur.execute("SELECT * FROM liste WHERE Nombre={0}".format(args[0])).fetchone()
-        except:
-            raise AssertionError("Le numéro de giveaway donné n'est pas valide.")
-        assert etat!=None, "Ce numéro de giveaway n'existe pas."
-        try:
-            message=await ctx.guild.get_channel(etat["IDChan"]).fetch_message(etat["IDMess"])
-        except:
-            raise AssertionError("Ce giveaway est introuvable. Soit je n'ai plus accès au salon où il a eu lieu, soit il a été supprimé.")
-        choix=random.choice(curseur.execute("SELECT * FROM {0}".format("n{0}".format(args[0]))).fetchall())
-        await ctx.send("<:otVERT:718396570638483538> Bravo à <@{0}> qui a gagné {1} !".format(choix["ID"],etat["Lot"]))
+    if len(args)==0:
+        await commandeGAR(ctx,None,False,None)
         return
-    """except AssertionError as er:
-        await ctx.send(embed=embedAssert(str(er)))
+        
+    connexion,curseur=connectSQL(ctx.guild.id,"Giveaway","Guild",None,None)
+    try:
+        etat=curseur.execute("SELECT * FROM liste WHERE Nombre={0}".format(args[0])).fetchone()
     except:
-        await ctx.send(embed=await exeErrorExcept(ctx,bot,args))"""
+        raise AssertionError("Le numéro de giveaway donné n'est pas valide.")
+    assert etat!=None, "Ce numéro de giveaway n'existe pas."
+    try:
+        await ctx.guild.get_channel(etat["IDChan"]).fetch_message(etat["IDMess"])
+    except:
+        raise AssertionError("Ce giveaway est introuvable. Soit je n'ai plus accès au salon où il a eu lieu, soit il a été supprimé.")
+    choix=random.choice(curseur.execute("SELECT * FROM {0}".format("n{0}".format(args[0]))).fetchall())
+    await ctx.send("<:otVERT:718396570638483538> Bravo à <@{0}> qui a gagné {1} !".format(choix["ID"],etat["Lot"]))
 
 
 async def commandeGAR(ctx,turn,react,ligne):

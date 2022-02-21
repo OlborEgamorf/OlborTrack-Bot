@@ -1,8 +1,9 @@
-from Stats.SQL.ConnectSQL import connectSQL
-from Titres.Outils import createAccount
-from Core.Fonctions.Embeds import createEmbed, embedAssert
-from Titres.Listes import commandeTMP
 import asyncio
+
+from Core.Fonctions.Embeds import createEmbed, embedAssert
+from Stats.SQL.ConnectSQL import connectSQL
+
+from Titres.Outils import createAccount
 from Titres.Vente import verifVente
 
 dictStatut={0:"Fabuleux",1:"Rare",2:"Légendaire",3:"Unique"}
@@ -136,10 +137,8 @@ async def tradeTitre(ctx,idtitre,bot):
         embed=createEmbed("Échange de Titre","Échange terminé !",0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
         await ctx.reply(embed=embed)
 
-    except AssertionError as er:
-        await ctx.reply(embed=embedAssert(er))
     except asyncio.exceptions.TimeoutError:
-        await message.reply(embed=embedAssert("Une minute s'est écoulée et rien ne s'est produit. La transaction a été annulée."))
+        await embedAssert(ctx,"Une minute s'est écoulée et rien ne s'est produit. L'opération a été annulée",True)
         await message.clear_reactions()
 
 

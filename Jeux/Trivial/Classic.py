@@ -288,13 +288,13 @@ async def embedTrivial(arg,ctx,bot,author,option,inGame,gamesTrivial):
         question.newQuestion()
         embedT=question.createEmbed()
     except AssertionError as er:
-        await ctx.send(embed=embedAssert(er))
+        await embedAssert(ctx,er,True)
     except sqlite3.OperationalError as er:
         await asyncio.sleep(0.2)
         inGame.remove(author.id)
         await embedTrivial(arg,ctx,bot,author,option,inGame,gamesTrivial)
     except:
-        await ctx.send(embed=await exeErrorExcept(ctx,bot,""))
+        await exeErrorExcept(ctx,bot,True)
     else:
         if option=="streak" and question.serie!=0:
             await ctx.message.edit(embed=embedT)

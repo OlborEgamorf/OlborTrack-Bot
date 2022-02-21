@@ -1,5 +1,5 @@
 from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.Embeds import embedAssert, sendEmbed
+from Core.Fonctions.Embeds import embedAssertClassic, sendEmbed
 from Core.Fonctions.setMaxPage import setMax, setPage
 from Stats.Embeds.Central import statsEmbed
 from Stats.SQL.ConnectSQL import connectSQL
@@ -8,7 +8,7 @@ tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai",
 dictOption={"tortues":"Tortues","tortuesduo":"TortuesDuo","trivialversus":"TrivialVersus","trivialbr":"TrivialBR","trivialparty":"TrivialParty","p4":"P4","bataillenavale":"BatailleNavale"}
 dictNoms={"culture":0,"divertissement":1,"sciences":2,"mythologie":3,"sport":4,"géographie":5,"histoire":6,"politique":7,"art":8,"célébrités":9,"animaux":10,"véhicules":11,"streak":"Streak"}
 
-async def statsTrivial(ctx,turn,react,ligne,guildOT,bot,option):
+async def statsTrivial(ctx,turn,react,ligne,bot,option):
     try:
         connexionCMD,curseurCMD=connectSQL(ctx.guild.id,"Commandes","Guild",None,None)
         if not react:
@@ -49,6 +49,6 @@ async def statsTrivial(ctx,turn,react,ligne,guildOT,bot,option):
         await sendEmbed(ctx,embed,react,True,curseurCMD,connexionCMD,page,pagemax)
     except:
         if react:
-            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nLe classement cherché n'existe plus ou alors il y a un problème de mon côté."))
+            await ctx.reply(embed=embedAssertClassic("Impossible de trouver ce que vous cherchez.\nLe classement cherché n'existe plus ou alors il y a un problème de mon côté."))
         else:
-            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\Le classement cherché n'existe pas ou alors il y a un problème de mon côté.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))
+            await ctx.reply(embed=embedAssertClassic("Impossible de trouver ce que vous cherchez.\Le classement cherché n'existe pas ou alors il y a un problème de mon côté.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))

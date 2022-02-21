@@ -2,9 +2,9 @@ import asyncio
 
 import discord
 from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.Embeds import embedAssert, exeErrorExcept
 from Core.Fonctions.WebRequest import webRequest
 from Core.OS.Keys3 import NASAKey
+from Core.Decorator import OTCommand
 
 
 async def embedNasaPhoto() -> discord.Embed:
@@ -21,14 +21,7 @@ async def embedNasaPhoto() -> discord.Embed:
     embedP.set_footer(text="OT!nasaphoto")
     return embedP
 
-async def exeNASA(ctx,bot,args):
+@OTCommand
+async def exeNASA(ctx,bot):
     """Cette fonction génère les embeds des commandes de type Geo en fonction de quelle commande est invoquée."""
-    try:
-        embed=await embedNasaPhoto()
-        await ctx.send(embed=embed)
-    except AssertionError as er:
-        await ctx.send(embed=embedAssert(str(er)))
-    except asyncio.exceptions.TimeoutError:
-        await ctx.send(embed=embedAssert("Temps de requête écoulé, veuillez réessayer."))
-    except:
-        await ctx.send(embed=await exeErrorExcept(ctx,bot,args))
+    await ctx.send(embed=await embedNasaPhoto())

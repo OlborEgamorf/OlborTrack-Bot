@@ -1,9 +1,8 @@
+import discord
+from Core.Fonctions.Embeds import addtoFields, createFields
 from Core.Fonctions.WebRequest import webRequestHD
 from Core.OS.Keys3 import headersTwitch
-import discord
-from Core.Fonctions.Embeds import addtoFields, createFields, sendEmbed
-from Stats.SQL.ConnectSQL import connectSQL
-from Core.Fonctions.AuteurIcon import auteur
+
 
 async def embedAlert(data,stream):
     user=await webRequestHD("https://api.twitch.tv/helix/users",headersTwitch,(("login",stream),("id",data["data"][0]["user_id"])))

@@ -1,5 +1,6 @@
 import sqlite3
 import sys
+import traceback
 
 import discord
 from Core.Fonctions.AuteurIcon import auteur
@@ -76,26 +77,7 @@ def newDescip(descip:(str or discord.embeds._EmptyEmbed),option:str,obj:str,guil
         descip="{0}\n-----\n{1}".format(nomsOptions(option,int(obj),guildOT,bot),descip)
     return descip
 
-
-def embedError(guild:discord.Guild,channel:discord.TextChannel,author:discord.Member,error:str,commande:str) -> (discord.Embed, discord.Embed):
-    """Fonction qui génére deux embeds en cas d'erreur lors d'une commande : un pour l'utilisateur et un autre pour le support.
-    Entrées : 
-        guild : le serveur où l'erreur s'est produite
-        channel : le salon où l'erreur s'est produite
-        author : l'auteur de la commande qui a échoué
-        error : les infos de l'erreur
-        commande : le nom de la commande
-    Sorties :
-        embedTable : l'embed pour l'utilisateur
-        embedHistorique : l'embed pour le support"""
-    embedTable=discord.Embed(title="<:otROUGE:868535622237818910> Erreur", description="Une erreur est survenue lors de l'execution de la commande.\nUn rapport a été envoyé au support.\n"+error,color=0xff0000)
-    embedTable.set_footer(text="Avertissement")
-    embedHistorique=discord.Embed(description="**Erreur : OT!"+commande+"** "+str(channel)+" "+str(channel.id)+" | "+str(guild)+" "+str(guild.id)+" | "+str(author)+" "+str(author.id)+"\n"+error, color=0x3498db)
-    embedHistorique.set_footer(text="OlborTrack Log")
-    return embedTable, embedHistorique
-
-
-async def exeErrorExcept(ctx:commands.Context,bot:commands.Bot,args:str) -> discord.Embed:
+async def exeErrorExcept(ctx:commands.Context,bot:commands.Bot,reply) -> discord.Embed:
     """Fonction qui envoie deux embeds en cas d'erreur lors d'une commande : un pour l'utilisateur et un autre pour le support, avec des informations plus détaillées.
     Entrées : 
         ctx : toutes les infos de la commande
@@ -103,14 +85,17 @@ async def exeErrorExcept(ctx:commands.Context,bot:commands.Bot,args:str) -> disc
         args : les arguments qui avaient été donnés avec la commande
     Sortie :
         embedE : l'embed d'erreur pour l'utilisateur"""
-    argsstr=""
-    for i in range(1,len(ctx.args)):
-        argsstr+=str(ctx.args[i])+" "
-    error=str(sys.exc_info()[0])+"\n"+str(sys.exc_info()[1])+"\n"+str(sys.exc_info()[2].tb_frame)+"\n"+str(sys.exc_info()[2].tb_lineno)
-    embedE=embedError(ctx.guild,ctx.message.channel,ctx.author,str(sys.exc_info()[0]),str(ctx.invoked_with)+" "+argsstr)[0]
-    embedHistorique=embedError(ctx.guild,ctx.message.channel,ctx.author,error,str(ctx.invoked_with)+" "+argsstr)[1]
-    await bot.get_channel(726000546401615912).send(embed=embedHistorique)
-    return embedE
+
+    embedUser=createEmbed("<:otROUGE:868535622237818910> Erreur","Une erreur est survenue lors de l'execution de la commande.\nUn rapport a été envoyé au support.\n{0}".format(sys.exc_info()[0]),0xff0000,ctx.invoked_with.lower(),ctx.author)
+    embedLog=createEmbed("Erreur","Commande : {0}\nSalon : {1} | {1.id}\nServeur : {2} | {2.id}\nAuteur : {3} | {3.id}\nInfos : {4}\nArguments : {5}".format(ctx.invoked_with.lower(),ctx.message.channel,ctx.guild,ctx.author,traceback.format_exc(),ctx.args),0x3498db,"Log",ctx.guild)
+    
+    await bot.get_channel(726000546401615912).send(embed=embedLog)
+    if reply:
+        await ctx.reply(embed=embedUser)
+    elif reply==None:
+        return embedUser
+    else:
+        await ctx.send(embed=embedUser)
 
 
 def createEmbed(title:str,descip:str,color:int,command:str,option:(discord.Member or discord.Guild)) -> discord.Embed:
@@ -163,7 +148,7 @@ async def sendEmbed(ctx:commands.Context,embed:discord.Embed,react:bool,boutons:
             connexionCMD.commit()
             return message
     except discord.errors.Forbidden:
-        await ctx.reply(embed=embedAssert("Je n'ai pas pu envoyer les réactions de cette commande, qui servent à naviguer dedans. Donnez moi les permissions 'utiliser emojis externes' et 'ajouter des réactions' si vous ne voulez plus voir ce message, et profiter à fond de mes possibilités."),delete_after=10)
+        await embedAssert(ctx,"Je n'ai pas pu envoyer les réactions de cette commande, qui servent à naviguer dedans. Donnez moi les permissions 'utiliser emojis externes' et 'ajouter des réactions' si vous ne voulez plus voir ce message, et profiter à fond de mes possibilités.",True)
 
 
 def embedHisto(ctx:commands.Context,bot) -> discord.Embed:
@@ -174,7 +159,22 @@ def embedHisto(ctx:commands.Context,bot) -> discord.Embed:
         return createEmbed("Commande exécutée","Commande : OT!{0}\nServeur : {1} - {2}\nSalon : {3} - {4}\nAuteur : {5} - {6}\n{7}".format(ctx.command.qualified_name,ctx.guild.name,ctx.guild.id,ctx.channel.name,ctx.channel.id,ctx.author.name,ctx.author.id,ctx.args[2:len(ctx.args)]),0x6ec8fa,"OT Log",bot.user)
 
 
-def embedAssert(info:str) -> discord.Embed:
+async def embedAssert(ctx,info:str,reply) -> discord.Embed:
+    """Génère l'embed à envoyer si une AssertionError est relevée.
+    Entrée :
+        info : les informations de l'erreur
+    Sortie :
+        embedTable : l'embed à envoyer"""
+    if info=="mp":
+        embed=createEmbed("<:otORANGE:868538903584456745> Erreur","Cette commande n'est pas compatible dans les messages privés !",0xff9900,ctx.invoked_with.lower(),ctx.author)
+    else:
+        embed=createEmbed("<:otROUGE:868535622237818910> Erreur",str(info),0xff0000,ctx.invoked_with.lower(),ctx.author)
+    if reply:
+        await ctx.reply(embed=embed)
+    else:
+        await ctx.send(embed=embed)
+
+def embedAssertClassic(info:str) -> discord.Embed:
     """Génère l'embed à envoyer si une AssertionError est relevée.
     Entrée :
         info : les informations de l'erreur

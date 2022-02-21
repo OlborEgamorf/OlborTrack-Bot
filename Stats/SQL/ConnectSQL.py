@@ -25,6 +25,13 @@ def connectSQL(guild,db,option,mois,annee):
         else:
             pathDir="SQL/{0}/Jeux/{1}/{2}".format(guild,annee,mois.upper())
             path="SQL/{0}/Jeux/{1}/{2}/{3}.db".format(guild,annee,mois.upper(),db)
+    elif option=="Focus":
+        if mois in ("GL","glob") or annee in ("GL","glob"):
+            pathDir="SQL/Focus/{0}/GL".format(guild)
+            path="SQL/Focus/{0}/GL/{1}.db".format(guild,db)
+        else:
+            pathDir="SQL/Focus/{0}/{1}/{2}".format(guild,annee,mois.upper())
+            path="SQL/Focus/{0}/{1}/{2}/{3}.db".format(guild,annee,mois.upper(),db)
     elif option in ("Trivial","Titres"):
         pathDir="SQL/OT/{0}".format(option)
         path="SQL/OT/{0}/{1}.db".format(option,db)

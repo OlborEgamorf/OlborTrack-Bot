@@ -2,7 +2,7 @@ import sys
 
 import discord
 from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.Embeds import embedAssert
+from Core.Fonctions.Embeds import embedAssertClassic
 from Stats.SQL.ConnectSQL import connectSQL
 
 async def exeCustom(guild:discord.Guild,message:discord.Message,author:discord.Member,listeOS:list):
@@ -54,5 +54,5 @@ async def exeCustom(guild:discord.Guild,message:discord.Message,author:discord.M
             else:
                 await message.channel.send(tableCommande["Description"])
     except:
-        embedErr=embedAssert("Votre commande personnalisée présente une erreur qui m'empêche de l'envoyer : \nEmplacement : "+mode+"\nType : "+str(sys.exc_info()[0])) 
+        embedErr=embedAssertClassic("Votre commande personnalisée présente une erreur qui m'empêche de l'envoyer : \nEmplacement : "+mode+"\nType : "+str(sys.exc_info()[0])) 
         await message.channel.send(embed=embedErr)

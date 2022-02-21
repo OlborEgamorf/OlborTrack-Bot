@@ -1,6 +1,6 @@
 import asyncio
 
-from Core.Fonctions.Embeds import createEmbed, embedAssert
+from Core.Fonctions.Embeds import createEmbed, embedAssertClassic
 from Stats.SQL.ConnectSQL import connectSQL
 from Titres.Outils import createAccount
 
@@ -12,8 +12,8 @@ from Jeux.CrossServeur.ClasseTrivialBRCross import BattleRoyaleCross
 from Jeux.CrossServeur.ClasseTrivialPartyCross import PartyCross
 from Jeux.CrossServeur.ClasseTrivialVSCross import VersusCross
 from Jeux.Matrice.Matrice import JeuMatrice
-from Jeux.P4.P4 import JeuP4
 from Jeux.Morpion.ClasseMorpion import JeuMorpion
+from Jeux.P4.P4 import JeuP4
 from Jeux.Tortues.ClasseTortues import JeuTortues
 from Jeux.Tortues.ClasseTortuesDuo import JeuTortuesDuo
 from Jeux.Trivial.BattleRoyale import BattleRoyale
@@ -158,7 +158,7 @@ async def miseCoins(message,user,reaction,dictJeux,bot):
         await messMise.edit(embed=embed)
     except AssertionError as er:
         if er!="":
-            await message.reply(embed=embedAssert(er),delete_after=5)
+            await message.reply(embed=embedAssertClassic(er),delete_after=5)
     except asyncio.exceptions.TimeoutError:
-        await messMise.edit(embed=embedAssert("La transaction a été annulée."),delete_after=5)
+        await messMise.edit(embed=embedAssertClassic("La transaction a été annulée."),delete_after=5)
     await reaction.remove(user)

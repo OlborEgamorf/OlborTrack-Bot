@@ -24,8 +24,8 @@ dictOutils={
 
 dictJeux={
     1:[],
-    2:["trivial","trivialversus","trivialbr","trivialparty","trivialstreak"],
-    3:["tortues","tortuesduo","p4","matrice","codenames"],
+    3:["trivial","trivialversus","trivialbr","trivialparty","trivialstreak"],
+    2:["tortues","tortuesduo","p4","matrice","morpion","codenames"],
     5:["jeuxrank","jeuxmondial","jeuxperso","jeuxboard","trivialrank","trivialperso"],
     4:["tortuescross","tortuesduocross","p4cross","trivialversuscross","trivialbrcross","trivialpartycross"]}
 
@@ -33,7 +33,7 @@ dictSV={1:[],2:["savezvous","savezvous add","savezvous del","savezvous edit"],3:
 
 dictAdmin={1:[],2:["hide","blind","mute","tabhide"],3:["modulestat","modulecmd"],4:["delstats","statson","statsoff"],5:["zip","wikinsfw"]}
 
-dictAutre={1:["help","about","invite","support","test","feedback","servcount","credits","reseaux","botlists"],2:["events","zeynah","nasaphoto","roulette","dice","snipe","avatar","say","perms"]}
+dictAutre={1:["events","births","deaths","zeynah","nasaphoto","roulette","dice","snipe","avatar","say","perms"],2:["help","about","invite","support","test","feedback","servcount","credits","reseaux","botlists"]}
 
 dictTitres={1:[],2:["titre","titre liste","titre perso","titre set","titre infos"],3:["titre achat","titre vente","titre cadeau","titre trade","titre pack"],4:["profil","profil custom","profil emote","profil couleur","profil fond","profil texte","profil badges"],5:["indic","fondsubmit"]}
 
@@ -107,7 +107,7 @@ dictTPoll={1:"Sondages, giveaway et rappels",2:"Sondages",3:"Giveaway",4:"Rappel
 
 dictTOutils={1:"Outils",2:"Messages de bienvenue",3:"Messages d'adieu",4:"Tableaux",5:"Salons vocaux éphémères",6:"Commandes personnalisées",7:"Commandes automatiques"}
 
-dictTJeux={1:"Jeux",2:"Jeux Trivial",3:"Jeux Tortues",4:"Autres jeux",5:"Classements",6:"Jeux Cross-Serveur"}
+dictTJeux={1:"Jeux",2:"Jeux OT",3:"Jeux Trivial",4:"Jeux Cross-Serveur",5:"Classements et stats"}
 
 dictTSV={1:"Savez-vous ?",2:"Gestion de la boite",3:"Affichage des élèments"}
 

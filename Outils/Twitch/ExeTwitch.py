@@ -1,31 +1,30 @@
-from Stats.SQL.ConnectSQL import connectSQL
-from Core.Fonctions.setMaxPage import setMax, setPage
+from Core.Decorator import OTCommand
 from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.Embeds import embedAssert, exeErrorExcept, sendEmbed
-from Outils.Twitch.ModifTwitch import addTwitch, chanTwitch, delTwitch, descipTwitch
-from Outils.Twitch.EmbedsTwitch import embedTwitch
+from Core.Fonctions.Embeds import sendEmbed
+from Core.Fonctions.setMaxPage import setMax, setPage
 from Core.OTGuild import OTGuild
+from Outils.Twitch.EmbedsTwitch import embedTwitch
+from Outils.Twitch.ModifTwitch import (addTwitch, chanTwitch, delTwitch,
+                                       descipTwitch)
+from Stats.SQL.ConnectSQL import connectSQL
 
+
+@OTCommand
 async def exeTwitch(ctx,bot,args,guildOT):
-    try:
-        connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
-        if ctx.invoked_with=="twitch":
-            await commandeTwitch(ctx,None,False,None,bot,guildOT,curseur)
-            return
-        elif ctx.invoked_with=="add":
-            embed=await addTwitch(ctx,bot,args,curseur)
-        elif ctx.invoked_with=="chan":
-            embed=await chanTwitch(ctx,bot,args,curseur)
-        elif ctx.invoked_with=="del":
-            embed=await delTwitch(ctx,bot,args,curseur,guildOT)
-        elif ctx.invoked_with=="edit":
-            embed=await descipTwitch(ctx,bot,args,curseur,guildOT)
-        connexion.commit()
-        guildOT.getTwitch()
-    except AssertionError as er:
-        embed=embedAssert(str(er))
-    except:
-        embed=await exeErrorExcept(ctx,bot,args)
+    connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
+    if ctx.invoked_with=="twitch":
+        await commandeTwitch(ctx,None,False,None,bot,guildOT,curseur)
+        return
+    elif ctx.invoked_with=="add":
+        embed=await addTwitch(ctx,bot,args,curseur)
+    elif ctx.invoked_with=="chan":
+        embed=await chanTwitch(ctx,bot,args,curseur)
+    elif ctx.invoked_with=="del":
+        embed=await delTwitch(ctx,bot,args,curseur,guildOT)
+    elif ctx.invoked_with=="edit":
+        embed=await descipTwitch(ctx,bot,args,curseur,guildOT)
+    connexion.commit()
+    guildOT.getTwitch()
     await ctx.send(embed=embed)
 
 

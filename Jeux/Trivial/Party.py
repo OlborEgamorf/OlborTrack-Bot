@@ -1,13 +1,13 @@
 import asyncio
+from math import inf
 from random import choice
 
 import discord
+from Core.Decorator import OTJeux
 from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.Embeds import embedAssert
+from Jeux.Paris import Pari
 from Jeux.Trivial.Attente import attente
 from Jeux.Trivial.Versus import Versus
-from math import inf
-from Jeux.Paris import Pari
 
 emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>"]
 listeNoms=["Culture","Divertissement","Sciences","Mythologie","Sport","Géographie","Histoire","Politique","Art","Célébrités","Animaux","Véhicules","Global"]
@@ -74,241 +74,236 @@ class Party(Versus):
             if self.scores[i]>5:
                 self.paris.ouvert=False 
 
+@OTJeux
+async def trivialParty(ctx,bot,game,inGame,gamesTrivial):
+    assert ctx.author.id not in inGame, "Terminez votre question en cours avant de lancer ou rejoindre une partie."
+    game=Party(ctx.guild,"party")
+    message=await game.startGame(ctx,bot,inGame,gamesTrivial)
+    if message==False:
+        return
+    messAd=await bot.get_channel(870598360296488980).send("{0} - {1} : partie OT!trivialparty débutée\n{2} joueurs".format(ctx.guild.name,ctx.guild.id,len(game.joueurs)))
+    if len(game.joueurs)<4:
+        game.event.remove("duo")
+    game.paris=Pari(game.ids,"TrivialParty")
+    while game.playing:
+        dictNomsVal={"culture":9,"divertissement":choice([10,11,12,13,14,15,16,29,31,32]),"sciences":choice([17,18,19,30]),"mythologie":20,"sport":21,"géographie":22,"histoire":23,"politique":24,"art":25,"célébrités":26,"animaux":27,"véhicules":28,"livres":10,"films":11,"musique":12,"anime":31,"manga":31}
+        liste=[]
+        for i in game.scores:
+            if game.scores[i]>=game.max:
+                liste.append(i)
+        if len(liste)!=0:
+            event="speedfinal"
+            game.reponses={i:None for i in liste}
+            descip=""
+            for i in liste:
+                descip+="<@{0}> ".format(i)
+            await message.edit(embed=game.affichageEvent(event,descip))
+            await asyncio.sleep(5)
+        elif game.tour<3:
+            event=None
+        else:
+            event=game.setEvent()
 
-async def trivialParty(ctx,bot,inGame,gamesTrivial):
-    try:
-        assert ctx.author.id not in inGame, "Terminez votre question en cours avant de lancer ou rejoindre une partie."
-        game=Party(ctx.guild,"party")
-        message=await game.startGame(ctx,bot,inGame,gamesTrivial)
-        if message==False:
-            return
-        messAd=await bot.get_channel(870598360296488980).send("{0} - {1} : partie OT!trivialparty débutée\n{2} joueurs".format(ctx.guild.name,ctx.guild.id,len(game.joueurs)))
-        if len(game.joueurs)<4:
-            game.event.remove("duo")
-        game.paris=Pari(game.ids,"TrivialParty")
-        while game.playing:
-            dictNomsVal={"culture":9,"divertissement":choice([10,11,12,13,14,15,16,29,31,32]),"sciences":choice([17,18,19,30]),"mythologie":20,"sport":21,"géographie":22,"histoire":23,"politique":24,"art":25,"célébrités":26,"animaux":27,"véhicules":28,"livres":10,"films":11,"musique":12,"anime":31,"manga":31}
+        if event in ("theme1","themeA"):
             liste=[]
-            for i in game.scores:
-                if game.scores[i]>=game.max:
-                    liste.append(i)
-            if len(liste)!=0:
-                event="speedfinal"
-                game.reponses={i:None for i in liste}
-                descip=""
-                for i in liste:
-                    descip+="<@{0}> ".format(i)
-                await message.edit(embed=game.affichageEvent(event,descip))
-                await asyncio.sleep(5)
-            elif game.tour<3:
-                event=None
-            else:
-                event=game.setEvent()
-
-            if event in ("theme1","themeA"):
-                liste=[]
-                listeChoix={i:0 for i in range(4)}
-                listeThemes=["culture","divertissement","sciences","mythologie","sport","géographie","histoire","politique","art","célébrités","animaux","véhicules"]
-                for i in range(4):
-                    liste.append(choice(listeThemes))
-                    listeThemes.remove(liste[i])
-                if event=="theme1":
-                    user=[choice(game.ids)]
-                    game.reponses={user[0]:None}
-                else:
-                    game.reponses={i:None for i in game.ids}
-                    user=[]
-                await message.edit(embed=game.affichageEvent(event,user))
-                await asyncio.sleep(6)
-                await message.edit(embed=game.affichageChoix(liste,"Choix du thème !"))
-                await attente(game,12,None)
-                for i in game.reponses:
-                    if game.reponses[i]!=None:
-                        listeChoix[game.reponses[i]]+=1
-                arg=dictNomsVal[liste[max(listeChoix,key=lambda x:listeChoix[x])]]
-                game.arg=arg
-                game.categ=dictCateg[arg]
-            else:
-                game.setCateg(None)
-
-            if event in ("diff1","diffA"):
-                liste=["Facile","Moyen","Difficile","Aléatoire"]
-                dictDiffV={"Facile":"easy","Moyen":"medium","Difficile":"hard","Aléatoire":choice(["easy","medium","hard"])}
-                listeChoix={i:0 for i in range(4)}
-                if event=="diff1":
-                    user=[choice(game.ids)]
-                    game.reponses={user[0]:None}
-                else:
-                    game.reponses={i:None for i in game.ids}
-                    user=[]
-                await message.edit(embed=game.affichageEvent(event,user))
-                await asyncio.sleep(6)
-                embed=game.affichageChoix(liste,"Choix de la difficulté !")
-                embed.add_field(name="Catégorie",value=listeNoms[dictCateg[game.arg]],inline=True)
-                await message.edit(embed=embed)
-                await attente(game,12,None)
-                for i in game.reponses:
-                    if game.reponses[i]!=None:
-                        listeChoix[game.reponses[i]]+=1
-                game.diff=dictDiffV[liste[max(listeChoix,key=lambda x:listeChoix[x])]]
-            else:
-                game.setDiff()
-
-            user=[]
-            if event in ("solo","vol"):
+            listeChoix={i:0 for i in range(4)}
+            listeThemes=["culture","divertissement","sciences","mythologie","sport","géographie","histoire","politique","art","célébrités","animaux","véhicules"]
+            for i in range(4):
+                liste.append(choice(listeThemes))
+                listeThemes.remove(liste[i])
+            if event=="theme1":
                 user=[choice(game.ids)]
                 game.reponses={user[0]:None}
-            elif event=="duo":
-                user=[]
-                listeJoueurs=game.joueurs.copy()
-                for i in range(2):
-                    choix=choice(listeJoueurs)
-                    user.append(choix)
-                    listeJoueurs.remove(user[i])
-                game.reponses={i.id:None for i in user}
-            elif event=="speedfinal":
-                pass
-            else: 
+            else:
                 game.reponses={i:None for i in game.ids}
+                user=[]
+            await message.edit(embed=game.affichageEvent(event,user))
+            await asyncio.sleep(6)
+            await message.edit(embed=game.affichageChoix(liste,"Choix du thème !"))
+            await attente(game,12,None)
+            for i in game.reponses:
+                if game.reponses[i]!=None:
+                    listeChoix[game.reponses[i]]+=1
+            arg=dictNomsVal[liste[max(listeChoix,key=lambda x:listeChoix[x])]]
+            game.arg=arg
+            game.categ=dictCateg[arg]
+        else:
+            game.setCateg(None)
 
-            if event not in (None,"theme1","themeA","diff1","diffA","speedfinal"):
-                await message.edit(embed=game.affichageEvent(event,user))
-                await asyncio.sleep(6)
-
-            game.newQuestion()
-            embedT=game.createEmbed(False,event)
-            await message.edit(embed=embedT)
-            if event=="10s":
-                await attente(game,20,event)
+        if event in ("diff1","diffA"):
+            liste=["Facile","Moyen","Difficile","Aléatoire"]
+            dictDiffV={"Facile":"easy","Moyen":"medium","Difficile":"hard","Aléatoire":choice(["easy","medium","hard"])}
+            listeChoix={i:0 for i in range(4)}
+            if event=="diff1":
+                user=[choice(game.ids)]
+                game.reponses={user[0]:None}
             else:
-                await attente(game,20,event)
+                game.reponses={i:None for i in game.ids}
+                user=[]
+            await message.edit(embed=game.affichageEvent(event,user))
+            await asyncio.sleep(6)
+            embed=game.affichageChoix(liste,"Choix de la difficulté !")
+            embed.add_field(name="Catégorie",value=listeNoms[dictCateg[game.arg]],inline=True)
+            await message.edit(embed=embed)
+            await attente(game,12,None)
+            for i in game.reponses:
+                if game.reponses[i]!=None:
+                    listeChoix[game.reponses[i]]+=1
+            game.diff=dictDiffV[liste[max(listeChoix,key=lambda x:listeChoix[x])]]
+        else:
+            game.setDiff()
 
-            end=[]
-            if event=="malus":
-                for i in game.joueurs:
-                    if game.reponses[i.id]==game.vrai-1:
-                        game.scores[i.id]+=2
-                    else:
-                        game.scores[i.id]-=1
-            elif event=="double":
-                for i in game.joueurs:
-                    if game.reponses[i.id]==game.vrai-1:
-                        game.scores[i.id]+=4
-            elif event=="triple":
-                for i in game.joueurs:
-                    if game.reponses[i.id]==game.vrai-1:
-                        game.scores[i.id]+=6
-            elif event=="10s":
-                for i in game.joueurs:
-                    if game.reponses[i.id]==game.vrai-1:
-                        game.scores[i.id]+=2
-                    elif game.reponses[i.id]==None:
-                        game.scores[i.id]-=1
-            elif event=="solo":
-                for i in game.reponses:
-                    if game.reponses[i]==game.vrai-1:
-                        game.scores[i]+=4
-                    else:
-                        game.scores[i]-=3
-                        for j in game.joueurs:
-                            game.scores[j.id]+=2
-            elif event=="ratio":
-                count=0
-                for i in game.joueurs:
-                    if game.reponses[i.id]==game.vrai-1:
-                        count+=1
-                for i in game.joueurs:
-                    if game.reponses[i.id]==game.vrai-1:
-                        if count==1:
-                            game.scores[i.id]+=5
-                        elif count/len(game.joueurs)<0.25:
-                            game.scores[i.id]+=3
-                        elif count/len(game.joueurs)<0.5:
-                            game.scores[i.id]+=2
-                        else:
-                            game.scores[i.id]+=1
-            elif event=="speed":
-                for i in game.joueurs:
-                    if game.reponses[i.id]==game.vrai-1:
+        user=[]
+        if event in ("solo","vol"):
+            user=[choice(game.ids)]
+            game.reponses={user[0]:None}
+        elif event=="duo":
+            user=[]
+            listeJoueurs=game.joueurs.copy()
+            for i in range(2):
+                choix=choice(listeJoueurs)
+                user.append(choix)
+                listeJoueurs.remove(user[i])
+            game.reponses={i.id:None for i in user}
+        elif event=="speedfinal":
+            pass
+        else: 
+            game.reponses={i:None for i in game.ids}
+
+        if event not in (None,"theme1","themeA","diff1","diffA","speedfinal"):
+            await message.edit(embed=game.affichageEvent(event,user))
+            await asyncio.sleep(6)
+
+        game.newQuestion()
+        embedT=game.createEmbed(False,event)
+        await message.edit(embed=embedT)
+        if event=="10s":
+            await attente(game,20,event)
+        else:
+            await attente(game,20,event)
+
+        end=[]
+        if event=="malus":
+            for i in game.joueurs:
+                if game.reponses[i.id]==game.vrai-1:
+                    game.scores[i.id]+=2
+                else:
+                    game.scores[i.id]-=1
+        elif event=="double":
+            for i in game.joueurs:
+                if game.reponses[i.id]==game.vrai-1:
+                    game.scores[i.id]+=4
+        elif event=="triple":
+            for i in game.joueurs:
+                if game.reponses[i.id]==game.vrai-1:
+                    game.scores[i.id]+=6
+        elif event=="10s":
+            for i in game.joueurs:
+                if game.reponses[i.id]==game.vrai-1:
+                    game.scores[i.id]+=2
+                elif game.reponses[i.id]==None:
+                    game.scores[i.id]-=1
+        elif event=="solo":
+            for i in game.reponses:
+                if game.reponses[i]==game.vrai-1:
+                    game.scores[i]+=4
+                else:
+                    game.scores[i]-=3
+                    for j in game.joueurs:
+                        game.scores[j.id]+=2
+        elif event=="ratio":
+            count=0
+            for i in game.joueurs:
+                if game.reponses[i.id]==game.vrai-1:
+                    count+=1
+            for i in game.joueurs:
+                if game.reponses[i.id]==game.vrai-1:
+                    if count==1:
+                        game.scores[i.id]+=5
+                    elif count/len(game.joueurs)<0.25:
                         game.scores[i.id]+=3
-                    elif game.reponses[i.id]==None:
-                        pass
-                    else:
-                        game.scores[i.id]-=1
-            elif event=="speedfinal":
-                for i in game.reponses:
-                    if game.reponses[i]==game.vrai-1:
-                        game.scores[i]=100
-                        for j in game.joueurs:
-                            if j.id==i:
-                                end.append(j)
-                                break
-                    else:
-                        game.scores[i]=10
-            elif event=="duo":
-                count=0
-                for i in game.reponses:
-                    if game.reponses[i]==game.vrai-1:
-                        count+=1
-                for i in game.reponses:
-                    if count==2:
-                        game.scores[i]+=3
-                    else:
-                        game.scores[i]-=3
-                        for j in game.joueurs:
-                            game.scores[j.id]+=2
-            elif event=="vol":
-                for i in game.reponses:
-                    if game.reponses[i]==game.vrai-1:
-                        temp=game.reponses.copy()
-                        liste=[]
-                        listeID=[]
-                        listeChoix={i:0 for i in range(4)}
-                        listeJoueurs=game.joueurs.copy()
-                        for j in range(4 if len(game.joueurs)>4 else len(game.joueurs)):
-                            choix=choice(listeJoueurs)
-                            liste.append(choix.name)
-                            listeID.append(choix.id)
-                            listeJoueurs.remove(choix)
-                        await message.edit(embed=game.affichageChoix(liste,"Vous avez eu juste ! Choississez un joueur pour lui voler 3 points."))
-                        game.reponses={i:None}
-                        await attente(game,12,None)
-                        for j in game.reponses:
-                            if game.reponses[j]!=None:
-                                listeChoix[game.reponses[j]]+=1
-                        game.scores[listeID[max(listeChoix,key=lambda x:listeChoix[x])]]-=3
-                        game.scores[i]+=3
-                        game.reponses=temp
-            else:
-                for i in game.joueurs:
-                    if game.reponses[i.id]==game.vrai-1:
+                    elif count/len(game.joueurs)<0.5:
                         game.scores[i.id]+=2
+                    else:
+                        game.scores[i.id]+=1
+        elif event=="speed":
+            for i in game.joueurs:
+                if game.reponses[i.id]==game.vrai-1:
+                    game.scores[i.id]+=3
+                elif game.reponses[i.id]==None:
+                    pass
+                else:
+                    game.scores[i.id]-=1
+        elif event=="speedfinal":
+            for i in game.reponses:
+                if game.reponses[i]==game.vrai-1:
+                    game.scores[i]=100
+                    for j in game.joueurs:
+                        if j.id==i:
+                            end.append(j)
+                            break
+                else:
+                    game.scores[i]=10
+        elif event=="duo":
+            count=0
+            for i in game.reponses:
+                if game.reponses[i]==game.vrai-1:
+                    count+=1
+            for i in game.reponses:
+                if count==2:
+                    game.scores[i]+=3
+                else:
+                    game.scores[i]-=3
+                    for j in game.joueurs:
+                        game.scores[j.id]+=2
+        elif event=="vol":
+            for i in game.reponses:
+                if game.reponses[i]==game.vrai-1:
+                    temp=game.reponses.copy()
+                    liste=[]
+                    listeID=[]
+                    listeChoix={i:0 for i in range(4)}
+                    listeJoueurs=game.joueurs.copy()
+                    for j in range(4 if len(game.joueurs)>4 else len(game.joueurs)):
+                        choix=choice(listeJoueurs)
+                        liste.append(choix.name)
+                        listeID.append(choix.id)
+                        listeJoueurs.remove(choix)
+                    await message.edit(embed=game.affichageChoix(liste,"Vous avez eu juste ! Choississez un joueur pour lui voler 3 points."))
+                    game.reponses={i:None}
+                    await attente(game,12,None)
+                    for j in game.reponses:
+                        if game.reponses[j]!=None:
+                            listeChoix[game.reponses[j]]+=1
+                    game.scores[listeID[max(listeChoix,key=lambda x:listeChoix[x])]]-=3
+                    game.scores[i]+=3
+                    game.reponses=temp
+        else:
+            for i in game.joueurs:
+                if game.reponses[i.id]==game.vrai-1:
+                    game.scores[i.id]+=2
 
-            embedT=game.createEmbed(True,event)
-            embedT.description=game.affichageWin()
-            embedT.colour=0x47b03c
-            await message.edit(embed=embedT)
-            if game.maxTour():
-                maxi,maxiJoueur=-inf,None
-                for i in game.joueurs:
-                    if game.scores[i.id]>maxi:
-                        maxi,maxiJoueur=game.scores[i.id],i
-                end=[maxiJoueur]
-            if len(end)!=0:
-                await message.clear_reactions()
-                await message.channel.send(embed=game.embedResults(end[0]))
-                await message.unpin()
-                game.playing=False
-                await game.stats(end[0],"TrivialParty",message.channel)
-                game.paris.distribParis(end[0].id)
+        embedT=game.createEmbed(True,event)
+        embedT.description=game.affichageWin()
+        embedT.colour=0x47b03c
+        await message.edit(embed=embedT)
+        if game.maxTour():
+            maxi,maxiJoueur=-inf,None
+            for i in game.joueurs:
+                if game.scores[i.id]>maxi:
+                    maxi,maxiJoueur=game.scores[i.id],i
+            end=[maxiJoueur]
+        if len(end)!=0:
+            await message.clear_reactions()
+            await message.channel.send(embed=game.embedResults(end[0]))
+            await message.unpin()
+            game.playing=False
+            await game.stats(end[0],"TrivialParty",message.channel)
+            game.paris.distribParis(end[0].id)
 
-            game.fermeture()
-            game.tour+=1
-            await asyncio.sleep(7)
-        await game.endGame(message,inGame,gamesTrivial)
-    except AssertionError as er:
-        await ctx.send(embed=embedAssert(er))
-    except:
-        await game.error(ctx,bot,message,inGame,gamesTrivial)
+        game.fermeture()
+        game.tour+=1
+        await asyncio.sleep(7)
+
     if "messAd" in locals():
         await messAd.delete()

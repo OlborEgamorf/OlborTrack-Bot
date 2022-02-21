@@ -1,10 +1,12 @@
-from Stats.SQL.ConnectSQL import connectSQL
-from Core.Fonctions.WebRequest import getAvatar
-from Core.Fonctions.Embeds import createEmbed, embedAssert
-from Core.Fonctions.Phrase import createPhrase
-from Outils.Bienvenue.Manipulation import formatage
 import asyncio
 
+from Core.Fonctions.Embeds import createEmbed, embedAssert
+from Core.Fonctions.Phrase import createPhrase
+from Core.Decorator import OTCommand
+from Outils.Bienvenue.Manipulation import formatage
+from Stats.SQL.ConnectSQL import connectSQL
+
+@OTCommand
 async def modifMessage(ctx,bot,args,option):
     dictTitres={"BV":"de bienvenue","AD":"d'adieu"}
     try:
@@ -47,8 +49,6 @@ async def modifMessage(ctx,bot,args,option):
         embed=createEmbed("Modification message {0}".format(dictTitres[option]),"Le message a bien été modifié !\nNuméro du message : `{0}`".format(args[0]),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
         await ctx.reply(embed=embed)
 
-    except AssertionError as er:
-        await ctx.reply(embed=embedAssert(er))
     except asyncio.exceptions.TimeoutError:
-        await message.reply(embed=embedAssert("Une minute s'est écoulée et vous n'avez pas confirmé la modification. L'opération a été annulée"))
+        await embedAssert(ctx,"Une minute s'est écoulée et vous n'avez pas confirmé la modification. L'opération a été annulée",True)
         await message.clear_reactions()

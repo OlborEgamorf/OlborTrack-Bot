@@ -1,6 +1,9 @@
+import asyncio
+
+from Core.Decorator import OTCommand
 from Core.Fonctions.Embeds import createEmbed, embedAssert
 from Stats.SQL.ConnectSQL import connectSQL
-import asyncio
+
 from Titres.Outils import createAccount
 
 dictReverse={300:1,800:2,4000:3}
@@ -50,10 +53,8 @@ async def achatTitre(ctx,idtitre,bot,gift):
             embed=createEmbed("Achat de Titre","Titre acheté avec succès !\nVous pouvez équiper **{0}** avec la commande **OT!titre set {1}**.".format(nom,idtitre),0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
 
         await message.reply(embed=embed)
-    except AssertionError as er:
-        await ctx.reply(embed=embedAssert(er))
     except asyncio.exceptions.TimeoutError:
-        await message.reply(embed=embedAssert("Une minute s'est écoulée et vous n'avez pas confirmé l'achat. La transaction a été annulée."))
+        await embedAssert(ctx,"Une minute s'est écoulée et vous n'avez pas confirmé l'activation. L'opération a été annulée",True)
         await message.clear_reactions()
 
 

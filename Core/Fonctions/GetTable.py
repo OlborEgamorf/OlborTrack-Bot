@@ -114,7 +114,10 @@ def getTablePerso(guild,option,id,idobj,period,tri):
         try:
             connection,curseur=connectSQL(guild,option,"Stats",i["Mois"],i["Annee"])
             if not idobj:
-                stat=curseur.execute("SELECT Rank,Count,Mois,Annee,ID FROM {0}{1} WHERE ID={2}".format(tableauMois[i["Mois"]],i["Annee"],id)).fetchone()
+                if i["Annee"]=="GL":
+                    stat=curseur.execute("SELECT Rank,Count,Mois,Annee,ID FROM glob WHERE ID={0}".format(id)).fetchone()
+                else:
+                    stat=curseur.execute("SELECT Rank,Count,Mois,Annee,ID FROM {0}{1} WHERE ID={2}".format(tableauMois[i["Mois"]],i["Annee"],id)).fetchone()
             else:
                 stat=curseur.execute("SELECT Rank,Count,Mois,Annee,ID FROM perso{0}{1}{2} WHERE ID={3}".format(i["Mois"],i["Annee"],id,idobj)).fetchone()
             if stat!=None:

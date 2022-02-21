@@ -1,9 +1,10 @@
-from Stats.SQL.ConnectSQL import connectSQL
 import discord
 from Core.Fonctions.AuteurIcon import auteur
+from Core.Fonctions.GetNom import getTitre
+from Stats.SQL.ConnectSQL import connectSQL
+
 from Titres.Couleur import getColorJeux
 from Titres.Emote import getEmoteJeux
-from Core.Fonctions.GetNom import getTitre
 from Titres.Outils import createAccount
 
 dictStatut={0:"Fabuleux",1:"Rare",2:"Légendaire",3:"Unique"}

@@ -1,11 +1,13 @@
 import asyncio
 
+from Core.Decorator import OTCommand
 from Core.Fonctions.Embeds import createEmbed, embedAssert
 from Core.Fonctions.Phrase import createPhrase
 from Outils.Bienvenue.Manipulation import formatage
 from Stats.SQL.ConnectSQL import connectSQL
 
 
+@OTCommand
 async def addMessage(ctx,bot,option):
     dictTitres={"BV":"de bienvenue","AD":"d'adieu"}
     try:
@@ -40,8 +42,6 @@ async def addMessage(ctx,bot,option):
         embed=createEmbed("Ajout message {0}".format(dictTitres[option]),"Le message a bien été ajouté !\nNuméro du message : `{0}`".format(num),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
         await ctx.reply(embed=embed)
     
-    except AssertionError as er:
-        await ctx.reply(embed=embedAssert(er))
     except asyncio.exceptions.TimeoutError:
-        await message.reply(embed=embedAssert("Une minute s'est écoulée et vous n'avez pas confirmé l'ajout. L'opération a été annulée"))
+        await embedAssert(ctx,"Une minute s'est écoulée et vous n'avez pas confirmé l'ajout. L'opération a été annulée",True)
         await message.clear_reactions()

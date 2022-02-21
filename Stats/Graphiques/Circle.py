@@ -1,11 +1,12 @@
-from matplotlib import pyplot as plt
-import pandas as pd
 import circlify
-from Stats.SQL.ConnectSQL import connectSQL
-from Core.Fonctions.GraphTheme import setThemeGraph
-from Core.Fonctions.GetTable import getTableRoles, getTableRolesMem
+import pandas as pd
 from Core.Fonctions.GetNom import getNomGraph
+from Core.Fonctions.GetTable import getTableRoles, getTableRolesMem
+from Core.Fonctions.GraphTheme import setThemeGraph
 from Core.Fonctions.TempsVoice import tempsVoice
+from matplotlib import pyplot as plt
+from Stats.SQL.ConnectSQL import connectSQL
+
 colorOT=(110/256,200/256,250/256,1)
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TOTAL","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
 dictOption={"tortues":"Tortues","tortuesduo":"TortuesDuo","trivialversus":"TrivialVersus","trivialbr":"TrivialBR","trivialparty":"TrivialParty","p4":"P4","bataillenavale":"BatailleNavale","cross":"Cross","trivial":"trivial","codenames":"CodeNames"}
@@ -15,6 +16,7 @@ async def graphCircle(ligne,ctx,bot,option,guildOT):
     fig, ax = plt.subplots(figsize=(6.4,6.4))
     listeX,listeY,listeC=[],[],[]
     obj=ligne["Args3"] if ligne["Args3"]!="None" else ""
+
     if ligne["Commande"]=="perso":
         connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",ligne["Args1"],ligne["Args2"])
         table=curseur.execute("SELECT * FROM perso{0}{1}{2} WHERE Count>0 ORDER BY Count DESC LIMIT 100".format(ligne["Args1"],ligne["Args2"],ligne["AuthorID"])).fetchall()
@@ -45,6 +47,7 @@ async def graphCircle(ligne,ctx,bot,option,guildOT):
     else:
         connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[ligne["Args1"]],ligne["Args2"])
         table=curseur.execute("SELECT * FROM {0}{1}{2} WHERE Count>0 ORDER BY Rank DESC LIMIT 100".format(ligne["Args1"],ligne["Args2"],obj)).fetchall()
+        
     delete=0
     for i in range(len(table)):
         listeX.append(table[i]["Count"])

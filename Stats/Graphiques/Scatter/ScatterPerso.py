@@ -2,6 +2,7 @@ import sqlite3
 
 import pandas as pd
 from Core.Fonctions.GetNom import getNomGraph
+from Core.Fonctions.GetTable import getTablePerso
 from Core.Fonctions.GraphTheme import setThemeGraph
 from matplotlib import pyplot as plt
 from Stats.SQL.ConnectSQL import connectSQL
@@ -29,9 +30,10 @@ async def graphScatterPerso(ligne,ctx,bot,option,guildOT):
         listeY.append(table[i]["Count"])
         try:
             if ligne["Args1"]=="TO":
-                tablePerso=curseur.execute("SELECT * FROM persoA{0}{1} WHERE Annee<>'GL'".format(ligne["AuthorID"],table[i]["ID"])).fetchall()
+                tablePerso=getTablePerso(ctx.guild.id,option,ligne["AuthorID"],table[i]["ID"],"A","periodAsc")
+                tablePerso=list(filter(lambda x:x["Annee"]!="GL", tablePerso))
             else:
-                tablePerso=curseur.execute("SELECT * FROM persoM{0}{1}".format(ligne["AuthorID"],table[i]["ID"])).fetchall()
+                tablePerso=getTablePerso(ctx.guild.id,option,ligne["AuthorID"],table[i]["ID"],"M","periodAsc")
             for j in tablePerso:
                 listeXU.append(i+1-count)
                 listeYU.append(j["Count"])

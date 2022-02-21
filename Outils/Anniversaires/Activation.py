@@ -1,13 +1,13 @@
 import asyncio
-from time import strftime
 
+from Core.Decorator import OTCommand
 from Core.Fonctions.Embeds import createEmbed, embedAssert
-from Core.Fonctions.GetPeriod import getAnnee, getMois
 from Core.Fonctions.Phrase import createPhrase
 from Outils.Anniversaires.Formatage import formatageAnniv
 from Stats.SQL.ConnectSQL import connectSQL
 
 
+@OTCommand
 async def toggleAnniversaire(ctx,bot,chan,guild):
     try:
         connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
@@ -74,8 +74,6 @@ async def toggleAnniversaire(ctx,bot,chan,guild):
             embed=createEmbed("Désactivation anniversaires","Opération validée !",0x11f738,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
             await ctx.reply(embed=embed)
         guild.getAnniv()
-    except AssertionError as er:
-        await ctx.reply(embed=embedAssert(er))
     except asyncio.exceptions.TimeoutError:
-        await message.reply(embed=embedAssert("Une minute s'est écoulée et vous n'avez pas confirmé l'activation. L'opération a été annulée"))
+        await embedAssert(ctx,"Une minute s'est écoulée et vous n'avez pas confirmé l'activation. L'opération a été annulée",True)
         await message.clear_reactions()

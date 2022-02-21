@@ -1,33 +1,33 @@
-from Stats.SQL.ConnectSQL import connectSQL
 import discord
-from Core.Fonctions.Embeds import addtoFields, createFields, embedAssert, exeErrorExcept, sendEmbed
-from Outils.VoiceEphem.ModifVoiceEphem import voiceEphemAdd, voiceEphemDel, voiceEphemEdit, voiceEphemLimite 
-from Core.Fonctions.setMaxPage import setMax, setPage
+from Core.Decorator import OTCommand
 from Core.Fonctions.AuteurIcon import auteur
+from Core.Fonctions.Embeds import addtoFields, createFields, sendEmbed
+from Core.Fonctions.setMaxPage import setMax, setPage
+from Outils.VoiceEphem.ModifVoiceEphem import (voiceEphemAdd, voiceEphemDel,
+                                               voiceEphemEdit,
+                                               voiceEphemLimite)
+from Stats.SQL.ConnectSQL import connectSQL
 
+
+@OTCommand
 async def exeVoiceEphem(ctx,bot,args,guildOT):
-    try:
-        connexion,curseur=connectSQL(ctx.guild.id,"VoiceEphem","Guild",None,None)
-        if ctx.invoked_with=="hubs":
-            await commandeVoiceEphem(ctx,None,False,None,bot,guildOT,curseur,"hubs")
-            return
-        elif ctx.invoked_with=="salons":
-            await commandeVoiceEphem(ctx,None,False,None,bot,guildOT,curseur,"salons")
-            return
-        elif ctx.invoked_with=="add":
-            embed=await voiceEphemAdd(ctx,curseur)
-        elif ctx.invoked_with=="limit":
-            embed=await voiceEphemLimite(ctx,args,curseur)
-        elif ctx.invoked_with=="del":
-            embed=await voiceEphemDel(ctx,args,curseur)
-        elif ctx.invoked_with=="edit":
-            embed=await voiceEphemEdit(ctx,args,curseur)
-        guildOT.getHubs(curseur)
-        connexion.commit()
-    except AssertionError as er:
-        embed=embedAssert(str(er))
-    except:
-        embed=await exeErrorExcept(ctx,bot,args)
+    connexion,curseur=connectSQL(ctx.guild.id,"VoiceEphem","Guild",None,None)
+    if ctx.invoked_with=="hubs":
+        await commandeVoiceEphem(ctx,None,False,None,bot,guildOT,curseur,"hubs")
+        return
+    elif ctx.invoked_with=="salons":
+        await commandeVoiceEphem(ctx,None,False,None,bot,guildOT,curseur,"salons")
+        return
+    elif ctx.invoked_with=="add":
+        embed=await voiceEphemAdd(ctx,curseur)
+    elif ctx.invoked_with=="limit":
+        embed=await voiceEphemLimite(ctx,args,curseur)
+    elif ctx.invoked_with=="del":
+        embed=await voiceEphemDel(ctx,args,curseur)
+    elif ctx.invoked_with=="edit":
+        embed=await voiceEphemEdit(ctx,args,curseur)
+    guildOT.getHubs(curseur)
+    connexion.commit()
     await ctx.send(embed=embed)
 
 

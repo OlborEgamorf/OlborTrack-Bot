@@ -1,5 +1,5 @@
 from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.Embeds import embedAssert, newDescip, sendEmbed
+from Core.Fonctions.Embeds import embedAssertClassic, newDescip, sendEmbed
 from Core.Fonctions.GetNom import getAuthor
 from Core.Fonctions.GetTable import getTablePerso
 from Core.Fonctions.setMaxPage import setMax, setPage
@@ -10,10 +10,9 @@ from Stats.SQL.Verification import verifCommands
 dictTriField={"countAsc":"Compteur croissant","rankAsc":"Rang croissant","countDesc":"Compteur décroissant","rankDesc":"Rang décroissant","dateAsc":"Date croissante","dateDesc":"Date décroissante","periodAsc":"Date croissante","periodDesc":"Date décroissante","moyDesc":"Moyenne décroissante","nombreDesc":"Compteur décroissant","winAsc":"Victoires croissant","winDesc":"Victoires décroissant","loseAsc":"Défaites croissant","loseDesc":"Défaites décroissant","expDesc":"Expérience décroissant","expAsc":"Expérience croissant"}
 
 async def statsPeriodsInter(ctx,option,turn,react,ligne,guildOT,bot):
-    if True:
+    try:
         assert verifCommands(guildOT,option)
         connexionCMD,curseurCMD=connectSQL(ctx.guild.id,"Commandes","Guild",None,None)
-        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
         if not react:
             author=ctx.author.id
             obj=getAuthor(option,ctx,2)
@@ -53,8 +52,8 @@ async def statsPeriodsInter(ctx,option,turn,react,ligne,guildOT,bot):
 
         await sendEmbed(ctx,embed,react,True,curseurCMD,connexionCMD,page,pagemax)
         
-    else:
+    except:
         if react:
-            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée n'existe plus ou alors est masqué par un administrateur."))
+            await ctx.reply(embed=embedAssertClassic("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée n'existe plus ou alors est masqué par un administrateur."))
         else:
-            await ctx.reply(embed=embedAssert("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée cherché n'existe pas ou alors est masqué par un administrateur.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))
+            await ctx.reply(embed=embedAssertClassic("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée cherché n'existe pas ou alors est masqué par un administrateur.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))

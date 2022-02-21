@@ -17,20 +17,17 @@ async def graphHeatGlobal(ligne,ctx,bot,option,guildOT):
     obj="" if ligne["Args3"]=="None" else ligne["Args3"]
     setThemeGraph(plt)
 
-    if ligne["Commande"]=="periodsInter":
-        table=getTablePerso(ctx.guild.id,option,ligne["AuthorID"],ligne["Args1"],"A","periodAsc")
-        dates=[]
-        for i in table:
-            if i["Annee"] not in dates and i["Annee"]!="GL":
-                dates.append({"Annee":i["Annee"]}) 
-        dates.sort(key=lambda x:x["Annee"])
-    elif obj=="":
-        dates=curseur.execute("SELECT DISTINCT Annee FROM firstA ORDER BY Annee ASC").fetchall()
+    if obj=="":
+        dates=curseur.execute("SELECT DISTINCT Annee FROM firstA WHERE Annee<>'GL' ORDER BY Annee ASC").fetchall()
     else:
-        table=getTablePerso(ctx.guild.id,option,ligne["AuthorID"],False,"A","periodAsc")
+        if ligne["Commande"]=="periodsInter":
+            table=getTablePerso(ctx.guild.id,option,ligne["AuthorID"],ligne["Args1"],"A","periodAsc")
+        else:
+            table=getTablePerso(ctx.guild.id,option,ligne["AuthorID"],False,"A","periodAsc")
         dates=[]
         for i in table:
             if i["Annee"] not in dates and i["Annee"]!="GL":
+                print(i["Annee"])
                 dates.append({"Annee":i["Annee"]}) 
         dates.sort(key=lambda x:x["Annee"])
 

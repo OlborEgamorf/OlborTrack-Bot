@@ -1,26 +1,23 @@
 import os
 import shutil
 
-from Core.Fonctions.Embeds import createEmbed, embedAssert, exeErrorExcept
+from Core.Fonctions.Embeds import createEmbed, exeErrorExcept
+from Core.Decorator import OTCommand
 
 listeDel={}
 
+@OTCommand
 async def deleteStats(ctx,bot):
-    try:
-        if len(ctx.args)==2:
-            stat="all"
-        else:
-            stat=ctx.args[2].lower()
-            assert stat in ("all","voice","messages","moyennes","salons","emotes","reactions","divers","mentions","freq","mots"), "La statistique donnée n'est pas bonne. Veuillez choisir entre : all, voice, messages, moyennes, salons, emotes, reactions, divers, mentions, freq, mots"
-        embed=createEmbed("Suppression des statistiques","Veuillez confirmer la suppression des statistiques : **{0}**. \nUne fois que ce sera fait, vous ne pourrez plus les récupérer sauf en réinitialisant toutes les statistiques avec OT!getdata.".format(stat),0x220cc9,ctx.invoked_with.lower(),ctx.guild)
-        message=await ctx.send(embed=embed)
-        await message.add_reaction("<:OTdelete:866705696505200691>")
-        await message.add_reaction("<:otANNULER:811242376625782785>")
-        listeDel[message.id]=stat
-    except AssertionError as er:
-        embedTable=embedAssert(str(er))
-    except:
-        embedTable=await exeErrorExcept(ctx,bot,"")
+    if len(ctx.args)==2:
+        stat="all"
+    else:
+        stat=ctx.args[2].lower()
+        assert stat in ("all","voice","messages","moyennes","salons","emotes","reactions","divers","mentions","freq","mots"), "La statistique donnée n'est pas bonne. Veuillez choisir entre : all, voice, messages, moyennes, salons, emotes, reactions, divers, mentions, freq, mots"
+    embed=createEmbed("Suppression des statistiques","Veuillez confirmer la suppression des statistiques : **{0}**. \nUne fois que ce sera fait, vous ne pourrez plus les récupérer sauf en réinitialisant toutes les statistiques avec OT!getdata.".format(stat),0x220cc9,ctx.invoked_with.lower(),ctx.guild)
+    message=await ctx.send(embed=embed)
+    await message.add_reaction("<:OTdelete:866705696505200691>")
+    await message.add_reaction("<:otANNULER:811242376625782785>")
+    listeDel[message.id]=stat
 
 async def confirmDel(ctx,author,bot):
     try:
@@ -62,7 +59,7 @@ async def confirmDel(ctx,author,bot):
     except AssertionError as er:
         pass
     except:
-        await ctx.send(embed=await exeErrorExcept(ctx,bot,""))
+        await exeErrorExcept(ctx,bot,True)
 
 async def cancelDel(ctx,author,bot):
     try:
@@ -75,4 +72,4 @@ async def cancelDel(ctx,author,bot):
     except AssertionError as er:
         pass
     except:
-        await ctx.send(embed=await exeErrorExcept(ctx,bot,""))
+        await exeErrorExcept(ctx,bot,True)
