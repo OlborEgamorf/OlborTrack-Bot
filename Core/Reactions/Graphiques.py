@@ -95,6 +95,24 @@ async def reactGraph(message:int,bot:commands.Bot,guildOT:OTGuild,payload,emoji)
             else:
                 await ctx.reply("Cette commande ne dispose pas de graphiques.")
                 return
+        
+        elif ligne["Commande"]=="first":
+            await graphRank(ligne,ctx,bot,ligne["Option"],guildOT)
+            messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
+            embedM,embed=await embedGraph([1,2,3,4],messageGraph,ctx,message)
+            listeG.append(messageGraph.attachments[0].url)
+
+            await graphCircle(ligne,ctx,bot,ligne["Option"],guildOT)
+            messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
+            listeG.append(messageGraph.attachments[0].url)
+
+            graphPerso(ligne,ctx,ligne["Option"],bot,"mois","First")
+            messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
+            listeG.append(messageGraph.attachments[0].url)
+
+            graphPerso(ligne,ctx,ligne["Option"],bot,"annee","First")
+            messageGraph=await bot.get_channel(786175275418517554).send(file=discord.File("Graphs/otGraph.png"))
+            listeG.append(messageGraph.attachments[0].url)
 
         else:
             if ligne["Commande"] in ("rank","jeux"):
@@ -149,9 +167,6 @@ async def reactGraph(message:int,bot:commands.Bot,guildOT:OTGuild,payload,emoji)
             elif ligne["Commande"] in ("jeux","trivial"):
                 await ctx.reply("Les graphiques pour les classements de jeux ne sont pas encore disponible ! Il manque des choses à régler pour cela...")
                 return
-
-            elif ligne["Commande"]=="first":
-                listeFonc=[graphRank,graphCircle]
             
             for i,fonc in enumerate(listeFonc):
                 await fonc(ligne,ctx,bot,ligne["Option"],guildOT)

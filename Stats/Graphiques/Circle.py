@@ -1,9 +1,12 @@
+import traceback
 import circlify
 import pandas as pd
+from colorthief import ColorThief
 from Core.Fonctions.GetNom import getNomGraph
 from Core.Fonctions.GetTable import getTableRoles, getTableRolesMem
 from Core.Fonctions.GraphTheme import setThemeGraph
 from Core.Fonctions.TempsVoice import tempsVoice
+from Core.Fonctions.WebRequest import getImage
 from matplotlib import pyplot as plt
 from Stats.SQL.ConnectSQL import connectSQL
 
@@ -46,8 +49,9 @@ async def graphCircle(ligne,ctx,bot,option,guildOT):
             i["Rank"]=1
     else:
         connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[ligne["Args1"]],ligne["Args2"])
-        table=curseur.execute("SELECT * FROM {0}{1}{2} WHERE Count>0 ORDER BY Rank DESC LIMIT 100".format(ligne["Args1"],ligne["Args2"],obj)).fetchall()
-        
+        table=curseur.execute("SELECT * FROM {0}{1}{2} WHERE Count>0 ORDER BY Rank ASC LIMIT 100".format(ligne["Args1"],ligne["Args2"],obj)).fetchall()
+        table.reverse()
+
     delete=0
     for i in range(len(table)):
         listeX.append(table[i]["Count"])
@@ -82,23 +86,27 @@ async def graphCircle(ligne,ctx,bot,option,guildOT):
                     del listeC[i]
                     delete+=1
                 elif guildOT.users[table[i]["ID"]]["Leave"]:
-                    if table[i]["Rank"]>15:
-                        listeY.append("??")
-                    else:
-                        listeY.append("Ancien membre")
+                    listeY.append("Ancien membre")
                 else:
                     user=getNomGraph(ctx,bot,"Messages",table[i]["ID"])
                     listeC[i]=(user.color.r/256,user.color.g/256,user.color.b/256,1)
-                    if table[i]["Rank"]>15:
-                        listeY.append("??")
-                    else:
-                        listeY.append(user.name) 
+                    listeY.append(user.name) 
+            elif option in ("Reactions","Emotes"):
+                try:
+                    open("PNG/{0}.png".format(table[i]["ID"]))
+                except:
+                    await getImage(table[i]["ID"])
+                color=ColorThief("PNG/{0}.png".format(table[i]["ID"])).get_color(quality=1)
+                listeC[i]=(color[0]/256,color[1]/256,color[2]/256,1)
+                listeY.append(getNomGraph(ctx,bot,option,table[i]["ID"])) 
             else:
                 listeY.append(getNomGraph(ctx,bot,option,table[i]["ID"]))  
             if len(listeY[i-delete])>15:
                 listeY[i-delete]="{0}...".format(listeY[i-delete][0:15])  
             if ligne["Commande"]=="first":
                 listeY[i-delete]+="\n{0} 20{1}".format(tableauMois[table[i]["Mois"]],table[i]["Annee"])
+            if table[i]["Rank"]>25:
+                listeY[i-delete]="??"
         except:
             listeY.append("??")
 
