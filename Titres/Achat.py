@@ -11,6 +11,11 @@ dictValue={1:300,2:800,3:4000}
 
 async def achatTitre(ctx,idtitre,bot,gift):
     try:
+        def checkValid(reaction,user):
+            if type(reaction.emoji)==str:
+                return False
+            return reaction.emoji.id==772766033996021761 and reaction.message.id==message.id and user.id==ctx.author.id
+
         if gift:
             assert len(ctx.message.mentions)!=0, "Si vous voulez offrir un titre à quelqu'un, vous devez le mentionner."
         nom,valeur,coins=verifAchat(ctx,idtitre,gift)
@@ -23,12 +28,7 @@ async def achatTitre(ctx,idtitre,bot,gift):
         message=await ctx.reply(embed=embed)
         await message.add_reaction("<:otVALIDER:772766033996021761>")
 
-        def check(reaction,user):
-            if type(reaction.emoji)==str:
-                return False
-            return reaction.emoji.id==772766033996021761 and reaction.message.id==message.id and user.id==ctx.author.id
-
-        reaction,user=await bot.wait_for('reaction_add', check=check, timeout=60)
+        reaction,user=await bot.wait_for('reaction_add', check=checkValid, timeout=60)
         await message.clear_reactions()
         nom,valeur,coins=verifAchat(ctx,idtitre,gift)
 

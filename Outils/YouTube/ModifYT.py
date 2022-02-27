@@ -7,6 +7,15 @@ from Core.OS.Keys3 import ytKey
 
 
 async def addYT(ctx,bot,args):
+    def checkValid(reaction,user):
+        if type(reaction.emoji)==str:
+            return False
+        return reaction.emoji.id==772766033996021761 and reaction.message.id==message.id and user.id==ctx.author.id
+    def checkMentions(mess):
+        return mess.author.id==ctx.author.id and mess.channel.id==message.channel.id and mess.channel_mentions!=[]
+    def checkAuthor(mess):
+        return mess.author.id==ctx.author.id and mess.channel.id==message.channel.id
+
     assert len(args)>0, "Vous devez me donner une chaîne YouTube !"
     chaine=createPhrase(args)[:-1]
     infos=await webRequest("https://www.googleapis.com/youtube/v3/search?key={0}&q={1}&part=snippet,id&maxResults=1&type=channel&order=relevance".format(ytKey,chaine))
@@ -24,37 +33,21 @@ async def addYT(ctx,bot,args):
     message=await ctx.reply(embed=embed)
     await message.add_reaction("<:otVALIDER:772766033996021761>")
 
-    def check(reaction,user):
-        if type(reaction.emoji)==str:
-            return False
-        return reaction.emoji.id==772766033996021761 and reaction.message.id==message.id and user.id==ctx.author.id
-
-    reaction,user=await bot.wait_for('reaction_add', check=check, timeout=60)
-
+    reaction,user=await bot.wait_for('reaction_add', check=checkValid, timeout=60)
+    await message.clear_reactions()
 
     embed=createEmbed("{0} - Alertes YouTube étape 2/3".format(channelName),"**Chaîne YouTube :** {0}\n**Salon :** - \n**Description :** -\n\nVeuillez mentionner le salon dans lequel les alertes devront s'envoyer.".format(channelName),0xFF0000,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
     embed.set_thumbnail(url=channelPicture)
-    message=await ctx.reply(embed=embed)
-
-    def checkChan(mess):
-        try:
-            assert mess.channel_mentions!=[]
-        except:
-            return False
-        return mess.author.id==ctx.author.id and mess.channel.id==message.channel.id
+    await message.edit(embed=embed)
     
-    mess=await bot.wait_for('message', check=checkChan, timeout=60)
+    mess=await bot.wait_for('message', check=checkMentions, timeout=60)
     salonID=mess.channel_mentions[0].id
-
 
     embed=createEmbed("{0} - Alertes YouTube étape 3/3".format(channelName),"**Chaîne YouTube :** {0}\n**Salon :** <#{1}> \n**Description :** -\n\nVeuillez écrire la description que vous voulez mettre dans l'alerte.".format(channelName,salonID),0xFF0000,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
     embed.set_thumbnail(url=channelPicture)
-    message=await ctx.reply(embed=embed)
-
-    def checkChan(mess):
-        return mess.author.id==ctx.author.id and mess.channel.id==message.channel.id
+    await message.edit(embed=embed)
     
-    mess=await bot.wait_for('message', check=checkChan, timeout=60)
+    mess=await bot.wait_for('message', check=checkAuthor, timeout=60)
     descip=createPhrase(mess.content.split(" "))
 
     data=await webRequest("https://www.googleapis.com/youtube/v3/search?key={0}&channelId={1}&part=snippet,id&order=date&maxResults=7&type=video".format(ytKey,channelID))
@@ -62,10 +55,10 @@ async def addYT(ctx,bot,args):
         last=data["items"][0]["id"]["videoId"]
 
     connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
-    if True:
+    try:
         num=curseur.execute("SELECT COUNT() as Nombre FROM youtube").fetchone()["Nombre"]+1
         curseur.execute("INSERT INTO youtube VALUES({0},{1},'{2}','{3}','{4}','{5}')".format(num,salonID,channelID,descip,last,channelName))
-    else:
+    except:
         raise AssertionError("Ce couple de chaîne YouTube et de salon existe déjà.")
     connexion.commit()
 

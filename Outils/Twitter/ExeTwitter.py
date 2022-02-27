@@ -19,9 +19,9 @@ async def exeTwitterAlerts(ctx,bot,args,guildOT):
     elif ctx.invoked_with=="chan":
         embed=await chanTwitter(ctx,bot,args,curseur)
     elif ctx.invoked_with=="del":
-        embed=await delTwitter(ctx,bot,args,curseur,guildOT)
+        embed=await delTwitter(ctx,bot,args,curseur)
     elif ctx.invoked_with=="edit":
-        embed=await descipTwitter(ctx,bot,args,curseur,guildOT)
+        embed=await descipTwitter(ctx,bot,args,curseur)
     connexion.commit()
     guildOT.getTwitter()
     await ctx.send(embed=embed)

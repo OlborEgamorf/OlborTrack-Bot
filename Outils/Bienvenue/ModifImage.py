@@ -13,6 +13,35 @@ from Stats.SQL.ConnectSQL import connectSQL
 async def modifImage(ctx,bot,args,option):
     dictTitres={"BV":"de bienvenue","AD":"d'adieu"}
     try:
+        def checkModif(reaction,user):
+            if type(reaction.emoji)==str:
+                return False
+            return reaction.emoji.id in (705766186909958185,705766186989912154,705766186930929685,705766186947706934,811242376625782785,705766186713088042) and reaction.message.id==message.id and user.id==ctx.author.id
+        def checkAuthor(mess):
+            return mess.author.id==ctx.author.id and mess.channel.id==ctx.channel.id
+        def checkContent(mess):
+            try:
+                int(mess.content)
+            except:
+                pass
+            return mess.author.id==ctx.author.id and mess.channel.id==ctx.channel.id
+        def checkColor(mess):
+            try:
+                assert mess.content in dictColor
+            except:
+                pass
+            return mess.author.id==ctx.author.id and mess.channel.id==ctx.channel.id
+        def checkMode(mess):
+            try:
+                assert mess.content in dictMode
+            except:
+                pass
+            return mess.author.id==ctx.author.id and mess.channel.id==ctx.channel.id
+        def checkValid(reaction,user):
+            if type(reaction.emoji)==str:
+                return False
+            return reaction.emoji.id in (772766033996021761,811242376625782785) and reaction.message.id==message.id and user.id==ctx.author.id
+
         assert len(args)>0, "Vous devez me donner le numéro de l'image !"
         connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
         try:
@@ -41,75 +70,42 @@ async def modifImage(ctx,bot,args,option):
             for i in liste:
                 await message.add_reaction(i)
 
-            def check(reaction,user):
-                if type(reaction.emoji)==str:
-                    return False
-                return reaction.emoji.id in (705766186909958185,705766186989912154,705766186930929685,705766186947706934,811242376625782785,705766186713088042) and reaction.message.id==message.id and user.id==ctx.author.id
-            
-            reaction,user=await bot.wait_for('reaction_add', check=check, timeout=60)
+            reaction,user=await bot.wait_for('reaction_add', check=checkModif, timeout=60)
             await message.clear_reactions()
 
             if reaction.emoji.id==705766186909958185:
                 embed=createEmbed("Modification image {0}".format(dictTitres[option]),"Pour ajouter un texte sur cette image, écrivez la phrase que vous voulez.\nPour afficher le nom du membre qui a rejoint, utilisez la balise `{name}`.\nPour écrire le nom de votre serveur, utilisez la balise `{guild}`.\nPour montrer le nombre de membre sur votre serveur, utilisez la balise `{number}`.",0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
-                message=await ctx.reply(embed=embed)
-
-                def check(mess):
-                    return mess.author.id==ctx.author.id and mess.channel.id==ctx.channel.id
-                
-                mess=await bot.wait_for("message",check=check,timeout=60)
-
+                await message.edit(embed=embed)
+                mess=await bot.wait_for("message",check=checkAuthor,timeout=60)
                 texte=createPhrase(mess.content.split(" "))
+
             elif reaction.emoji.id==705766186989912154:
                 embed=createEmbed("Modification image {0}".format(dictTitres[option]),"Pour ajuster la taille du texte, donnez moi un nombre.\nLa taille actuelle est : **{0}**".format(taille),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
-                message=await ctx.reply(embed=embed)
-
-                def check(mess):
-                    try:
-                        int(mess.content)
-                    except:
-                        pass
-                    return mess.author.id==ctx.author.id and mess.channel.id==ctx.channel.id
-                
-                mess=await bot.wait_for("message",check=check,timeout=60)
+                await message.edit(embed=embed)
+                mess=await bot.wait_for("message",check=checkContent,timeout=60)
                 taille=int(mess.content)
+
             elif reaction.emoji.id==705766186930929685:
                 embed=createEmbed("Modification image {0}".format(dictTitres[option]),"Pour modifier la couleur du texte, choisissez entre : default (blanc ou noir en fonction du fond), blanc, noir, rouge, vert, bleu, jaune, cyan.\nLa couleur actuelle est : **{0}**".format(couleur),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
-                message=await ctx.reply(embed=embed)
+                await message.edit(embed=embed)
                 dictColor=["blanc","noir","rouge","vert","bleu","jaune","cyan","default"]
-                def check(mess):
-                    try:
-                        assert mess.content in dictColor
-                    except:
-                        pass
-                    return mess.author.id==ctx.author.id and mess.channel.id==ctx.channel.id
-                
-                mess=await bot.wait_for("message",check=check,timeout=60)
+                mess=await bot.wait_for("message",check=checkColor,timeout=60)
                 couleur=mess.content
+
             elif reaction.emoji.id==705766186947706934:
                 embed=createEmbed("Modification image {0}".format(dictTitres[option]),"Le mode détermine à quelle heure de la journée l'image peut être envoyée. Pour modifier le mode de l'image, choisissez entre : all (s'active tout le temps), jour (ne s'active qu'entre 9h et 22h), nuit (ne s'active qu'entre 22h et 9h).\nLa couleur actuelle est : **{0}**\n*Attention : aucune modification ne sera visible, le mode ne concerne que le déclenchement de la fonctionnalité*".format(mode),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
-                message=await ctx.reply(embed=embed)
-                dictMode=["all","jour","nuit"]
-                def check(mess):
-                    try:
-                        assert mess.content in dictMode
-                    except:
-                        pass
-                    return mess.author.id==ctx.author.id and mess.channel.id==ctx.channel.id
-                
-                mess=await bot.wait_for("message",check=check,timeout=60)
+                await message.edit(embed=embed)
+                dictMode=["all","jour","nuit"]                
+                mess=await bot.wait_for("message",check=checkMode,timeout=60)
                 mode=mess.content
+
             elif reaction.emoji.id==705766186713088042:
                 embed=createEmbed("Modification image {0}".format(dictTitres[option]),"Le filtre gris est automatiquement activé pour les images d'adieu. Actuellement il est : **{0}**\nAppuyez sur <:otVALIDER:772766033996021761> pour l'activer ou <:otANNULER:811242376625782785> pour le retirer.".format(dictFiltre[filtre]),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
-                message=await ctx.reply(embed=embed)
+                await message.edit(embed=embed)
                 await message.add_reaction("<:otVALIDER:772766033996021761>")
                 await message.add_reaction("<:otANNULER:811242376625782785>")
 
-                def check(reaction,user):
-                    if type(reaction.emoji)==str:
-                        return False
-                    return reaction.emoji.id in (772766033996021761,811242376625782785) and reaction.message.id==message.id and user.id==ctx.author.id
-                
-                reaction,user=await bot.wait_for('reaction_add', check=check, timeout=60)
+                reaction,user=await bot.wait_for('reaction_add', check=checkValid, timeout=60)
                 await message.clear_reactions()
                 if reaction.emoji.id==772766033996021761:
                     filtre=True
@@ -123,16 +119,11 @@ async def modifImage(ctx,bot,args,option):
             else:
                 fusionAdieu(image["Path"],ctx.author,texte,couleur,taille,ctx.guild,filtre)
             embed=createEmbed("Modification image {0}".format(dictTitres[option]),"Voici le résultat final de votre image. Cela vous convient-il ?\nAppuyez sur <:otVALIDER:772766033996021761> pour valider ou <:otANNULER:811242376625782785> pour revenir en arrière.",0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
-            message=await ctx.reply(embed=embed,file=discord.File("Temp/{0}{1}.png".format(option,ctx.author.id)))
+            await message.edit(embed=embed,file=discord.File("Temp/{0}{1}.png".format(option,ctx.author.id)))
             await message.add_reaction("<:otVALIDER:772766033996021761>")
             await message.add_reaction("<:otANNULER:811242376625782785>")
-
-            def check(reaction,user):
-                if type(reaction.emoji)==str:
-                    return False
-                return reaction.emoji.id in (772766033996021761,811242376625782785) and reaction.message.id==message.id and user.id==ctx.author.id
             
-            reaction,user=await bot.wait_for('reaction_add', check=check, timeout=60)
+            reaction,user=await bot.wait_for('reaction_add', check=checkValid, timeout=60)
             await message.clear_reactions()
             if reaction.emoji.id==772766033996021761:
                 if option=="BV":

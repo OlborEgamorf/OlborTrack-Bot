@@ -11,6 +11,18 @@ from Titres.Outils import createAccount
 @OTCommand
 async def achatCustom(ctx,bot):
     try:
+        def checkMess(reaction,user):
+            if type(reaction.emoji)==str:
+                return False
+            return reaction.emoji.id==772766033996021761 and reaction.message.id==message.id and user.id==ctx.author.id
+
+        def checkCustom(mess):
+            try:
+                assert len(mess.content)<=8
+            except:
+                return False
+            return user.id==ctx.author.id and mess.channel.id==message.channel.id
+
         connexionUser,curseurUser=connectSQL("OT",ctx.author.id,"Titres",None,None)
         createAccount(connexionUser,curseurUser)
         coins=curseurUser.execute("SELECT * FROM coins").fetchone()["Coins"]
@@ -22,25 +34,12 @@ async def achatCustom(ctx,bot):
         message=await ctx.reply(embed=embed)
         await message.add_reaction("<:otVALIDER:772766033996021761>")
 
-        def check(reaction,user):
-            if type(reaction.emoji)==str:
-                return False
-            return reaction.emoji.id==772766033996021761 and reaction.message.id==message.id and user.id==ctx.author.id
-
-        reaction,user=await bot.wait_for('reaction_add', check=check, timeout=60)
+        reaction,user=await bot.wait_for('reaction_add', check=checkMess, timeout=60)
         await message.clear_reactions()
-
 
         embed=createEmbed("Surnom personnalisé","Donnez moi le surnom que vous voulez avoir, et qui sera mis derrière votre titre. Il ne doit pas dépasser 8 caractères.",0xf58d1d,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author)
 
         message=await ctx.reply(embed=embed)
-
-        def checkCustom(mess):
-            try:
-                assert len(mess.content)<=8
-            except:
-                return False
-            return user.id==ctx.author.id and mess.channel.id==message.channel.id
 
         mess=await bot.wait_for('message', check=checkCustom, timeout=60)
         custom=createPhrase([mess.content])[:-1]
@@ -48,7 +47,6 @@ async def achatCustom(ctx,bot):
         for i in custom:
             if i!="\\":
                 newCustom+=i
-
 
         connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
         titre=curseur.execute("SELECT titres.Nom FROM active JOIN titres ON active.TitreID=titres.ID WHERE MembreID={0}".format(ctx.author.id)).fetchone()
@@ -61,12 +59,7 @@ async def achatCustom(ctx,bot):
         message=await ctx.reply(embed=embed)
         await message.add_reaction("<:otVALIDER:772766033996021761>")
 
-        def check(reaction,user):
-            if type(reaction.emoji)==str:
-                return False
-            return reaction.emoji.id==772766033996021761 and reaction.message.id==message.id and user.id==ctx.author.id
-
-        reaction,user=await bot.wait_for('reaction_add', check=check, timeout=60)
+        reaction,user=await bot.wait_for('reaction_add', check=checkMess, timeout=60)
         await message.clear_reactions()
 
 

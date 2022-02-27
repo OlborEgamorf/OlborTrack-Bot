@@ -5,6 +5,15 @@ from Stats.SQL.ConnectSQL import connectSQL
 from Core.OS.Keys3 import headerTwit
 
 async def addTwitter(ctx,bot,args):
+    def checkValid(reaction,user):
+        if type(reaction.emoji)==str:
+            return False
+        return reaction.emoji.id==772766033996021761 and reaction.message.id==message.id and user.id==ctx.author.id
+    def checkMentions(mess):
+        return mess.author.id==ctx.author.id and mess.channel.id==message.channel.id and mess.channel_mentions!=[]
+    def checkAuthor(mess):
+        return mess.author.id==ctx.author.id and mess.channel.id==message.channel.id
+
     assert len(args)>0, "Vous devez me donner un compte Twitter !"
     chaine=createPhrase(args)[:-1]
     infos=await webRequestHD("https://api.twitter.com/2/users/by/username/{0}".format(chaine),headerTwit,(("user.fields","id,name,profile_image_url,description"),("tweet.fields","id,created_at")))
@@ -26,36 +35,21 @@ async def addTwitter(ctx,bot,args):
     message=await ctx.reply(embed=embed)
     await message.add_reaction("<:otVALIDER:772766033996021761>")
 
-    def check(reaction,user):
-        if type(reaction.emoji)==str:
-            return False
-        return reaction.emoji.id==772766033996021761 and reaction.message.id==message.id and user.id==ctx.author.id
-
-    reaction,user=await bot.wait_for('reaction_add', check=check, timeout=60)
+    reaction,user=await bot.wait_for('reaction_add', check=checkValid, timeout=60)
+    await message.clear_reactions()
 
     embed=createEmbed("{0} - Alertes Twitter étape 2/3".format(accountName),"**Compte Twitter :** @{0}\n**Salon :** - \n**Description :** -\n\nVeuillez mentionner le salon dans lequel les alertes devront s'envoyer.".format(accountUser),0x00ACEE,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
     embed.set_thumbnail(url=accountPicture)
-    message=await ctx.reply(embed=embed)
+    await message.edit(embed=embed)
 
-    def checkChan(mess):
-        try:
-            assert mess.channel_mentions!=[]
-        except:
-            return False
-        return mess.author.id==ctx.author.id and mess.channel.id==message.channel.id
-    
-    mess=await bot.wait_for('message', check=checkChan, timeout=60)
+    mess=await bot.wait_for('message', check=checkMentions, timeout=60)
     salonID=mess.channel_mentions[0].id
-
 
     embed=createEmbed("{0} - Alertes Twitter étape 3/3".format(accountName),"**Compte Twitter :** {0}\n**Salon :** <#{1}> \n**Description :** -\n\nVeuillez écrire la description que vous voulez mettre dans l'alerte.".format(accountUser,salonID),0x00ACEE,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
     embed.set_thumbnail(url=accountPicture)
-    message=await ctx.reply(embed=embed)
+    await message.edit(embed=embed)
 
-    def checkChan(mess):
-        return mess.author.id==ctx.author.id and mess.channel.id==message.channel.id
-    
-    mess=await bot.wait_for('message', check=checkChan, timeout=60)
+    mess=await bot.wait_for('message', check=checkAuthor, timeout=60)
     descip=createPhrase(mess.content.split(" "))
 
     data=await webRequestHD("https://api.twitter.com/2/tweets/search/recent",headerTwit,(("query","from:{0}".format(accountID)),("tweet.fields","id")))
@@ -94,7 +88,7 @@ async def chanTwitter(ctx,bot,args,curseur):
     return createEmbed("Alerte Twitter modifiée","Numéro de l'alerte : {0}\nNouveau salon : <#{1}>".format(args[0],ctx.message.channel_mentions[0].id),0x00ACEE,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
 
 
-async def delTwitter(ctx,bot,args,curseur,guild):
+async def delTwitter(ctx,bot,args,curseur):
     assert len(args)>=1, "Il manque le numéro de l'alerte pour la supprimer !"
     try:
         alert=curseur.execute("SELECT * FROM twitter WHERE Nombre={0}".format(args[0])).fetchone()
@@ -110,7 +104,7 @@ async def delTwitter(ctx,bot,args,curseur,guild):
     return createEmbed("Alerte Twitter supprimée","Numéro de l'alerte : {0}".format(args[0]),0x00ACEE,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
 
 
-async def descipTwitter(ctx,bot,args,curseur,guild):
+async def descipTwitter(ctx,bot,args,curseur):
     assert len(args)>=1, "Il manque le numéro de l'alerte pour la modifier !"
     try:
         alert=curseur.execute("SELECT * FROM twitter WHERE Nombre={0}".format(args[0])).fetchone()

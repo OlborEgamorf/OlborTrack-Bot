@@ -12,6 +12,11 @@ from Stats.SQL.ConnectSQL import connectSQL
 async def delImage(ctx,bot,args,option):
     dictTitres={"BV":"de bienvenue","AD":"d'adieu"}
     try:
+        def checkValid(reaction,user):
+            if type(reaction.emoji)==str:
+                return False
+            return reaction.emoji.id==772766033996021761 and reaction.message.id==message.id and user.id==ctx.author.id
+
         assert len(args)>0, "Vous devez me donner le numéro de l'image !"
         connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
         try:
@@ -28,13 +33,8 @@ async def delImage(ctx,bot,args,option):
         embed=createEmbed("Suppression image {0}".format(dictTitres[option]),"Voici l'image que vous voulez supprimer.\nSi vous être sûr de votre choix, appuyez sur <:otVALIDER:772766033996021761>.",0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
         message=await ctx.reply(embed=embed,file=discord.File("Temp/{0}{1}.png".format(option,ctx.author.id)))
         await message.add_reaction("<:otVALIDER:772766033996021761>")
-
-        def check(reaction,user):
-            if type(reaction.emoji)==str:
-                return False
-            return reaction.emoji.id==772766033996021761 and reaction.message.id==message.id and user.id==ctx.author.id
         
-        reaction,user=await bot.wait_for('reaction_add', check=check, timeout=60)
+        reaction,user=await bot.wait_for('reaction_add', check=checkValid, timeout=60)
         await message.clear_reactions()
 
         connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)

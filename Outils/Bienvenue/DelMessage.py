@@ -8,6 +8,11 @@ from Stats.SQL.ConnectSQL import connectSQL
 async def delMessage(ctx,bot,args,option):
     dictTitres={"BV":"de bienvenue","AD":"d'adieu"}
     try:
+        def checkValid(reaction,user):
+            if type(reaction.emoji)==str:
+                return False
+            return reaction.emoji.id==772766033996021761 and reaction.message.id==message.id and user.id==ctx.author.id
+
         assert len(args)>0, "Vous devez me donner le numéro du message !"
         connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
         try:
@@ -20,13 +25,8 @@ async def delMessage(ctx,bot,args,option):
         embed=createEmbed("Suppression message {0}".format(dictTitres[option]),"Voici le message que vous voulez supprimer : {0}.\nSi vous être sûr de votre choix, appuyez sur <:otVALIDER:772766033996021761>.".format(texte["Message"]),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
         message=await ctx.reply(embed=embed)
         await message.add_reaction("<:otVALIDER:772766033996021761>")
-
-        def check(reaction,user):
-            if type(reaction.emoji)==str:
-                return False
-            return reaction.emoji.id==772766033996021761 and reaction.message.id==message.id and user.id==ctx.author.id
         
-        reaction,user=await bot.wait_for('reaction_add', check=check, timeout=60)
+        reaction,user=await bot.wait_for('reaction_add', check=checkValid, timeout=60)
         await message.clear_reactions()
 
         connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)

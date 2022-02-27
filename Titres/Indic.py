@@ -8,9 +8,10 @@ from Core.Decorator import OTCommand
 @OTCommand
 async def setServer(ctx,bot):
     try:
-        embed=createEmbed("Indicatif de serveur","Donnez moi l'indicatif que vous voulez donner à votre serveur. Il ne doit pas dépasser 4 caractères et être unique. Il sera affiché dans le classement des jeux Cross-Serveurs.",0xf58d1d,ctx.invoked_with.lower(),ctx.guild)
-
-        message=await ctx.reply(embed=embed)
+        def checkMess(reaction,user):
+            if type(reaction.emoji)==str:
+                return False
+            return reaction.emoji.id==772766033996021761 and reaction.message.id==message.id and user.id==ctx.author.id
 
         def checkCustom(mess):
             try:
@@ -18,6 +19,10 @@ async def setServer(ctx,bot):
             except:
                 return False
             return mess.author.id==ctx.author.id and mess.channel.id==message.channel.id
+
+        embed=createEmbed("Indicatif de serveur","Donnez moi l'indicatif que vous voulez donner à votre serveur. Il ne doit pas dépasser 4 caractères et être unique. Il sera affiché dans le classement des jeux Cross-Serveurs.",0xf58d1d,ctx.invoked_with.lower(),ctx.guild)
+
+        message=await ctx.reply(embed=embed)
 
         mess=await bot.wait_for('message', check=checkCustom, timeout=60)
         custom=createPhrase([mess.content])[:-1]
@@ -36,12 +41,7 @@ async def setServer(ctx,bot):
         message=await ctx.reply(embed=embed)
         await message.add_reaction("<:otVALIDER:772766033996021761>")
 
-        def check(reaction,user):
-            if type(reaction.emoji)==str:
-                return False
-            return reaction.emoji.id==772766033996021761 and reaction.message.id==message.id and user.id==ctx.author.id
-
-        reaction,user=await bot.wait_for('reaction_add', check=check, timeout=60)
+        reaction,user=await bot.wait_for('reaction_add', check=checkMess, timeout=60)
         await message.clear_reactions()
 
         connexion,curseur=connectSQL("OT","Titres","Titres",None,None)

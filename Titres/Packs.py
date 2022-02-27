@@ -13,6 +13,11 @@ dictStatut={0:"Fabuleux",1:"Rare",2:"Légendaire",3:"Unique"}
 
 async def packTitre(ctx,bot):
     try:
+        def checkPack(reaction,user):
+            if type(reaction.emoji)==str:
+                return False
+            return reaction.emoji.id in listeReactID and reaction.message.id==message.id and user.id==ctx.author.id
+            
         connexionUser,curseurUser=connectSQL("OT",ctx.author.id,"Titres",None,None)
         createAccount(connexionUser,curseurUser)
         coins=curseurUser.execute("SELECT * FROM coins").fetchone()["Coins"]
@@ -43,11 +48,6 @@ async def packTitre(ctx,bot):
         message=await ctx.reply(embed=embed)
         for i in range(len(liste)):
             await message.add_reaction(listeReact[i])
-        
-        def checkPack(reaction,user):
-            if type(reaction.emoji)==str:
-                return False
-            return reaction.emoji.id in listeReactID and reaction.message.id==message.id and user.id==ctx.author.id
         
         reaction,user=await bot.wait_for('reaction_add', check=checkPack, timeout=60)
         await message.clear_reactions()
