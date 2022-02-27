@@ -22,7 +22,7 @@ async def exeModules(ctx,bot,args,guild):
     listeC=["Stats","Sondages","Outils","Savezvous","Jeux"]
     connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
     if len(args)==0:
-        embedTable=commandePerms(ctx,ctx.command.name,guild)
+        await ctx.reply(embed=commandePerms(ctx,ctx.command.name,guild))
     else:
         nom=args[0][0].upper()+args[0][1:len(args[0])].lower()
         if ctx.command.name=="modulestat":

@@ -42,7 +42,7 @@ class Voice:
 async def voiceConnect(member,before,after,guild):
     if member.bot==False and guild.mstats[5]["Statut"]==True and guild.stats:
         if before.channel!=None:
-            if verifExecSQL(guild,before.channel,member):
+            if verifExecSQL(guild,before.channel,member) and member.id in listeCo:
                 listeCo[member.id].exeStat(guild)
         if after.channel!=None:
             if verifExecSQL(guild,after.channel,member):

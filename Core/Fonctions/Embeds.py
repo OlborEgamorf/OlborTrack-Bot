@@ -91,7 +91,10 @@ async def exeErrorExcept(ctx:commands.Context,bot:commands.Bot,reply) -> discord
     
     await bot.get_channel(726000546401615912).send(embed=embedLog)
     if reply:
-        await ctx.reply(embed=embedUser)
+        try:
+            await ctx.reply(embed=embedUser)
+        except:
+            await ctx.send(embed=embedUser)
     elif reply==None:
         return embedUser
     else:
@@ -170,7 +173,10 @@ async def embedAssert(ctx,info:str,reply) -> discord.Embed:
     else:
         embed=createEmbed("<:otROUGE:868535622237818910> Erreur",str(info),0xff0000,ctx.invoked_with.lower(),ctx.author)
     if reply:
-        await ctx.reply(embed=embed)
+        try:
+            await ctx.reply(embed=embed)
+        except:
+            await ctx.send(embed=embed)
     else:
         await ctx.send(embed=embed)
 

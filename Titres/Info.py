@@ -24,7 +24,7 @@ async def infosTitre(ctx,idtitre,bot):
     embed.add_field(name="Collection",value=titre["Collection"],inline=True)
     embed.add_field(name="Rareté",value=dictStatut[titre["Rareté"]],inline=True)
     embed.add_field(name="Valeur marchande",value="Achat : {0}\nVente : {1}".format(dictValue[titre["Rareté"]],dictSell[titre["Rareté"]]),inline=True)
-    embed.set_footer(text="OT!titre infos")
+    embed.set_footer(text="{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()))
     embed=embed=auteur(bot.user,None,None,embed,"olbor")
     await ctx.reply(embed=embed)
 
@@ -53,6 +53,6 @@ async def profilUser(ctx,bot):
     embed.add_field(name="OT Coins",value="{0} <:otCOINS:873226814527520809>".format(int(coins["Coins"])),inline=True)
     embed.add_field(name="Titres possédés",value=str(count),inline=True)
 
-    embed.set_footer(text="OT!titre profil")
+    embed.set_footer(text=ctx.invoked_with.lower())
     auteur(ctx.author.id,ctx.author.name,ctx.author.avatar,embed,"user")
     await ctx.reply(embed=embed)

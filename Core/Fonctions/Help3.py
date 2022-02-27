@@ -11,7 +11,7 @@ dictStats={
     10:["moyheure","moyjour","moymois","moyannee"],
     11:[]}
 
-dictPoll={1:[],2:["poll","polltime"],3:["giveaway","gareroll"],4:["rappel","rappelmp"]}
+dictPoll={1:[],2:["poll","polltime","vote","election","petition"],3:["giveaway","gareroll"],4:["rappel","rappelmp"]}
 
 dictOutils={
     1:[],
@@ -58,7 +58,7 @@ dictFPoll={1:[],2:["temps","texte","usage"],3:["temps","gagnants","usage"],4:["t
 
 dictFOutils={1:[],2:["usage"],3:["usage"],4:["usage","salons"],5:["voice","usage"],6:["usage"],7:["usage","auto","salons"]}
 
-dictFJeux={1:[],2:["trivial","usage"],3:[],4:[],5:["periodes","jeux","trivial","usage"],6:[]}
+dictFJeux={1:[],2:[],3:["trivial","usage"],4:[],5:["periodes","jeux","trivial","usage"],6:[]}
 
 dictFSV={1:[],2:["usage"],3:[]}
 
@@ -83,7 +83,7 @@ dictFields={
     "temps":{"name":"Instructions pour le temps","value":"Indiquer un nombre suivi de s (pour secondes) ou m (pour minutes) ou h (pour heures) ou j (pour jours). Si vous voulez mettre des nombres à virgule, utilisez un point (.).\nExemples : 20m (20 minutes), 1.5j (1 jour et 12 heures), 10h (10 heures), 20h20m10s (20 heures, 20 minutes et 10 secondes."},
     "texte":{"name":"Instructions pour le texte","value":"Pour le bot, chaque mot correspond à une proposition. Si vous voulez poser une question et/ou avoir des propositions plus longues que un seul mot, ajoutez des guillemets (\" \") aux deux extrèmités de chaque proposition."},
     "gagnants":{"name":"Comment avoir plusieurs gagnants ?","value":"A la fin de la commande, donnez le nombre de gagnants que vous souhaitez suivi de 'g'.\nExemples : 2g (2 gagnants), 10g (10 gagnants)."},
-    "jeux":{"name":"Liste des jeux","value":"trivialversus, trivialparty, trivialbr, tortues, tortuesduo, p4, bataillenavale"},
+    "jeux":{"name":"Liste des jeux","value":"trivialversus, trivialparty, trivialbr, tortues, tortuesduo, p4, morpion, matrice, codenames"},
     "usage":{"name":"Arguments","value":"(argument) : optionnel\n[argument] : obligatoire\n*Attention ! Ne pas mettre les paranthèses ou les crochets, juste l'argument !*"},
     "auto":{"name":"Liste des commandes auto","value":"nasaphoto\nevents\nsavezvous : une phrase au hasard\njour : le rapport du jour précédent\nmois : le rapport du mois précédent\nannee : le rapport de l'année précédente"},
     "mal":{"name":"Mots-clés","value":"Mots clés anime : all / watching / completed / onhold / dropped / ptw\nMots clés manga : all / reading / completed / onhold / dropped / ptr"},

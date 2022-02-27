@@ -201,6 +201,7 @@ async def texteFond(ctx,bot,args):
     await bot.get_channel(750803643820802100).send("Phrase : {0} - {1}".format(ctx.author.id,clean))
 
 
+@OTCommand
 async def submitFond(ctx,bot):
     try:
         connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
