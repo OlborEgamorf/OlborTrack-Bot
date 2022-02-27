@@ -1,62 +1,111 @@
-from time import time
 import asyncio
+import random
+from time import time
+
 from Core.Fonctions.Embeds import createEmbed
 from Stats.SQL.ConnectSQL import connectSQL
-import random
-from Core.Fonctions.DichoTri import nombre
 
 emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>","<:ot5:705766186713088042>","<:ot6:705766187182850148>","<:ot7:705766187115741246>","<:ot8:705766187132256308>","<:ot9:705766187145101363>","<:ot10:705766186909958206>"]
 ids=[705766186909958185,705766186989912154,705766186930929685,705766186947706934,705766186713088042,705766187182850148,705766187115741246,705766187132256308,705766187145101363,705766186909958206]
 
-class PollTime():
-    def __init__(self,id,guild,temps,props,question,chan):
+class Proposition:
+    def __init__(self,emoji,id,prop,count=None):
+        self.emoji=emoji
         self.id=id
+        self.prop=prop
+        if count==None:
+            self.count=0
+        else:
+            self.count=count
+
+class PollTime():
+    def __init__(self,message,guild,temps,props,question,option,counts=None,votants={}):
+        self.message=message
+        self.id=message.id
         self.guild=guild
         self.temps=temps
-        self.propositions=props
         self.question=question
         self.start=time()
-        self.chan=chan
+        self.chan=message.channel
         self.active=True
+        self.option=option
+        self.end=self.start+self.temps
 
-    async def trigger(self,bot):
-        reacts=[]
-        for i in range(len(self.propositions)):
-            reacts.append({"Emoji":emotes[i],"ID":ids[i],"Count":0,"Prop":self.propositions[i]})   
-        if self.temps>0:
-            await asyncio.sleep(self.temps)
-        channel=bot.get_channel(self.chan)
+        self.votants=votants
+
+        if counts==None:
+            self.propositions={ids[i]:Proposition(emotes[i],ids[i],props[i]) for i in range(len(props))}
+            self.total=0
+        else:
+            self.propositions={ids[i]:Proposition(emotes[i],ids[i],props[i],count=counts[i]) for i in range(len(props))}
+            self.total=sum(counts)
+
+    async def trigger(self, bot):
+        await asyncio.sleep(self.temps)
         try:
-            message=await channel.fetch_message(self.id)
+            message=await self.chan.fetch_message(self.id)
         except:
             self.active=False
             return
-        for i in range(len(message.reactions)):
-            for j in reacts:
-                if message.reactions[i].emoji.id==j["ID"]:
-                    j["Count"]=message.reactions[i].count
-        embed=self.affichage(reacts,message.guild)
-        await message.reply(embed=embed)
-        await message.clear_reactions()
+
+        if self.option=="polltime":
+            for react in message.reactions:
+                if type(react)!=str and react.emoji.id in ids:
+                    self.propositions[react.emoji.id].count=react.count-1
+                    self.total+=react.count-1
+
+        embed=self.affichage(self.total,self.guild)
+        await self.message.reply(embed=embed)
+        await self.message.clear_reactions()
         self.active=False
 
-    def affichage(self,table,guild):
-        total=0
+    def affichage(self,total,guild):
         descip=""
-        for i in table:
-            i["Count"]=i["Count"]-1
-            if i["Count"]>0:
-                total=total+i["Count"]
         if total==0:
-            embed=createEmbed(self.question,"Personne n'a répondu au sondage.",0xfc03d7,"polltime",guild)
+            embed=createEmbed(self.question+"\nRésultats","Personne n'a répondu au sondage.",0xfc03d7,self.option,guild)
         else:
-            table.sort(key=nombre, reverse=True)
+            table=dict(sorted(self.propositions.items(), key=lambda item: item[1].count, reverse=True))
             for i in table:
-                if i["Count"]>=0:
-                    per=i["Count"]/total*100
-                    descip+="{0} {1} : {2}% ({3})\n".format(i["Emoji"],i["Prop"],round(per,2),i["Count"])
-            embed=createEmbed(self.question,descip,0xfc03d7,"polltime",guild)
+                if table[i].count>=0:
+                    descip+="{0} {1} : {2}% ({3})\n".format(table[i].emoji,table[i].prop,round(table[i].count/total*100,2),table[i].count)
+            embed=createEmbed(self.question+"\nRésultats",descip,0xfc03d7,self.option,guild)
         return embed
+
+
+class Petition():
+    def __init__(self,message,temps,question,votes,votants=[]):
+        self.message=message
+        self.guild=message.guild
+        self.id=message.id
+        self.temps=temps
+        self.question=question
+        self.start=time()
+        self.end=self.start+self.temps
+        self.chan=message.channel
+        self.active=True
+        self.votes=votes
+        self.total=0
+        self.votants=votants
+
+    async def trigger(self,bot):
+        await asyncio.sleep(self.temps)
+
+        try:
+            await self.chan.fetch_message(self.id)
+        except:
+            self.active=False
+            return
+
+        embed=self.affichage(self.total>=self.votes,self.guild)
+        await self.message.reply(embed=embed)
+        await self.message.clear_reactions()
+        self.active=False
+
+    def affichage(self,valid,guild):
+        if valid:
+            return createEmbed(self.question,"La pétition a été validée !\nLes {0} signatures ont été atteintes, bravo !".format(self.votes),0xfc03d7,"petition",guild)
+        else:
+            return createEmbed(self.question,"La pétition n'a pas atteint ses objectifs...\nSur les {0} signatures attendues, seulement {1} ont été reçues.".format(self.votes,self.total),0xfc03d7,"petition",guild)
 
 class Reminder():
     def __init__(self,id,user,temps,remind):
@@ -111,7 +160,7 @@ class Giveaway():
             return
         users=None
         for i in range(len(message.reactions)):
-            if message.reactions[i].emoji.id==711222160982540380:
+            if type(message.reactions[i].emoji.id)!=str and message.reactions[i].emoji.id==711222160982540380:
                 users=await message.reactions[i].users().flatten()
                 if bot.user in users:
                     users.remove(bot.user)
@@ -139,11 +188,13 @@ class Giveaway():
             winner.append(won)
             users.remove(won)
             descip+="<@"+str(won.id)+"> "
+        embed=message.embeds[0]
         if len(winner)==1:
-            embed=createEmbed("Le gagnant de '{0}' est...".format(self.lot),"Félicitations à : <@{0}> !!||\n`Numéro reroll : {1}`||".format(winner[0].id,count),winner[0].color.value,"giveaway",winner[0])
+            embed.set_field_at(2,name="Gagnant",value="Bravo à <@{0}> !".format(winner[0].id))
             await message.reply("<:otVERT:868535645897912330> Bravo à <@{0}> qui a gagné {1} !".format(winner[0].id,self.lot))
         else:
-            embed=createEmbed("Les gagnants de '{0}' sont...".format(self.lot),"Félicitations à : {0} !!||\n`Numéro reroll : {1}`||".format(descip,count),0xfc03d7,"giveaway",message.guild)
+            embed.set_field_at(2,name="Gagnants",value="Bravo à {0}!".format(descip))
             await message.reply("<:otVERT:868535645897912330> Bravo à {0}qui ont gagné {1} !".format(descip,self.lot))
+        embed.add_field(name="||Numéro reroll||",value="||{0}||".format(count))
         await message.edit(embed=embed)
         self.active=False
