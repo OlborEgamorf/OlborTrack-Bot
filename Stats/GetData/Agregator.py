@@ -79,7 +79,7 @@ def agregatorEvol(liste,guild,autho,id,option,dictConnexion,dictCurseur,curRap):
                 firstSQL(dictCurseur["GL"],i.table[0]["ID"],i.table[0]["Count"],(i.mois,i.annee))
             for i in listeA:
                 firstSQL(dictCurseur["GL"],i.table[0]["ID"],i.table[0]["Count"],("TO",i.annee))
-            firstSQL(dictCurseur["GL"],listeG.table[0]["ID"],listeG.table[0]["Count"],"TO","GL")
+            firstSQL(dictCurseur["GL"],listeG.table[0]["ID"],listeG.table[0]["Count"],("TO","GL"))
 
         perso=True
         if id!="":

@@ -55,7 +55,7 @@ async def newGetData(guild,channel,bot,guildOT):
         for guildChan in guild.text_channels:
             tempsI=time()
             try:
-                if verifExecGD(guildOT,guildChan,bot.user)==False:
+                if verifExecGD(guildOT,guildChan,None)==False:
                     continue
                 async for message in guildChan.history(limit=None,oldest_first=True):
                     if message.author.bot==True or verifExecGD(guildOT,guildChan,message.author)==False:

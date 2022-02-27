@@ -23,17 +23,18 @@ def verifExecSQL(guild,channel,author):
 
 def verifExecGD(guild,channel,author):
     try:
-        if guild.users[author.id]["Blind"]==True:
-            return False
-    except:
-        if author.bot:
-            return False
-        leaveUser(guild,author,False)
-    try:
         if guild.chan[channel.id]["Blind"]==True:
             return False
     except:
         addChan(guild,channel)
+    if author!=None:
+        try:
+            if guild.users[author.id]["Blind"]==True:
+                return False
+        except:
+            if author.bot:
+                return False
+            leaveUser(guild,author,False)
     return True
 
 def verifCommands(guild,option):
