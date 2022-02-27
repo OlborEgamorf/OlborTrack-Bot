@@ -104,3 +104,4 @@ async def startGameMatrice(ctx,bot,game,inGame,gamesMatrice):
         await messAd.delete()
 
     del gamesMatrice[message.id]
+    return game

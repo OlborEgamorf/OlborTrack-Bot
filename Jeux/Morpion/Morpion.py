@@ -83,3 +83,4 @@ async def startGameMorpion(ctx,bot,game,inGame,gamesMorpion):
         await messAd.delete()
 
     del gamesMorpion[message.id]
+    return game

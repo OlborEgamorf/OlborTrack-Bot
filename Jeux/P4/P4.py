@@ -90,3 +90,4 @@ async def startGameP4(ctx,bot,game,inGame,gamesP4):
         await messAd.delete()
 
     del gamesP4[message.id]
+    return game

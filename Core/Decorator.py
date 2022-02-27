@@ -22,20 +22,20 @@ def OTCommand(func):
 
 def OTJeux(func):
     async def wrapper(*args,**kwargs):
-        ctx,bot=args[0],args[1]
+        ctx,bot,game,inGame,listeGames=args
         try:
-            await func(*args,**kwargs)
+            game=await func(*args,**kwargs)
         except AssertionError as er:
             await embedAssert(ctx,er,True)
         except:
             await exeErrorExcept(ctx,bot,True)
             # AJOUT UNPIN ! METTRE MESSAGE DANS GAME ET DEL AUSSI
-        if ctx.cog.qualified_name=="Jeux":
-            game,inGame=args[2],args[3]
-            try:
-                await game.delEmotes()
-            except:
-                pass
+        await unpin(game.message)
+        try:
+            await game.delEmotes()
+        except:
+            pass
+        if game!=None:
             for i in game.ids:
                 inGame.remove(i)
         
@@ -45,7 +45,7 @@ def OTCross(func):
     async def wrapper(*args,**kwargs):
         ctx,bot,game,inGame,listeGames=args
         try:
-            await func(*args,**kwargs)
+            game=await func(*args,**kwargs)
         except AssertionError as er:
             await embedAssert(ctx,er,True)
         except:
@@ -53,11 +53,11 @@ def OTCross(func):
                 await i.channel.send(embed=await exeErrorExcept(ctx,bot,None))
                 await unpin(i)
         
-        if ctx.cog.qualified_name=="Jeux":
-            try:
-                await game.delEmotes()
-            except:
-                pass
+        try:
+            await game.delEmotes()
+        except:
+            pass
+        if game!=None:   
             for i in game.ids:
                 inGame.remove(i)
             for i in game.messages:

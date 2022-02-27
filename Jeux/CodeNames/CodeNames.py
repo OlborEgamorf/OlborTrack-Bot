@@ -161,3 +161,4 @@ async def startGameCodeNames(ctx,bot,game,inGame,gamesCN):
     if "messAd" in locals():
         await messAd.delete()
     del gamesCN[message.id]
+    return game

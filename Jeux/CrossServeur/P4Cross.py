@@ -156,4 +156,4 @@ async def startGameP4Cross(ctx,bot,game,inGame,gamesP4):
 
     if "messAd" in locals():
         await messAd.delete()
-
+    return game

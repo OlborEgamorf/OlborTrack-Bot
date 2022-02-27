@@ -296,3 +296,4 @@ async def trivialPartyCross(ctx,bot,game,inGame,gamesTrivial):
 
     if "messAd" in locals():
         await messAd.delete()
+    return game

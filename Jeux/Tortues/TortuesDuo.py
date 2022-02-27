@@ -103,3 +103,4 @@ async def startGameTortuesDuo(ctx,bot,game,inGame,gamesTortues):
         await messAd.delete()
 
     del gamesTortues[message.id]
+    return game

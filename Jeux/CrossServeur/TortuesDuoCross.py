@@ -150,3 +150,4 @@ async def startGameTortuesDuoCross(ctx,bot,game,inGame,gamesTortues):
 
     if "messAd" in locals():
         await messAd.delete()
+    return game
