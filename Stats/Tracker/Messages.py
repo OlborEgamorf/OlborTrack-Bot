@@ -14,15 +14,6 @@ async def exeMessageClient(option,message,client,guild):
     if verifExecSQL(guild,message.channel,message.author)==False:
         return
     
-    if message.mentions!=[] and bool(guild.mstats[4]["Statut"])==True:
-        dictPing={}
-        for i in message.mentions:
-            if i.bot==False:
-                if i.id not in dictPing:
-                    dictPing[i.id]=0
-                dictPing[i.id]+=1
-        exeMentionsSQL(message.author.id,dictPing,guild,option)
-    
     if bool(guild.mstats[10]["Statut"])==True:
         count=0
         dictType={"Images":0,"GIFs":0,"Fichiers":0,"Liens":0,"Réponse":0,"Stickers":0}

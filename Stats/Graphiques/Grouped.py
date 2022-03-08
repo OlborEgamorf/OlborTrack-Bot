@@ -50,7 +50,7 @@ def graphGroupedMois(ligne,ctx,option,bot):
     plt.xticks(listeSX, listeSN,rotation=45)
     plt.xlabel("Mois")
     
-    if option in ("Messages","Mots","Voice","Mentions","Mentionne") or ligne["Args1"]!="None":
+    if option in ("Messages","Mots","Voice") or ligne["Args1"]!="None":
         nom=getNomGraph(ctx,bot,"Messages",author)
         try:
             nom=nom.name

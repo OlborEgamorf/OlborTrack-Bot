@@ -1,9 +1,12 @@
-from Stats.SQL.EmoteDetector import emoteDetector
+import discord
 from Core.Fonctions.Embeds import createEmbed
+from Stats.SQL.EmoteDetector import emoteDetector
+
 
 async def addTableau(ctx,bot,args,curseur):
     assert curseur.execute("SELECT * FROM sb WHERE ID=0").fetchone()==None, "Vous avez déjà paramétré un tableau général !"
     assert ctx.message.channel_mentions!=[], "Vous devez me donner un salon valide pour créer un tableau !"
+    assert type(ctx.message.channel_mentions[0])==discord.TextChannel, "Vous ne pouvez pas me donner de salon vocal !"
     assert ctx.message.channel_mentions[0].permissions_for(ctx.guild.get_member(bot.user.id)).view_channel==True, "Le salon mentionné n'a pas les permissions nécessaires pour que je puisse le voir."
     assert ctx.message.channel_mentions[0].permissions_for(ctx.guild.get_member(bot.user.id)).send_messages==True, "Le salon mentionné n'a pas les permissions nécessaires pour que je puisse envoyer des messages."
     assert len(args)>=0, "Il manque des éléments pour créer le tableau ! Donnez moi dans l'ordre : un emoji, le nombre de réactions nécessaire pour faire apparaître un message et un salon mentionné."
@@ -35,6 +38,7 @@ async def addTableau(ctx,bot,args,curseur):
 
 async def chanTableau(ctx,bot,args,curseur):
     assert ctx.message.channel_mentions!=[], "Vous devez me donner un salon valide pour modifier un tableau !" 
+    assert type(ctx.message.channel_mentions[0])==discord.TextChannel, "Vous ne pouvez pas me donner de salon vocal !"
     assert ctx.message.channel_mentions[0].permissions_for(ctx.guild.get_member(bot.user.id)).view_channel==True, "Le salon mentionné n'a pas les permissions nécessaires pour que je puisse le voir."
     assert ctx.message.channel_mentions[0].permissions_for(ctx.guild.get_member(bot.user.id)).send_messages==True, "Le salon mentionné n'a pas les permissions nécessaires pour que je puisse envoyer des messages."
     assert len(args)>=2, "Il manque des éléments pour modifier le salon d'un tableau ! Donnez moi dans l'ordre : le numéro du tableau voulu et le nouveau salon mentionné."

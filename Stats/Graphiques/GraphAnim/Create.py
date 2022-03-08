@@ -1,7 +1,7 @@
-from Stats.SQL.ConnectSQL import connectSQL
-from Stats.Graphiques.Evol import getNomColor 
-from Core.Fonctions.DichoTri import dichotomieID, triID
+from Core.Fonctions.DichoTri import dichotomieID
 from Core.Fonctions.RankingClassic import rankingClassic
+from Stats.Graphiques.Evol import getNomColor
+from Stats.SQL.ConnectSQL import connectSQL
 
 tableauSiom={"janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","TOTAL":"TO",":":":","00":"00","01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre"}
 
@@ -40,7 +40,7 @@ def createDict(listeMois,client,ctx,option,guildOT):
         listeNC.append(getNomColor(ctx,client,option,i))
     ranks=16 if len(listeAll)>15 else len(listeAll)+1
     for i in range(len(listeMois)):
-        listeMois[i].sort(key=triID)
+        listeMois[i].sort(key=lambda x:x["ID"])
         if i==0:
             listeRank=listeMois[0].copy()
             for h in range(len(listeAll)):
@@ -57,16 +57,16 @@ def createDict(listeMois,client,ctx,option,guildOT):
             listeOld=[]
             for h in listeRank:
                 listeOld.append(h.copy())
-            listeRank.sort(key=triID)
+            listeRank.sort(key=lambda x:x["ID"])
             for h in listeMois[i]:
                 exe=dichotomieID(listeRank,h["ID"],"ID")
                 if exe[0]==True:
                     listeRank[exe[1]]["Count"]+=h["Count"]
                 else:
                     listeRank.append(h)
-                    listeRank.sort(key=triID)
+                    listeRank.sort(key=lambda x:x["ID"])
             rankingClassic(listeRank)
-            listeRank.sort(key=triID)
+            listeRank.sort(key=lambda x:x["ID"])
 
             for h in range(len(listeAll)):
                 exeB=dichotomieID(listeOld,listeAll[h],"ID")

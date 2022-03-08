@@ -23,6 +23,9 @@ async def addImage(ctx,bot,option):
         def checkAuthor(mess):
             return mess.author.id==ctx.author.id and mess.channel.id==ctx.channel.id
 
+        connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
+        assert curseur.execute("SELECT * FROM etatBVAD WHERE Type='{0}'".format(option)).fetchone()["Statut"]==True, "Vous n'avez pas activé les messages {0} sur votre serveur. Commencez par faire la commande OT!{1} pour les activer !".format(dictTitres[option],ctx.invoked_parents[0])
+        
         embed=createEmbed("Ajout image {0}".format(dictTitres[option]),"Pour ajouter une image {0} à la collection, envoyez l'image que vous voulez.\nElle doit dépasser 256 pixels en largeur et en hauteur. Si les dimensions dépassent 1280x720, elle sera redimensionnée.\n\nToutes les indications sur la configuration s'afficheront sur ce message, donc surveillez le au fil des étapes !".format(dictTitres[option]),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
         message=await ctx.reply(embed=embed)
         
@@ -68,7 +71,7 @@ async def addImage(ctx,bot,option):
                 config=False
         await message.clear_reactions()
 
-        connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
+        
         num=curseur.execute("SELECT COUNT() as Nombre FROM images{0}".format(option)).fetchone()["Nombre"]+1
         if option=="BV":
             curseur.execute("INSERT INTO imagesBV VALUES({0},'{1}','{2}','default',50,'all')".format(num,path,text))

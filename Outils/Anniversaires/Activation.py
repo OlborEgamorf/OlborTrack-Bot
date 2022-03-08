@@ -1,4 +1,5 @@
 import asyncio
+import discord
 
 from Core.Decorator import OTCommand
 from Core.Fonctions.Embeds import createEmbed, embedAssert
@@ -10,8 +11,8 @@ from Stats.SQL.ConnectSQL import connectSQL
 @OTCommand
 async def toggleAnniversaire(ctx,bot,chan,guild):
     try:
-        def checkMentions(mess):
-            return mess.author.id==ctx.author.id and mess.channel.id==ctx.channel.id and mess.channel_mentions!=[]
+        def checkMention(mess):
+            return mess.author.id==ctx.author.id and mess.channel.id==ctx.channel.id and mess.channel_mentions!=[] and type(mess.channel_mentions[0])==discord.TextChannel
         def checkAuthor(mess):
             return mess.author.id==ctx.author.id and mess.channel.id==ctx.channel.id
         def checkValid(reaction,user):
@@ -25,7 +26,7 @@ async def toggleAnniversaire(ctx,bot,chan,guild):
             embed=createEmbed("Activation anniversaires","Pour activer les anniversaires automatiques, donnez moi le salon dans lequel les messages seront envoyés.",0x11f738,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
             message=await ctx.reply(embed=embed)
 
-            mess=await bot.wait_for("message",check=checkMentions,timeout=60)
+            mess=await bot.wait_for("message",check=checkMention,timeout=60)
             chan=mess.channel_mentions[0].id
 
             assert mess.channel_mentions[0].permissions_for(ctx.guild.get_member(bot.user.id)).view_channel==True, "Le salon mentionné n'a pas les permissions nécessaires pour que je puisse le voir."

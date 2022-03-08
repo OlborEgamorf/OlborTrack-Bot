@@ -125,21 +125,6 @@ def getAuthor(option:str,ctx:commands.Context,nb:int) -> (str or None):
             author=emoteDetector(ctx.args[nb])[0]
         elif option=="Divers":
             author=dictTrivia[ctx.args[nb]]
-        elif option=="Roles":
-            if ctx.message.role_mentions!=[]:
-                author=ctx.message.role_mentions[0].id
-            else:
-                dictRolesNb={}
-                role=createPhrase(ctx.args[nb:len(ctx.args)]).lower()
-                assert role!=""
-                for i in ctx.guild.roles:
-                    dictRolesNb[i.id]=aligne(role,i.name.lower())
-                maxi=dictRolesNb[ctx.guild.id]
-                author=ctx.guild.id
-                for i in dictRolesNb:
-                    if dictRolesNb[i]>maxi:
-                        maxi=dictRolesNb[i]
-                        author=i
         elif option=="Voicechan":
             dictChanNb={}
             chan=createPhrase(ctx.args[nb:len(ctx.args)]).lower()

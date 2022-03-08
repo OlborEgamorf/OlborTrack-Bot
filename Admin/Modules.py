@@ -1,11 +1,15 @@
 import discord
+from Core.Decorator import OTCommand
 from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.Embeds import createEmbed
-from Core.Decorator import OTCommand
+from Core.OT import OlborTrack
+from Core.OTGuild import OTGuildCMD
+from discord.ext import commands
 from Stats.SQL.ConnectSQL import connectSQL
 
+
 @OTCommand
-async def exeModules(ctx,bot,args,guild):
+async def exeModules(ctx:commands.Context,bot:OlborTrack,args:list,guild:OTGuildCMD):
     """Fonction qui permet d'activer et de désactiver des modules de stats ou de commandes. Pour un serveur
     
     En argument avec la commande est donné le nom du module.
@@ -47,7 +51,7 @@ async def exeModules(ctx,bot,args,guild):
         await ctx.reply(embed=createEmbed("Modification de modules",descip,0x220cc9,ctx.invoked_with.lower(),ctx.guild))
 
 
-def commandePerms(ctx,option,guildOT):
+def commandePerms(ctx:commands.Context,option:str,guildOT:OTGuildCMD) -> discord.Embed:
     """Embed qui affiche pour un serveur les modules de stats ou de commandes et leur état
     
     Type de la sortie : discord.Embed"""

@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 from Stats.SQL.ConnectSQL import connectSQL
 
 colorOT=(110/256,200/256,250/256,1)
-dictNameAxis={"Messages":"Messages","Salons":"Messages","Freq":"Messages","Mots":"Mots","Emotes":"Utilisations","Reactions":"Utilisations","Mentions":"Mentions","Mentionne":"Mentions","Divers":"Nombre","Voice":"Temps en vocal","Voicechan":"Temps en vocal"}
+dictNameAxis={"Messages":"Messages","Salons":"Messages","Freq":"Messages","Mots":"Mots","Emotes":"Utilisations","Reactions":"Utilisations","Divers":"Nombre","Voice":"Temps en vocal","Voicechan":"Temps en vocal"}
 dictColorMoy={"light":"black","dark":"white"}
 
 def graphPerso(ligne,ctx,option,bot,period,categ):
@@ -70,7 +70,7 @@ def graphPerso(ligne,ctx,option,bot,period,categ):
             plt.plot('date', categ, data=df, linestyle='-', marker='o',color=colorOT)
             plt.title("Ancien membre - Périodes{0}".format(plus),fontsize=12)
         else:
-            if option in ("Messages","Mots","Voice","Mentions","Mentionne"):
+            if option in ("Messages","Mots","Voice"):
                 couleur,nom=(user.color.r/256,user.color.g/256,user.color.b/256,1),user.name
             else:
                 couleur,nom=colorOT,user

@@ -1,3 +1,4 @@
+import asyncio
 import sqlite3
 
 from Core.Fonctions.Embeds import createEmbed
@@ -46,11 +47,12 @@ async def monthlyTitles(mois,annee,bot):
         connexionTitre,curseurTitre=connectSQL("OT","Titres","Titres",None,None)
         try:
             rank1=curseur.execute("SELECT * FROM glob WHERE Rank=1").fetchone()
+            assert rank1!=None
         except:
             continue
         else:
             old=curseurTitre.execute("SELECT * FROM monthly WHERE Jeu='{0}'".format(i)).fetchone()
-            if rank1["ID"]!=old["ID"]:
+            if old==None or rank1["ID"]!=old["ID"]:
                 connexionUser,curseurUser=connectSQL("OT",rank1["ID"],"Titres",None,None)
                 createAccount(connexionUser,curseurUser)
                 try:
@@ -59,15 +61,18 @@ async def monthlyTitles(mois,annee,bot):
                     pass
                 connexionUser.commit()
 
-                connexionUser,curseurUser=connectSQL("OT",old["ID"],"Titres",None,None)
-                createAccount(connexionUser,curseurUser)
-                curseurUser.execute("DELETE FROM titresUser WHERE ID={0}".format(dictID[i]+2))
-                if curseurTitre.execute("SELECT * FROM active WHERE MembreID={0}".format(old["ID"])).fetchone()!=None:
-                    if curseurTitre.execute("SELECT * FROM active WHERE MembreID={0}".format(old["ID"])).fetchone()["TitreID"]==dictID[i]+2:
-                        curseurTitre.execute("UPDATE active SET TitreID=73 WHERE MembreID={0}".format(old["ID"]))
-                connexionUser.commit()
+                if old!=None:
+                    connexionUser,curseurUser=connectSQL("OT",old["ID"],"Titres",None,None)
+                    createAccount(connexionUser,curseurUser)
+                    curseurUser.execute("DELETE FROM titresUser WHERE ID={0}".format(dictID[i]+2))
+                    if curseurTitre.execute("SELECT * FROM active WHERE MembreID={0}".format(old["ID"])).fetchone()!=None:
+                        if curseurTitre.execute("SELECT * FROM active WHERE MembreID={0}".format(old["ID"])).fetchone()["TitreID"]==dictID[i]+2:
+                            curseurTitre.execute("UPDATE active SET TitreID=73 WHERE MembreID={0}".format(old["ID"]))
+                    connexionUser.commit()
+                    curseurTitre.execute("UPDATE monthly SET ID={0} WHERE Jeu='{1}'".format(rank1["ID"],i))
+                else:
+                    curseurTitre.execute("INSERT INTO monthly VALUES ({0},'{1}')".format(rank1["ID"],i))
 
-                curseurTitre.execute("UPDATE monthly SET ID={0} WHERE Jeu='{1}'".format(rank1["ID"],i))
                 connexionTitre.commit()
 
                 try:

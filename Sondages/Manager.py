@@ -1,11 +1,13 @@
 import asyncio
+
+import discord
 from Core.Decorator import OTCommand
 from Core.Fonctions.Embeds import createEmbed
 from Core.Fonctions.Phrase import createPhrase
 
 from Sondages.Classes import PollTime
-from Sondages.Temps import footerTime, gestionTemps
 from Sondages.exePolls import dictPolls
+from Sondages.Temps import footerTime, gestionTemps
 
 emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>","<:ot5:705766186713088042>","<:ot6:705766187182850148>","<:ot7:705766187115741246>","<:ot8:705766187132256308>","<:ot9:705766187145101363>","<:ot10:705766186909958206>"]
 
@@ -26,7 +28,7 @@ async def pollManager(ctx,bot):
         return mess.author.id==ctx.author.id and mess.channel.id==ctx.channel.id and len(mess.attachments)!=0
 
     def checkSalon(mess):
-        return mess.author.id==ctx.author.id and mess.channel.id==ctx.channel.id and len(mess.channel_mentions)!=0
+        return mess.author.id==ctx.author.id and mess.channel.id==ctx.channel.id and len(mess.channel_mentions)!=0 and type(mess.channel_mentions[0])==discord.TextChannel
     
     messWait=await bot.wait_for("message",check=checkMess,timeout=45)
     question=createPhrase(messWait.content.split(" "))

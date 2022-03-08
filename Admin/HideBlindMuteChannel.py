@@ -1,10 +1,14 @@
+from Core.Decorator import OTCommand
 from Core.Fonctions.Embeds import createEmbed
 from Core.Fonctions.GetNom import getAuthor
-from Core.Decorator import OTCommand
+from Core.OT import OlborTrack
+from Core.OTGuild import OTGuildCMD
+from discord.ext import commands
 from Stats.SQL.ConnectSQL import connectSQL
 
+
 @OTCommand
-async def exeHBM(ctx,bot,option,guild):
+async def exeHBM(ctx:commands.Context,bot:OlborTrack,option:str,guild:OTGuildCMD):
     """Fonction qui permet de rendre masqué, bloqué ou muet des salons textuels pour un serveur.
     
     En argument avec la commande est donné un ou plusieurs salons.

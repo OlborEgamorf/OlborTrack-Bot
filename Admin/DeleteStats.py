@@ -1,25 +1,30 @@
 import os
 import shutil
 
-from Core.Fonctions.Embeds import createEmbed, exeErrorExcept
+import discord
 from Core.Decorator import OTCommand
+from Core.Fonctions.Embeds import createEmbed, exeErrorExcept
+from Core.OT import OlborTrack
+from discord.ext import commands
 
 listeDel={}
 
 @OTCommand
-async def deleteStats(ctx,bot):
+async def deleteStats(ctx:commands.Context,bot:OlborTrack):
+    """Commande qui déclenche la suppression des stats. Commande admin seulement. Possibilité de préciser quelle stat supprimer. Renvoie ensuite à un message de confirmation."""
     if len(ctx.args)==2:
         stat="all"
     else:
         stat=ctx.args[2].lower()
-        assert stat in ("all","voice","messages","moyennes","salons","emotes","reactions","divers","mentions","freq","mots"), "La statistique donnée n'est pas bonne. Veuillez choisir entre : all, voice, messages, moyennes, salons, emotes, reactions, divers, mentions, freq, mots"
+        assert stat in ("all","voice","messages","moyennes","salons","emotes","reactions","divers","freq","mots"), "La statistique donnée n'est pas bonne. Veuillez choisir entre : all, voice, messages, moyennes, salons, emotes, reactions, divers, mentions, freq, mots"
     embed=createEmbed("Suppression des statistiques","Veuillez confirmer la suppression des statistiques : **{0}**. \nUne fois que ce sera fait, vous ne pourrez plus les récupérer sauf en réinitialisant toutes les statistiques avec OT!getdata.".format(stat),0x220cc9,ctx.invoked_with.lower(),ctx.guild)
     message=await ctx.send(embed=embed)
     await message.add_reaction("<:OTdelete:866705696505200691>")
     await message.add_reaction("<:otANNULER:811242376625782785>")
     listeDel[message.id]=stat
 
-async def confirmDel(ctx,author,bot):
+async def confirmDel(ctx:commands.Context,author:discord.Member,bot:OlborTrack):
+    """Fonction qui supprime les statistiques après confirmation par un membre. Si le membre n'est pas administrateur, rien ne se passe. Parcours les périodes possibles et supprime les fichiers qui correspondent. Action irréversible."""
     try:
         assert author.guild_permissions.administrator
         assert ctx.message.id in listeDel
@@ -61,7 +66,8 @@ async def confirmDel(ctx,author,bot):
     except:
         await exeErrorExcept(ctx,bot,True)
 
-async def cancelDel(ctx,author,bot):
+async def cancelDel(ctx:commands.Context,author:discord.Member,bot:OlborTrack):
+    """Fonction qui annule la suppression des stats, si un membre a utilisé la réaction d'annulation. Si le membre n'est pas administrateur, rien ne se passe."""
     try:
         assert ctx.message.id in listeDel
         assert not author.bot

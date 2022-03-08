@@ -6,7 +6,7 @@ from time import time
 
 import discord
 from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.DichoTri import dichotomieID, dichotomiePlage, triID
+from Core.Fonctions.DichoTri import dichotomieID, dichotomiePlage
 from Core.Fonctions.Embeds import embedAssertClassic
 from Core.Fonctions.RankingClassic import rankingClassic
 from Core.Fonctions.TempsVoice import tempsVoice
@@ -155,7 +155,7 @@ async def newGetData(guild,channel,bot,guildOT):
 
                         if guildOT.mstats[1]["Statut"]==True:
                             date=str(message.created_at.year)[2:4]+mois+jour+heureMoy
-                            listeMoy.sort(key=triID)
+                            listeMoy.sort(key=lambda x:x["ID"])
                             add=dichotomieID(listeMoy,message.author.id,"ID")
                             ajout=add[0]
                             place=add[1]

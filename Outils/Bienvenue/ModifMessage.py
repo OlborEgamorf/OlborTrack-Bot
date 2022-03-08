@@ -24,6 +24,10 @@ async def modifMessage(ctx,bot,args,option):
         except:
             raise AssertionError("Le numéro donné n'est pas valide.")
         assert texte!=None, "Le numéro donné ne correspond à aucun message."
+
+        if curseur.execute("SELECT * FROM etatBVAD WHERE Type='{0}'".format(option)).fetchone()["Statut"]==True:
+            await ctx.reply("<:otORANGE:868538903584456745> le message que vous cherchez existe bien, mais les messages {0} sont actuellement désactivés sur votre serveur. Le modifier est donc peu pertinant, mais libre à vous !".format(dictTitres[option]))
+
         connexion.close()
         
         embed=createEmbed("Modification message {0}".format(dictTitres[option]),"Le message que vous voulez modifier est : "+texte["Message"]+".\nPour le faire, écrivez la nouvelle phrase corrigée.\nPour mentionner le membre qui a rejoint de le message, utilisez la balise `{user}`.\nPour afficher juste son nom, utilisez la balise `{name}`\nPour écrire le nom de votre serveur, utilisez la balise `{guild}`.",0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)

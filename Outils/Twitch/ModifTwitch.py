@@ -1,8 +1,11 @@
-from Core.Fonctions.Phrase import createPhrase
+import discord
 from Core.Fonctions.Embeds import createEmbed
+from Core.Fonctions.Phrase import createPhrase
+
 
 async def addTwitch(ctx,bot,args,curseur):
     assert ctx.message.channel_mentions!=[], "Vous devez me donner un salon valide pour créer une alerte Twitch !"
+    assert type(ctx.message.channel_mentions[0])==discord.TextChannel, "Vous ne pouvez pas me donner de salon vocal !"
     assert ctx.message.channel_mentions[0].permissions_for(ctx.guild.get_member(bot.user.id)).view_channel==True, "Le salon mentionné n'a pas les permissions nécessaires pour que je puisse le voir."
     assert ctx.message.channel_mentions[0].permissions_for(ctx.guild.get_member(bot.user.id)).send_messages==True, "Le salon mentionné n'a pas les permissions nécessaires pour que je puisse envoyer des messages."
     assert len(args)>=3, "Il manque des éléments pour créer l'alerte ! Donnez moi dans l'ordre : un streamer, un salon mentionné et une description."
@@ -21,6 +24,7 @@ async def addTwitch(ctx,bot,args,curseur):
 
 async def chanTwitch(ctx,bot,args,curseur):
     assert ctx.message.channel_mentions!=[], "Vous devez me donner un salon valide pour modifier une alerte Twitch !" 
+    assert type(ctx.message.channel_mentions[0])==discord.TextChannel, "Vous ne pouvez pas me donner de salon vocal !"
     assert ctx.message.channel_mentions[0].permissions_for(ctx.guild.get_member(bot.user.id)).view_channel==True, "Le salon mentionné n'a pas les permissions nécessaires pour que je puisse le voir."
     assert ctx.message.channel_mentions[0].permissions_for(ctx.guild.get_member(bot.user.id)).send_messages==True, "Le salon mentionné n'a pas les permissions nécessaires pour que je puisse envoyer des messages."
     assert len(args)>=2, "Il manque des éléments pour modifier le salon d'une alerte ! Donnez moi dans l'ordre : le numéro de l'alerte voulue et le nouveau salon mentionné."

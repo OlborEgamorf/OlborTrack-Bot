@@ -1,0 +1,8 @@
+discord.py
+matplotlib
+seaborn
+circlify
+colorthief
+pillow
+pandas
+numpy

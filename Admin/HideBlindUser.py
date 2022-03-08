@@ -1,9 +1,13 @@
-from Core.Fonctions.Embeds import createEmbed
 from Core.Decorator import OTCommand
+from Core.Fonctions.Embeds import createEmbed
+from Core.OT import OlborTrack
+from Core.OTGuild import OTGuildCMD
+from discord.ext import commands
 from Stats.SQL.ConnectSQL import connectSQL
 
+
 @OTCommand
-async def exeHBUser(ctx,bot,option,guild):
+async def exeHBUser(ctx:commands.Context,bot:OlborTrack,option:str,guild:OTGuildCMD):
     """Cette fonction permet à un utilisateur de se rendre masqué ou bloqué aux yeux du bot sur un serveur.
     
     L'utilisation de la commande suffit pour activer/désactiver l'une des options.

@@ -1,11 +1,11 @@
 import discord
-from Stats.SQL.ConnectSQL import connectSQL
+from Core.Fonctions.DichoTri import dichotomieID
+from Core.Fonctions.RankingClassic import rankingClassic
+from Stats.Rapports.CreateEmbed import embedRapport
 from Stats.Rapports.Description import descipGlobal
 from Stats.Rapports.Moyennes import descipMoyennes
-from Stats.Rapports.Paliers import paliers 
-from Stats.Rapports.CreateEmbed import embedRapport
-from Core.Fonctions.DichoTri import dichotomieID, triID
-from Core.Fonctions.RankingClassic import rankingClassic
+from Stats.Rapports.Paliers import paliers
+from Stats.SQL.ConnectSQL import connectSQL
 
 dictSection={"Voice":"vocal","Reactions":"réactions","Emotes":"emotes","Salons":"salons","Freq":"heures","Messages":"salons","Voicechan":"vocal"}
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TOTAL","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","to":"TO","glob":"GL"}
@@ -39,7 +39,7 @@ def homeSpe(date,guildOT,bot,guild,option,pagemax,period):
                             classement[exe[1]]["Count"]+=j["Count"]
                         else:
                             classement.append({"Rank":0,"ID":j["ID"],"Count":j["Count"]})
-                            classement.sort(key=triID)
+                            classement.sort(key=lambda x:x["ID"])
                 except:
                     pass
             

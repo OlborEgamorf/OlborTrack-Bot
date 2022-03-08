@@ -18,6 +18,9 @@ async def addMessage(ctx,bot,option):
                 return False
             return reaction.emoji.id==772766033996021761 and reaction.message.id==message.id and user.id==ctx.author.id
 
+        connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
+        assert curseur.execute("SELECT * FROM etatBVAD WHERE Type='{0}'".format(option)).fetchone()["Statut"]==True, "Vous n'avez pas activé les messages {0} sur votre serveur. Commencez par faire la commande OT!{1} pour les activer !".format(dictTitres[option],ctx.invoked_parents[0])
+
         embed=createEmbed("Ajout message {0}".format(dictTitres[option]),"Pour ajouter un message "+dictTitres[option]+" à la collection, écrivez la phrase que vous voulez.\nPour mentionner le membre qui a rejoint de le message, utilisez la balise `{user}`.\nPour afficher juste son nom, utilisez la balise `{name}`\nPour écrire le nom de votre serveur, utilisez la balise `{guild}`.\n\nToutes les indications sur la configuration s'afficheront sur ce message, donc surveillez le au fil des étapes !",0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
         message=await ctx.reply(embed=embed)
 
@@ -33,7 +36,6 @@ async def addMessage(ctx,bot,option):
         reaction,user=await bot.wait_for('reaction_add', check=checkValid, timeout=60)
         await message.clear_reactions()
 
-        connexion,curseur=connectSQL(ctx.guild.id,"Guild","Guild",None,None)
         num=curseur.execute("SELECT COUNT() as Nombre FROM messages{0}".format(option)).fetchone()["Nombre"]+1
         curseur.execute("INSERT INTO messages{0} VALUES({1},'{2}')".format(option,num,clean))
         connexion.commit()

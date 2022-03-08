@@ -52,6 +52,9 @@ async def modifImage(ctx,bot,args,option):
         await getAvatar(ctx.author)
         squaretoround(ctx.author.id)
         config=True
+
+        if curseur.execute("SELECT * FROM etatBVAD WHERE Type='{0}'".format(option)).fetchone()["Statut"]==True:
+            await ctx.reply("<:otORANGE:868538903584456745> l'image que vous cherchez existe bien, mais les messages {0} sont actuellement désactivés sur votre serveur. La modifier est donc peu pertinant, mais libre à vous !".format(dictTitres[option]))
         
         while config:
             image=curseur.execute("SELECT * FROM images{0} WHERE Nombre={1}".format(option,args[0])).fetchone()

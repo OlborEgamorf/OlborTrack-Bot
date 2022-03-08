@@ -262,7 +262,7 @@ async def graphEvolAutour(ligne,ctx,bot,option,guildOT):
                     nom=getNomGraph(ctx,bot,option,tableRank[i]["ID"])
                 except:
                     nom="??"
-            plt.plot("Date", "Count", data=df2, linestyle='--', marker='',color=colorsBasic[i],label=nom)
+            plt.plot("Date", "Count", data=df2, linestyle='--', marker='',color=colorsBasic[i],label="{0} ({1}e)".format(nom,tableRank[i]["Rank"]))
     
     nom,color=getNomColor(ctx,bot,option,ligne["Args3"])
     plt.plot("Date", "Count", data=df, linestyle='-', marker='',color=color,label=nom)

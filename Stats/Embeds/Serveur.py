@@ -2,7 +2,7 @@ import discord
 from Stats.SQL.ConnectSQL import connectSQL
 from Core.Fonctions.Embeds import addtoFields, createFields, defEvol
 from Core.Fonctions.GetNom import getIndic
-from Core.Fonctions.DichoTri import dichotomieID, triID
+from Core.Fonctions.DichoTri import dichotomieID
 
 def embedServeurs(table,guild,page,mobile,evol):
     embed=discord.Embed()
@@ -25,7 +25,7 @@ def embedServeurs(table,guild,page,mobile,evol):
         field1,field2,field3=addtoFields(field1,field2,field3,mobile,rank,nom,count)
     
     if not author:
-        table.sort(key=triID)
+        table.sort(key=lambda x:x["ID"])
         etat=dichotomieID(table,guild.id,"ID")
         if etat[0]:
             rank="\n**__{0}__**".format(table[etat[1]]["Rank"])

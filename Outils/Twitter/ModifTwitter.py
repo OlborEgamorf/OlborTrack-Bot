@@ -1,16 +1,18 @@
+import discord
 from Core.Fonctions.Embeds import createEmbed
 from Core.Fonctions.Phrase import createPhrase
 from Core.Fonctions.WebRequest import webRequestHD
-from Stats.SQL.ConnectSQL import connectSQL
 from Core.OS.Keys3 import headerTwit
+from Stats.SQL.ConnectSQL import connectSQL
+
 
 async def addTwitter(ctx,bot,args):
     def checkValid(reaction,user):
         if type(reaction.emoji)==str:
             return False
         return reaction.emoji.id==772766033996021761 and reaction.message.id==message.id and user.id==ctx.author.id
-    def checkMentions(mess):
-        return mess.author.id==ctx.author.id and mess.channel.id==message.channel.id and mess.channel_mentions!=[]
+    def checkMention(mess):
+        return mess.author.id==ctx.author.id and mess.channel.id==ctx.channel.id and mess.channel_mentions!=[] and type(mess.channel_mentions[0])==discord.TextChannel
     def checkAuthor(mess):
         return mess.author.id==ctx.author.id and mess.channel.id==message.channel.id
 
@@ -42,7 +44,7 @@ async def addTwitter(ctx,bot,args):
     embed.set_thumbnail(url=accountPicture)
     await message.edit(embed=embed)
 
-    mess=await bot.wait_for('message', check=checkMentions, timeout=60)
+    mess=await bot.wait_for('message', check=checkMention, timeout=60)
     salonID=mess.channel_mentions[0].id
 
     embed=createEmbed("{0} - Alertes Twitter étape 3/3".format(accountName),"**Compte Twitter :** {0}\n**Salon :** <#{1}> \n**Description :** -\n\nVeuillez écrire la description que vous voulez mettre dans l'alerte.".format(accountUser,salonID),0x00ACEE,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
@@ -74,6 +76,7 @@ async def addTwitter(ctx,bot,args):
 
 async def chanTwitter(ctx,bot,args,curseur):
     assert ctx.message.channel_mentions!=[], "Vous devez me donner un salon valide pour modifier une alerte Twitter !" 
+    assert type(ctx.message.channel_mentions[0])==discord.TextChannel, "Vous ne pouvez pas me donner de salon vocal !"
     assert ctx.message.channel_mentions[0].permissions_for(ctx.guild.get_member(bot.user.id)).view_channel==True, "Le salon mentionné n'a pas les permissions nécessaires pour que je puisse le voir."
     assert ctx.message.channel_mentions[0].permissions_for(ctx.guild.get_member(bot.user.id)).send_messages==True, "Le salon mentionné n'a pas les permissions nécessaires pour que je puisse envoyer des messages."
     assert len(args)>=2, "Il manque des éléments pour modifier le salon d'une alerte ! Donnez moi dans l'ordre : le numéro de l'alerte voulue et le nouveau salon mentionné."

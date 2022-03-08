@@ -1,8 +1,8 @@
 import discord
+from Core.Fonctions.DichoTri import dichotomieID
 from Core.Fonctions.Embeds import addtoFields, createFields, defEvol
-from Core.Fonctions.DichoTri import dichotomieID, triID
-from Stats.SQL.ConnectSQL import connectSQL
 from Core.Fonctions.GetNom import getTitre
+from Stats.SQL.ConnectSQL import connectSQL
 from Titres.Badges import getBadges
 
 dictOption={"tortues":"Tortues","tortuesduo":"TortuesDuo","trivialversus":"TrivialVersus","trivialbr":"TrivialBR","trivialparty":"TrivialParty","p4":"P4","bataillenavale":"BatailleNavale","cross":"Cross","trivial":"trivial","codenames":"CodeNames","matrice":"Matrice","morpion":"Morpion"}
@@ -33,7 +33,7 @@ def embedJeux(table,guild,page,mobile,id,evol,option):
         field1,field2,field3=addtoFields(field1,field2,field3,mobile,rank,nom,count)
     
     if not author:
-        table.sort(key=triID)
+        table.sort(key=lambda x:x["ID"])
         etat=dichotomieID(table,id,"ID")
         if etat[0]:
             rank="\n**__{0}__**".format(table[etat[1]]["Rank"])

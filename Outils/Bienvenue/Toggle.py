@@ -3,13 +3,14 @@ import asyncio
 from Core.Fonctions.Embeds import createEmbed, embedAssert
 from Core.Decorator import OTCommand
 from Stats.SQL.ConnectSQL import connectSQL
+import discord
 
 @OTCommand
 async def toggleBienvenue(ctx,bot,chan,guild,option):
     dictTitres={"BV":"de bienvenue","AD":"d'adieu"}
     try:
         def checkMention(mess):
-            return mess.author.id==ctx.author.id and mess.channel.id==ctx.channel.id and mess.channel_mentions!=[]
+            return mess.author.id==ctx.author.id and mess.channel.id==ctx.channel.id and mess.channel_mentions!=[] and type(mess.channel_mentions[0])==discord.TextChannel
         def checkValid(reaction,user):
             if type(reaction.emoji)==str:
                 return False

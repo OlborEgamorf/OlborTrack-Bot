@@ -1,9 +1,7 @@
-import traceback
 import circlify
 import pandas as pd
 from colorthief import ColorThief
 from Core.Fonctions.GetNom import getNomGraph
-from Core.Fonctions.GetTable import getTableRoles, getTableRolesMem
 from Core.Fonctions.GraphTheme import setThemeGraph
 from Core.Fonctions.TempsVoice import tempsVoice
 from Core.Fonctions.WebRequest import getImage
@@ -24,16 +22,6 @@ async def graphCircle(ligne,ctx,bot,option,guildOT):
         connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",ligne["Args1"],ligne["Args2"])
         table=curseur.execute("SELECT * FROM perso{0}{1}{2} WHERE Count>0 ORDER BY Count DESC LIMIT 100".format(ligne["Args1"],ligne["Args2"],ligne["AuthorID"])).fetchall()
         table.reverse()
-    elif ligne["Commande"]=="roles":
-        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[ligne["Args1"]],ligne["Args2"])
-        obj="" if ligne["Args3"]=="None" else ligne["Args3"]
-        if ligne["Args4"]=="None":
-            table=getTableRoles(curseur,ctx.guild,"{0}{1}{2}".format(ligne["Args1"],ligne["Args2"],obj),ligne["Tri"])
-        else:
-            table=getTableRolesMem(curseur,ctx.guild,int(ligne["Args4"]),"{0}{1}{2}".format(ligne["Args1"],ligne["Args2"],obj),ligne["Tri"])
-        table.reverse()
-        if len(table)>100:
-            table=table[0:100]
     elif ligne["Commande"]=="trivial":
         connexion,curseur=connectSQL("OT","ranks","Trivial",None,None)
         table=curseur.execute("SELECT * FROM {0} WHERE Count>0 ORDER BY Rank DESC LIMIT 100".format(ligne["Args2"])).fetchall()
@@ -80,7 +68,7 @@ async def graphCircle(ligne,ctx,bot,option,guildOT):
                     delete+=1
                 else:
                     listeY.append(getNomGraph(ctx,bot,option,table[i]["ID"]))
-            elif option in ("Messages","Mots","Voice","Mentions","Mentionne") or obj!="":
+            elif option in ("Messages","Mots","Voice") or obj!="":
                 if guildOT.users[table[i]["ID"]]["Hide"]:
                     del listeX[i]
                     del listeC[i]

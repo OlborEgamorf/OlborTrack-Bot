@@ -1,4 +1,3 @@
-from Core.Fonctions.DichoTri import nombre
 from Stats.GetData.Outils import dichotomieTable, triIDTable
 from Stats.GetData.Objets import Table, UserEvol
 

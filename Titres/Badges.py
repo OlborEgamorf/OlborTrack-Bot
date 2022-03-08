@@ -6,7 +6,7 @@ dictValues={1:"<:BronzeMois:886707210749632542>",2:"<:ArgentMois:886707209797521
 async def showBadges(ctx,bot):
     try:
         connexionUser,curseurUser=connectSQL("OT",ctx.author.id,"Titres",None,None)
-        liste=["P4","BatailleNavale","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR","Matrice"]
+        liste=["P4","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR","Matrice","CodeNames","Morpion"]
         liste.sort()
         listeValues=[1,2,3,11,12,13]
         descip=""

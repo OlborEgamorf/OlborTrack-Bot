@@ -1,7 +1,6 @@
 import matplotlib.image as mpimg
 from colorthief import ColorThief
 from Core.Fonctions.GetNom import getNomGraph
-from Core.Fonctions.GetTable import getTableRoles, getTableRolesMem
 from Core.Fonctions.GraphTheme import setThemeGraph
 from Core.Fonctions.VoiceAxe import voiceAxe
 from Core.Fonctions.WebRequest import getAvatar, getImage
@@ -27,16 +26,6 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
             table=curseur.execute("SELECT * FROM {0}{1} WHERE Rank<=15 ORDER BY Rank DESC".format(mois,annee)).fetchall()
         else:
             table=curseur.execute("SELECT * FROM {0}{1}{2} WHERE Rank<=15 ORDER BY Rank DESC".format(mois,annee,obj)).fetchall()
-    elif ligne["Commande"]=="roles":
-        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[mois],annee)
-        obj="" if ligne["Args3"]=="None" else ligne["Args3"]
-        if ligne["Args4"]=="None":
-            table=getTableRoles(curseur,ctx.guild,"{0}{1}{2}".format(mois,annee,obj),ligne["Tri"])
-        else:
-            table=getTableRolesMem(curseur,ctx.guild,int(ligne["Args4"]),"{0}{1}{2}".format(mois,annee,obj),ligne["Tri"])
-        table.reverse()
-        if len(table)>15:
-            table=table[0:15]
     elif ligne["Commande"]=="jeux":
         connexion,curseur=connectSQL(ligne["Args3"],dictOption[option],"Jeux",tableauMois[mois],annee)
         table=curseur.execute("SELECT * FROM {0}{1} WHERE Rank<=15 ORDER BY Rank ASC LIMIT 15".format(mois,annee)).fetchall()
@@ -109,7 +98,7 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
                         listeN.append("")
                     else:
                         listeN.append(getNomGraph(ctx,bot,option,table[i]["ID"]))
-            elif option in ("Messages","Mots","Voice","Mentions","Mentionne") or obj!="None":
+            elif option in ("Messages","Mots","Voice") or obj!="None":
                 if guildOT.users[table[i]["ID"]]["Hide"]:
                     listeY[i]=0
                     listeN.append("")

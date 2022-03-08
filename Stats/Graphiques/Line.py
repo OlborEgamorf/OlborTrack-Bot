@@ -1,11 +1,12 @@
-from matplotlib import pyplot as plt
-import pandas as pd
 from math import inf
-from Core.Fonctions.VoiceAxe import voiceAxe
-from Core.Fonctions.GraphTheme import setThemeGraph
-from Stats.SQL.ConnectSQL import connectSQL
+
+import pandas as pd
 from Core.Fonctions.GetNom import getNomGraph, getTitre
-from Titres.Couleur import getColorJeux
+from Core.Fonctions.GraphTheme import setThemeGraph
+from Core.Fonctions.VoiceAxe import voiceAxe
+from matplotlib import pyplot as plt
+from Stats.SQL.ConnectSQL import connectSQL
+
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TOTAL","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
 colorOT=(110/256,200/256,250/256,1)
 dictOption={"tortues":"Tortues","tortuesduo":"TortuesDuo","trivialversus":"TrivialVersus","trivialbr":"TrivialBR","trivialparty":"TrivialParty","p4":"P4","bataillenavale":"BatailleNavale"}
@@ -82,7 +83,7 @@ async def graphLine(ligne,ctx,bot,option,guildOT):
             if option in ("Salons","Voicechan") and obj=="":
                 if guildOT.chan[table[i]["ID"]]["Hide"]:
                     continue
-            elif option in ("Messages","Mots","Voice","Mentions","Mentionne") or obj!="":
+            elif option in ("Messages","Mots","Voice") or obj!="":
                 if guildOT.users[table[i]["ID"]]["Hide"]:
                     continue 
             df=pd.DataFrame({"Date": listeX[i], "Count": listeY[i]})
