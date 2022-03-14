@@ -3,21 +3,16 @@ from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.Embeds import addtoFields, createFields, sendEmbed
 from Core.Fonctions.setMaxPage import setMax, setPage
 from Core.OTGuild import OTGuild
+from OT3.Core.Fonctions.Embeds import createEmbed
 from Stats.SQL.ConnectSQL import connectSQL
 
 
 def embedStarBoard(user,content,channel,image,id,link):
-    embedS=discord.Embed(description=content+"\n<#{0}> - [Contexte]({1})".format(channel,link),color=user.color.value)
-    if user.nick!=None:
-        embedS=auteur(user.id,user.nick,user.avatar,embedS,"user")
-    else:
-        embedS=auteur(user.id,user.name,user.avatar,embedS,"user")
-    if id!=0:
-        embedS.set_footer(icon_url="https://cdn.discordapp.com/emojis/"+str(id)+".png",text="OT!tableau")
-    else:
-        embedS.set_footer(text="OT!tableau")
+    embedS=createEmbed("",content,user.color.value,"tableau",user)
     if image!=[]:
         embedS.set_image(url=image[0].url)
+    embedS.add_field(name="Salon",value="<#{0}>".format(channel),inline=True)
+    embedS.add_field(name="Contexte",value="[Lien vers le message !]({1})".format(channel,link),inline=True)
     return embedS
 
 def embedSB(table,page,pagemax,mobile):

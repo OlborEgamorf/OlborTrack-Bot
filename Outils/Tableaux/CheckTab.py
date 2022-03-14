@@ -34,12 +34,12 @@ async def checkTabReact(message,emoji,count,bot,guild):
                 etat=curseur.execute("SELECT IDStar FROM sbmessages WHERE Nombre={0} AND IDMess={1}".format(guild.stardict[i].nombre,message.id)).fetchone()
                 if etat==None:
                     embed=embedStarBoard(message.author,message.content,message.channel.id,message.attachments,guild.stardict[i].id,message.jump_url)
-                    newMessage=await bot.get_channel(guild.stardict[i].salon).send(content=str(emoji)+" : "+str(count), embed=embed)
+                    newMessage=await bot.get_channel(guild.stardict[i].salon).send(content="{0} **{1}**".format(emoji,count), embed=embed)
                     curseur.execute("INSERT INTO sbmessages VALUES({0},{1},{2})".format(message.id,newMessage.id,guild.stardict[i].nombre))
                 else:
                     embed=embedStarBoard(message.author,message.content,message.channel.id,message.attachments,guild.stardict[i].id,message.jump_url)
                     messageStar=await bot.get_channel(guild.stardict[i].salon).fetch_message(etat["IDStar"])
-                    await messageStar.edit(content=str(emoji)+" : "+str(count), embed=embed)
+                    await messageStar.edit(content="{0} **{1}**".format(emoji,count), embed=embed)
             else:
                 etat=curseur.execute("SELECT IDStar FROM sbmessages WHERE Nombre={0} AND IDMess={1}".format(guild.stardict[i].nombre,message.id)).fetchone()
                 if etat!=None:
