@@ -18,7 +18,7 @@ dictOutils={
     2:["bienvenue","bienvenue chan","bvmessage","bvmessage add","bvmessage edit","bvmessage del","bvimage","bvimage add","bvimage edit","bvimage del"],
     3:["adieu","adieu chan","admessage","admessage add","admessage edit","admessage del","adimage","adimage add","adimage edit","adimage del"],
     4:["tableau","tableau add","tableau del","tableau nb","tableau chan","tabhide"],
-    5:["voiceephem add","voiceephem del","voiceephem limit","voiceephem edit","voiceephem hubs","voiceephem salons"],
+    5:["voicehubs","voicehubs add","voicehubs del","voicehubs edit","voiceephem","voiceephem rename","voiceephem limite","voiceephem lock"],
     6:["customcmd","customcmd add","customcmd del","customcmd embed","customcmd patron","customcmd edit","customcmd auteur","customcmd titre","customcmd bas","customcmd image","customcmd miniature","customcmd couleur","customcmd len"],
     7:["auto","auto add","auto del","auto edit"]}
 

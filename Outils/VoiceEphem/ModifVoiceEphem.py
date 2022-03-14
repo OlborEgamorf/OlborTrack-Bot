@@ -1,59 +1,42 @@
-from Core.Fonctions.GetNom import getAuthor
-from Stats.SQL.ConnectSQL import connectSQL
 from Core.Fonctions.Embeds import createEmbed
 from Core.Fonctions.Phrase import createPhrase
 
-
-async def voiceEphemAdd(ctx,curseur):
-    chan=getAuthor("Voicechan",ctx,2)
-    assert chan!=None, "Vous devez me donner un salon vocal valide !"
-    assert curseur.execute("SELECT * FROM hub WHERE ID={0}".format(chan)).fetchone()==None, "Le salon <#{0}> est déjà un hub !".format(chan)
-    num=curseur.execute("SELECT COUNT() as Nombre FROM hub").fetchone()["Nombre"]+1
-    curseur.execute("INSERT INTO hub VALUES({0},{1},0)".format(num,chan))
-
-    return createEmbed("Hub créé","Numéro du hub : {0}\nSalon : <#{1}>\nNombre limite d'utilisateurs : aucune\n".format(num,chan),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
+async def voiceEphemRename(ctx,args):
+    assert len(args)>0, "Vous devez me donner un nom de salon !"
+    phrase=createPhrase(args)[:-1]
+    await ctx.author.voice.channel.edit(name=phrase)
+    return createEmbed("Nom du salon éphémère modifié.","Nouveau nom : {0}".format(phrase),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
 
 
-async def voiceEphemLimite(ctx,args,curseur):
-    assert len(args)>=2, "Il manque des éléments pour modifier la limite d'utilisateur dans chaque salon ! Donnez moi dans l'ordre : le numéro du hub voulu et la nouvelle limite."
+async def voiceEphemLock(ctx,curseur,bot):
+    salon=curseur.execute("SELECT * FROM salons WHERE IDOwner={0} AND IDChannel={1}".format(ctx.author.id,ctx.author.voice.channel.id)).fetchone()
+
+    if salon["Lock"]==True:
+        hub=bot.get_channel(salon["IDHub"])
+        await ctx.author.voice.channel.edit(overwrites=hub.overwrites)
+        curseur.execute("UPDATE salons SET Lock=False WHERE IDChannel={0}".format(ctx.author.voice.channel.id))
+        return createEmbed("Salon éphémère déverrouillé","Le salon est revenu à ses autorisations de base, établies à partir de son hub.",0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
+    else:
+        for i in ctx.guild.roles:
+            try:
+                await ctx.author.voice.channel.set_permissions(i, connect=False)
+            except:
+                pass
+        curseur.execute("UPDATE salons SET Lock=True WHERE IDChannel={0}".format(ctx.author.voice.channel.id))
+        return createEmbed("Salon éphémère verrouillé","Seul les administrateurs de votre serveur peuvent accéder à votre salon.",0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
+
+
+async def voiceEphemLimit(ctx,args,curseur):
+    assert len(args)>0, "Vous devez me donner la limite à imposer !"
     try:
-        hub=curseur.execute("SELECT * FROM hub WHERE Nombre={0}".format(args[0])).fetchone()
+        if args[0].lower()!="inf":
+            int(args[0])
     except:
-        raise AssertionError("Le numéro donné n'est pas valide.")
-    assert hub!=None, "Le numéro donné ne correspond à aucun hub actif."
-    assert hub["Limite"]!=args[1], "Le nombre d'utilisations donné est le même que celui actuel."
+        raise AssertionError("Vous devez me donner un nombre valide ou alors 'inf' pour retirer la limite actuelle !")
 
-    curseur.execute("UPDATE hub SET Limite={0} WHERE Nombre={1}".format(args[1],hub["Nombre"]))
-    return createEmbed("Limite modifiée","Numéro du hub : {0}\nNouveau nombre limite d'utilisateurs : {1}".format(args[0],args[1]),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
-    
+    if args[0].lower()=="inf":
+        await ctx.author.voice.channel.edit(user_limit=None)
+    else:
+        await ctx.author.voice.channel.edit(user_limit=int(args[0]))
 
-async def voiceEphemDel(ctx,args,curseur):
-    assert len(args)>=1, "Il manque le numéro du hub pour le supprimer !"
-    try:
-        hub=curseur.execute("SELECT * FROM hub WHERE Nombre={0}".format(args[0])).fetchone()
-    except:
-        raise AssertionError("Le numéro donné n'est pas valide.")
-    assert hub!=None, "Le numéro donné ne correspond à aucun hub actif."
-
-    curseur.execute("DELETE FROM hub WHERE Nombre={0}".format(args[0]))
-
-    for i in curseur.execute("SELECT * FROM hub WHERE Nombre>{0} ORDER BY Nombre ASC".format(args[0])).fetchall():
-        curseur.execute("UPDATE hub SET Nombre={0} WHERE Nombre={1}".format(i["Nombre"]-1,i["Nombre"]))
-
-    return createEmbed("Hub supprimé","Numéro du hub : {0}".format(args[0]),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
-
-
-async def voiceEphemEdit(ctx,args,curseur):
-    assert len(args)>=1, "Il manque le numéro du salon pour le modifier !"
-    try:
-        hub=curseur.execute("SELECT * FROM salons WHERE Nombre={0}".format(args[0])).fetchone()
-    except:
-        raise AssertionError("Le numéro donné n'est pas valide.")
-    assert hub!=None, "Le numéro donné ne correspond à aucun salon pouvant exister."
-
-    nom=createPhrase(args[1:])
-    assert len(nom)<20, "Le nom du salon ne doit pas dépasser les 20 caractères !"
-
-    curseur.execute("UPDATE salons SET Nom='{0}' WHERE Nombre={1}".format(nom,args[0]))
-
-    return createEmbed("Nom de salon modifié","Numéro du salon : {0}\nNouveau nom du salon : {1}".format(args[0],nom),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
+    return createEmbed("Limite modifiée","La nouvelle limite de membres pour votre salon éphémère est : {0}".format(args[0]),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
