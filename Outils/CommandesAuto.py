@@ -5,7 +5,7 @@ from Autre.Events import autoEvents
 from Autre.PhotoNASA import embedNasaPhoto
 from Core.Decorator import OTCommand
 from Core.Fonctions.Embeds import createEmbed
-from Savezvous.exeSavezVous import autoSV
+from Savezvous.exeSavezVous import showSV
 from Stats.Rapports.exeRapports import autoRapport
 from Stats.SQL.ConnectSQL import connectSQL
 from Stats.Tracker.Voice import endNight
@@ -124,7 +124,7 @@ async def boucleAutoCMD(bot,dictGuilds):
                             if strftime("%y")!=annee:
                                 await autoRapport(i,j["Salon"],dictGuilds[i.id],bot,"annee",(annee))
                         elif j["Commande"]=="savezvous":
-                            await autoSV(j["Salon"],i,bot)
+                            await bot.get_channel(j["Salon"]).send(embed=showSV(i,bot))
                         elif j["Commande"]=="nasaphoto":
                             await bot.get_channel(j["Salon"]).send(embed=await embedNasaPhoto())
                         elif j["Commande"]=="events":
