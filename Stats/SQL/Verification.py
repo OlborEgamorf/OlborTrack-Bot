@@ -2,7 +2,7 @@ from Stats.SQL.NewSalons import addChan
 from Stats.SQL.NewMembres import leaveUser
 import os
 
-dictOptions={"Messages":9,"Salons":0,"Freq":2,"Mots":6,"Emotes":8,"Reactions":3,"Voice":5,"Voicechan":5,"Mentions":4,"Mentionne":4,"Divers":10,"Moyennes":1,"Roles":7}
+dictOptions={"Messages":9,"Salons":0,"Freq":2,"Mots":6,"Emotes":8,"Reactions":3,"Voice":5,"Voicechan":5,"Divers":10,"Moyennes":1,"Roles":7}
 
 def verifExecSQL(guild,channel,author):
     if guild.gd or not guild.stats or os.path.exists("SQL/{0}/GETING".format(guild.id)):

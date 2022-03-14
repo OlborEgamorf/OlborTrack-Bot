@@ -24,15 +24,14 @@ def exeClassic(count,id,nom,curseurGuild,guild):
     compteurSQL(curseur,"to"+strftime("%y"),id,(0,id,"TO",strftime("%y"),count,0),count,(strftime("%d"),strftime("%m"),strftime("%y")),("TO",strftime("%y")),False,True,1,curseurGL)
     connexion.commit()
 
-    liste=compteurSQL(curseurGL,"glob",id,(0,id,"TO","GL",count,0),count,(strftime("%d"),strftime("%m"),strftime("%y")),("TO","GL"),False,True,1,curseurGL)
+    compteurSQL(curseurGL,"glob",id,(0,id,"TO","GL",count,0),count,(strftime("%d"),strftime("%m"),strftime("%y")),("TO","GL"),False,True,1,curseurGL)
     if nom in ("Messages","Voice"):
         compteurSQL(curseurGL,"dayRank",int(strftime("%y")+strftime("%m")+strftime("%d")),(0,int(strftime("%y")+strftime("%m")+strftime("%d")),strftime("%d"),strftime("%m"),strftime("%y"),count),count,None,None,None,False,3,curseurGL)
     
     connexionGL.commit()
 
     dailySQL(dateID,(strftime("%d"),strftime("%m"),strftime("%y")),nom,curseurGuild,guild.id,option)
-    if nom not in ("Mentions","Mentionne"):
-        rapportsSQL(guild,"ranks",id,None,count,(0,id,strftime("%d"),strftime("%m"),strftime("%y"),dateID,count,nom),strftime("%d"),strftime("%m"),strftime("%y"),nom)
+    rapportsSQL(guild,"ranks",id,None,count,(0,id,strftime("%d"),strftime("%m"),strftime("%y"),dateID,count,nom),strftime("%d"),strftime("%m"),strftime("%y"),nom)
 
 def exeObj(count,idObj,id,obj,guild,nom):
     option="Stats"
@@ -53,16 +52,15 @@ def exeObj(count,idObj,id,obj,guild,nom):
         curseur.execute("DROP TABLE to{0}{1}".format(strftime("%y"),idObj))
     connexion.commit()
 
-    liste=compteurSQL(curseurGL,"glob"+str(idObj),id,(0,id,idObj,"TO","GL",count),count,(strftime("%d"),strftime("%m"),strftime("%y")),("TO","GL"),obj,False,2,curseurGL)
+    compteurSQL(curseurGL,"glob"+str(idObj),id,(0,id,idObj,"TO","GL",count),count,(strftime("%d"),strftime("%m"),strftime("%y")),("TO","GL"),obj,False,2,curseurGL)
     if nom in ("Emotes","Reactions"):
         if curseurGL.execute("SELECT Count FROM glob WHERE ID={0}".format(idObj)).fetchone()["Count"]<50:
             curseurGL.execute("DROP TABLE glob{0}".format(idObj))
     connexionGL.commit()
 
-    if nom not in ("Mentions","Mentionne"):
-        rapportsSQL(guild,"objs",idObj,id,count,(0,id,idObj,strftime("%d"),strftime("%m"),strftime("%y"),dateID,count,nom),strftime("%d"),strftime("%m"),strftime("%y"),nom)
+    rapportsSQL(guild,"objs",idObj,id,count,(0,id,idObj,strftime("%d"),strftime("%m"),strftime("%y"),dateID,count,nom),strftime("%d"),strftime("%m"),strftime("%y"),nom)
 
-def exeJeuxSQL(id,idObj,state,guild,curseurGuild,count,option,tours):
+def exeJeuxSQL(id,idObj,state,guild,curseurGuild,option,tours):
     dictCount={"W":2,"L":-1}
     dictW={"W":1,"L":0}
     dictL={"W":0,"L":1}

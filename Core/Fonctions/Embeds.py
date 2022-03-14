@@ -5,7 +5,6 @@ import traceback
 import discord
 from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.GetNom import nomsOptions
-from Core.Fonctions.TempsVoice import formatCount
 from Core.OTGuild import OTGuild
 from discord.ext import commands
 
@@ -111,10 +110,13 @@ def createEmbed(title:str,descip:str,color:int,command:str,option:(discord.Membe
         option : l'option pour savoir quoi mettre en author
     Sortie :
         embed : l'embed créé"""
+
     embed=discord.Embed(title=title,description=descip,color=color)
     embed.set_footer(text="OT!"+command)
     if type(option)==discord.Guild:
         auteur(option.id,option.name,option.icon,embed,"guild")
+    elif type(option)==discord.Member:
+        auteur(option.id,option.nick or option.name,option.avatar,embed,"user")
     else:
         auteur(option.id,option.name,option.avatar,embed,"user")
     return embed
@@ -132,6 +134,7 @@ async def sendEmbed(ctx:commands.Context,embed:discord.Embed,react:bool,boutons:
         pagemax : page maximale
     Sortie :
         Si react==True : rien, sinon le message envoyé."""
+
     try:
         if react:
             await ctx.message.edit(embed=embed)
@@ -154,7 +157,7 @@ async def sendEmbed(ctx:commands.Context,embed:discord.Embed,react:bool,boutons:
         await embedAssert(ctx,"Je n'ai pas pu envoyer les réactions de cette commande, qui servent à naviguer dedans. Donnez moi les permissions 'utiliser emojis externes' et 'ajouter des réactions' si vous ne voulez plus voir ce message, et profiter à fond de mes possibilités.",True)
 
 
-def embedHisto(ctx:commands.Context,bot) -> discord.Embed:
+def embedHisto(ctx:commands.Context,bot:commands.Bot) -> discord.Embed:
     """Fonction qui génère l'embed à envoyer dans l'historique des commandes invoquées sur le serveur de tests."""
     if ctx.guild==None:
         return createEmbed("Commande exécutée","Commande : OT!{0}\nServeur : Message Privé\nAuteur : {1} - {2}\n{3}".format(ctx.command.qualified_name,ctx.author.name,ctx.author.id,ctx.args[2:len(ctx.args)]),0x6ec8fa,"OT Log",bot.user)
@@ -162,7 +165,7 @@ def embedHisto(ctx:commands.Context,bot) -> discord.Embed:
         return createEmbed("Commande exécutée","Commande : OT!{0}\nServeur : {1} - {2}\nSalon : {3} - {4}\nAuteur : {5} - {6}\n{7}".format(ctx.command.qualified_name,ctx.guild.name,ctx.guild.id,ctx.channel.name,ctx.channel.id,ctx.author.name,ctx.author.id,ctx.args[2:len(ctx.args)]),0x6ec8fa,"OT Log",bot.user)
 
 
-async def embedAssert(ctx,info:str,reply) -> discord.Embed:
+async def embedAssert(ctx:commands.Context,info:str,reply:bool) -> discord.Embed:
     """Génère l'embed à envoyer si une AssertionError est relevée.
     Entrée :
         info : les informations de l'erreur

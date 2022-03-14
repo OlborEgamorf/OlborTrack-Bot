@@ -1,13 +1,13 @@
 from time import strftime, time
-from Stats.SQL.ConnectSQL import connectSQL
-from Stats.SQL.Execution import exeClassic, exeObj
-from Stats.SQL.Compteur import compteurSQL
-from Stats.SQL.EmoteDetector import emoteDetector
-from Stats.SQL.Moyennes import moySQL
+
 from Core.Fonctions.Convertisseurs import inverse
-from Stats.Tracker.Divers import exeDiversSQL
+from Stats.SQL.ConnectSQL import connectSQL
+from Stats.SQL.EmoteDetector import emoteDetector
+from Stats.SQL.Execution import exeClassic, exeObj
+from Stats.SQL.Moyennes import moySQL
 from Stats.SQL.Verification import verifExecSQL
-from Stats.Tracker.Mentions import exeMentionsSQL
+from Stats.Tracker.Divers import exeDiversSQL
+
 
 async def exeMessageClient(option,message,client,guild):
 

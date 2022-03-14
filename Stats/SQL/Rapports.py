@@ -2,8 +2,6 @@ from Stats.SQL.ConnectSQL import connectSQL
 
 def rapportsSQL(guild,table,id,idcomp,count,insert,jour,mois,annee,option):
     connexion,base=connectSQL(guild.id,"Rapports","Stats","GL","")
-    if option in ("Mentions","Mentionne"):
-        return
     typeRapport={"ranks":"(Rank INT, ID BIGINT, Jour TEXT, Mois TEXT, Annee TEXT, DateID INT, Count INT, Type TEXT, PRIMARY KEY(Jour,Mois,Annee,ID,Type))","objs":"(Rank INT, ID BIGINT, IDComp BIGINT, Jour TEXT, Mois TEXT, Annee TEXT, DateID INT, Count INT, Type TEXT, PRIMARY KEY(Jour,Mois,Annee,ID,Type,IDComp))"}
     base.execute("CREATE TABLE IF NOT EXISTS {0} {1}".format(table,typeRapport[table]))
 
