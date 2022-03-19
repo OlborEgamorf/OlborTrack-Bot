@@ -1,7 +1,5 @@
-import asyncio
-
 import discord
-from Core.Fonctions.AuteurIcon import auteur
+from Core.Fonctions.Embeds import createEmbed
 from Core.Fonctions.WebRequest import webRequest
 from Core.OS.Keys3 import NASAKey
 from Core.Decorator import OTCommand
@@ -15,11 +13,9 @@ async def embedNasaPhoto() -> discord.Embed:
     Renvoie l'embed en question."""
     table=await webRequest("https://api.nasa.gov/planetary/apod?api_key="+NASAKey+"&hd=True")
     assert table!=False, "Une erreur est survenue lors du chargement de l'image... Veuillez réessayer plus tard..."
-    embedP=discord.Embed(title="Photo du jour : "+table["title"],description=table["explanation"],color=0xa83e32)
-    embedP=auteur("https://apod.nasa.gov/apod/astropix.html",0,0,embedP,"nasa")
-    embedP.set_image(url=table["url"])
-    embedP.set_footer(text="OT!nasaphoto")
-    return embedP
+    embed=createEmbed("Photo du jour : "+table["title"],table["explanation"],0xa83e32,"nasaphoto",None)
+    embed.set_author(name="NASA",icon_url="https://media.discordapp.net/attachments/726034739550486618/769603075282305044/nasa-vector-logo-small.png",url=id)
+    return embed
 
 @OTCommand
 async def exeNASA(ctx,bot):

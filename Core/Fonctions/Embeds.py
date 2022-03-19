@@ -117,6 +117,8 @@ def createEmbed(title:str,descip:str,color:int,command:str,option:(discord.Membe
         auteur(option.id,option.name,option.icon,embed,"guild")
     elif type(option)==discord.Member:
         auteur(option.id,option.nick or option.name,option.avatar,embed,"user")
+    elif option is None:
+        pass
     else:
         auteur(option.id,option.name,option.avatar,embed,"user")
     return embed

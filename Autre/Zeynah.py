@@ -1,9 +1,8 @@
 from random import choice
 
-import discord
 import rule34
 from Core.Decorator import OTCommand
-from Core.Fonctions.AuteurIcon import auteur
+from Core.Fonctions.Embeds import createEmbed
 
 
 @OTCommand
@@ -17,8 +16,6 @@ async def exeNeko(ctx,bot):
     phrases=["T'as pas honte ?","Gros porc","Tu me dégoutes","Mais sérieux ?","Tu voudrais pas aller voir dehors ?","Tu te branles vraiment sur ça ?","Tes parents le savent ?","Je vais te retirer des stats si tu continues...","C'est dégueulasse","..."]
     rule = rule34.Rule34(bot.loop)
     liste=await rule.getImages("neko",singlePage=True,randomPID=True)
-    embed=discord.Embed(title=choice(phrases),color=ctx.author.color.value)
+    embed=createEmbed(choice(phrases),"",ctx.author.color.value,ctx.invoked_with.lower(),ctx.author)
     embed.set_image(url=choice(liste).file_url)
-    embed.set_footer(text="OT!zeynah")
-    embed=auteur(ctx.author.id,ctx.author,ctx.author.avatar,embed,"user")
     await ctx.send(embed=embed)

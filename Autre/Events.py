@@ -1,10 +1,9 @@
 from random import randint
 from time import strftime
 
-import discord
-from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.WebRequest import webRequest
 from Core.Decorator import OTCommand
+from Core.Fonctions.Embeds import createEmbed
 from Stats.SQL.ConnectSQL import connectSQL
 
 tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai","06":"Juin","07":"Juillet","08":"Aout","09":"Septembre","10":"Octobre","11":"Novembre","12":"Décembre","TO":"Année","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
@@ -22,10 +21,9 @@ async def embedWikiEvents(option,jour,mois):
         descip+="**"+table[option][listeDates[i]]["year"]+": **"+table[option][listeDates[i]]["description"]+"\n"
         for k in range(len(table[option][listeDates[i]]["wikipedia"])):
             hyper+="["+table[option][listeDates[i]]["wikipedia"][k]["title"]+"]("+table[option][listeDates[i]]["wikipedia"][k]["wikipedia"]+"), "
-    embedW=discord.Embed(title=jour+" "+tableauMois[mois],description=descip+"\nRéférences : "+hyper[0:len(hyper)-2],color=0xfcfcfc)
-    embedW.set_footer(text="OT!"+option)
-    embedW=auteur(table["wikipedia"],0,0,embedW,"wp")
-    return embedW
+    embed=createEmbed(jour+" "+tableauMois[mois],descip+"\nRéférences : "+hyper[0:len(hyper)-2],0xfcfcfc,option,None)
+    embed.set_author(name="Wikipédia",icon_url="https://cdn.discordapp.com/attachments/726034739550486618/757641659285635142/Wikipedia-logo-v2.png",url=table["wikipedia"])
+    return embed
 
 async def autoEvents(bot,channel,guild):
     connexionCMD,curseurCMD=connectSQL(guild,"Commandes","Guild",None,None)

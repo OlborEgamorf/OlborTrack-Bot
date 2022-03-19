@@ -5,9 +5,8 @@ import sys
 from time import time
 
 import discord
-from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.DichoTri import dichotomieID, dichotomiePlage
-from Core.Fonctions.Embeds import embedAssertClassic
+from Core.Fonctions.Embeds import createEmbed, embedAssertClassic
 from Core.Fonctions.RankingClassic import rankingClassic
 from Core.Fonctions.TempsVoice import tempsVoice
 from Stats.GetData.Agregator import agregatorEvol
@@ -15,7 +14,7 @@ from Stats.GetData.AgregatorMoyennes import agregatorMoy
 from Stats.GetData.Compteurs import compteurGD28
 from Stats.GetData.Createurs import primeAll
 from Stats.GetData.Ecriture import ecritureSQL
-from Stats.GetData.EmbedGetData import embedCreate
+from Stats.GetData.EmbedGetData import embedStatut
 from Stats.GetData.Outils import hideGD, sommeTable
 from Stats.SQL.ConnectSQL import connectSQL
 from Stats.SQL.EmoteDetector import emoteDetector
@@ -51,7 +50,7 @@ async def newGetData(guild,channel,bot,guildOT):
         listeMois,listeWords,listeMoy=[],[],[]
         listeChannels,listeEmotes,listeReact,listeFreq,listeDivers,listeMentions,listeMentionne={},{},{},{},{j:[] for j in range(1,11)},{},{}
         tableJours=[]
-        await messEdit.edit(embed=embedCreate(None,"Suppression",temps,temps,guild))
+        await messEdit.edit(embed=embedStatut(None,"Suppression",temps,temps,guild))
         for guildChan in guild.text_channels:
             tempsI=time()
             try:
@@ -168,7 +167,7 @@ async def newGetData(guild,channel,bot,guildOT):
                             else:
                                 listeMoy.append({"ID":message.author.id,"Plages":[date]})
                             
-                await messEdit.edit(embed=embedCreate(messEdit.embeds[0],guildChan.name,tempsI,temps,guild))         
+                await messEdit.edit(embed=embedStatut(messEdit.embeds[0],guildChan.name,tempsI,temps,guild))         
             except discord.errors.Forbidden:
                 pass    
             except asyncio.TimeoutError:
@@ -204,12 +203,12 @@ async def newGetData(guild,channel,bot,guildOT):
 
         for i in dictConnexion:
             dictConnexion[i].commit()
-        await messEdit.edit(embed=embedCreate(messEdit.embeds[0],"Messages",tempsI,temps,guild))
+        await messEdit.edit(embed=embedStatut(messEdit.embeds[0],"Messages",tempsI,temps,guild))
         
         if guildOT.mstats[1]["Statut"]==True:
             tempsI=time()
             agregatorMoy(listeMoy,etat[2],etat[3],guild)
-            await messEdit.edit(embed=embedCreate(messEdit.embeds[0],"Moyennes",tempsI,temps,guild))
+            await messEdit.edit(embed=embedStatut(messEdit.embeds[0],"Moyennes",tempsI,temps,guild))
         
         hideGD(guild,etat[4].table,guildCur)
         del etat
@@ -220,7 +219,7 @@ async def newGetData(guild,channel,bot,guildOT):
             for j in dictConnexion:
                 dictConnexion[j].commit()
             del listeWords
-            await messEdit.edit(embed=embedCreate(messEdit.embeds[0],"Mots",tempsI,temps,guild))
+            await messEdit.edit(embed=embedStatut(messEdit.embeds[0],"Mots",tempsI,temps,guild))
         
         i=0
         while len(allList)>0:
@@ -231,7 +230,7 @@ async def newGetData(guild,channel,bot,guildOT):
                     agregatorEvol(allList[i][j],guild,True,int(j),noms[i],dictConnexion,dictCurseur,curRap) 
                 for j in dictConnexion:
                     dictConnexion[j].commit()
-                await messEdit.edit(embed=embedCreate(messEdit.embeds[0],noms[i],tempsI,temps,guild))
+                await messEdit.edit(embed=embedStatut(messEdit.embeds[0],noms[i],tempsI,temps,guild))
                 del allList[i], allGlob[i], noms[i], modules[i]
         
         coRap.commit()
@@ -240,14 +239,11 @@ async def newGetData(guild,channel,bot,guildOT):
         guildOT.getHBM()
 
         await bot.get_channel(717727027465289768).send("Procédure get data **TERMINEE** : "+guild.name+" | "+str(guild.member_count)+" | "+str(guild.id)+" | "+tempsVoice(int(time()-temps)))
-        embedT=discord.Embed(title="OlborTrack GetData - Succès",description="Terminé ! Sans accroc. Temps écoulé : "+tempsVoice(int(time()-temps)),color=0x220cc9)
-        embedT=auteur(guild.id,guild.name,guild.icon,embedT,"guild")
-        await messEdit.channel.send(embed=embedT)
+        await messEdit.channel.send(embed=createEmbed("OlborTrack GetData - Succès","Terminé ! Sans accroc. Temps écoulé : "+tempsVoice(int(time()-temps)),0x220cc9,"getdata",guild))
     except:
-        embedT=discord.Embed(title="OlborTrack GetData - Erreur",description="Une erreur innatendue est arrivée. Contactez le support. "+tempsVoice(time()-tempsI)+" "+str(sys.exc_info()[0]),color=0x220cc9)
-        embedT=auteur(guild.id,guild.name,guild.icon,embedT,"guild")
-        await messEdit.channel.send(embed=embedT)
         error=str(sys.exc_info()[0])+"\n"+str(sys.exc_info()[1])+"\n"+str(sys.exc_info()[2].tb_frame)+"\n"+str(sys.exc_info()[2].tb_lineno)
         await bot.get_channel(717727027465289768).send("Procédure get data **ECHEC** : "+guild.name+" | "+str(guild.member_count)+" | "+str(guild.id)+" | "+tempsVoice(time()-tempsI)+"\n"+error)
+        await messEdit.channel.send(embed=createEmbed("OlborTrack GetData - Erreur","Une erreur innatendue est arrivée. Vos statistiques ont été captées que partiellement.\nUn rapport a été envoyé au support.\n"+tempsVoice(time()-tempsI)+" "+str(sys.exc_info()[0]),0x220cc9,"getdata",guild))
+    
     guildOT.gd=False
     shutil.rmtree("SQL/{0}/GETING".format(guild.id)) 

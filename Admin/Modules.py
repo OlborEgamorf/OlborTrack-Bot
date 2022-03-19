@@ -1,6 +1,5 @@
 import discord
 from Core.Decorator import OTCommand
-from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.Embeds import createEmbed
 from Core.OT import OlborTrack
 from Core.OTGuild import OTGuildCMD
@@ -63,7 +62,4 @@ def commandePerms(ctx:commands.Context,option:str,guildOT:OTGuildCMD) -> discord
     else:
         for i in guildOT.mcmd:
             descip+="{0} : {1}\n".format(i["Module"],dictStatut[i["Statut"]])
-    embed=discord.Embed(title="Modules",description=descip,color=0x220cc9)
-    embed.set_footer(text="OT!{0}".format(option))
-    embed=auteur(ctx.guild.id,ctx.guild.name,ctx.guild.icon,embed,"guild")
-    return embed
+    return createEmbed("Modules",descip,0x220cc9,option,ctx.guild)

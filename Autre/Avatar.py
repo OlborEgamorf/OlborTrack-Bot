@@ -1,6 +1,5 @@
-import discord
 from Core.Decorator import OTCommand
-from Core.Fonctions.AuteurIcon import auteur
+from Core.Fonctions.Embeds import createEmbed
 
 
 @OTCommand
@@ -9,12 +8,9 @@ async def exePP(ctx,bot):
     
     Si personne n'est mentionné, renvoie l'image de profil de l'auteur de la commande."""
     if len(ctx.message.mentions)==0:
-        embedF=discord.Embed(title="Photo de profil :",color=ctx.author.color.value)
-        embedF.set_image(url=ctx.author.avatar_url)
-        embedF=auteur(ctx.author.id,ctx.author.name,ctx.author.avatar,embedF,"user") 
+        embed=createEmbed("Photo de profil","",ctx.author.color.value,ctx.invoked_with.lower(),ctx.author)
+        embed.set_image(url=ctx.author.avatar_url)
     else:
-        embedF=discord.Embed(title="Photo de profil :",color=ctx.message.mentions[0].color.value)
-        embedF.set_image(url=ctx.message.mentions[0].avatar_url)
-        embedF=auteur(ctx.message.mentions[0].id,ctx.message.mentions[0].name,ctx.message.mentions[0].avatar,embedF,"user")
-    embedF.set_footer(text="OT!avatar")
-    await ctx.send(embed=embedF)
+        embed=createEmbed("Photo de profil","",ctx.message.mentions[0].color.value,ctx.invoked_with.lower(),ctx.message.mentions[0])
+        embed.set_image(url=ctx.message.mentions[0].avatar_url)
+    await ctx.send(embed=embed)
