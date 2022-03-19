@@ -179,7 +179,7 @@ async def fondsUser(ctx,bot,args):
 @OTCommand
 async def texteFond(ctx,bot,args):
     assert len(args)!=0, "Vous devez me donner la phrase que vous voulez équiper !"
-    clean=createPhrase(args)[:-1]
+    clean=createPhrase(args)
     assert len(clean)<35, "Votre phrase ne doit pas dépasser les 35 caractères !"
 
     connexionUser,curseurUser=connectSQL("OT",ctx.author.id,"Titres",None,None)

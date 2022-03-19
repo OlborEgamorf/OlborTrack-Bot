@@ -89,7 +89,7 @@ def addSV(ctx:commands.Context,args:list,curseur:sqlite3.Cursor) -> discord.Embe
         image=ctx.message.attachments[0].url
     else:
         image=None
-    descip=createPhrase(args[0:len(args)])
+    descip=createPhrase(args)
     assert len(descip)<2000, "Votre phrase est trop longue."
     count=curseur.execute("SELECT COUNT() as Nb FROM savezvous").fetchone()["Nb"]
     curseur.execute("INSERT INTO savezvous VALUES('{0}',{1},'{2}',{3},'None')".format(descip,ctx.author.id,image,count+1))
@@ -123,7 +123,7 @@ def editSV(ctx:commands.Context,args:list,curseur:sqlite3.Cursor) -> discord.Emb
     except:
         raise AssertionError("Le numéro donné n'est pas valide.")
     assert ctx.author.id==phrase["ID"], "Cette phrase ne vous appartient pas."
-    descip=createPhrase(args[1:len(args)])
+    descip=createPhrase(args[1:])
     assert len(descip)<2000, "Votre phrase est trop longue."
     curseur.execute("UPDATE savezvous SET Texte='{0}' WHERE Count={1}".format(descip,args[0]))
     return createEmbed("Phrase modifiée","`{0}` : {1}".format(args[0],descip),0x00ffd0,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
@@ -138,7 +138,7 @@ def sourceSV(ctx:commands.Context,args:list,curseur:sqlite3.Cursor) -> discord.E
     except:
         raise AssertionError("Le numéro donné n'est pas valide.")
     assert ctx.author.id==phrase["ID"], "Cette phrase ne vous appartient pas."
-    descip=createPhrase(args[1:len(args)])
+    descip=createPhrase(args[1:])
     assert len(descip)<200, "Votre source est trop longue."
     curseur.execute("UPDATE savezvous SET Source='{0}' WHERE Count={1}".format(descip,args[0]))
     return createEmbed("Phrase sourcée","`{0}` : {1}\n\nSource : {2}".format(args[0],phrase["Texte"],descip),0x00ffd0,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
@@ -152,7 +152,7 @@ async def commentSV(ctx:commands.Context,args:list,bot:commands.Bot,curseur:sqli
         assert phrase!=None, "Le numéro donné ne correspond à aucune phrase."
     except:
         raise AssertionError("Le numéro donné n'est pas valide.")
-    descip=createPhrase(args[1:len(args)])
+    descip=createPhrase(args[1:])
     assert len(descip)<300, "Votre commentaire est trop long."
     if ctx.author.id==phrase["ID"]:
         curseur.execute("INSERT INTO svcomment VALUES ({0},{1},'{2}','{3}')".format(phrase["Count"],ctx.author.id,descip,strftime("%d/%m/%Y")))

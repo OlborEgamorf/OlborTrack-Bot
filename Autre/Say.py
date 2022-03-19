@@ -1,8 +1,6 @@
 import asyncio
 
 import discord
-from Core.Fonctions.Phrase import createPhrase
-
 
 async def exeSay(ctx,bot,args):
     """Cette fonction fait réécrire au bot un message donné par un utilisateur.
@@ -17,7 +15,7 @@ async def exeSay(ctx,bot,args):
             await ctx.message.delete()
         except:
             pass
-        quote=createPhrase(args)
+        quote=" ".join(args)
         await ctx.trigger_typing()
         await asyncio.sleep(0.42*len(args))
     await ctx.send(content=quote,allowed_mentions=discord.AllowedMentions(everyone=False,users=False,roles=False,replied_user=False))

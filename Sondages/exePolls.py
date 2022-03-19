@@ -62,13 +62,11 @@ async def exePolltime(ctx,bot,args,option):
     assert len(args)!=2, "Il faut une question, maximum 10 propositions et du temps !"
     assert len(args)!=3, "Il doit manquer soit le temps soit des propositions..."
     assert len(args)<13, "Pas plus de 10 propositions !"
-    descip=""
-    for i in range(1,len(args)-1):
-        descip=descip+emotes[i-1]+" "+args[i]+"\n"
+    descip=" ".join(args[1:-1])
     tempo=args[-1]
     somme=gestionTemps(tempo)
     format=footerTime(somme)
-    embedPoll=createEmbed(args[0],"<@{0}> a lancé un sondage !".format(ctx.author.id),0xfc03d7,ctx.invoked_with.lower(),ctx.guild)
+    embedPoll=createEmbed(args[0],"<@{0}> a lancé un sondage !".format(ctx.author.id),0xfc03d7,option,ctx.guild)
     embedPoll.add_field(name="Propositions",value=descip,inline=False)
     embedPoll.add_field(name="Fin des votes",value=format,inline=False)
     if ctx.message.attachments!=[]:
@@ -84,6 +82,7 @@ async def exePolltime(ctx,bot,args,option):
     dictPolls[message.id]=PollTime(message,ctx.guild,somme,args[1:-1],args[0],option)
     await dictPolls[message.id].trigger(bot)
     del dictPolls[message.id]
+    return result
 
 @OTCommand
 async def exePetition(ctx,bot,args):
@@ -96,9 +95,7 @@ async def exePetition(ctx,bot,args):
         assert votes>0, "Le nombre de signatures ne peut pas être négatif !"
     except:
         raise AssertionError("Le nombre de signatures nécessaire doit être un entier !")
-    descip=""
-    for i in range(len(args)-2):
-        descip+=args[i]+" "
+    descip=" ".join(args[:-2])
     tempo=args[-1]
     somme=gestionTemps(tempo)
     format=footerTime(somme)
@@ -132,8 +129,7 @@ async def exeGiveaway(ctx,bot,args):
             nb=2
         except:
             pass
-    for i in range(0,len(args)-nb):
-        descip=descip+args[i]+" "
+    descip=" ".join(args[:-nb])
     tempo=args[len(args)-nb]
     somme=gestionTemps(tempo)
     format=footerTime(somme)
@@ -147,7 +143,7 @@ async def exeGiveaway(ctx,bot,args):
         embedPoll.set_image(url=ctx.message.attachments[0].url)
     await ctx.message.delete()
     message=await ctx.send(embed=embedPoll)
-    dictPolls[message.id]=Giveaway(message.id,ctx.guild.id,somme,createPhrase([descip])[0:-1],gagnants,message.channel.id)
+    dictPolls[message.id]=Giveaway(message.id,ctx.guild.id,somme,descip,gagnants,message.channel.id)
     await message.add_reaction("<a:MusicMakeYouLoseControl:711222160982540380>")
     await dictPolls[message.id].trigger(bot)
     del dictPolls[message.id]
@@ -183,22 +179,22 @@ def sauvegardePoll(bot):
     for i in dictPolls:
         if dictPolls[i].active:
             if type(dictPolls[i])==PollTime:
-                curseur.execute("INSERT INTO Polls VALUES({0},{1},{2},'{3}',{4},{5},'{6}')".format(dictPolls[i].id,dictPolls[i].guild.id,dictPolls[i].temps,createPhrase([dictPolls[i].question]),dictPolls[i].start,dictPolls[i].chan.id,dictPolls[i].option))
+                curseur.execute("INSERT INTO Polls VALUES({0},{1},{2},'{3}',{4},{5},'{6}')".format(dictPolls[i].id,dictPolls[i].guild.id,dictPolls[i].temps,createPhrase(dictPolls[i].question),dictPolls[i].start,dictPolls[i].chan.id,dictPolls[i].option))
                 curseur.execute("CREATE TABLE p{0} (Prop TEXT, Count INT)".format(dictPolls[i].id))
                 for j in dictPolls[i].propositions:
-                    curseur.execute("INSERT INTO p{0} VALUES ('{1}',{2})".format(dictPolls[i].id,createPhrase([dictPolls[i].propositions[j].prop]),dictPolls[i].propositions[j].count))
+                    curseur.execute("INSERT INTO p{0} VALUES ('{1}',{2})".format(dictPolls[i].id,createPhrase(dictPolls[i].propositions[j].prop),dictPolls[i].propositions[j].count))
                 if dictPolls[i].option!="polltime":
                     curseur.execute("CREATE TABLE v{0} (ID INT, Prop INT)".format(dictPolls[i].id))
                     for j in dictPolls[i].votants:
                         curseur.execute("INSERT INTO v{0} VALUES ({1},{2})".format(dictPolls[i].id,j,dictPolls[i].votants[j]))
             elif type(dictPolls[i])==Reminder:
-                curseur.execute("INSERT INTO Reminders VALUES({0},{1},{2},'{3}',{4})".format(dictPolls[i].id,dictPolls[i].user,dictPolls[i].temps,createPhrase([dictPolls[i].remind]),dictPolls[i].start))
+                curseur.execute("INSERT INTO Reminders VALUES({0},{1},{2},'{3}',{4})".format(dictPolls[i].id,dictPolls[i].user,dictPolls[i].temps,createPhrase(dictPolls[i].remind),dictPolls[i].start))
             elif type(dictPolls[i])==ReminderGuild:
-                curseur.execute("INSERT INTO RemindersGuild VALUES({0},{1},{2},'{3}',{4},{5})".format(dictPolls[i].id,dictPolls[i].user,dictPolls[i].temps,createPhrase([dictPolls[i].remind]),dictPolls[i].start,dictPolls[i].chan))
+                curseur.execute("INSERT INTO RemindersGuild VALUES({0},{1},{2},'{3}',{4},{5})".format(dictPolls[i].id,dictPolls[i].user,dictPolls[i].temps,createPhrase(dictPolls[i].remind),dictPolls[i].start,dictPolls[i].chan))
             elif type(dictPolls[i])==Giveaway:
-                curseur.execute("INSERT INTO Giveaways VALUES({0},{1},{2},'{3}',{4},{5},{6})".format(dictPolls[i].id,dictPolls[i].guild,dictPolls[i].temps,createPhrase([dictPolls[i].lot]),dictPolls[i].gagnants,dictPolls[i].start,dictPolls[i].chan))
+                curseur.execute("INSERT INTO Giveaways VALUES({0},{1},{2},'{3}',{4},{5},{6})".format(dictPolls[i].id,dictPolls[i].guild,dictPolls[i].temps,createPhrase(dictPolls[i].lot),dictPolls[i].gagnants,dictPolls[i].start,dictPolls[i].chan))
             elif type(dictPolls[i])==Petition:
-                curseur.execute("INSERT INTO Petitions VALUES({0},{1},{2},'{3}',{4},{5},{6})".format(dictPolls[i].id,dictPolls[i].guild.id,dictPolls[i].temps,createPhrase([dictPolls[i].question]),dictPolls[i].start,dictPolls[i].chan.id,dictPolls[i].votes))
+                curseur.execute("INSERT INTO Petitions VALUES({0},{1},{2},'{3}',{4},{5},{6})".format(dictPolls[i].id,dictPolls[i].guild.id,dictPolls[i].temps,createPhrase(dictPolls[i].question),dictPolls[i].start,dictPolls[i].chan.id,dictPolls[i].votes))
                 curseur.execute("CREATE TABLE v{0} (ID INT)".format(dictPolls[i].id))
                 for j in dictPolls[i].votants:
                     curseur.execute("INSERT INTO v{0} VALUES ({1})".format(dictPolls[i].id,j))

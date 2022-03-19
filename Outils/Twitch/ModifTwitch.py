@@ -12,8 +12,8 @@ async def addTwitch(ctx,bot,args,curseur):
     
     try:
         num=curseur.execute("SELECT COUNT() as Nombre FROM twitch").fetchone()["Nombre"]+1
-        stream=createPhrase([args[0]]).lower()[0:-1]
-        descip=createPhrase(args[2:len(args)])
+        stream=createPhrase(args[0]).lower()
+        descip=createPhrase(args[2:])
         curseur.execute("INSERT INTO twitch VALUES({0},{1},'{2}','{3}',False)".format(num,ctx.message.channel_mentions[0].id,stream,descip))
     except:
         raise AssertionError("Ce couple de streamer et de salon existe déjà.")
@@ -64,7 +64,7 @@ async def descipTwitch(ctx,bot,args,curseur,guild):
         raise AssertionError("Le numéro donné n'est pas valide.")
     assert alert!=None, "Le numéro donné ne correspond à aucun tableau actif."
 
-    descip=createPhrase(args[1:len(args)])
+    descip=createPhrase(args[1:])
     curseur.execute("UPDATE twitch SET Descip='{0}' WHERE Nombre={1}".format(descip,alert["Nombre"]))
 
     return createEmbed("Alerte Twitch modifiée","Numéro de l'alerte : {0}\nNouvelle description : {1}".format(args[0],descip),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)

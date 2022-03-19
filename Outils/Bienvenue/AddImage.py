@@ -53,7 +53,7 @@ async def addImage(ctx,bot,option):
                 
                 mess=await bot.wait_for("message",check=checkAuthor,timeout=60)
 
-                text=createPhrase(mess.content.split(" "))
+                text=createPhrase(mess.content)
             else:
                 text=None
 

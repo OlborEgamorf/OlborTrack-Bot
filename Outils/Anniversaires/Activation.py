@@ -36,7 +36,7 @@ async def toggleAnniversaire(ctx,bot,chan,guild):
             await message.edit(embed=embed)
 
             mess=await bot.wait_for("message",check=checkAuthor,timeout=60)
-            clean=createPhrase(mess.content.split(" "))
+            clean=createPhrase(mess.content)
             exemple=formatageAnniv(clean,bot.user)
 
             embed=createEmbed("Activation anniversaires","Le salon dans lequel les messages seront envoyés sera <#{0}>.\nLe message sera : {1}\n Est-ce bon ? Appuyez sur <:otVALIDER:772766033996021761> pour valider.".format(chan,exemple),0x11f738,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)

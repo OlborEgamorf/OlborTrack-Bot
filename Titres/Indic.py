@@ -25,7 +25,7 @@ async def setServer(ctx,bot):
         message=await ctx.reply(embed=embed)
 
         mess=await bot.wait_for('message', check=checkCustom, timeout=60)
-        custom=createPhrase([mess.content])[:-1]
+        custom=createPhrase(mess.content)
         newCustom=""
         for i in custom:
             if i!="\\":

@@ -1,9 +1,9 @@
+import discord
 from Core.Fonctions.Embeds import createEmbed
 from Core.Fonctions.Phrase import createPhrase
 from Core.Fonctions.WebRequest import webRequest
-from Outils.YouTube.EmbedsYT import embedYT
-from Stats.SQL.ConnectSQL import connectSQL
 from Core.OS.Keys3 import ytKey
+from Stats.SQL.ConnectSQL import connectSQL
 
 
 async def addYT(ctx,bot,args):
@@ -11,13 +11,13 @@ async def addYT(ctx,bot,args):
         if type(reaction.emoji)==str:
             return False
         return reaction.emoji.id==772766033996021761 and reaction.message.id==message.id and user.id==ctx.author.id
-    def checkMentions(mess):
-        return mess.author.id==ctx.author.id and mess.channel.id==message.channel.id and mess.channel_mentions!=[]
+    def checkMention(mess):
+        return mess.author.id==ctx.author.id and mess.channel.id==ctx.channel.id and mess.channel_mentions!=[] and type(mess.channel_mentions[0])==discord.TextChannel
     def checkAuthor(mess):
         return mess.author.id==ctx.author.id and mess.channel.id==message.channel.id
 
     assert len(args)>0, "Vous devez me donner une chaîne YouTube !"
-    chaine=createPhrase(args)[:-1]
+    chaine=createPhrase(args)
     infos=await webRequest("https://www.googleapis.com/youtube/v3/search?key={0}&q={1}&part=snippet,id&maxResults=1&type=channel&order=relevance".format(ytKey,chaine))
     assert infos!=False, "Il y a eu une erreur lors de la recherche de la chaîne YouTube."
 
@@ -40,7 +40,7 @@ async def addYT(ctx,bot,args):
     embed.set_thumbnail(url=channelPicture)
     await message.edit(embed=embed)
     
-    mess=await bot.wait_for('message', check=checkMentions, timeout=60)
+    mess=await bot.wait_for('message', check=checkMention, timeout=60)
     salonID=mess.channel_mentions[0].id
 
     embed=createEmbed("{0} - Alertes YouTube étape 3/3".format(channelName),"**Chaîne YouTube :** {0}\n**Salon :** <#{1}> \n**Description :** -\n\nVeuillez écrire la description que vous voulez mettre dans l'alerte.".format(channelName,salonID),0xFF0000,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
@@ -48,7 +48,7 @@ async def addYT(ctx,bot,args):
     await message.edit(embed=embed)
     
     mess=await bot.wait_for('message', check=checkAuthor, timeout=60)
-    descip=createPhrase(mess.content.split(" "))
+    descip=createPhrase(mess.content)
 
     data=await webRequest("https://www.googleapis.com/youtube/v3/search?key={0}&channelId={1}&part=snippet,id&order=date&maxResults=7&type=video".format(ytKey,channelID))
     if data!=False or len(data["items"])!=0:
@@ -67,6 +67,7 @@ async def addYT(ctx,bot,args):
 
 async def chanYT(ctx,bot,args,curseur):
     assert ctx.message.channel_mentions!=[], "Vous devez me donner un salon valide pour modifier une alerte YouTube !" 
+    assert type(ctx.message.channel_mentions[0])==discord.TextChannel, "Vous ne pouvez pas me donner de salon vocal !"
     assert ctx.message.channel_mentions[0].permissions_for(ctx.guild.get_member(bot.user.id)).view_channel==True, "Le salon mentionné n'a pas les permissions nécessaires pour que je puisse le voir."
     assert ctx.message.channel_mentions[0].permissions_for(ctx.guild.get_member(bot.user.id)).send_messages==True, "Le salon mentionné n'a pas les permissions nécessaires pour que je puisse envoyer des messages."
     assert len(args)>=2, "Il manque des éléments pour modifier le salon d'une alerte ! Donnez moi dans l'ordre : le numéro de l'alerte voulue et le nouveau salon mentionné."
@@ -105,7 +106,7 @@ async def descipYT(ctx,bot,args,curseur,guild):
         raise AssertionError("Le numéro donné n'est pas valide.")
     assert alert!=None, "Le numéro donné ne correspond à aucun tableau actif."
 
-    descip=createPhrase(args[1:len(args)])
+    descip=createPhrase(args[1:])
     curseur.execute("UPDATE youtube SET Descip='{0}' WHERE Nombre={1}".format(descip,alert["Nombre"]))
 
     return createEmbed("Alerte YouTube modifiée","Numéro de l'alerte : {0}\nNouvelle description : {1}".format(args[0],descip),0xFF0000,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)

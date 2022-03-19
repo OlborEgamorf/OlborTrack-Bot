@@ -3,7 +3,6 @@ import asyncio
 import discord
 from Core.Decorator import OTCommand
 from Core.Fonctions.Embeds import createEmbed
-from Core.Fonctions.Phrase import createPhrase
 
 from Sondages.Classes import PollTime
 from Sondages.exePolls import dictPolls
@@ -31,7 +30,7 @@ async def pollManager(ctx,bot):
         return mess.author.id==ctx.author.id and mess.channel.id==ctx.channel.id and len(mess.channel_mentions)!=0 and type(mess.channel_mentions[0])==discord.TextChannel
     
     messWait=await bot.wait_for("message",check=checkMess,timeout=45)
-    question=createPhrase(messWait.content.split(" "))
+    question=messWait.content
 
     apercu=createEmbed(question,"<@{0}> a lancé un sondage !".format(ctx.author.id),0xfc03d7,"poll",ctx.guild)
     apercu.add_field(name="Propositions",value="Pour le moment vide...",inline=False)
@@ -50,7 +49,7 @@ async def pollManager(ctx,bot):
                 reponse="stop"
             else:
                 raise asyncio.exceptions.TimeoutError()
-        reponse=createPhrase(messWait.content.split(" "))[:-1]
+        reponse=messWait.content
         split=reponse.split(" ")
         if split[0].lower()=="del" and len(liste)!=0:
             if len(split)>1:

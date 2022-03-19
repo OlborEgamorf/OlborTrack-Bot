@@ -2,7 +2,6 @@ from math import inf
 
 import discord
 from Core.Fonctions.AligneText import aligne
-from Core.Fonctions.Phrase import createPhrase
 from Core.OTGuild import OTGuild
 from discord.ext import commands
 from Stats.SQL.ConnectSQL import connectSQL
@@ -127,7 +126,7 @@ def getAuthor(option:str,ctx:commands.Context,nb:int) -> (str or None):
             author=dictTrivia[ctx.args[nb]]
         elif option=="Voicechan":
             dictChanNb={}
-            chan=createPhrase(ctx.args[nb:len(ctx.args)]).lower()
+            chan=" ".join(ctx.args[nb:]).lower()
             assert chan!=""
             for i in ctx.guild.voice_channels:
                 dictChanNb[i.id]=aligne(chan,i.name.lower())

@@ -71,7 +71,7 @@ async def voiceHubEdit(ctx,args,curseur,bot):
                 await message.edit(embed=embed)
 
                 messWait=await bot.wait_for('message', check=checkAuthor, timeout=60)
-                clean=createPhrase(messWait.content.split(" "))
+                clean=createPhrase(messWait.content)
                 exemple=formatageVoiceEphem(clean,bot.user,1)
 
                 curseur.execute("UPDATE hub SET Pattern='{0}' WHERE Nombre={1}".format(clean,hub["Nombre"]))

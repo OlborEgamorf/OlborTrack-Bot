@@ -6,7 +6,7 @@ async def addCCMD(ctx,args,nom,command,curseur):
     for i in nom:
         assert (ord(i)>=65 and ord(i)<=122) or (ord(i)>=48 and ord(i)<=57), "Le nom de la commande ne doit pas avoir de caractères spéciaux."
     assert command==None, "Cette commande existe déjà ! Pour la modifier, faites edit au lieu de add."
-    quote=createPhrase(args[1:len(args)])
+    quote=createPhrase(args[1:])
     curseur.execute("INSERT INTO custom VALUES('{0}','{1}',False,'None','None','olbor','OT!{0}','None','None')".format(nom,quote))
     curseur.execute("INSERT INTO help VALUES('{0}','*Pas de description*')".format(nom))
     return createEmbed("Commande ajoutée","Nom : {0}\nContenu : {1}".format(nom,quote),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
@@ -20,7 +20,7 @@ async def delCCMD(ctx,nom,curseur):
 
 async def editCCMD(ctx,args,nom,curseur):
     """Edite le contenu d'une commande custom / modifie la description d'un embed custom"""
-    quote=createPhrase(args[1:len(args)])
+    quote=createPhrase(args[1:])
     curseur.execute("UPDATE custom SET Description='{0}' WHERE Nom='{1}'".format(quote,nom))
     return createEmbed("Commande modifiée","Nom : {0}\nNouveau contenu : {1}".format(nom,quote),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
 
@@ -29,7 +29,7 @@ async def helpCCMD(ctx,args,nom,curseur):
     if args[1].lower()=="del":
         quote="*Pas de description*"
     else:
-        quote=createPhrase(args[1:len(args)])
+        quote=createPhrase(args[1:])
     curseur.execute("UPDATE help SET Description='{0}' WHERE Nom='{1}'".format(quote,nom))
     return createEmbed("Contenu d'aide modifié","Commande : {0}\nDescription : {1}".format(nom,quote),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
 
@@ -48,7 +48,7 @@ async def authorCCMD(ctx,args,nom,curseur):
     elif args[1].lower()=="del":
         author="None"
     else:
-        author=createPhrase(args[1:len(args)])
+        author=createPhrase(args[1:])
     curseur.execute("UPDATE custom SET Author='{0}' WHERE Nom='{1}'".format(author,nom))
     return createEmbed("Auteur d'embed modifié","Commande : {0}\nAuteur : {1}".format(nom,author),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
 
@@ -57,7 +57,7 @@ async def titleCCMD(ctx,args,nom,curseur):
     if args[1]=="del":
         titre="None"
     else:
-        titre=createPhrase(args[1:len(args)])
+        titre=createPhrase(args[1:])
     curseur.execute("UPDATE custom SET Title='{0}' WHERE Nom='{1}'".format(titre,nom))
     return createEmbed("Titre d'embed modifié","Commande : {0}\nTitre : {1}".format(nom,titre),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
 
@@ -66,7 +66,7 @@ async def footerCCMD(ctx,args,nom,curseur):
     if args[1]=="del":
         footer="OT!{0}".format(nom)
     else:
-        footer=createPhrase(args[1:len(args)])
+        footer=createPhrase(args[1:])
     curseur.execute("UPDATE custom SET Footer='{0}' WHERE Nom='{1}'".format(footer,nom))
     return createEmbed("Bas d'embed modifié","Commande : {0}\nBas de page : {1}".format(nom,footer),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
 

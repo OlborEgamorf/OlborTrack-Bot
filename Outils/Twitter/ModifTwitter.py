@@ -17,7 +17,7 @@ async def addTwitter(ctx,bot,args):
         return mess.author.id==ctx.author.id and mess.channel.id==message.channel.id
 
     assert len(args)>0, "Vous devez me donner un compte Twitter !"
-    chaine=createPhrase(args)[:-1]
+    chaine=createPhrase(args)
     infos=await webRequestHD("https://api.twitter.com/2/users/by/username/{0}".format(chaine),headerTwit,(("user.fields","id,name,profile_image_url,description"),("tweet.fields","id,created_at")))
     assert infos!=False, "Il y a eu une erreur lors de la recherche du compte Twitter."
     if infos==None:
@@ -52,7 +52,7 @@ async def addTwitter(ctx,bot,args):
     await message.edit(embed=embed)
 
     mess=await bot.wait_for('message', check=checkAuthor, timeout=60)
-    descip=createPhrase(mess.content.split(" "))
+    descip=createPhrase(mess.content)
 
     data=await webRequestHD("https://api.twitter.com/2/tweets/search/recent",headerTwit,(("query","from:{0}".format(accountID)),("tweet.fields","id")))
     if data["meta"]["result_count"]!=0:
@@ -115,7 +115,7 @@ async def descipTwitter(ctx,bot,args,curseur):
         raise AssertionError("Le numéro donné n'est pas valide.")
     assert alert!=None, "Le numéro donné ne correspond à aucun tableau actif."
 
-    descip=createPhrase(args[1:len(args)])
+    descip=createPhrase(args[1:])
     curseur.execute("UPDATE twitter SET Descip='{0}' WHERE Nombre={1}".format(descip,alert["Nombre"]))
 
     return createEmbed("Alerte Twitter modifiée","Numéro de l'alerte : {0}\nNouvelle description : {1}".format(args[0],descip),0x00ACEE,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)

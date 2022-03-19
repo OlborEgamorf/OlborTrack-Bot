@@ -35,7 +35,7 @@ async def modifMessage(ctx,bot,args,option):
 
         mess=await bot.wait_for("message",check=checkAuthor,timeout=60)
 
-        clean=createPhrase(mess.content.split(" "))
+        clean=createPhrase(mess.content)
         exemple=formatage(clean,bot.user,ctx.guild)
 
         embed=createEmbed("Modification message {0}".format(dictTitres[option]),"{0}\nVoici un exemple avec moi-même d'à quoi ressemble votre nouveau message {1}. Vous convient-il ?\nAppuyez sur <:otVALIDER:772766033996021761> pour confirmer la modification.".format(exemple,dictTitres[option]),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)

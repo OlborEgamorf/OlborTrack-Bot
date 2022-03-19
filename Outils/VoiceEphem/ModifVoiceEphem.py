@@ -3,7 +3,7 @@ from Core.Fonctions.Phrase import createPhrase
 
 async def voiceEphemRename(ctx,args):
     assert len(args)>0, "Vous devez me donner un nom de salon !"
-    phrase=createPhrase(args)[:-1]
+    phrase=createPhrase(args)
     await ctx.author.voice.channel.edit(name=phrase)
     return createEmbed("Nom du salon éphémère modifié.","Nouveau nom : {0}".format(phrase),0xf54269,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
 
