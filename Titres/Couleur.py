@@ -27,7 +27,7 @@ async def setColor(ctx,bot,args):
     coins=curseurUser.execute("SELECT * FROM coins").fetchone()["Coins"]
     assert coins>=50, "Vous n'avez pas assez d'OT Coins !"
     curseurUser.execute("UPDATE coins SET Coins=Coins-50")
-    curseurUser.commit()
+    connexionUser.commit()
 
     connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
     assert curseur.execute("SELECT * FROM custombans WHERE ID={0}".format(ctx.author.id)).fetchone()==None, "Vous êtes banni des outils de personnalisation."

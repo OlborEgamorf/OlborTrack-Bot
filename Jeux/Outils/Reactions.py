@@ -1,26 +1,19 @@
 import asyncio
 
 from Core.Fonctions.Embeds import createEmbed, embedAssertClassic
+from Jeux.CodeNames import JeuCodeNames
+from Jeux.Matrice import JeuMatrice
+from Jeux.Morpion import JeuMorpion
+from Jeux.Puissance4 import JeuP4
+from Jeux.Tortues import JeuTortues
+from Jeux.TortuesDuo import JeuTortuesDuo
+from Jeux.TrivialBR import JeuTrivialBR
+from Jeux.TrivialParty import JeuTrivialParty
+from Jeux.TrivialVersus import JeuTrivialVersus
 from Stats.SQL.ConnectSQL import connectSQL
 from Titres.Outils import createAccount
 
-from Jeux.CodeNames.ClasseCodeNames import JeuCN
-from Jeux.CrossServeur.ClasseP4Cross import JeuP4Cross
-from Jeux.CrossServeur.ClasseTDCross import JeuTortuesDuoCross
-from Jeux.CrossServeur.ClasseTortuesCross import JeuTortuesCross
-from Jeux.CrossServeur.ClasseTrivialBRCross import BattleRoyaleCross
-from Jeux.CrossServeur.ClasseTrivialPartyCross import PartyCross
-from Jeux.CrossServeur.ClasseTrivialVSCross import VersusCross
-from Jeux.Matrice.Matrice import JeuMatrice
-from Jeux.Morpion.ClasseMorpion import JeuMorpion
-from Jeux.P4.P4 import JeuP4
-from Jeux.Tortues.ClasseTortues import JeuTortues
-from Jeux.Tortues.ClasseTortuesDuo import JeuTortuesDuo
-from Jeux.Trivial.BattleRoyale import BattleRoyale
-from Jeux.Trivial.Party import Party
-from Jeux.Trivial.Versus import Versus
-
-dictMax={JeuTortues:5,JeuTortuesDuo:4,Versus:5,BattleRoyale:15,Party:15,JeuP4:2,JeuTortuesCross:5,JeuP4Cross:2,JeuTortuesDuoCross:4,VersusCross:5,BattleRoyaleCross:7,PartyCross:7,JeuMatrice:2,JeuCN:4,JeuMorpion:2}
+dictMax={JeuTortues:5,JeuTortuesDuo:4,JeuTrivialVersus:5,JeuTrivialBR:15,JeuTrivialParty:15,JeuP4:2,JeuMatrice:2,JeuCodeNames:4,JeuMorpion:2}
 emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>","<:ot5:705766186713088042>","<:ot6:705766187182850148>","<:ot7:705766187115741246>","<:ot8:705766187132256308>","<:ot9:705766187145101363>","<:ot10:705766186909958206>"]
 emotesIds=[705766186909958185,705766186989912154,705766186930929685,705766186947706934,705766186713088042,705766187182850148,705766187115741246,705766187132256308,705766187145101363,705766186909958206]
 
@@ -35,11 +28,8 @@ async def joinGame(message,user,reaction,inGame,dictJeux):
             return
         assert user.id not in game.ids
         assert user.id not in inGame
-        game.ids.append(user.id)
         inGame.append(user.id)
-        if type(game) in (JeuTortuesCross,JeuP4Cross,JeuTortuesDuoCross,VersusCross,BattleRoyaleCross,PartyCross):
-            game.memguild[user.id]=message.guild.id
-            game.memmess[user.id]=message
+        game.addPlayer(user,message)
         if len(game.ids)==dictMax[type(game)]:
             game.playing=True
         await message.channel.send("<:otVERT:868535645897912330> <@{0}> rejoint la partie !".format(user.id))
@@ -57,11 +47,31 @@ async def cancelGame(message,user,reaction,inGame,dictJeux):
             return
         inGame.remove(user.id)
         game.ids.remove(user.id)
-        if type(game) in (JeuTortuesCross,JeuP4Cross,JeuTortuesDuoCross,VersusCross,BattleRoyaleCross,PartyCross):
-            del game.memguild[user.id]
-            del game.memmess[user.id]
+        for i in game.joueurs:
+            if i.id==user.id:
+                if type(game)==JeuTortues:
+                    game.tortues.append(i.couleur)
+                elif type(game)==JeuMatrice:
+                    game.couleurs.append(i.couleur)
+                game.joueurs.remove(i)
+            
         await message.channel.send("<:otROUGE:868535622237818910> <@{0}> ne souhaite plus jouer.".format(user.id))
         await reaction.remove(user)
+
+
+async def trivialReact(message,emoji,user,reaction,gamesTrivial):
+    try:
+        choix={705766186909958185:0,705766186989912154:1,705766186930929685:2,705766186947706934:3,473254057511878656:4}
+        if message.id in gamesTrivial:
+            tableQuestion=gamesTrivial[message.id]
+            assert type(tableQuestion) in (JeuTrivialBR, JeuTrivialParty, JeuTrivialVersus)
+            if user.id in tableQuestion.reponses:
+                if tableQuestion.reponses[user.id]==None:
+                    tableQuestion.reponses[user.id]=choix[emoji.id]
+            if not user.bot:
+                await reaction.remove(user)
+    except AssertionError:
+        pass
 
 
 async def checkReactDel(message,reaction,dictJeux):
@@ -102,14 +112,11 @@ async def miseCoins(message,user,reaction,dictJeux,bot):
             if user.id not in game.paris.paris:
                 descip=""
                 dictPari={}
-                for i in range(len(game.ids)):
-                    if game.paris.cotes[game.ids[i]]==None:
+                for i in range(len(game.joueurs)):
+                    if game.paris.cotes[game.joueurs[i].id]==None or game.joueurs[i].guild!=reaction.message.guild.id:
                         continue
-                    if type(game) in (JeuTortuesCross,JeuP4Cross,JeuTortuesDuoCross,VersusCross,BattleRoyaleCross,PartyCross):
-                        if game.memguild[game.ids[i]]!=reaction.message.guild.id:
-                            continue
-                    descip+="{0} : <@{1}> (côte : {2})\n".format(emotes[i],game.ids[i],game.paris.cotes[game.ids[i]])
-                    dictPari[emotesIds[i]]=game.ids[i]
+                    descip+="{0} : <@{1}> (côte : {2})\n".format(emotes[i],game.joueurs[i].id,game.paris.cotes[game.joueurs[i].id])
+                    dictPari[emotesIds[i]]=game.joueurs[i].id
                 embed=createEmbed("Pari d'OT Coins","Vous devez préciser sur qui vous voulez parier des OT Coins. Réagissez avec le chiffre correspondant au joueur que vous voulez.\n{0}".format(descip),0xad917b,"LOL",user)
                 embed.set_footer(text="Pari d'OT Coins")
                 messMise=await message.reply(embed=embed)

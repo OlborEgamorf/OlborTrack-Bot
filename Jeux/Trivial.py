@@ -1,13 +1,12 @@
 import asyncio
 import html
-import sqlite3
 from random import choice, randint
 
 import discord
-from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.DichoTri import triID
-from Core.Fonctions.Embeds import embedAssert, exeErrorExcept
-from Stats.SQL.Compteur import compteurSQL
+from Core.Decorator import OTCommand
+from Core.Fonctions.Embeds import createEmbed
+from discord.ext import commands
+from Stats.SQL.Compteur import compteurSQL, compteurTrivialS
 from Stats.SQL.ConnectSQL import connectSQL
 from Titres.Outils import gainCoins, titresTrivial
 
@@ -19,7 +18,7 @@ dictCateg={9:0,10:1,11:1,12:1,13:1,14:1,15:1,16:1,17:2,18:2,19:2,20:3,21:4,22:5,
 dictDiff={"easy":"Facile (+10)","medium":"Moyenne (+15)","hard":"Difficile (+25)"}
 
 class Question:
-    def __init__(self,author,option):
+    def __init__(self,author:discord.Member,option:str):
         self.author=author
         self.option=option
 
@@ -33,6 +32,7 @@ class Question:
         self.multi=None
         self.user=None
         self.auteur=None
+        self.temps=20
 
     def newQuestion(self):
         connexion,curseur=connectSQL("OT","trivial","Trivial",None,None)
@@ -54,14 +54,14 @@ class Question:
             tableQuestion.append({"ID":choix[0],"Reponse":None,"Correct":True,"Trad":html.unescape(table["Bonne"])})
         if self.option=="br":
             tableQuestion.append({"ID":4,"Reponse":"Fake","Correct":False,"Trad":"Fake"})
-        tableQuestion.sort(key=triID)
+        tableQuestion.sort(key=lambda x:x["ID"])
         self.table=tableQuestion
         self.questionFR=html.unescape(table["Question"])
         if tableENG!=None:
             self.questionEN=html.unescape(tableENG["Question"])
         self.vrai=choix[0]
+        print(self.vrai)
         self.auteur=table["Auteur"]
-        #print(self.vrai)
 
     def setUser(self):
         connexion,curseur=connectSQL("OT",self.author.id,"Trivial",None,None)
@@ -134,7 +134,7 @@ class Question:
                 descip+="{0} {1} {2}\n".format(emotes[i],self.table[i]["Trad"],trad)
         return descip
     
-    def gestionMulti(self,victoire,inGame):
+    def gestionMulti(self,victoire):
         categ,multi,diff,author=self.categ,self.multi,self.diff,self.author.id
         points={"easy":10,"medium":15,"hard":25}
         niveaux=[30, 60, 100, 150, 200, 400, 600, 1000, 1500, 2000, 3000, 4000, 5000, 7500, 10000, 20000, 30000, 40000, 50000, 100000, 1000000]
@@ -178,38 +178,19 @@ class Question:
             curseur.execute("UPDATE trivial{0} SET Multi=0 WHERE IDCateg={1}".format(author,categ))
             curseur.execute("UPDATE trivial{0} SET Multi=0 WHERE IDCateg=12".format(author))
 
-        inGame.remove(author)
         connexion.commit()
 
     def createEmbed(self):
-        embedT=discord.Embed(title=self.questionFR, description=self.affichageClassique(), color=0xad917b)
-        embedT.set_footer(text="OT!trivial")
-        embedT=auteur(self.author.id,self.author.name,self.author.avatar,embedT,"user")
+        embedT=createEmbed(self.questionFR,self.affichageClassique(),0xad917b,"trivial",self.author)
         embedT.add_field(name="Catégorie", value=listeNoms[dictCateg[self.arg]], inline=True)
         embedT.add_field(name="Difficulté", value=dictDiff[self.diff], inline=True)
         embedT.add_field(name="Multiplicateur", value=str(self.multi),inline=True)
         embedT.add_field(name="Auteur",value="[{0}](https://forms.gle/RNTGn9tds2LGVkdU8)".format(self.auteur),inline=True)
         return embedT
 
-    async def timer(self,message,bot,ctx,inGame):
-        await asyncio.sleep(20)
-        try:
-            newMessage=await message.channel.fetch_message(message.id)
-        except:
-            return
-        if newMessage.embeds[0].color==discord.Colour(0xad917b):
-            await newMessage.clear_reactions()
-            newMessage.embeds[0].description=self.affichageLose(None)
-            newMessage.embeds[0].colour=0xcf1742
-            self.gestionMulti(False,inGame)
-            await newMessage.edit(embed=newMessage.embeds[0])
-        return
-
-
 class Streak(Question):
     def __init__(self, author):
         self.serie=0
-        self.temps=20
         self.rota=["culture","divertissement","sciences","mythologie","sport","géographie","histoire","politique","art","célébrités","animaux","véhicules"]
         super().__init__(author,"streak")
         self.record=self.getRecord()
@@ -240,22 +221,6 @@ class Streak(Question):
     def changeTime(self):
         if self.serie%2==0 and self.temps>12:
             self.temps-=1
-
-    async def timer(self,message,bot,ctx,inGame):
-        serie=self.serie
-        await asyncio.sleep(self.temps)
-        try:
-            newMessage=await message.channel.fetch_message(message.id)
-        except:
-            return
-        if newMessage.embeds[0].color==discord.Colour(0xad917b):
-            if self.serie==serie:
-                await newMessage.clear_reactions()
-                newMessage.embeds[0].description=self.affichageLose(None)
-                newMessage.embeds[0].colour=0xcf1742
-                self.gestionMulti(False,inGame)
-                await newMessage.edit(embed=newMessage.embeds[0])
-        return
        
     def getRecord(self):
         connexion,curseur=connectSQL("OT","ranks","Trivial",None,None)
@@ -267,41 +232,67 @@ class Streak(Question):
             return "{0} - {1}e".format(etat["Count"],etat["Rank"])
 
 
-async def embedTrivial(arg,ctx,bot,author,option,inGame,gamesTrivial):
-    try:
-        assert author.id not in inGame, "Vous êtes déjà en train de répondre à une question !"
-        inGame.append(author.id)
-        if option=="classic":
-            question=Question(author,option)
-        elif option=="streak":
-            if ctx.message.id in gamesTrivial:
-                question=gamesTrivial[ctx.message.id]
-            else:
-                question=Streak(author)
-        if option!="streak":
-            if len(arg)!=0:
-                if arg[0].lower()=="art":
-                    arg=None
-        question.setCateg(arg)
-        question.setUser()
-        question.setDiff()
-        question.newQuestion()
-        embedT=question.createEmbed()
-    except AssertionError as er:
-        await embedAssert(ctx,er,True)
-    except sqlite3.OperationalError as er:
-        await asyncio.sleep(0.2)
-        inGame.remove(author.id)
-        await embedTrivial(arg,ctx,bot,author,option,inGame,gamesTrivial)
-    except:
-        await exeErrorExcept(ctx,bot,True)
-    else:
-        if option=="streak" and question.serie!=0:
-            await ctx.message.edit(embed=embedT)
-            message=ctx.message
+@OTCommand
+async def embedTrivial(ctx:commands.Context,bot:commands.Bot,args:list,option:str,inGame:list):
+    choix={705766186909958185:0,705766186989912154:1,705766186930929685:2,705766186947706934:3,473254057511878656:4}
+    assert ctx.author.id not in inGame, "Vous êtes déjà en train de répondre à une question !"
+    inGame.append(ctx.author.id)
+    if option=="classic":
+        question=Question(ctx.author,option)
+        if len(args)!=0:
+            if args[0].lower()=="art":
+                args=None
+    elif option=="streak":
+        question=Streak(ctx.author)
+        
+    question.setCateg(args)
+    question.setUser()
+    question.setDiff()
+    question.newQuestion()
+
+    message=await ctx.send(embed=question.createEmbed())
+    for i in emotes:
+        await message.add_reaction(i)
+    
+    def checkAnswer(reaction,user):
+        if type(reaction.emoji)==str:
+            return False
+        return user.id==ctx.author.id and reaction.message.id==message.id and reaction.emoji.id in (705766186909958185,705766186989912154,705766186930929685,705766186947706934)
+
+    play=True
+    while play:
+        try:
+            react,user=await bot.wait_for("reaction_add",check=checkAnswer,timeout=question.temps)
+            rep=choix[react.emoji.id]+1
+            emoji=react.emoji.id
+        except asyncio.exceptions.TimeoutError:
+            rep=None
+            emoji=None
+
+        if question.vrai==rep:
+            question.gestionMulti(True)
+            if question.option=="classic":
+                play=False
+                message.embeds[0].colour=0x47b03c
+                message.embeds[0].description=question.affichageWin()
+            elif question.option=="streak":
+                await react.remove(user)
+                question.serie+=1
+                question.changeTime()
+                question.setCateg(None)
+                question.setUser()
+                question.setDiff()
+                question.newQuestion()
+                await message.edit(embed=question.createEmbed())
         else:
-            message=await ctx.send(embed=embedT)
-            gamesTrivial[message.id]=question
-            for i in emotes:
-                await message.add_reaction(i)
-        bot.loop.create_task(question.timer(message,bot,ctx,inGame))
+            play=False
+            message.embeds[0].colour=0xcf1742
+            message.embeds[0].description=question.affichageLose(emoji)
+            question.gestionMulti(False)
+            if question.option=="streak":
+                results=compteurTrivialS(question.author.id,(0,question.author.id,13,"TO","GL",question.serie),question.serie)
+                if results[0]:
+                    await ctx.reply("Bravo ! Vous avez battu votre record de série avec **{0}** bonnes réponses ! Votre ancien score était **{1}** bonnes réponses.".format(results[1],results[2]))
+        await message.edit(embed=message.embeds[0])
+    await message.clear_reactions()
+    inGame.remove(ctx.author.id)

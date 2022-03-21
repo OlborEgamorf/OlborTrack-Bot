@@ -14,8 +14,8 @@ from Titres.Listes import commandeTMP
 from Titres.Outils import createAccount
 
 
-async def sendCarte(user,jeu,wins,option,chan):
-    await newCarte(user,jeu,wins,option)
+async def sendCarte(user,jeu,wins,chan):
+    await newCarte(user,jeu,wins)
     await chan.send(file=discord.File("Images/ExFond/{0}.png".format(user.id)))
 
 class Badge:
@@ -24,7 +24,7 @@ class Badge:
         self.x=x
         self.y=y
 
-async def newCarte(user,jeu,wins,option):
+async def newCarte(user,jeu,wins):
     connexionUser,curseurUser=connectSQL("OT",user.id,"Titres",None,None)
     connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
 
@@ -44,20 +44,10 @@ async def newCarte(user,jeu,wins,option):
     else:
         texte=fond["Texte"]
     
-    if option=="cross":
-        nom=getTitre(curseur,user.id)
-        emote=curseur.execute("SELECT * FROM emotes WHERE ID={0}".format(user.id)).fetchone()
-        if emote==None:
-            imPP=Image.open("Images/ot256.png")
-        else:
-            await getImage(emote["IDEmote"])
-            squaretoround(emote["IDEmote"])
-            imPP=Image.open("PNG/Round{0}.png".format(emote["IDEmote"]))
-    else:
-        await getAvatar(user)
-        squaretoround(user.id)
-        nom=user.name
-        imPP=Image.open("PNG/Round{0}.png".format(user.id))
+    await getAvatar(user)
+    squaretoround(user.id)
+    nom=user.name
+    imPP=Image.open("PNG/Round{0}.png".format(user.id))
     
     im.paste(imPP, ((im.size[0]-imPP.size[0])//2,(im.size[1]-imPP.size[1])//2), mask = imPP)
 

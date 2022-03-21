@@ -1,5 +1,4 @@
-### Ligne auteur des embeds
-
+from Stats.SQL.EmoteDetector import emoteDetector
 
 def auteur(id,nom,avatar,embed,option):
     if option=="olbor":
@@ -19,4 +18,9 @@ def auteur(id,nom,avatar,embed,option):
         elif option=="guild":
             embed.set_author(name=nom, icon_url=('https://cdn.discordapp.com/icons/'+str(id)+"/"+avatar+sufx))
     return embed
-#####
+
+def auteurJeux(user,embed):
+    if user.emote!=None:
+        embed.set_author(name=user.titre,icon_url="https://cdn.discordapp.com/emojis/{0}.png".format(emoteDetector(user.emote)[0]))
+    else:
+        embed.set_author(name=user.titre)

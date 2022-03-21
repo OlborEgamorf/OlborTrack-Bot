@@ -1,13 +1,16 @@
 import asyncio
 from random import choice, randint
 
-import discord
-from Core.Fonctions.AuteurIcon import auteur
+from Core.Fonctions.AuteurIcon import auteurJeux
+from Core.Fonctions.Embeds import createEmbed
+from Core.Fonctions.Unpin import unpin
+
+from Jeux.Outils.Bases import JeuBase, JoueurBase
 
 dictEmotes={("B","C","C","P"):878357453828411392,("B","C","P","P"):878357453534801921,("B","C","P","G"):878357453576732692,("B","R","C","G"):878357453526401055,("B","R","C","P"):878357453400592455,("B","R","P","P"):878357453660643359,("B","R","P","G"):878357453614506025,("B","C","C","G"):878357453702561863,
 ("R","C","C","P"):878357454008774686,("R","C","P","P"):878357453450907710,("R","C","P","G"):878357453660643358,("R","R","C","G"):878357453656428605,("R","R","C","P"):878357453757108275,("R","R","P","P"):878357453614506026,("R","R","P","G"):878357453660643360,("R","C","C","G"):878357453673234522}
 dict0={"B":"Bleu","R":"Rouge"}
-dict1={"C":"Carre","R":"Rond"}
+dict1={"C":"Carré","R":"Rond"}
 dict2={"C":"Creux","P":"Plein"}
 dict3={"P":"Petit","G":"Grand"}
 emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>","<:ot5:705766186713088042>","<:ot6:705766187182850148>","<:ot7:705766187115741246>","<:ot8:705766187132256308>"]
@@ -16,12 +19,10 @@ dictX={1:0,2:1,3:2,4:3}
 dictY={"a":0,"b":1,"c":2,"d":3}
 dictYReverse={0:"A",1:"B",2:"C",3:"D"}
 
-class JoueurMatrice:
-    def __init__(self,user,couleur):
-        self.userid=user.id
-        self.name=user.name
-        self.color=user.color.value
-        self.avatar=user.avatar
+class JoueurMatrice(JoueurBase):
+    def __init__(self,user,message,couleur):
+        super().__init__(user,message)
+        self.couleur=couleur
         if couleur=="rouge":
             self.pions={0:("R","C","P","P"),1:("R","C","C","P"),2:("R","C","P","G"),3:("R","C","C","G"),4:("R","R","P","P"),5:("R","R","C","P"),6:("R","R","P","G"),7:("R","R","C","G")}
         else:
@@ -107,47 +108,51 @@ class TabMatrice:
         joueur.pions[nb]=None
 
 
-class JeuMatrice:
-    def __init__(self,guild,user):
-        self.joueurs=[]
-        self.ids=[]
-        self.emotes={}
-        self.guild=guild
+class JeuMatrice(JeuBase):
+    def __init__(self,message,user,cross):
+        super().__init__(message,user,"Matrice",cross)
         self.tab=TabMatrice()
         self.tours=0
-        self.playing=False
-        self.invoke=user
-        self.paris=None
-    
-    def addPlayer(self,user,couleur):
-        self.joueurs.append(JoueurMatrice(user,couleur))
+        self.couleurs=["bleu","rouge"]
+        
+    def addPlayer(self,user,message):
+        couleur=choice(self.couleurs)
+        self.couleurs.remove(couleur)
+        self.joueurs.append(JoueurMatrice(user,message,couleur))
+        self.ids.append(user.id)
 
-    def embedGame(self,turn):
-        embed=discord.Embed(title="Au tour de {0}".format(self.joueurs[turn].name),description=self.affichageTab(),color=self.joueurs[turn].color)
-        auteur(self.joueurs[turn].userid,self.joueurs[turn].name,self.joueurs[turn].avatar,embed,"user")
-        embed.set_footer(text="OT!matrice")
+    def embedGame(self,guild:int):
+        user=self.joueurs[self.turn]
+        if user.guild==guild:
+            embed=createEmbed("Au tour de {0}".format(user.nom),self.affichageTab(),user.color,"matrice",user.user)
+        else:
+            embed=createEmbed("Au tour de {0}".format(user.titre),self.affichageTab(),user.color,"matrice",user.user)
+            auteurJeux(user,embed)
+
         for i in self.joueurs:
             descip=""
+            if self.paris.ouvert and i.guild==guild and self.paris.cotes[i.id]!=None:
+                descip+="*Côte : {0}*\n".format(self.paris.cotes[i.id])
+            else:
+                if self.paris.mises[i.id]!=0:
+                    descip+="*Mise : {0} <:otCOINS:873226814527520809>*\n".format(self.paris.mises[i.id])
+
             for j in i.pions:
                 if i.pions[j]==None:
                     descip+="{0} : //\n".format(emotes[j])
                 else:
                     nom=dict0[i.pions[j][0]]+dict1[i.pions[j][1]]+dict2[i.pions[j][2]]+dict3[i.pions[j][3]]
                     descip+="{0} : <:{1}:{2}>\n".format(emotes[j],nom,dictEmotes[i.pions[j]])
-            embed.add_field(name=i.name,value=descip,inline=True)
-        if sum(self.paris.mises.values())!=0:
-            descip=""
-            for i in self.paris.mises:
-                if self.paris.mises[i]!=0:
-                    descip+="<@{0}> : {1} <:otCOINS:873226814527520809>\n".format(i,self.paris.mises[i])
-            embed.add_field(name="Mises d'OT Coins",value=descip)
-        if self.paris.ouvert:
-            descip=""
-            for i in self.paris.cotes:
-                if self.paris.cotes[i]!=None:
-                    descip+="<@{0}> : {1}\n".format(i,self.paris.cotes[i])
-            if descip!="":
-                embed.add_field(name="Côtes",value=descip)
+            
+            if i.emote==None:
+                emote=""
+            else:
+                emote=i.emote
+            if i.guild==guild:
+                embed.add_field(name="{0} Jeu de {1}".format(emote,i.nom),value=descip)
+            else:
+                embed.add_field(name="{0} Jeu de {1}".format(emote,i.titre),value=descip)
+
         return embed
 
     def affichageTab(self):
@@ -166,27 +171,31 @@ class JeuMatrice:
             descip+="\n"
         return descip
 
-    def embedWin(self,win,nul,categ,cara,i):
-        if nul==True:
-            embed=discord.Embed(title="Match nul !", description="Le tableau est bloqué, et personne n'a gagné !", color=0xad917b)
+    def embedEnd(self,nul,categ,cara,i,guild):
+        if nul:
+            return createEmbed("Match nul !","Le tableau est bloqué, et personne n'a gagné !",0xad917b,"matrice",guild)
         else:
-            liste=[dict0,dict1,dict2,dict3]
-            embed=discord.Embed(title="Victoire de {0}".format(self.joueurs[win].name), description="Bravo à lui/elle !", color=self.joueurs[win].color)
-            embed=auteur(self.joueurs[win].userid,self.joueurs[win].name,self.joueurs[win].avatar,embed,"user")
+            user=self.joueurs[self.turn]
+            embed=createEmbed("Victoire de {0}".format(user.nom),"Bravo à lui/elle !",user.color,"matrice",user.user)
+            
+            if user.guild==guild.id:
+                embed=createEmbed("Victoire de {0}".format(user.nom),"Bravo à lui/elle !",user.color,"matrice",user.user)
+            else:
+                embed=createEmbed("Victoire de {0}".format(user.titre),"Bravo à lui/elle !",user.color,"matrice",user.user)
+                auteurJeux(user,embed)
+
             embed.add_field(name="<:otCOINS:873226814527520809> gagnés",value="{0} <:otCOINS:873226814527520809>".format(50+sum(self.paris.mises.values())))
+            liste=[dict0,dict1,dict2,dict3]
             embed.add_field(name="Combinaison",value="{0}, {1}".format(categ,liste[i][cara]))
+            return embed
 
-        embed.set_footer(text="OT!p4")
-        return embed
-
-
-    async def play(self,turn,message,bot):
+    async def play(self,message,bot):
 
         def check(reaction,user):
             if type(reaction.emoji)==str:
                 return False
-            if reaction.emoji.id in (705766186909958185,705766186989912154,705766186930929685,705766186947706934,705766186713088042,705766187182850148,705766187115741246,705766187132256308) and reaction.message.id==message.id and self.joueurs[turn].userid==user.id:
-                return self.joueurs[turn].checkPion(dictCo[reaction.emoji.id])
+            if reaction.emoji.id in (705766186909958185,705766186989912154,705766186930929685,705766186947706934,705766186713088042,705766187182850148,705766187115741246,705766187132256308) and reaction.message.id==message.id and self.joueurs[self.turn].id==user.id:
+                return self.joueurs[self.turn].checkPion(dictCo[reaction.emoji.id])
 
         try:
             reaction,user=await bot.wait_for('reaction_add', check=check, timeout=40)
@@ -194,11 +203,11 @@ class JeuMatrice:
             nb=dictCo[reaction.emoji.id]
 
             def check(mess):
-                return self.joueurs[turn].userid==mess.author.id and message.channel.id==mess.channel.id and self.tab.checkPos(mess.content)
+                return self.joueurs[self.turn].id==mess.author.id and message.channel.id==mess.channel.id and self.tab.checkPos(mess.content)
 
-            pion=self.joueurs[turn].pions[dictCo[reaction.emoji.id]]
+            pion=self.joueurs[self.turn].pions[dictCo[reaction.emoji.id]]
             nom=dict0[pion[0]]+dict1[pion[1]]+dict2[pion[2]]+dict3[pion[3]]
-            ask=await message.channel.send("<@{0}> : choisissez sur quelle case poser <:{1}:{2}>".format(self.joueurs[turn].userid,nom,dictEmotes[pion]))
+            ask=await message.channel.send("<@{0}> : choisissez sur quelle case poser <:{1}:{2}>".format(self.joueurs[self.turn].id,nom,dictEmotes[pion]))
 
             messageCoord=await bot.wait_for("message",check=check,timeout=40)
             await ask.delete()
@@ -208,18 +217,43 @@ class JeuMatrice:
 
         except asyncio.exceptions.TimeoutError:
             mot="00"
-            while self.tab.checkPos(mot)==False:
+            while not self.tab.checkPos(mot):
                 mot=choice(["a","b","c","d"])+choice(["1","2","3","4"])
             x,y=dictX[int(mot[1])],dictY[mot[0].lower()]
             pion=None
             while pion==None:
                 nb=randint(0,7)
-                self.joueurs[turn].checkPion(nb)
-            self.tab.addPion(self.joueurs[turn],x,y,nb)
+                self.joueurs[self.turn].checkPion(nb)
+            self.tab.addPion(self.joueurs[self.turn],x,y,nb)
         else:
-            self.tab.addPion(self.joueurs[turn],x,y,nb)
+            self.tab.addPion(self.joueurs[self.turn],x,y,nb)
         return x,y
 
     def fermeture(self):
         if self.tours==4:
             self.paris.ouvert=False
+
+    async def boucle(self,bot):
+        for mess in self.messages:
+            await mess.edit(embed=self.embedGame(mess.guild.id))
+        while self.playing:
+            self.tours+=1
+            x,y=await self.play(self.joueurs[self.turn].message,bot)
+            win=self.tab.checkTab(x,y)
+            if win[0]:  
+                nul=self.tab.checkNul()
+                if self.tab.checkTab(x,y) or nul:
+                    if not nul:
+                        await self.stats(self.joueurs[self.turn].id,self.joueurs[self.turn].guild)
+                    for mess in self.messages:
+                        await mess.clear_reactions()
+                        await mess.reply(embed=self.embedEnd(nul,win[1],win[3],win[2],mess.guild))
+                        await unpin(mess)
+                    self.playing=False
+            else:
+                if self.turn==0: self.turn=1
+                else: self.turn=0
+            
+            self.fermeture()
+            for mess in self.messages:
+                await mess.edit(embed=self.embedGame(mess.guild.id))

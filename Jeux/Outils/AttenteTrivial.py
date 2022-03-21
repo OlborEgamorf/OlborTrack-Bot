@@ -1,6 +1,6 @@
 import asyncio
 
-async def attente(game,temps,event):
+async def attenteParty(game,temps,event):
     time,done=0,False
     while time!=temps and not done:
         await asyncio.sleep(0.5)
@@ -21,3 +21,13 @@ async def attente(game,temps,event):
             if count==len(game.reponses):
                 done=True
         time+=0.5
+
+async def attente(game):
+    time,done=0,False
+    while time!=20 and not done:
+        await asyncio.sleep(1)
+        done=True
+        for j in game.reponses:
+            if game.reponses[j]==None:
+                done=False
+        time+=1
