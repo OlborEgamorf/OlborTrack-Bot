@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 from Outils.CommandesAuto import boucleAutoCMD, boucleAutoStats
 from Outils.Twitch.Boucle import boucleTwitch
@@ -5,10 +6,9 @@ from Outils.Twitter.BoucleTwitter import boucleTwitter
 from Outils.VoiceEphem.CheckState import checkAll
 from Outils.YouTube.BoucleYT import boucleYT
 from Sondages.exePolls import recupPoll
-from Stats.SQL.NewGuild import createDirSQL
+from Stats.SQL.NewGuild import alterHBM, createDirSQL
 from Stats.Tracker.Voice import disconnect, reconnect
 
-from Core.Fonctions.Statut import changeStatut
 from Core.OTGuild import OTGuildCMD
 
 
@@ -27,14 +27,17 @@ class OlborTrack(commands.Bot):
 
     async def startBot(self,version:str):
         await self.wait_until_ready()
+        await self.change_presence(status=discord.Status.online, activity=discord.Game(name="Commande d'aide : OT!help"))
         print("-----\nConnecté dans {0.user} \nLatence : {0.latency}".format(self))
         for i in self.guilds:
             try:
                 self.dictGuilds[i.id]=OTGuildCMD(i.id,True)
             except:
+                alterHBM(self)
                 createDirSQL(i)
                 self.dictGuilds[i.id]=OTGuildCMD(i.id,True)
             await checkAll(self.dictGuilds[i.id],self)
+        self.dictGuilds[None]=OTGuildCMD("MP",False)
 
         for i in self.commands:
             self.listeOS.append(i.name)
@@ -47,12 +50,9 @@ class OlborTrack(commands.Bot):
             self.dictTasks["twitch"]=self.loop.create_task(boucleTwitch(self,self.dictGuilds))
             self.dictTasks["yt"]=self.loop.create_task(boucleYT(self,self.dictGuilds))
             self.dictTasks["twitter"]=self.loop.create_task(boucleTwitter(self,self.dictGuilds))
-            self.dictTasks["status"]=self.loop.create_task(changeStatut(self))
             self.dictTasks["stats"]=self.loop.create_task(boucleAutoStats(self,self.dictGuilds))
             await recupPoll(self)
             await disconnect(self)
-            await reconnect(self,self.dictTasks)
-
-        self.dictGuilds[None]=OTGuildCMD("MP",False)
+            await reconnect(self,self.dictGuilds)
 
         print("TOUS LES PROCESSUS SONT TERMINES")

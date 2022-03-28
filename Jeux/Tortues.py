@@ -45,7 +45,7 @@ class JeuTortues(JeuBase):
         self.plateau=[Pile() for i in range(10)]
         self.cartes=[Carte(i,1) for i in listeCouleurs]*5+[Carte(i,2) for i in listeCouleurs]+[Carte(i,-1) for i in listeCouleurs]*2+[Carte("multi",1) for i in range(5)]+[Carte("last",1) for i in range(3)]+[Carte("last",2) for i in range(2)]+[Carte("multi",-1) for i in range(2)]
         for i in self.tortues:
-            self.plateau[5].empiler(i)
+            self.plateau[0].empiler(i)
 
     def embedGame(self,user:JoueurTortue,guild:int):
         

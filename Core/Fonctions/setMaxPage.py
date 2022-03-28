@@ -25,7 +25,7 @@ def setPage(page:int,pagemax:int,turn:(str or None)) -> int:
             la nouvelle page"""
     page+=dictPage[turn]
     if page==0:
-        page=pagemax
+        return pagemax
     elif page>pagemax:
-        page=1 
+        return 1 
     return page

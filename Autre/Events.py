@@ -1,9 +1,9 @@
 from random import randint
 from time import strftime
 
-from Core.Fonctions.WebRequest import webRequest
 from Core.Decorator import OTCommand
 from Core.Fonctions.Embeds import createEmbed
+from Core.Fonctions.WebRequest import webRequest
 from Stats.SQL.ConnectSQL import connectSQL
 
 tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai","06":"Juin","07":"Juillet","08":"Aout","09":"Septembre","10":"Octobre","11":"Novembre","12":"Décembre","TO":"Année","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}

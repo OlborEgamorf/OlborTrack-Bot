@@ -10,7 +10,7 @@ async def exeTitres(ctx,bot,args):
     assert len(args)>0, "Vous devez me donner l'ID d'un titre !"
     if ctx.invoked_with=="achat":
         await achatTitre(ctx,args[0],bot,False)
-    elif ctx.invoked_with=="gift":
+    elif ctx.invoked_with=="cadeau":
         await achatTitre(ctx,args[0],bot,True)
     elif ctx.invoked_with=="vente":
         await venteTitre(ctx,args[0],bot)

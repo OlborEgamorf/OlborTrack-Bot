@@ -15,7 +15,7 @@ listeCross=[]
 dictMax={"Tortues":5,"TortuesDuo":4,"TrivialVersus":5,"TrivialBR":15,"TrivialParty":15,"P4":2,"Matrice":2,"Morpion":2}
 
 async def gameLauncher(ctx,bot,jeu,inGame,dictJeux,cross):
-    if True:
+    try:
         assert ctx.author.id not in inGame, "Terminez votre partie en cours avant de lancer ou rejoindre une partie."
         mini=2
         if jeu=="P4":
@@ -74,8 +74,8 @@ async def gameLauncher(ctx,bot,jeu,inGame,dictJeux,cross):
             return
         elif cross:
             listeCross.append(game)
-            """annonce=await bot.get_channel(878254347459366952).send("<:otVERT:868535645897912330> Partie de {0} Cross en recherche de joueurs !\n Faites OT!{1}cross pour rejoindre !".format(jeu,jeu.lower()))
-            await annonce.publish()"""
+            annonce=await bot.get_channel(878254347459366952).send("<:otVERT:868535645897912330> Partie de {0} Cross en recherche de joueurs !\n Faites OT!{1}cross pour rejoindre !".format(jeu,jeu.lower()))
+            await annonce.publish()
 
         for i in range(60):
             if not game.playing:
@@ -85,7 +85,7 @@ async def gameLauncher(ctx,bot,jeu,inGame,dictJeux,cross):
         
         if cross:
             listeCross.remove(game)
-            #await annonce.edit(content="~~{0}~~\nRecherche terminée.".format(annonce.content))
+            await annonce.edit(content="~~{0}~~\nRecherche terminée.".format(annonce.content))
         if not await game.startGame(inGame,emotes,mini):
             del dictJeux[message.id]
             return
@@ -94,11 +94,11 @@ async def gameLauncher(ctx,bot,jeu,inGame,dictJeux,cross):
 
         await game.boucle(bot)
 
-    """except AssertionError as er:
+    except AssertionError as er:
         await embedAssert(ctx,er,True)
         return
     except:
-        await exeErrorExcept(ctx,bot,True)"""
+        await exeErrorExcept(ctx,bot,True)
     
     if "messAd" in locals():
         await messAd.delete()

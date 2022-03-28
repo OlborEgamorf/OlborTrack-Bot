@@ -100,7 +100,7 @@ class JeuTortuesDuo(JeuTortues):
                 exeJeuxSQL(i.id,None,state,guild,curseurGuild,self.jeu,None)
             wins=exeJeuxSQL(i.id,None,state,"OT",curseurOT,self.jeu,None)
             if state=="W":
-                await sendCarte(i.user,self.jeu,wins,self.cross,i.message.channel)
+                await sendCarte(i.user,self.jeu,wins,self.cross)
         connexionGuild.commit()
         connexionOT.commit()
 

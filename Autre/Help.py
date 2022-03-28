@@ -1,12 +1,14 @@
 import discord
+from Core.Decorator import OTCommand
+from Core.Fonctions.Embeds import sendEmbed
 from Core.Fonctions.Help3 import *
 from Core.Fonctions.setMaxPage import setPage
-from Core.Fonctions.Embeds import sendEmbed
 from Outils.CustomCMD.ListeCMD import commandeCMD
 from Stats.SQL.ConnectSQL import connectSQL
 
 dictDescip={"home":{},"stats":dictStats,"polls":dictPoll,"jeux":dictJeux,"autre":dictAutre,"sv":dictSV,"outils":dictOutils,"admin":dictAdmin,"titres":dictTitres,"alertes":dictAlertes,"anniv":dictAnniv}
 
+@OTCommand
 async def commandeHelp(ctx,turn,react,ligne,bot,guildOT):
     connexionCMD,curseurCMD=connectSQL(guildOT.id,"Commandes","Guild",None,None)
     if not react:

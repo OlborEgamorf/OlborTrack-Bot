@@ -4,6 +4,6 @@ def createPhrase(text:(str or list)) -> str:
         args : liste de mots qui forme une phrase
     Sortie :
         descip : la phrase reconstituée"""
-    if type(text)==list:
+    if type(text) in (list, tuple):
         text=" ".join(text)
     return text.replace("'","’")
