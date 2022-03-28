@@ -62,7 +62,9 @@ async def exePolltime(ctx,bot,args,option):
     assert len(args)!=2, "Il faut une question, maximum 10 propositions et du temps !"
     assert len(args)!=3, "Il doit manquer soit le temps soit des propositions..."
     assert len(args)<13, "Pas plus de 10 propositions !"
-    descip=" ".join(args[1:-1])
+    descip=""
+    for i in range(1,len(args)-1):
+        descip=descip+emotes[i-1]+" "+args[i]+"\n"
     tempo=args[-1]
     somme=gestionTemps(tempo)
     format=footerTime(somme)
@@ -80,7 +82,7 @@ async def exePolltime(ctx,bot,args,option):
     for i in range(len(args)-2):
         await message.add_reaction(emotes[i])
     dictPolls[message.id]=PollTime(message,ctx.guild,somme,args[1:-1],args[0],option)
-    await dictPolls[message.id].trigger(bot)
+    result=await dictPolls[message.id].trigger(bot)
     del dictPolls[message.id]
     return result
 

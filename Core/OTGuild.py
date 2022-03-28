@@ -78,6 +78,7 @@ class OTGuildCMD(OTGuild):
             self.getBV(curseur)
             self.getAnniv()
             self.getTwitter(curseur)
+            self.getDynIcon(curseur)
 
     def getStar(self,curseur=None):
         if curseur==None:
@@ -126,14 +127,14 @@ class OTGuildCMD(OTGuild):
         if curseur==None:
             connexion,curseur=connectSQL(self.id,"VoiceEphem","Guild",None,None)
         for i in curseur.execute("SELECT * FROM hub").fetchall():
-            self.voicehub[i["ID"]]=i["Limite"]
+            self.voicehub[i["ID"]]=OTHub(i)
     
     def getChans(self,curseur=None):
         self.voiceephem=[]
         if curseur==None:
             connexion,curseur=connectSQL(self.id,"VoiceEphem","Guild",None,None)
-        for i in curseur.execute("SELECT * FROM salons WHERE ID<>0").fetchall():
-            self.voiceephem.append(i["ID"])
+        for i in curseur.execute("SELECT * FROM salons").fetchall():
+            self.voiceephem.append(i["IDChannel"])
 
     def getBV(self,curseur=None):
         self.bv=None
@@ -152,6 +153,15 @@ class OTGuildCMD(OTGuild):
         anniv=curseur.execute("SELECT * FROM etatAnniv").fetchone()
         if anniv["Statut"]==True:
             self.anniv=OTAnniv(anniv)
+
+    def getDynIcon(self,curseur=None):
+        if curseur==None:
+            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+        dyn=curseur.execute("SELECT * FROM etatPP").fetchone()
+        if dyn["Statut"]==True:
+            self.dynicon=dyn["Salon"]
+        else:
+            self.dynicon=None
 
 class OTTableau:
     def __init__(self,star):
@@ -201,3 +211,8 @@ class OTAnniv:
     def __init__(self,anniv):
         self.chan=anniv["Salon"]
         self.descip=anniv["Message"]
+
+class OTHub:
+    def __init__(self,hub):
+        self.limite=hub["Limite"]
+        self.pattern=hub["Pattern"]

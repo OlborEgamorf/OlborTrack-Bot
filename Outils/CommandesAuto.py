@@ -14,6 +14,7 @@ from Titres.Auto import (annualyBadges, annualyTitles, dailyCoins,
 from Titres.Outils import setMarketPlace
 
 from Outils.Anniversaires.Auto import autoAnniv
+from Outils.DynamicPP.exeDynIcon import rotation
 
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"to","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","to":"TO","glob":"GL"}
 
@@ -47,7 +48,7 @@ def embedAuto(ctx,guildOT):
 
 def archivesSave(guild,jour,mois,annee):
     connexion,curseur=connectSQL(guild,"Rapports","Stats","GL","")
-    curseur.execute("CREATE TABLE archives (Rank INT, ID BIGINT, Jour TEXT, Mois TEXT, Annee TEXT, DateID INT, Periode TEXT, Count INT, Evol INT, Type TEXT, PRIMARY KEY(Jour,Mois,Annee,ID,Type,Periode))")
+    curseur.execute("CREATE TABLE IF NOT EXISTS archives (Rank INT, ID BIGINT, Jour TEXT, Mois TEXT, Annee TEXT, DateID INT, Periode TEXT, Count INT, Evol INT, Type TEXT, PRIMARY KEY(Jour,Mois,Annee,ID,Type,Periode))")
     if curseur.execute("SELECT * FROM ranks WHERE Jour='{0}' AND Mois='{1}' AND Annee='{2}'".format(jour,mois,annee)).fetchone()==None:
         return
     for i in ("Salons","Freq","Messages","Emotes","Reactions","Voice","Voicechan"):
@@ -108,6 +109,8 @@ async def boucleAutoCMD(bot,dictGuilds):
 
         for i in bot.guilds:
             
+            if dictGuilds[i.id].dynicon!=None:
+                await rotation(i,dictGuilds[i.id].dynicon)
             if dictGuilds[i.id].auto==None:
                 continue
 

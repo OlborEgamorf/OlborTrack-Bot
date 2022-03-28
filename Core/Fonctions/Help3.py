@@ -11,7 +11,7 @@ dictStats={
     10:["moyheure","moyjour","moymois","moyannee"],
     11:[]}
 
-dictPoll={1:[],2:["poll","polltime","vote","election","petition"],3:["giveaway","gareroll"],4:["rappel","rappelmp"]}
+dictPoll={1:[],2:["poll","polltime","vote","election","petition","assistant"],3:["giveaway","gareroll"],4:["rappel","rappelmp"]}
 
 dictOutils={
     1:[],
@@ -19,15 +19,16 @@ dictOutils={
     3:["adieu","adieu chan","admessage","admessage add","admessage edit","admessage del","adimage","adimage add","adimage edit","adimage del"],
     4:["tableau","tableau add","tableau del","tableau nb","tableau chan","tabhide"],
     5:["voicehubs","voicehubs add","voicehubs del","voicehubs edit","voiceephem","voiceephem rename","voiceephem limite","voiceephem lock"],
-    6:["customcmd","customcmd add","customcmd del","customcmd embed","customcmd patron","customcmd edit","customcmd auteur","customcmd titre","customcmd bas","customcmd image","customcmd miniature","customcmd couleur","customcmd len"],
-    7:["auto","auto add","auto del","auto edit"]}
+    6:["dynicon","dynicon chan","dynicon add","dynicon edit","dynicon membres","dynicon del"],
+    7:["customcmd","customcmd add","customcmd del","customcmd embed","customcmd patron","customcmd edit","customcmd auteur","customcmd titre","customcmd bas","customcmd image","customcmd miniature","customcmd couleur","customcmd len"],
+    8:["auto","auto add","auto del","auto edit"]}
 
 dictJeux={
     1:[],
     3:["trivial","trivialversus","trivialbr","trivialparty","trivialstreak"],
-    2:["tortues","tortuesduo","p4","matrice","morpion","codenames"],
+    2:["tortues","tortuesduo","p4","matrice","morpion"],
     5:["jeuxrank","jeuxmondial","jeuxperso","jeuxboard","trivialrank","trivialperso"],
-    4:["tortuescross","tortuesduocross","p4cross","trivialversuscross","trivialbrcross","trivialpartycross"]}
+    4:["tortuescross","tortuesduocross","p4cross","matricecross","morpioncross","trivialversuscross","trivialbrcross","trivialpartycross"]}
 
 dictSV={1:[],2:["savezvous","savezvous add","savezvous del","savezvous edit"],3:["savezvous list","savezvous modo"]}
 
@@ -42,9 +43,9 @@ dictAlertes={1:[],2:["youtube","youtube add","youtube del","youtube edit","youtu
 dictAnniv={1:[],2:["anniversaire","anniversaire set"],3:["anniversaire active","anniversaire chan"]}
 
 dictPStats={1:"Olbor Track est capable de capter différentes statistiques comme les messages envoyés par chaque membre du serveur, le temps passé en vocal, les emotes utilisées par exemple.\nCes statistiques sont stockées sous plusieurs formes, et consultables avec ces commandes.\nLes administrateurs peuvent les configurer (voir OT!help admin).\n\n**Sous les commandes apparaitront des réactions :**\n <:otGAUCHE:772766034335236127> / <:otDROITE:772766034376523776> : changer de page\n<:otGRAPH:772766034558058506> : afficher les graphiques\n<:otTRI:833666016491864114> : changer le tri\n<:otMOBILE:833736320919797780> : changer l'affichage, classique ou mobile\n<:otCHOIXPAGE:887022335578767420> : choix manuel de la page",10:"**OT!messganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les messages.\n**OT!saloganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les salons.\n**OT!freqganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les heures d'activité.\n**OT!voicganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour le temps passé en vocal.\n**OT!vchaganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les salons vocaux.\n**OT!emotganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les emotes.\n**OT!reacganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les réactions.\n**OT!motsganim** [période (mois)] : affiche le graphique animé du classement du mois voulu pour les mots envoyés."}
-dictPPoll={1:"Olbor Track dispose de plusieurs commandes pour faire des sondages et giveaway.\nPour pouvoir les lancer, il faut avoir la permission 'gestion des messages' sur le serveur.\nLa commande OT!reminder ne nécessite aucune permission spéciale."}
+dictPPoll={1:"Olbor Track dispose de plusieurs commandes pour faire des sondages et giveaway.\nPour pouvoir lancer la plupart des commandes, il faut avoir la permission 'gestion des messages' sur le serveur, sauf : OT!poll, OT!rappel et OT!rappelmp qui ne nécessitent aucune permission spéciale."}
 dictPJeux={1:"Olbor Track possède plusieurs jeux qui se jouent à plusieurs, de 2 à 15 joueurs !\nEssayez des jeux Trivial, la Course des Tortues, le Puissance 4 ou la Bataille Navale !\nTous les jeux possèdent des classements par serveurs et mondial !",2:"Vous pouvez proposer de nouvelles questions pour étoffer les jeux Trivial [en cliquant ici !](https://docs.google.com/forms/d/e/1FAIpQLSc6d3fHx95m5pRnCYMfcFg7Ng0eeEhXl4aS87Hb0cupA_NvOg/viewform)\n",4:"Le but des jeux cross-serveurs est de pouvoir jouer avec des personnes externes à votre serveur !\nIls sont tous anonymisés par le système de personnalisation : allez voir `OT!titre help` pour plus d'informations !\nPour voir si des parties en attente, rejoignez le serveur de tests et consultez le salon #parties-cross-serveur. (OT!tests)"}
-dictPOutils={1:"Olbor Track peut améliorer votre serveur avec des outils pratiques !\nEssayez les messages de bienvenue, les salons vocaux éphémères, les tableaux d'emotes, les commandes personnalisées et les commandes automatiques !\nIl faut avoir la permission 'gestion des messages' sur le serveur pour pouvoir les configurer.",2:"Les messages de bienvenue s'affichent quand un nouveau membre rejoint votre serveur. Vous pouvez configurer des messages et/ou des images. Si vous en configurez plusieurs messages ou images, le bot choisira aléatoirement ce qui sera envoyé !\n",3:"Pareil que les messages de bienvenue, sauf qu'ils sont activés quand un membre s'en va !\n",4:"**Les tableaux c'est quoi?**\nLes tableaux d'emotes sont des outils que propose OlborTrack. On les active en donnant *une emote*, *un nombre*, et un *salon*. Quand cette emote atteint le nombre donné de réactions sur un message, le message est copié dans le salon !\n",7:"**Comment fonctionnent les commandes automatiques ??**\nLes commandes automatiques, quand elles sont activées, se déclenchent tous les jours à minuit dans le salon de votre choix. Pour les commandes 'mois' et 'annee', elles se déclenchent respectivement quand commence un nouveau mois et une nouvelle année.\n",5:"Les salons vocaux éphémères est une fonctionnalité qui permet de créer des salons vocaux en fonction de la demande des utilisateurs. Ajoutez un hub, et dès qu'un membre s'y connectera, un nouveau salon vocal sera créé pour lui et son groupe ! Quand tout le monde est déconnecté, le salon vocal est supprimé.\n"}
+dictPOutils={1:"Olbor Track peut améliorer votre serveur avec des outils pratiques !\nEssayez les messages de bienvenue, les salons vocaux éphémères, les tableaux d'emotes, les commandes personnalisées et les commandes automatiques !\nIl faut avoir la permission 'gestion des messages' sur le serveur pour pouvoir les configurer.",2:"Les messages de bienvenue s'affichent quand un nouveau membre rejoint votre serveur. Vous pouvez configurer des messages et/ou des images. Si vous en configurez plusieurs messages ou images, le bot choisira aléatoirement ce qui sera envoyé !\n",3:"Pareil que les messages de bienvenue, sauf qu'ils sont activés quand un membre s'en va !\n",4:"**Les tableaux c'est quoi?**\nLes tableaux d'emotes sont des outils que propose OlborTrack. On les active en donnant *une emote*, *un nombre*, et un *salon*. Quand cette emote atteint le nombre donné de réactions sur un message, le message est copié dans le salon !\n",8:"**Comment fonctionnent les commandes automatiques ??**\nLes commandes automatiques, quand elles sont activées, se déclenchent tous les jours à minuit dans le salon de votre choix. Pour les commandes 'mois' et 'annee', elles se déclenchent respectivement quand commence un nouveau mois et une nouvelle année.\n",5:"Les salons vocaux éphémères est une fonctionnalité qui permet de créer des salons vocaux en fonction de la demande des utilisateurs. Ajoutez un hub, et dès qu'un membre s'y connectera, un nouveau salon vocal sera créé pour lui et son groupe ! Quand tout le monde est déconnecté, le salon vocal est supprimé.\n",6:"Les icônes de serveur dynamiques permettent de changer l'icone de votre serveur tous les jours, avec des images ajoutées par les membres de votre serveur. Cette fonctionnalité est modérée par les diverses autorisations données aux commandes."}
 dictPSV={1:"Olbor Track vous permet d'avoir une boîte de connaissance commune à votre serveur !\nN'importe qui peut y ajouter des phrases et/ou des images, qui sortent ensuite aléatoirement avec la commande OT!savezvous.\nLes modérateurs peuvent supprimer des phrases de la boîte."}
 dictPAdmin={1:"Les administrateurs du serveur peuvent configurer Olbor Track afin d'avoir une utilisation personnalisée du bot.\nIls peuvent moduler les statistiques traquées, les commandes activées, le statut des salons, et +...",4:"**OT!getdata** : [ADMIN] Initialise toutes les statistiques de votre serveur."}
 dictPAutre={}
@@ -56,7 +57,7 @@ dictFStats={1:[],2:["periodes","usage"],3:["periodes","usage","salons","voice","
 
 dictFPoll={1:[],2:["temps","texte","usage"],3:["temps","gagnants","usage"],4:["temps","usage"]}
 
-dictFOutils={1:[],2:["usage"],3:["usage"],4:["usage","salons"],5:["voice","usage"],6:["usage"],7:["usage","auto","salons"]}
+dictFOutils={1:[],2:["usage"],3:["usage"],4:["usage","salons"],5:["voice","usage"],6:["usage","salons"],7:["usage"],8:["usage","auto","salons"]}
 
 dictFJeux={1:[],2:[],3:["trivial","usage"],4:[],5:["periodes","jeux","trivial","usage"],6:[]}
 
@@ -105,7 +106,7 @@ dictTStats={
 
 dictTPoll={1:"Sondages, giveaway et rappels",2:"Sondages",3:"Giveaway",4:"Rappels"}
 
-dictTOutils={1:"Outils",2:"Messages de bienvenue",3:"Messages d'adieu",4:"Tableaux",5:"Salons vocaux éphémères",6:"Commandes personnalisées",7:"Commandes automatiques"}
+dictTOutils={1:"Outils",2:"Messages de bienvenue",3:"Messages d'adieu",4:"Tableaux",5:"Salons vocaux éphémères",6:"Icônes de serveur dynamiques",7:"Commandes personnalisées",8:"Commandes automatiques"}
 
 dictTJeux={1:"Jeux",2:"Jeux OT",3:"Jeux Trivial",4:"Jeux Cross-Serveur",5:"Classements et stats"}
 

@@ -58,6 +58,15 @@ class PollTime():
         await self.message.reply(embed=embed)
         await self.message.clear_reactions()
         self.active=False
+        if self.total==0:
+            return None
+        else:
+            all=list(map(lambda x:self.propositions[x].count, self.propositions))
+            propMax=max(self.propositions, key=lambda x:self.propositions[x].count)
+            if all.count(self.propositions[propMax].count)>1:
+                return None
+            else:
+                return propMax
 
     def affichage(self,total,guild):
         descip=""

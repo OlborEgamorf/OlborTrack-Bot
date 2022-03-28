@@ -42,16 +42,35 @@ async def getAvatar(user):
 
 
 async def getAttachment(message):
-    assert message.attachments[0].filename[-4:].lower() in ("jpg","png","jpeg"), "Le format de l'image n'est pas bon, veuillez me donner un PNG ou un JPG !"
+    assert message.attachments[0].filename[-4:].lower() in (".jpg",".png","jpeg"), "Le format de l'image n'est pas bon, veuillez me donner un PNG ou un JPG !"
     async with aiohttp.ClientSession() as session:
         async with session.get(message.attachments[0].url) as resp:
             if resp.status == 200:
                 if not os.path.exists("BV/{0}".format(message.guild.id)):
                     os.makedirs("BV/{0}".format(message.guild.id))
                 count=0
-                path="BV/{0}/{1}.png".format(message.guild.id,message.attachments[0].filename)
+                path="BV/{0}/{1}.png".format(message.guild.id,message.attachments[0].filename[:-4])
                 while os.path.isfile(path): 
-                    path="BV/{0}/{1}{2}.png".format(message.guild.id,message.attachments[0].filename,count)
+                    path="BV/{0}/{1}{2}.png".format(message.guild.id,count,message.attachments[0].filename[:-4])
+                    count+=1
+                f = await aiofiles.open(path, mode='wb')
+                await f.write(await resp.read())
+                await f.close()
+                return path
+
+async def getIcon(message):
+    assert message.attachments[0].filename[-4:].lower() in (".jpg",".png","jpeg",".gif"), "Le format de l'image n'est pas bon, veuillez me donner un PNG ou un JPG !"
+    if message.attachments[0].filename[-4:].lower()==".gif":
+        assert message.guild.premium_tier>0, "Pour utiliser un GIF vous devez avoir un serveur boosté. (c'est pas moi qui impose les règles, c'est Discord...)"
+    async with aiohttp.ClientSession() as session:
+        async with session.get(message.attachments[0].url) as resp:
+            if resp.status == 200:
+                if not os.path.exists("Dyn/{0}".format(message.guild.id)):
+                    os.makedirs("Dyn/{0}".format(message.guild.id))
+                count=0
+                path="Dyn/{0}/{1}".format(message.guild.id,message.attachments[0].filename)
+                while os.path.isfile(path): 
+                    path="Dyn/{0}/{1}{2}".format(message.guild.id,count,message.attachments[0].filename)
                     count+=1
                 f = await aiofiles.open(path, mode='wb')
                 await f.write(await resp.read())

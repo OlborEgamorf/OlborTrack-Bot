@@ -31,7 +31,8 @@ def createDirSQL(guild):
             pass
 
     curseur.execute("CREATE TABLE IF NOT EXISTS sbmessages (IDMess BIGINT, IDStar BIGINT, Nombre INT, PRIMARY KEY(IDMess,IDStar))")
-    curseur.execute("CREATE TABLE IF NOT EXISTS savezvous (Texte TEXT, ID BIGINT, Image TEXT, Count INT)")
+    curseur.execute("CREATE TABLE IF NOT EXISTS savezvous (Texte TEXT, ID BIGINT, Image TEXT, Count INT, Source TEXT)")
+    curseur.execute("CREATE TABLE IF NOT EXISTS svcomment (Count INT, ID INT, Texte TEXT, Date TEXT)")
     curseur.execute("CREATE TABLE IF NOT EXISTS sb (Nombre INT, Salon BIGINT, Emote TEXT, ID BIGINT, Count INT, PRIMARY KEY(Salon, Emote))")
     curseur.execute("CREATE TABLE IF NOT EXISTS twitch (Nombre INT, Salon BIGINT, Stream TEXT, Descip TEXT, Sent BOOL, PRIMARY KEY(Salon, Stream))")
     curseur.execute("CREATE TABLE IF NOT EXISTS youtube (Nombre INT, Salon BIGINT, Chaine TEXT, Descip TEXT, LastID TEXT, Nom TEXT, PRIMARY KEY(Salon, Chaine))")
@@ -45,6 +46,10 @@ def createDirSQL(guild):
     curseur.execute("CREATE TABLE IF NOT EXISTS messagesAD (Nombre INT, Message TEXT)")
 
     curseur.execute("CREATE TABLE IF NOT EXISTS etatAnniv (Statut BOOL, Salon INT, Message TEXT)")
+
+    curseur.execute("CREATE TABLE IF NOT EXISTS etatPP (Statut BOOL, Salon INT)")
+    curseur.execute("INSERT INTO etatPP VALUES (False,0)")
+    curseur.execute("CREATE TABLE IF NOT EXISTS icons (Nombre INT, Path TEXT, Description TEXT, Membres TEXT, Auteur INT, Rotation BOOL, PRIMARY KEY(Nombre))")
 
     for i in ("BV","AD"):
         try:
@@ -114,8 +119,8 @@ def createDirSQL(guild):
     connexion.commit()
 
     connexion,curseur = connectSQL(guild.id,"VoiceEphem","Guild",None,None)
-    curseur.execute("CREATE TABLE IF NOT EXISTS hub (Nombre INT PRIMARY KEY, ID INT, Limite INT)")
-    curseur.execute("CREATE TABLE IF NOT EXISTS salons (Nombre INT PRIMARY KEY, Nom TEXT, ID INT)")
+    curseur.execute("CREATE TABLE IF NOT EXISTS hub (Nombre INT PRIMARY KEY, ID INT, Limite INT, Pattern TEXT)")
+    curseur.execute("CREATE TABLE IF NOT EXISTS salons (IDHub INT, IDChannel INT, IDOwner INT, Lock BOOL)")
     for i in range(1,51):
         try:
             curseur.execute("INSERT INTO salons VALUES({0},'Salon {0}',0)".format(i))
@@ -126,8 +131,13 @@ def createDirSQL(guild):
 
 def alterHBM(bot):
     for i in bot.guilds:
-        connexion,curseur = connectSQL(i.id,"Guild","Guild",None,None)
-        curseur.execute("ALTER TABLE chans ADD COLUMN Tab BOOL")
-        curseur.execute("UPDATE chans SET Tab=False")
-        curseur.execute("DELETE FROM modulesCMD WHERE Module='{0}' OR Module='{1}' OR Module='{2}' OR Module='{3}'".format("MAL","Wiki","Spotify","Geo"))
+        connexion,curseur = connectSQL(i.id,"VoiceEphem","Guild",None,None)
+        try:
+            curseur.execute("ALTER TABLE hub ADD COLUMN Pattern TEXT")
+            curseur.execute("UPDATE hub SET Pattern='default'")
+            curseur.execute("DROP TABLE salons")
+            curseur.execute("CREATE TABLE salons (IDHub INT, IDChannel INT, IDOwner INT, Lock BOOL)")
+        except:
+            pass
+        #curseur.execute("DELETE FROM modulesCMD WHERE Module='{0}' OR Module='{1}' OR Module='{2}' OR Module='{3}'".format("MAL","Wiki","Spotify","Geo"))
         connexion.commit()
