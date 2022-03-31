@@ -5,13 +5,14 @@
 Bonjour et bienvenue sur la page GitHub du projet OlborTrack !
 OlborTrack est un bot Discord multifonction, concentré sur les statistiques et embarquant des jeux, des commandes custom, des sondages...
 
-Actuellement, je développe la version 3.1, et vous pouvez m'aider !
+Actuellement, je développe la version 3.2, et vous pouvez m'aider !
 
 Le patch note de la bêta 3.1 est disponible ici : https://github.com/OlborEgamorf/OlborTrack-Bot/blob/3.1/Beta3.1.md
+Le patch note de la 3.2 est disponible ici : https://github.com/OlborEgamorf/OlborTrack-Bot/blob/3.2/Patch3.2.md
 
 Le code est quasiment complet, il manque que la partie "exécution" qui contient des informations sensibles et que je ne veux pas divulguer.
 
-Je me sert de ces bibliothèques : discord.py, asyncio, aiohttp, wikiquote, wikipediaapi, shutil, matplotlib, pandas, seaborn, geoplot, geopandas, colorthief, circlify et rule34 (lol)
+Je me sert de ces bibliothèques : discord.py, aiohttp, shutil, matplotlib, pandas, seaborn, geoplot, geopandas, colorthief, circlify et rule34 (lol)
 
 Pour les statistiques, je me sers de sqlite3 et donc du langage SQL pour stocker et gérer les données. 
 
@@ -28,11 +29,6 @@ Vous avez à disposition un petit fichier nommé "Exemple.py" avec des évèvene
 Pour que les importations fonctionnent, il faut ajouter le répertoire dans le PYTHONPATH.
 
 Les différents schémas SQL sont exposés ici : https://github.com/OlborEgamorf/OlborTrack-Bot/blob/main/Stats/Schemas.md
-
-## Fichiers obsolètes 
-
-Il y a encore des fichiers et fonctions qui sont obsolètes et qui bientot ne serviront plus, par exemple :
-* EcritureRecherche3
 
 ## Liens
 
