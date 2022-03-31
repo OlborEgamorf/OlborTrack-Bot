@@ -1,11 +1,12 @@
-from matplotlib import pyplot as plt
-import pandas as pd
-from Stats.SQL.ConnectSQL import connectSQL
 from math import inf
-from Core.Fonctions.VoiceAxe import voiceAxe
-from Core.Fonctions.GraphTheme import setThemeGraph
-from Core.Fonctions.GetTable import collapseEvol, getTableDay
+
+import pandas as pd
 from Core.Fonctions.GetNom import getNomGraph
+from Core.Fonctions.GetTable import collapseEvol, getTableDay, getTablePerso
+from Core.Fonctions.GraphTheme import setThemeGraph
+from Core.Fonctions.VoiceAxe import voiceAxe
+from matplotlib import pyplot as plt
+from Stats.SQL.ConnectSQL import connectSQL
 
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TO","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
 dictTitle={"Messages":"membre","Voice":"membre","Mots":"membres","Salons":"salon","Emotes":"emote","Reactions":"réaction","Voicechan":"salon","Freq":"heure"}
@@ -88,11 +89,17 @@ async def graphEvolAA(ligne,ctx,bot,option,guildOT):
 
     connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
     if ligne["Args1"]=="to":
-        tableDemain=curseur.execute("SELECT Mois, Annee FROM persoA{0} WHERE Annee>'{1}' AND Annee<>'GL' ORDER BY Annee ASC".format(ligne["Args3"],annee)).fetchone()
-        tableHier=curseur.execute("SELECT Mois, Annee FROM persoA{0} WHERE Annee<'{1}' AND Annee<>'GL' ORDER BY Annee DESC".format(ligne["Args3"],annee)).fetchone()
+        tableDemain=getTablePerso(ctx.guild.id,option,ligne["Args3"],False,"A","periodAsc")
+        tableDemain=list(filter(lambda x:x["Annee"]!="GL" and x["Annee"]>annee, table))
+
+        tableHier=getTablePerso(ctx.guild.id,option,ligne["Args3"],False,"A","periodDesc")
+        tableHier=list(filter(lambda x:x["Annee"]!="GL" and x["Annee"]<annee, table))
     else:
-        tableDemain=curseur.execute("SELECT Mois, Annee, Annee || '' || Mois AS DateID FROM persoM{0} WHERE DateID>'{1}{2}' ORDER BY DateID ASC".format(ligne["Args3"],annee,tableauMois[mois])).fetchone()
-        tableHier=curseur.execute("SELECT Mois, Annee, Annee || '' || Mois AS DateID FROM persoM{0} WHERE DateID<'{1}{2}' ORDER BY DateID DESC".format(ligne["Args3"],annee,tableauMois[mois])).fetchone()
+        tableDemain=getTablePerso(ctx.guild.id,option,ligne["Args3"],False,"M","periodAsc")
+        tableDemain=list(filter(lambda x:x["Annee"]+x["Mois"]>annee+tableauMois[mois], table))
+
+        tableHier=getTablePerso(ctx.guild.id,option,ligne["Args3"],False,"M","periodDesc")
+        tableHier=list(filter(lambda x:x["Annee"]+x["Mois"]<annee+tableauMois[mois], table))
 
     nom,color=getNomColor(ctx,bot,option,ligne["Args3"])
 
@@ -164,9 +171,11 @@ async def graphEvolBest(ligne,ctx,bot,option,guildOT):
 
     connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
     if ligne["Args1"]=="to":
-        tableMeilleur=curseur.execute("SELECT Mois, Annee FROM persoA{0} WHERE Annee<>'GL' AND Annee<>'{1}' ORDER BY Count DESC".format(ligne["Args3"],annee)).fetchone()
+        tableMeilleur=getTablePerso(ctx.guild.id,option,ligne["Args3"],False,"A","countDesc")
+        tableMeilleur=list(filter(lambda x:x["Annee"]!="GL" and x["Annee"]!=annee, table))
     else:
-        tableMeilleur=curseur.execute("SELECT Mois, Annee, Annee || '' || Mois AS DateID FROM persoM{0} WHERE DateID<>'{1}{2}' ORDER BY Count DESC".format(ligne["Args3"],annee,tableauMois[mois])).fetchone()
+        tableMeilleur=getTablePerso(ctx.guild.id,option,ligne["Args3"],False,"M","countDesc")
+        tableMeilleur=list(filter(lambda x:x["Annee"]!=annee and x["Mois"]!=tableauMois[mois], table))
 
     nom,color=getNomColor(ctx,bot,option,ligne["Args3"])
     

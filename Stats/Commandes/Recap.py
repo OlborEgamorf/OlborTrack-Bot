@@ -1,6 +1,7 @@
 from time import strftime
 
 import discord
+from Core.Decorator import OTCommand
 from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.GetNom import nomsOptions
 from Core.Fonctions.GetPeriod import getAnnee, getMois
@@ -10,6 +11,7 @@ from Stats.SQL.ConnectSQL import connectSQL
 
 tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai","06":"Juin","07":"Juillet","08":"Aout","09":"Septembre","10":"Octobre","11":"Novembre","12":"Décembre","TO":"TO","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
 
+#@OTCommand
 async def recapStats(ctx,bot):
     if len(ctx.args)==2 or ctx.args[2].lower() not in ("mois","annee"):
         try:
@@ -24,7 +26,7 @@ async def recapStats(ctx,bot):
     elif ctx.args[2].lower()=="annee":
         mois,annee="to",strftime("%y")
     
-    dictMessages,dictSalons,dictEmotes,dictVoc,dictFreq=[],[],[],[],[]
+    dictMessages,dictSalons,dictEmotes,dictVoc,dictFreq=[],[],{},[],{}
     guilds=ctx.author.mutual_guilds
     dictAutre={"Messages":0,"Vocal":0,"Serveurs":len(guilds)}
     for i in guilds:
@@ -69,7 +71,10 @@ async def recapStats(ctx,bot):
             freq=curseur.execute("SELECT Rank,Count,ID FROM perso{0}{1}{2}".format(tableauMois[mois],annee,ctx.author.id)).fetchall()
             if freq!=[]:
                 for j in freq:
-                    dictFreq.append({"ID":j["ID"],"Count":j["Count"],"RankIntern":j["Rank"],"Rank":0})
+                    if j["ID"] not in dictFreq:
+                        dictFreq[j["ID"]]=j["Count"]
+                    else:
+                        dictFreq[j["ID"]]+=j["Count"]
             curseur.close()
             connexion.close()
         except:
@@ -80,7 +85,10 @@ async def recapStats(ctx,bot):
             emotes=curseur.execute("SELECT Rank,Count,ID FROM perso{0}{1}{2}".format(tableauMois[mois],annee,ctx.author.id)).fetchall()
             if emotes!=[]:
                 for j in emotes:
-                    dictEmotes.append({"ID":j["ID"],"Count":j["Count"],"RankIntern":j["Rank"],"Rank":0})
+                    if j["ID"] not in dictEmotes:
+                        dictEmotes[j["ID"]]=j["Count"]
+                    else:
+                        dictEmotes[j["ID"]]+=j["Count"]
             curseur.close()
             connexion.close()
         except:
@@ -88,12 +96,15 @@ async def recapStats(ctx,bot):
 
         if annee=="GL":
             mois,annee="glob",""
-            
+    
+    listeFreq=list(map(lambda x:{"ID":x,"Count":dictFreq[x],"Rank":0},dictFreq))
+    listeEmotes=list(map(lambda x:{"ID":x,"Count":dictEmotes[x],"Rank":0},dictEmotes))
+
     rankingClassic(dictMessages)
     rankingClassic(dictSalons)
-    rankingClassic(dictEmotes)
+    rankingClassic(listeEmotes)
     rankingClassic(dictVoc)
-    rankingClassic(dictFreq)
+    rankingClassic(listeFreq)
 
     if mois=="glob":
         title="Récapitulatif général"
@@ -117,11 +128,11 @@ async def recapStats(ctx,bot):
         for i in range(stop):
             descip+="{0}e : {1} - {2}\n".format(dictVoc[i]["Rank"],dictVoc[i]["Nom"],tempsVoice(dictVoc[i]["Count"]))
         embed.add_field(name="Serveurs les plus actifs - vocal",value=descip,inline=True)
-    if dictEmotes!=[]:
+    if listeEmotes!=[]:
         descip=""
-        stop=5 if len(dictEmotes)>5 else len(dictEmotes)
+        stop=5 if len(listeEmotes)>5 else len(listeEmotes)
         for i in range(stop):
-            descip+="{0}e : {1} - {2}\n".format(dictEmotes[i]["Rank"],nomsOptions("Emotes",dictEmotes[i]["ID"],None,bot),dictEmotes[i]["Count"])
+            descip+="{0}e : {1} - {2}\n".format(listeEmotes[i]["Rank"],nomsOptions("Emotes",listeEmotes[i]["ID"],None,bot),listeEmotes[i]["Count"])
         embed.add_field(name="Emotes les plus utilisées",value=descip,inline=True)
     if dictSalons!=[]:
         descip=""
@@ -129,11 +140,11 @@ async def recapStats(ctx,bot):
         for i in range(stop):
             descip+="{0}e : <#{1}> - {2}\n".format(dictSalons[i]["Rank"],dictSalons[i]["ID"],dictSalons[i]["Count"])
         embed.add_field(name="Salons les plus utilisés",value=descip,inline=True)
-    if dictFreq!=[]:
+    if listeFreq!=[]:
         descip=""
-        stop=5 if len(dictFreq)>5 else len(dictFreq)
+        stop=5 if len(listeFreq)>5 else len(listeFreq)
         for i in range(stop):
-            descip+="{0}e : {1} - {2}\n".format(dictFreq[i]["Rank"],nomsOptions("Freq",dictFreq[i]["ID"],None,bot),dictFreq[i]["Count"])
+            descip+="{0}e : {1} - {2}\n".format(listeFreq[i]["Rank"],nomsOptions("Freq",listeFreq[i]["ID"],None,bot),listeFreq[i]["Count"])
         embed.add_field(name="Heures les plus actives",value=descip,inline=True)
 
     embed.add_field(name="Stats diverses",value="Messages envoyés : {0}\nTemps passé en vocal : {1}\nNombre de serveurs en commun : {2}\n[Invitez moi sur votre serveur](https://discord.com/oauth2/authorize?client_id=699728606493933650&permissions=120259472576&scope=bot)".format(dictAutre["Messages"],tempsVoice(dictAutre["Vocal"]),dictAutre["Serveurs"]))

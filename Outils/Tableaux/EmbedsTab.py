@@ -1,9 +1,9 @@
 import discord
 from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.Embeds import addtoFields, createFields, sendEmbed
+from Core.Fonctions.Embeds import (addtoFields, createEmbed, createFields,
+                                   sendEmbed)
 from Core.Fonctions.setMaxPage import setMax, setPage
 from Core.OTGuild import OTGuild
-from OT3.Core.Fonctions.Embeds import createEmbed
 from Stats.SQL.ConnectSQL import connectSQL
 
 

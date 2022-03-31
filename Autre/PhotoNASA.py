@@ -14,7 +14,7 @@ async def embedNasaPhoto() -> discord.Embed:
     table=await webRequest("https://api.nasa.gov/planetary/apod?api_key="+NASAKey+"&hd=True")
     assert table!=False, "Une erreur est survenue lors du chargement de l'image... Veuillez réessayer plus tard..."
     embed=createEmbed("Photo du jour : "+table["title"],table["explanation"],0xa83e32,"nasaphoto",None)
-    embed.set_author(name="NASA",icon_url="https://media.discordapp.net/attachments/726034739550486618/769603075282305044/nasa-vector-logo-small.png",url=id)
+    embed.set_author(name="NASA",icon_url="https://media.discordapp.net/attachments/726034739550486618/769603075282305044/nasa-vector-logo-small.png",url="https://apod.nasa.gov/apod/astropix.html")
     return embed
 
 @OTCommand
