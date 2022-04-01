@@ -4,6 +4,7 @@ from Stats.SQL.ConnectSQL import connectSQL
 
 tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai","06":"Juin","07":"Juillet","08":"Aout","09":"Septembre","10":"Octobre","11":"Novembre","12":"Décembre","TO":"Année","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
 
+
 def setMarketPlace():
     connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
     for i in curseur.execute("SELECT * FROM marketplace").fetchall():
@@ -11,14 +12,14 @@ def setMarketPlace():
             curseur.execute("UPDATE titres SET Stock=Stock+{0} WHERE ID={1}".format(i["Stock"],i["ID"]))
         curseur.execute("DELETE FROM marketplace WHERE ID={0}".format(i["ID"]))
     
-    if randint(0,5)==3:
-        if curseur.execute("SELECT * FROM titres WHERE Rareté=3 AND Stock=1").fetchall()!=[]:
-            unique=curseur.execute("SELECT ID FROM titres WHERE Rareté=3 AND Stock=1 ORDER BY RANDOM()").fetchone()
+    if randint(0,20)==3:
+        if curseur.execute("SELECT * FROM titres WHERE Rareté=5 AND Stock=1").fetchall()!=[]:
+            unique=curseur.execute("SELECT ID FROM titres WHERE Rareté=5 AND Stock=1 ORDER BY RANDOM()").fetchone()
             curseur.execute("UPDATE titres SET Stock=0, Known=True WHERE ID={0}".format(unique["ID"]))
             curseur.execute("INSERT INTO marketplace VALUES({0},1,True)".format(unique["ID"]))
-    
-    if curseur.execute("SELECT * FROM titres WHERE Rareté=2 AND Stock<>0").fetchall()!=[]:
-        legend=curseur.execute("SELECT ID,Stock FROM titres WHERE Rareté=2 AND Stock<>0 ORDER BY RANDOM() LIMIT 3").fetchall()
+
+    if curseur.execute("SELECT * FROM titres WHERE Rareté=3 AND Stock<>0").fetchall()!=[]:
+        legend=curseur.execute("SELECT ID,Stock FROM titres WHERE Rareté=3 AND Stock<>0 ORDER BY RANDOM() LIMIT 2").fetchall()
         for i in legend:
             if i["Stock"]<3:
                 curseur.execute("UPDATE titres SET Stock=0, Known=True WHERE ID={0}".format(i["ID"]))
@@ -27,15 +28,25 @@ def setMarketPlace():
                 curseur.execute("UPDATE titres SET Stock=Stock-3, Known=True WHERE ID={0}".format(i["ID"]))
                 curseur.execute("INSERT INTO marketplace VALUES({0},3,True)".format(i["ID"]))
     
-    if curseur.execute("SELECT * FROM titres WHERE Rareté=1 AND Stock<>0").fetchall()!=[]:
-        legend=curseur.execute("SELECT ID,Stock FROM titres WHERE Rareté=1 AND Stock<>0 ORDER BY RANDOM() LIMIT 7").fetchall()
+    if curseur.execute("SELECT * FROM titres WHERE Rareté=2 AND Stock<>0").fetchall()!=[]:
+        legend=curseur.execute("SELECT ID,Stock FROM titres WHERE Rareté=2 AND Stock<>0 ORDER BY RANDOM() LIMIT 4").fetchall()
         for i in legend:
-            if i["Stock"]<10:
+            if i["Stock"]<7:
                 curseur.execute("UPDATE titres SET Stock=0, Known=True WHERE ID={0}".format(i["ID"]))
                 curseur.execute("INSERT INTO marketplace VALUES({0},{1},True)".format(i["ID"],i["Stock"]))
             else:
-                curseur.execute("UPDATE titres SET Stock=Stock-10, Known=True WHERE ID={0}".format(i["ID"]))
-                curseur.execute("INSERT INTO marketplace VALUES({0},10,True)".format(i["ID"]))
+                curseur.execute("UPDATE titres SET Stock=Stock-7, Known=True WHERE ID={0}".format(i["ID"]))
+                curseur.execute("INSERT INTO marketplace VALUES({0},7,True)".format(i["ID"]))
+    
+    if curseur.execute("SELECT * FROM titres WHERE Rareté=1 AND Stock<>0").fetchall()!=[]:
+        legend=curseur.execute("SELECT ID,Stock FROM titres WHERE Rareté=1 AND Stock<>0 ORDER BY RANDOM() LIMIT 7").fetchall()
+        for i in legend:
+            if i["Stock"]<15:
+                curseur.execute("UPDATE titres SET Stock=0, Known=True WHERE ID={0}".format(i["ID"]))
+                curseur.execute("INSERT INTO marketplace VALUES({0},{1},True)".format(i["ID"],i["Stock"]))
+            else:
+                curseur.execute("UPDATE titres SET Stock=Stock-15, Known=True WHERE ID={0}".format(i["ID"]))
+                curseur.execute("INSERT INTO marketplace VALUES({0},15,True)".format(i["ID"]))
 
     connexion.commit()
 

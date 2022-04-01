@@ -8,9 +8,9 @@ from Titres.Couleur import getColorJeux
 from Titres.Emote import getEmoteJeux
 from Titres.Outils import createAccount
 
-dictStatut={0:"Fabuleux",1:"Rare",2:"Légendaire",3:"Unique"}
-dictSell={1:150,2:400,3:2500,0:"Inestimable"}
-dictValue={0:"Inestimable",1:300,2:800,3:5000}
+dictStatut={0:"Spécial",1:"Basique",2:"Rare",3:"Légendaire",4:"Haut-Fait",5:"Unique",6:"Fabuleux"}
+dictSell={0:"Inestimable",1:150,2:300,3:500,4:"Inestimable",5:1250,6:"Inestimable"}
+dictValue={0:"Inestimable",1:300,2:600,3:1000,4:"Inestimable",5:2500,6:"Inestimable"}
 
 async def infosTitre(ctx,idtitre,bot):
     connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
@@ -25,6 +25,15 @@ async def infosTitre(ctx,idtitre,bot):
     embed.add_field(name="Collection",value=titre["Collection"],inline=True)
     embed.add_field(name="Rareté",value=dictStatut[titre["Rareté"]],inline=True)
     embed.add_field(name="Valeur marchande",value="Achat : {0}\nVente : {1}".format(dictValue[titre["Rareté"]],dictSell[titre["Rareté"]]),inline=True)
+
+    try:
+        connexionUser,curseurUser=connectSQL("OT",ctx.author.id,"Titres",None,None)
+        own=curseurUser.execute("SELECT * FROM titresUser WHERE ID={0}".format(idtitre)).fetchone()
+        assert own!=None
+        embed.add_field(name="Possédé",value="**Vous possèdez ce titre !**",inline=True)
+    except:
+        embed.add_field(name="Possédé",value="Vous ne possèdez pas ce titre...",inline=True)
+
     await ctx.reply(embed=embed)
 
 

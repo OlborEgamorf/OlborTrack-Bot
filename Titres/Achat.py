@@ -1,13 +1,12 @@
 import asyncio
 
-from Core.Decorator import OTCommand
 from Core.Fonctions.Embeds import createEmbed, embedAssert
 from Stats.SQL.ConnectSQL import connectSQL
 
 from Titres.Outils import createAccount
 
-dictReverse={300:1,800:2,4000:3}
-dictValue={1:300,2:800,3:4000}
+dictReverse={300:1,600:2,1000:3,2500:5}
+dictValue={1:300,2:600,3:1000,5:2500}
 
 async def achatTitre(ctx,idtitre,bot,gift):
     try:
@@ -73,13 +72,13 @@ def verifAchat(ctx,idtitre,gift):
         connexionGift,curseurGift=connectSQL("OT",ctx.message.mentions[0].id,"Titres",None,None)
         createAccount(connexionGift,curseurGift)
         assert curseurGift.execute("SELECT * FROM titresUser WHERE ID={0}".format(idtitre)).fetchone()==None, "La personne à qui vous voulez offrir ce titre le possède déjà !"
-        if titre["Rareté"]==3:
-            assert curseurGift.execute("SELECT COUNT() AS Count FROM titresUser WHERE Rareté=3").fetchone()["Count"]==0, "La personne à qui vous voulez offrir ce titre a déjà un titre de type Unique."
+        if titre["Rareté"]==5:
+            assert curseurGift.execute("SELECT COUNT() AS Count FROM titresUser WHERE Rareté=5").fetchone()["Count"]==0, "La personne à qui vous voulez offrir ce titre a déjà un titre de type Unique."
         connexionGift.close()
     else:
         assert curseurUser.execute("SELECT * FROM titresUser WHERE ID={0}".format(idtitre)).fetchone()==None, "Vous possèdez déjà ce titre !"
-        if titre["Rareté"]==3:
-            assert curseurUser.execute("SELECT COUNT() AS Count FROM titresUser WHERE Rareté=3").fetchone()["Count"]==0, "Vous ne pouvez pas avoir plus d'un titre unique dans votre inventaire."
+        if titre["Rareté"]==5:
+            assert curseurUser.execute("SELECT COUNT() AS Count FROM titresUser WHERE Rareté=5").fetchone()["Count"]==0, "Vous possèdez déjà un titre Unique, vous ne pouvez donc pas en acheter."
 
     connexionUser.close()
     connexion.close()

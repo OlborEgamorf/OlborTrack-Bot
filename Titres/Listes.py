@@ -4,9 +4,9 @@ from Core.Fonctions.Embeds import addtoFields, createFields, sendEmbed
 from Core.Fonctions.setMaxPage import setMax, setPage
 from Stats.SQL.ConnectSQL import connectSQL
 
-dictSell={1:150,2:400,3:2000,0:"Inestimable"}
-dictValue={0:"Inestimable",1:300,2:800,3:4000}
-dictStatut={0:"Fabuleux",1:"Rare",2:"Légendaire",3:"Unique"}
+dictStatut={0:"Spécial",1:"Basique",2:"Rare",3:"Légendaire",4:"Haut-Fait",5:"Unique",6:"Fabuleux"}
+dictSell={0:"Inestimable",1:150,2:300,3:500,4:"Inestimable",5:"Inestimable",6:"Inestimable"}
+dictValue={0:"Inestimable",1:300,2:600,3:1000,4:"Inestimable",5:2500,6:"Inestimable"}
 
 async def commandeTMP(ctx,turn,react,ligne,option):
     connexionCMD,curseurCMD=connectSQL(ctx.guild.id,"Commandes","Guild",None,None)
@@ -62,7 +62,7 @@ def getTableTitres(curseur,option,author,guild):
     elif option=="fonds":
         table=curseur.execute("SELECT * FROM fonds WHERE Guild=0 OR Guild={0}".format(guild)).fetchall()
     else:
-        table=curseur.execute("SELECT * FROM titres ORDER BY Rareté DESC").fetchall()
+        table=curseur.execute("SELECT * FROM titres ORDER BY Rareté ASC").fetchall()
     return table
 
 def embedTMP(table,page,mobile):

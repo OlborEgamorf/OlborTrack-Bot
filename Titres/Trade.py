@@ -6,10 +6,10 @@ from Stats.SQL.ConnectSQL import connectSQL
 from Titres.Outils import createAccount
 from Titres.Vente import verifVente
 
-dictStatut={0:"Fabuleux",1:"Rare",2:"Légendaire",3:"Unique"}
+dictStatut={0:"Spécial",1:"Basique",2:"Rare",3:"Légendaire",4:"Haut-Fait",5:"Unique",6:"Fabuleux"}
 dictTrade={705766186909958185:"Coins",705766186989912154:"Titre"}
-dictReverse={300:1,800:2,5000:3}
-dictReverseSell={150:1,400:2,2500:3}
+dictReverse={300:1,600:2,1000:3,2500:5}
+dictReverseSell={150:1,300:2,500:3}
 
 async def tradeTitre(ctx,idtitre,bot):
     try:
@@ -54,7 +54,7 @@ async def tradeTitre(ctx,idtitre,bot):
 
         connexionTrade,curseurTrade=connectSQL("OT",userTrade.id,"Titres",None,None)
         createAccount(connexionTrade,curseurTrade)
-        assert curseurTrade.execute("SELECT COUNT() AS Count FROM titresUser WHERE Rareté=3").fetchone()["Count"]==0, "Vous avez déjà un titre de type Unique." 
+        assert curseurTrade.execute("SELECT COUNT() AS Count FROM titresUser WHERE Rareté=5").fetchone()["Count"]==0, "Vous avez déjà un titre de type Unique." 
         if way=="Coins":
             coins=curseurTrade.execute("SELECT * FROM coins").fetchone()["Coins"]
             connexionTrade.close()
@@ -78,7 +78,7 @@ async def tradeTitre(ctx,idtitre,bot):
             titre=verifTrade(ctx,curseurUser,idtitre)
             coins=curseurTrade.execute("SELECT * FROM coins").fetchone()["Coins"]
             assert coins-somme>=0, "Vous n'avez pas assez de OT Coins !"
-            assert curseurTrade.execute("SELECT COUNT() AS Count FROM titresUser WHERE Rareté=3").fetchone()["Count"]==0, "Vous avez déjà un titre de type Unique." 
+            assert curseurTrade.execute("SELECT COUNT() AS Count FROM titresUser WHERE Rareté=5").fetchone()["Count"]==0, "Vous avez déjà un titre de type Unique." 
 
             curseurTrade.execute("UPDATE coins SET Coins=Coins-{0}".format(somme))
             curseurTrade.execute("INSERT INTO titresUser VALUES({0},'{1}',{2})".format(idtitre,titre["Nom"],titre["Rareté"]))
@@ -107,7 +107,7 @@ async def tradeTitre(ctx,idtitre,bot):
             connexionTrade,curseurTrade=connectSQL("OT",userTrade.id,"Titres",None,None)
             titre=verifTrade(ctx,curseurUser,idtitre)
             titreTrade=verifVente(userTrade.id,idtrade)
-            assert curseurTrade.execute("SELECT COUNT() AS Count FROM titresUser WHERE Rareté=3").fetchone()["Count"]==0, "Vous avez déjà un titre de type Unique." 
+            assert curseurTrade.execute("SELECT COUNT() AS Count FROM titresUser WHERE Rareté=5").fetchone()["Count"]==0, "Vous avez déjà un titre de type Unique." 
 
             curseurTrade.execute("INSERT INTO titresUser VALUES({0},'{1}',{2})".format(idtitre,titre["Nom"],titre["Rareté"]))
             curseurUser.execute("DELETE FROM titresUser WHERE ID={0}".format(idtitre))
@@ -129,7 +129,7 @@ def verifTrade(ctx,curseurUser1,idtitre):
     connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
     titre=curseurUser1.execute("SELECT * FROM titresUser WHERE ID={0}".format(idtitre)).fetchone()
     assert titre!=None, "Vous ne possèdez pas ce titre !"
-    assert titre["Rareté"]!=0, "Vous ne pouvez vendre ou échanger un titre Fabuleux."
+    assert titre["Rareté"] not in (0,4,5,6), "Vous ne pouvez vendre ou échanger ce titre."
     assert curseur.execute("SELECT * FROM active WHERE MembreID={0}".format(ctx.author.id)).fetchone()["TitreID"]!=int(idtitre), "Le titre que vous voulez échanger est celui qui est actuellement équipé pour vous."
     connexion.close()
     return titre

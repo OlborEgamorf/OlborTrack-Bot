@@ -5,7 +5,7 @@ from Stats.SQL.ConnectSQL import connectSQL
 
 from Titres.Outils import createAccount
 
-dictSell={1:150,2:400,3:2000}
+dictSell={0:"Inestimable",1:150,2:300,3:500,4:"Inestimable",5:"Inestimable",6:"Inestimable"}
 
 async def venteTitre(ctx,idtitre,bot):
     try:
@@ -48,7 +48,7 @@ def verifVente(user,idtitre):
 
     titre=curseurUser.execute("SELECT * FROM titresUser WHERE ID={0}".format(idtitre)).fetchone()
     assert titre!=None, "Vous ne possèdez pas ce titre."
-    assert titre["Rareté"]!=0, "Vous ne pouvez vendre ou échanger un titre Fabuleux."
+    assert titre["Rareté"] not in (0,4,5,6), "Vous ne pouvez vendre ou échanger ce titre."
     membre=curseur.execute("SELECT * FROM active WHERE MembreID={0}".format(user)).fetchone()
     if membre!=None:
         assert membre["TitreID"]!=int(idtitre), "Le titre que vous voulez vendre est celui qui est actuellement équipé pour vous."

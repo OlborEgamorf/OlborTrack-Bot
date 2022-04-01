@@ -1,4 +1,3 @@
-import asyncio
 import sqlite3
 
 from Core.Fonctions.Embeds import createEmbed
