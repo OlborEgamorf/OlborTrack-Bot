@@ -71,6 +71,8 @@ def getNomGraph(ctx:commands.Context,bot:commands.Bot,option:str,id:int) -> (str
         nom=nom if len(nom)<=15 else "{0}...".format(nom[0:15])
         return nom
     elif option in ("Salons","Voicechan"):
+        if id==0:
+            return "Salons éphémères"
         nom=bot.get_channel(id).name
         nom=nom if len(nom)<=15 else "{0}...".format(nom[0:15])
         return nom

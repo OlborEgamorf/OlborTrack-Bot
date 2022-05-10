@@ -14,7 +14,6 @@ async def connectionVoiceEphem(guildOT,before,after,member):
                 limite=guildOT.voicehub[hub].limite
             voice=await member.guild.create_voice_channel(formatageVoiceEphem(guildOT.voicehub[hub].pattern,member,nb["Count"]+1),overwrites=after.channel.overwrites,category=after.channel.category,bitrate=after.channel.bitrate,user_limit=limite)
             await member.move_to(voice)
-            print(hub,voice.id,member.id)
             curseur.execute("INSERT INTO salons VALUES ({0},{1},{2},False)".format(hub,voice.id,member.id))
             guildOT.voiceephem.append(voice.id)
             connexion.commit()

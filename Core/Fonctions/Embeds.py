@@ -100,7 +100,7 @@ async def exeErrorExcept(ctx:commands.Context,bot:commands.Bot,reply) -> discord
         await ctx.send(embed=embedUser)
 
 
-def createEmbed(title:str,descip:str,color:int,command:str,auteur:(discord.Member or discord.Guild)) -> discord.Embed:
+def createEmbed(title:str,descip:str,color:int,command:str,author:(discord.Member or discord.Guild)) -> discord.Embed:
     """Cette fonction créée un embed rapidement.
     Entrées : 
         title : le titre de l'embed
@@ -113,14 +113,14 @@ def createEmbed(title:str,descip:str,color:int,command:str,auteur:(discord.Membe
 
     embed=discord.Embed(title=title,description=descip,color=color)
     embed.set_footer(text="OT!"+command)
-    if type(auteur)==discord.Guild:
-        auteur(auteur.id,auteur.name,auteur.icon,embed,"guild")
-    elif type(auteur)==discord.Member:
-        auteur(auteur.id,auteur.nick or auteur.name,auteur.avatar,embed,"user")
-    elif auteur is None:
+    if type(author)==discord.Guild:
+        auteur(author.id,author.name,author.icon,embed,"guild")
+    elif type(author)==discord.Member:
+        auteur(author.id,author.nick or author.name,author.avatar,embed,"user")
+    elif author is None:
         pass
     else:
-        auteur(auteur.id,auteur.name,auteur.avatar,embed,"user")
+        auteur(author.id,author.name,author.avatar,embed,"user")
     return embed
 
 

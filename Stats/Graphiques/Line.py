@@ -5,6 +5,7 @@ from Core.Fonctions.GetNom import getNomGraph, getTitre
 from Core.Fonctions.GraphTheme import setThemeGraph
 from Core.Fonctions.VoiceAxe import voiceAxe
 from matplotlib import pyplot as plt
+from Core.Fonctions.GetTable import getTablePerso
 from Stats.SQL.ConnectSQL import connectSQL
 
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TOTAL","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
@@ -31,7 +32,9 @@ async def graphLine(ligne,ctx,bot,option,guildOT):
     if obj=="":
         old10=curseur.execute("SELECT * FROM firstM WHERE DateID<={0}{1} ORDER BY DateID DESC".format(ligne["Args2"],tableauMois[ligne["Args1"]])).fetchall()
     else:
-        old10=curseur.execute("SELECT Mois, Annee, Annee || '' || Mois AS DateID FROM persoM{0} WHERE DateID<='{1}{2}' ORDER BY DateID DESC".format(obj,ligne["Args2"],tableauMois[ligne["Args1"]])).fetchall()
+        less=ligne["Args2"]+tableauMois[ligne["Args1"]]
+        old10=getTablePerso(ctx.guild.id,option,obj,False,"M","periodDesc")
+        old10=list(filter(lambda x:x["Annee"]+x["Mois"]<less,old10))
     old10=old10[0:10] if len(old10)>10 else old10
 
     listeDates=[]

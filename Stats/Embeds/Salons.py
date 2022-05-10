@@ -11,7 +11,9 @@ def embedSalon(table,guildOT,page,mobile,evol,option):
         rank="{0} {1}".format(table[i]["Rank"],defEvol(table[i],evol))
         count=formatCount(option,table[i]["Count"])
         try:
-            if guildOT.chan[table[i]["ID"]]["Hide"]:
+            if table[i]["ID"]==0:
+                nom="Salons éphémères"
+            elif guildOT.chan[table[i]["ID"]]["Hide"]:
                 nom="*Salon masqué*"
                 count="*?*"
             else:

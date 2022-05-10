@@ -2,7 +2,7 @@ from Core.Fonctions.Embeds import createEmbed
 from Stats.SQL.ConnectSQL import connectSQL
 
 
-async def setTitre(ctx,idtitre,bot):
+async def setTitre(ctx,idtitre):
     connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
     connexionUser,curseurUser=connectSQL("OT",ctx.author.id,"Titres",None,None)
     titre=curseurUser.execute("SELECT * FROM titresUser WHERE ID={0}".format(idtitre)).fetchone()

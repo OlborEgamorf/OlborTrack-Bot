@@ -8,6 +8,10 @@ from Titres.Info import infosTitre
 @OTCommand
 async def exeTitres(ctx,bot,args):
     assert len(args)>0, "Vous devez me donner l'ID d'un titre !"
+    try:
+        int(args[0])
+    except:
+        raise AssertionError("Vous devez me donner l'ID d'un titre, pas son nom ou autre chose !")
     if ctx.invoked_with=="achat":
         await achatTitre(ctx,args[0],bot,False)
     elif ctx.invoked_with=="cadeau":
@@ -15,7 +19,7 @@ async def exeTitres(ctx,bot,args):
     elif ctx.invoked_with=="vente":
         await venteTitre(ctx,args[0],bot)
     elif ctx.invoked_with=="set":
-        await setTitre(ctx,args[0],bot)
+        await setTitre(ctx,args[0])
     elif ctx.invoked_with=="trade":
         await tradeTitre(ctx,args[0],bot)
     elif ctx.invoked_with=="infos":

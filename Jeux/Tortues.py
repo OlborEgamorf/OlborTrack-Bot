@@ -214,7 +214,7 @@ class JeuTortues(JeuBase):
         embed.set_footer(text="OT!tortues")
         return embed
 
-    async def startGame(self,inGame,emotes,mini):
+    async def startGame(self,inGame,emotes,mini,maxi):
         listeDel=[]
         for i in self.joueurs:
             try:
@@ -227,7 +227,7 @@ class JeuTortues(JeuBase):
             self.ids.remove(i.id)
             self.joueurs.remove(i)
             
-        start=await super().startGame(inGame,emotes,mini)
+        start=await super().startGame(inGame,emotes,mini,maxi)
 
         if start:
             await self.sendTortues()

@@ -152,6 +152,9 @@ class JeuMorpion(JeuBase):
             add=await self.play(self.joueurs[self.turn].message,bot)
             if add[0]:
                 nul=self.tab.checkNul()
+                win=self.tab.checkTab(add[1],add[2],self.turn+1)
+                if win:
+                    nul=False
                 if self.tab.checkTab(add[1],add[2],self.turn+1) or nul:
                     if not nul:
                         await self.stats(self.joueurs[self.turn].id,self.joueurs[self.turn].guild)

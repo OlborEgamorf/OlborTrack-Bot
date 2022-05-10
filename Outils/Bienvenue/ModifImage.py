@@ -53,7 +53,7 @@ async def modifImage(ctx,bot,args,option):
         squaretoround(ctx.author.id)
         config=True
 
-        if curseur.execute("SELECT * FROM etatBVAD WHERE Type='{0}'".format(option)).fetchone()["Statut"]==True:
+        if curseur.execute("SELECT * FROM etatBVAD WHERE Type='{0}'".format(option)).fetchone()["Statut"]==False:
             await ctx.reply("<:otORANGE:868538903584456745> l'image que vous cherchez existe bien, mais les messages {0} sont actuellement désactivés sur votre serveur. La modifier est donc peu pertinant, mais libre à vous !".format(dictTitres[option]))
         
         while config:

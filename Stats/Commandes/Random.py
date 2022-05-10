@@ -1,5 +1,6 @@
 from random import choice
 import sqlite3
+from Core.Fonctions.GetTable import getTablePerso
 from Stats.SQL.ConnectSQL import connectSQL
 from Core.Fonctions.TempsVoice import tempsVoice
 from Core.Fonctions.GetNom import nomsOptions
@@ -27,9 +28,9 @@ async def commandeRandom(ctx,ligne,react,guildOT,bot):
             sub=choice(["evol","perso"])
 
             if period=="mois":
-                table=curseur.execute("SELECT * FROM persoM{0} ORDER BY RANDOM()".format(author)).fetchone()
+                table=getTablePerso(ctx.guild.id,option,author,None,"M","random")
             else:
-                table=curseur.execute("SELECT * FROM persoA{0} ORDER BY RANDOM()".format(author)).fetchone()
+                table=getTablePerso(ctx.guild.id,option,author,None,"A","random")
             periodStr=randomPeriod(period,table)
 
             if sub=="evol":
@@ -87,9 +88,9 @@ async def commandeRandom(ctx,ligne,react,guildOT,bot):
         else:
             table=curseur.execute("SELECT * FROM glob ORDER BY RANDOM()").fetchone()
         if period=="mois":
-            tableObj=curseur.execute("SELECT * FROM persoM{0} ORDER BY RANDOM()".format(table["ID"])).fetchone()
+            tableObj=getTablePerso(ctx.guild.id,option,author,table["ID"],"M","random")
         else:
-            tableObj=curseur.execute("SELECT * FROM persoA{0} ORDER BY RANDOM()".format(table["ID"])).fetchone()
+            tableObj=getTablePerso(ctx.guild.id,option,author,table["ID"],"A","random")
         periodStr=randomPeriod(period,tableObj)
         dictPhrase={"Salons":"{0}, le salon {1} a vu **{2}** messages envoyés.\nSon rang est **{3}e** !",
                     "Freq":"{0}, **{2}** messages ont été envoyés entre {1}.\nLe rang de cette heure ci est **{3}e** !",

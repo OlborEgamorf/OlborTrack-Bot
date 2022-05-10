@@ -50,7 +50,7 @@ class PollTime():
 
         if self.option=="polltime":
             for react in message.reactions:
-                if type(react)!=str and react.emoji.id in ids:
+                if type(react.emoji)!=str and react.emoji.id in ids:
                     self.propositions[react.emoji.id].count=react.count-1
                     self.total+=react.count-1
 
@@ -169,7 +169,7 @@ class Giveaway():
             return
         users=None
         for i in range(len(message.reactions)):
-            if type(message.reactions[i].emoji.id)!=str and message.reactions[i].emoji.id==711222160982540380:
+            if type(message.reactions[i].emoji)!=str and message.reactions[i].emoji.id==711222160982540380:
                 users=await message.reactions[i].users().flatten()
                 if bot.user in users:
                     users.remove(bot.user)

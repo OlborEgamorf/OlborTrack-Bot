@@ -15,6 +15,7 @@ async def embedNasaPhoto() -> discord.Embed:
     assert table!=False, "Une erreur est survenue lors du chargement de l'image... Veuillez réessayer plus tard..."
     embed=createEmbed("Photo du jour : "+table["title"],table["explanation"],0xa83e32,"nasaphoto",None)
     embed.set_author(name="NASA",icon_url="https://media.discordapp.net/attachments/726034739550486618/769603075282305044/nasa-vector-logo-small.png",url="https://apod.nasa.gov/apod/astropix.html")
+    embed.set_image(url=table["url"])
     return embed
 
 @OTCommand

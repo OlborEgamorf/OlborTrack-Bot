@@ -86,7 +86,7 @@ async def gameLauncher(ctx,bot,jeu,inGame,dictJeux,cross):
         if cross:
             listeCross.remove(game)
             await annonce.edit(content="~~{0}~~\nRecherche terminée.".format(annonce.content))
-        if not await game.startGame(inGame,emotes,mini):
+        if not await game.startGame(inGame,emotes,mini,dictMax[jeu]):
             del dictJeux[message.id]
             return
 

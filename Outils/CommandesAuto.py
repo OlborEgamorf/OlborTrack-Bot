@@ -27,7 +27,7 @@ async def addAuto(ctx,bot,args,guildOT):
         curseur.execute("UPDATE auto SET Active=True, Salon={0} WHERE Commande='{1}'".format(ctx.message.channel_mentions[0].id,args[0].lower()))
         embed=createEmbed("Commande automatique activée ou modifiée","Commande : {0}\nSalon : <#{1}>".format(args[0].lower(),ctx.message.channel_mentions[0].id),0x220cc9,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
     elif ctx.invoked_with=="del":
-        assert args[0].lower() in ("jour","mois","annee","nasaphoto","savezvous"), "Vous devez me donner un nom de commande compatible !"
+        assert args[0].lower() in ("jour","mois","annee","nasaphoto","savezvous","events"), "Vous devez me donner un nom de commande compatible !"
         curseur.execute("UPDATE auto SET Active=False, Salon=0 WHERE Commande='{0}'".format(args[0].lower()))
         embed=createEmbed("Commande automatique supprimée","Commande : {0}".format(args[0].lower()),0x220cc9,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.guild)
     else:

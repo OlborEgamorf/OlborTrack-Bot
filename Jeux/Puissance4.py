@@ -175,7 +175,10 @@ class JeuP4(JeuBase):
             add=await self.play(bot,self.joueurs[self.turn].message)
             if add[0]:
                 nul=self.tab.checkNul()
-                if self.tab.checkTab(add[1],add[2],self.turn+1) or nul:
+                win=self.tab.checkTab(add[1],add[2],self.turn+1)
+                if win:
+                    nul=False
+                if win or nul:
                     if not nul:
                         await self.stats(self.joueurs[self.turn].id,self.joueurs[self.turn].guild)
                     for mess in self.messages:
@@ -187,7 +190,8 @@ class JeuP4(JeuBase):
                     self.tours+=1      
                     for i in range(7):
                         if self.tab.tableau[0][i]!=0:
-                            await self.message.clear_reaction(emotes[i])
+                            for mess in self.messages:
+                                await mess.clear_reaction(emotes[i])
                     if self.turn==0: self.turn=1
                     else: self.turn=0
             

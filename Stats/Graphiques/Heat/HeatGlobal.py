@@ -27,7 +27,6 @@ async def graphHeatGlobal(ligne,ctx,bot,option,guildOT):
         dates=[]
         for i in table:
             if i["Annee"] not in dates and i["Annee"]!="GL":
-                print(i["Annee"])
                 dates.append({"Annee":i["Annee"]}) 
         dates.sort(key=lambda x:x["Annee"])
 

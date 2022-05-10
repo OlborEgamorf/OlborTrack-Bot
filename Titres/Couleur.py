@@ -14,7 +14,7 @@ async def setColor(ctx,bot,args):
         g=int(args[1])
         b=int(args[2])
     else:
-        raise AssertionError("Pour définir votre couleur, vous devez fournir une valeur hexadécimale, commençant par # ou alors les valeurs Rouge, Verte et Bleu qui la compose. Les valeurs doivent être comprises entre 0 et 255.")
+        raise AssertionError("Pour définir votre couleur, vous devez fournir une valeur hexadécimale, commençant par # ou alors les valeurs Rouge, Verte et Bleu qui la compose, comprises entre 0 et 255.")
     try:
         assert r>=0 and r<=255
         assert g>=0 and g<=255

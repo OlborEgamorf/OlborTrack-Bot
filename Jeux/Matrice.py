@@ -223,7 +223,8 @@ class JeuMatrice(JeuBase):
             pion=None
             while pion==None:
                 nb=randint(0,7)
-                self.joueurs[self.turn].checkPion(nb)
+                if self.joueurs[self.turn].checkPion(nb):
+                    pion=self.joueurs[self.turn].pions[nb]
             self.tab.addPion(self.joueurs[self.turn],x,y,nb)
         else:
             self.tab.addPion(self.joueurs[self.turn],x,y,nb)
@@ -242,6 +243,9 @@ class JeuMatrice(JeuBase):
             win=self.tab.checkTab(x,y)
             if win[0]:  
                 nul=self.tab.checkNul()
+                win=self.tab.checkTab(x,y)
+                if win:
+                    nul=False
                 if self.tab.checkTab(x,y) or nul:
                     if not nul:
                         await self.stats(self.joueurs[self.turn].id,self.joueurs[self.turn].guild)

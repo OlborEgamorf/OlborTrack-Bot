@@ -1,3 +1,4 @@
+from random import choice
 import sqlite3
 
 from Stats.SQL.ConnectSQL import connectSQL
@@ -76,4 +77,9 @@ def getTablePerso(guild,option,id,idobj,period,tri):
         liste.sort(key=lambda x:x["Annee"]+x["Mois"],reverse=True)
     elif tri=="rankAsc":
         liste.sort(key=lambda x:x["Rank"])
+    elif tri=="random":
+        if liste!=[]:
+            liste=choice(liste)
+        else:
+            liste=None
     return liste

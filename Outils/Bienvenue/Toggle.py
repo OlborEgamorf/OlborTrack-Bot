@@ -45,7 +45,7 @@ async def toggleBienvenue(ctx,bot,chan,guild,option):
         else:
             embed=createEmbed("Désactivation messages {0}".format(dictTitres[option]),"Voulez-vous vraiment désactiver les messages {0} pour votre serveur ?\nSi vous changez d'avis plus tard, les messages et les images enregistrées restent dans la base de données.\nAppuyez sur <:otVALIDER:772766033996021761> pour valider.".format(dictTitres[option]),0xf54269,ctx.invoked_with.lower(),ctx.guild)
 
-            await message.edit(embed=embed)
+            message=await ctx.reply(embed=embed)
             await message.add_reaction("<:otVALIDER:772766033996021761>")
 
             reaction,user=await bot.wait_for('reaction_add', check=checkValid, timeout=60)

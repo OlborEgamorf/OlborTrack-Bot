@@ -35,8 +35,23 @@ class Voice:
             guild : l'objet OTGuild du serveur concerné"""
         self.connect=False
         count=int(time()-self.time)
+        if self.channelid in guild.voiceephem:
+            self.channelid=0
         if count!=0:
-            exeVoiceSQL(self.userid,self.channelid,count,guild)
+            connexionGuild,curseurGuild=connectSQL(guild.id,"Guild","Guild",None,None)
+            exeClassic(count,self.userid,"Voice",curseurGuild,guild)
+
+            connexion,curseur=connectSQL(guild.id,"Voice","Stats","GL","")
+            histoSQL(curseur,count,self.userid,strftime("%y")+strftime("%m")+strftime("%d"),self.channelid)
+            connexion.commit()
+
+            if bool(guild.mstats[0]["Statut"])==True:
+                exeClassic(count,self.channelid,"Voicechan",curseurGuild,guild)
+                exeObj(count,self.channelid,self.userid,True,guild,"Voicechan")
+            
+            exeDiversSQL(self.userid,{"Vocal":count},"+",guild,connexionGuild,curseurGuild)
+
+            connexionGuild.commit()
 
 
 async def voiceConnect(member,before,after,guild):
@@ -47,22 +62,6 @@ async def voiceConnect(member,before,after,guild):
         if after.channel!=None:
             if verifExecSQL(guild,after.channel,member):
                 listeCo[member.id]=Voice(member,after.channel,member.guild)
-
-def exeVoiceSQL(id,chan,count,guild):
-    connexionGuild,curseurGuild=connectSQL(guild.id,"Guild","Guild",None,None)
-    exeClassic(count,id,"Voice",curseurGuild,guild)
-
-    connexion,curseur=connectSQL(guild.id,"Voice","Stats","GL","")
-    histoSQL(curseur,count,id,strftime("%y")+strftime("%m")+strftime("%d"),chan)
-    connexion.commit()
-
-    if bool(guild.mstats[0]["Statut"])==True:
-        exeClassic(count,chan,"Voicechan",curseurGuild,guild)
-        exeObj(count,chan,id,True,guild,"Voicechan")
-    
-    exeDiversSQL(id,{"Vocal":count},"+",guild,connexionGuild,curseurGuild)
-
-    connexionGuild.commit()
 
 async def reconnect(client,dictGuilds):
     for i in client.guilds:

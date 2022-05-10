@@ -46,7 +46,7 @@ class JeuBase():
         self.jeu=jeu
         self.cross=cross
 
-    async def startGame(self,inGame:list,emotes:list,mini:int) -> bool:
+    async def startGame(self,inGame:list,emotes:list,mini:int,maxi:int) -> bool:
         self.playing=True
         for mess in self.messages:
             await mess.clear_reactions()        
@@ -57,6 +57,10 @@ class JeuBase():
             for i in self.ids:
                 inGame.remove(i)
             return False
+        elif len(self.ids)>maxi:
+            for i in range(maxi-len(self.ids)):
+                kick=self.joueurs.pop()
+                self.ids.remove(kick.id)
 
         for i in self.joueurs:
             i.getPerso()
