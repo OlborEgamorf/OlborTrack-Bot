@@ -62,7 +62,7 @@ def embedHelp30(option,guildOT,page,bot):
     embedHelp=discord.Embed(color=dictColor[option])
     embedHelp.set_author(icon_url=dictLinks[option],name=dictAuthor[option])
     if option=="home":
-        embedHelp.description="Effectuez une de ces commandes pour avoir plus d'infos sur mes commandes !\n**Mon préfixe est OT!**\nVous pouvez aussi faire **OT!help [nom d'une commande]** pour avoir directement les infos d'une commande.\n[Invitez moi !](https://discord.com/oauth2/authorize?client_id=699728606493933650&permissions=120259472576&scope=bot) - [Faites une donation !](https://paypal.me/OlborTrack) - [Serveur de test](https://discord.com/invite/kMQz7nF) - [Twitter](https://twitter.com/olbortrack) - [Instagram](https://www.instagram.com/OlborTrack/)"
+        embedHelp.description="**Olbor Track Companion bientôt disponible :** plus d'info avec OT!companion !\n\nEffectuez une de ces commandes pour avoir plus d'infos sur mes commandes !\n**Mon préfixe est OT!**\nVous pouvez aussi faire **OT!help [nom d'une commande]** pour avoir directement les infos d'une commande.\n[Invitez moi !](https://discord.com/oauth2/authorize?client_id=699728606493933650&permissions=120259472576&scope=bot) - [Faites une donation !](https://paypal.me/OlborTrack) - [Serveur de test](https://discord.com/invite/kMQz7nF) - [Twitter](https://twitter.com/olbortrack) - [Instagram](https://www.instagram.com/OlborTrack/)"
         if page==1 or page==2:
             if guildOT.mcmd!=None:
                 dictPerms={"Stats":0,"Sondages":3,"Outils":1,"Savezvous":4,"Jeux":2}
@@ -84,8 +84,8 @@ def embedHelp30(option,guildOT,page,bot):
                                 descip+="{0}, ".format(h)
                         embedHelp.add_field(name=listeName[i], value="`"+descip[0:-2]+"`", inline=False)
         else:
-            embedHelp.set_image(url="https://cdn.discordapp.com/attachments/726034739550486618/870617284920619058/unknown.png")
-            embedHelp.description="Merci d'avoir ajouté Olbor Track sur votre serveur ! Voici une petite liste de gens qui ont aidé à ce que le projet perdure :\nDonateurs : Alfashield, NatG34, Zey\nContributeurs : Tonton Mathias, Zey, ZAGUE, Lexadi, Souaip\nRéalisation badges : Shimi\n\n***Vous savez pas quoi faire ?***\nVous avez déjà joué à la courses de tortues ? Commencez dès maintenant avec **OT!tortues** !\nVous avez déjà joué à la courses de tortues ? Commencez dès maintenant avec **OT!tortues** !\nVous voulez savoir qui passe le plus de temps en vocal ? Faites **OT!vocal** !\nA votre avis, qui est le plus gros spammeur de votre serveur ? Découvrez le avec **OT!messages** !\nApprenez des choses aux autres avec **OT!savezvous add** !"
+            embedHelp.set_image(url="https://cdn.discordapp.com/attachments/702208752035692654/975873681525993522/OTC.png")
+            embedHelp.description="Merci d'avoir ajouté Olbor Track sur votre serveur ! Voici une petite liste de gens qui ont aidé à ce que le projet perdure :\nDonateurs : Alfashield, NatG34, Zey\nContributeurs : Tonton Mathias, Zey, ZAGUE, Lexadi, Souaip\nRéalisation badges : Shimi\n\n***Vous savez pas quoi faire ?***\nVous avez déjà joué à la courses de tortues ? Commencez dès maintenant avec **OT!tortues** !\nEnvie de vous battre sur une partie de Puissance 4 ? Lancez un **OT!p4** !\nVous voulez savoir qui passe le plus de temps en vocal ? Faites **OT!vocal** !\nA votre avis, qui est le plus gros spammeur de votre serveur ? Découvrez le avec **OT!messages** !\nApprenez des choses aux autres avec **OT!savezvous add** !\n\n***Découvrez toutes les informations sur la Bêta de Olbor Track Companion : OT!companion***"
     else:
         descip=""
         for i in dictDescip[option][page]:

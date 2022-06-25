@@ -225,7 +225,7 @@ async def graphEvolAutour(ligne,ctx,bot,option,guildOT):
     connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[mois],annee)
     table=curseur.execute("SELECT * FROM evol{0}{1}{2} ORDER BY DateID ASC".format(mois,annee,ligne["Args3"])).fetchall()
     mini=curseur.execute("SELECT MIN(Count) AS Min FROM evol{0}{1}{2} ORDER BY DateID ASC".format(mois,annee,ligne["Args3"])).fetchone()["Min"]
-    rank=table[len(table)-1]["Rank"]
+    rank=table[-1]["Rank"]
 
     for i in range(len(table)):
         listeY.append(table[i]["Count"])

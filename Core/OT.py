@@ -9,6 +9,7 @@ from Sondages.exePolls import recupPoll
 from Stats.SQL.NewGuild import alterHBM, createDirSQL
 from Stats.Tracker.Voice import disconnect, reconnect
 
+from Core.Companion.CompConnect import connectCompanion
 from Core.OTGuild import OTGuildCMD
 
 
@@ -44,6 +45,7 @@ class OlborTrack(commands.Bot):
             for j in i.aliases:
                 self.listeOS.append(j)
 
+        await recupPoll(self)
         if version=="ot":
             await self.get_channel(712753819447984248).send("TrackOS Commandes : Executé ")
             self.dictTasks["auto"]=self.loop.create_task(boucleAutoCMD(self,self.dictGuilds))
@@ -51,8 +53,9 @@ class OlborTrack(commands.Bot):
             self.dictTasks["yt"]=self.loop.create_task(boucleYT(self,self.dictGuilds))
             self.dictTasks["twitter"]=self.loop.create_task(boucleTwitter(self,self.dictGuilds))
             self.dictTasks["stats"]=self.loop.create_task(boucleAutoStats(self,self.dictGuilds))
-            await recupPoll(self)
             await disconnect(self)
             await reconnect(self,self.dictGuilds)
+
+        await connectCompanion(self)
 
         print("TOUS LES PROCESSUS SONT TERMINES")

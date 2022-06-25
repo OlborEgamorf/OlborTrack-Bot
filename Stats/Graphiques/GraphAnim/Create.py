@@ -27,9 +27,7 @@ def createDict(listeMois,client,ctx,option,guildOT):
             borne=len(listeMois[i])
         for h in range(borne):
             if option in ("Messages","Mots","Voice"):
-                print(listeMois[i][h]["ID"])
                 if guildOT.users[listeMois[i][h]["ID"]]["Hide"]:
-                    print("oui")
                     continue
             elif option in ("Salons","Voicechan"):
                 if guildOT.chan[listeMois[i][h]["ID"]]["Hide"]:
