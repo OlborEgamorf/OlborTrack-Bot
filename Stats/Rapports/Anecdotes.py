@@ -5,7 +5,7 @@ from Core.Fonctions.GetNom import nomsOptions
 from Core.Fonctions.GetTable import getTablePerso
 from Core.Fonctions.TempsVoice import formatCount
 from Stats.Rapports.CreateEmbed import embedRapport
-from Stats.Rapports.OlderEarlier import getOlderJour, hierMAG
+from Stats.Rapports.OlderEarlier import hierMAG
 from Stats.SQL.ConnectSQL import connectSQL
 
 dictSection={"Voice":"vocal","Reactions":"réactions","Emotes":"emotes","Salons":"salons","Freq":"heures","Messages":"salons","Voicechan":"vocal"}
@@ -13,19 +13,11 @@ dictTrivia={3:"Images",2:"GIFs",1:"Fichiers",4:"Liens",5:"Réponses",6:"Réactio
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TOTAL","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","to":"TO","glob":"GL"}
 
 def anecdotesSpe(date,guildOT,bot,guild,option,page,pagemax,period):
-    if period=="jour":
-        connexion,curseur=connectSQL(guild.id,"Rapports","Stats","GL","")
-    else:
-        connexion,curseur=connectSQL(guild.id,option,"Stats",tableauMois[date[0]],date[1])
-        conGL,curGL=connectSQL(guild.id,option,"Stats","GL","")
+    connexion,curseur=connectSQL(guild.id,option,"Stats",tableauMois[date[0]],date[1])
+    conGL,curGL=connectSQL(guild.id,option,"Stats","GL","")
     embed=discord.Embed()
 
-    if period=="jour":
-        result=curseur.execute("SELECT * FROM ranks WHERE Jour='{0}' AND Mois='{1}' AND Annee='{2}' AND Type='{3}' ORDER BY Rank ASC".format(date[0],date[1],date[2],option)).fetchall()
-        premiers=curseur.execute("SELECT * FROM ranks WHERE DateID={0} AND Type='{1}' AND Rank=1 ORDER BY Rank ASC".format(int(date[2]+date[1]+date[0]),option)).fetchall()
-        alea=choice(premiers)
-        first=curseur.execute("SELECT COUNT() AS Premier FROM ranks WHERE DateID<{0} AND Type='{1}' AND ID={2} AND Rank=1".format(int(date[2]+date[1]+date[0]),option,alea["ID"])).fetchone()
-    elif period in ("mois","annee"):
+    if period in ("mois","annee"):
         result=curseur.execute("SELECT * FROM {0}{1} ORDER BY Rank ASC".format(date[0],date[1])).fetchall()
         premiers=curseur.execute("SELECT * FROM {0}{1} WHERE Rank=1 ORDER BY Rank ASC".format(date[0],date[1])).fetchall()
         alea=choice(premiers)
@@ -51,37 +43,11 @@ def anecdotesSpe(date,guildOT,bot,guild,option,page,pagemax,period):
     dictPremier={"Salons":"Le salon le plus actif est {0}{1}{2}","Freq":"L'heure la plus active est {0}{1}{2}","Emotes":"L'emote la plus utilisée est {0}{1}{2}","Reactions":"La réaction la plus utilisée est {0}{1}{2}","Messages":"Le membre le plus actif est {0}{1}{2}","Voice":"Le membre le plus actif est {0}{1}{2}","Voicechan":"Le salon le plus actif est {0}{1}{2}"}
     embed.add_field(name="Premier",value=dictPremier[option].format(nom,count,ex),inline=False)
 
-    if period=="jour":
-        hier=getOlderJour(date[0],date[1],date[2],curseur,"ranks",option)
-    else:
-        hier=hierMAG(date,period,guild,option)
+    hier=hierMAG(date,period,guild,option)
     if period!="global":
         if hier!=None:
             if True:
-                if period=="jour":
-                    premierH=curseur.execute("SELECT Rank FROM ranks WHERE DateID={0} AND Type='{1}' AND ID={2}".format(hier[2]+hier[1]+hier[0],option,alea["ID"])).fetchone()
-                    if premierH==None or premierH["Rank"]!=1:
-                        serie=curseur.execute("SELECT ID FROM ranks WHERE DateID={0} AND Type='{1}' AND Rank=1".format(hier[2]+hier[1]+hier[0],option)).fetchone()
-                        if serie!=None:
-                            consec=curseur.execute("SELECT ID FROM ranks WHERE DateID<={0} AND Type='{1}' AND Rank=1 ORDER BY DateID DESC".format(hier[2]+hier[1]+hier[0],option)).fetchall()
-                            try:
-                                i=0
-                                while consec[i]["ID"]==serie["ID"]:
-                                    i+=1
-                            except:
-                                i=len(consec)
-                            embed.add_field(name="Série première place",value="Il arrête la série de {0}, premier **{1} fois** d'affilée jusque là".format(nomsOptions(option,serie["ID"],guildOT,bot),i),inline=False)
-                    else:
-                        serie=curseur.execute("SELECT ID FROM ranks WHERE DateID<={0} AND Type='{1}' AND Rank=1 ORDER BY DateID DESC".format(hier[2]+hier[1]+hier[0],option)).fetchall()
-                        try:
-                            i=1
-                            while serie[i]["ID"]==alea["ID"]:
-                                i+=1
-                            embed.add_field(name="Série première place",value="Il est sur une série de **{0}** premières places d'affilée.".format(i),inline=False)
-                        except:
-                            embed.add_field(name="Série première place",value="Il n'a **jamais arrêté** d'être premier.",inline=False)
-                        
-                elif period=="mois":
+                if period=="mois":
                     premierH=curGL.execute("SELECT ID FROM firstM WHERE Mois='{0}' AND Annee='{1}'".format(tableauMois[hier[0]],hier[1])).fetchone()["ID"]
                     if premierH!=alea["ID"]:
                         consec=curGL.execute("SELECT ID FROM firstM WHERE DateID<={0} ORDER BY DateID DESC".format(hier[1]+tableauMois[hier[0]])).fetchall()
@@ -124,19 +90,13 @@ def anecdotesSpe(date,guildOT,bot,guild,option,page,pagemax,period):
                             embed.add_field(name="Série première place",value="Il n'a **jamais arrêté** d'être premier.",inline=False)
                 
 
-    if period!="jour":
-        evol=curseur.execute("SELECT Count() AS Count FROM evol{0}{1}{2} WHERE Rank=1".format(date[0],date[1],alea["ID"])).fetchone()["Count"]
-        count=curseur.execute("SELECT Count() AS Count FROM evol{0}{1}{2}".format(date[0],date[1],alea["ID"])).fetchone()["Count"]
-        embed.add_field(name="Longévité",value="Sur la période, il a été premier **{0}** jours sur **{1}**".format(evol,count),inline=False)
+    evol=curseur.execute("SELECT Count() AS Count FROM evol{0}{1}{2} WHERE Rank=1".format(date[0],date[1],alea["ID"])).fetchone()["Count"]
+    count=curseur.execute("SELECT Count() AS Count FROM evol{0}{1}{2}".format(date[0],date[1],alea["ID"])).fetchone()["Count"]
+    embed.add_field(name="Longévité",value="Sur la période, il a été premier **{0}** jours sur **{1}**".format(evol,count),inline=False)
     
     if period!="global":
         records=[]
-        if period=="jour":
-            for i in curseur.execute("SELECT * FROM ranks WHERE DateID={0} AND Type='{1}'".format(date[2]+date[1]+date[0],option)).fetchall():
-                best=curseur.execute("SELECT MAX(Count),DateID,Count FROM ranks WHERE DateID<={0} AND Type='{1}' AND ID={2} ORDER BY DateID DESC".format(date[2]+date[1]+date[0],option,i["ID"])).fetchone()
-                if best["DateID"]==int(date[2]+date[1]+date[0]):
-                    records.append({"ID":i["ID"],"Count":formatCount(option,best["Count"])})
-        elif period=="mois":
+        if period=="mois":
             for i in result:
                 try:
                     tablePerso=getTablePerso(guild.id,option,i["ID"],False,"M","countDesc")
@@ -188,22 +148,8 @@ def anecdotesSpe(date,guildOT,bot,guild,option,page,pagemax,period):
         elif option=="Freq":
             count=24
         
-        if period=="jour":
-            countR=curseur.execute("SELECT COUNT() As Count FROM ranks WHERE DateID={0} AND Type='{1}'".format(date[2]+date[1]+date[0],option)).fetchone()["Count"]
-        else:
-            countR=curseur.execute("SELECT COUNT() As Count FROM {0}{1}".format(date[0],date[1])).fetchone()["Count"]
+        countR=curseur.execute("SELECT COUNT() As Count FROM {0}{1}".format(date[0],date[1])).fetchone()["Count"]
         embed.add_field(name="Proportions",value=dictSilent[option].format(count,countR,round(countR*100/count,2)),inline=False)
-    
-    if period=="jour":
-        dictDivers={"Messages":9,"Salons":9,"Freq":9,"Emotes":8,"Reactions":6,"Voice":11,"Voicechan":11}
-        somme=curseur.execute("SELECT Count FROM ranks WHERE DateID={0} AND Type='Divers' AND ID={1}".format(date[2]+date[1]+date[0],dictDivers[option])).fetchone()
-        record=curseur.execute("SELECT Count,Jour,Mois,Annee FROM ranks WHERE Type='Divers' AND ID={0} ORDER BY Count DESC".format(dictDivers[option])).fetchone()
-        if somme!=None and record!=None:
-            if record["Count"]==somme["Count"]:
-                dictRecord={"Messages":"Il n'y a jamais eu autant de messages envoyés qu'aujourd'hui, avec un total de **{0}**","Freq":"Il n'y a jamais eu autant de messages envoyés qu'aujourd'hui, avec un total de **{0}**","Salons":"Il n'y a jamais eu autant de messages envoyés qu'aujourd'hui, avec un total de **{0}**","Emotes":"Il n'y a jamais eu autant d'emotes utilisées qu'aujourd'hui, avec un total de **{0}**","Reactions":"Il n'y a jamais eu autant de réactions utilisées qu'aujourd'hui, avec un total de **{0}**","Voice":"Il n'y a jamais eu autant de temps passé en vocal cumulé qu'aujourd'hui, avec un total de **{0}**","Voicechan":"Il n'y a jamais eu autant de temps passé en vocal cumulé qu'aujourd'hui, avec un total de **{0}**"}
-            else:
-                dictRecord={"Messages":"Aujourd'hui **{0}** messages ont été envoyés. La date record est le **{1}/{2}/{3}** avec **{4}** messages.","Freq":"Aujourd'hui **{0}** messages ont été envoyés. La date record est le **{1}/{2}/{3}** avec **{4}** messages.","Salons":"Aujourd'hui **{0}** messages ont été envoyés. La date record est le **{1}/{2}/{3}** avec **{4}** messages.","Emotes":"Aujourd'hui **{0}** emotes ont été utilisées. La date record est le **{1}/{2}/{3}** avec **{4}** emotes.","Reactions":"Aujourd'hui **{0}** réactions ont été utilisées. La date record est le **{1}/{2}/{3}** avec **{4}** réactions.","Voice":"Aujourd'hui **{0}** ont été passées en vocal en cumulé. La date record est le **{1}/{2}/{3}** avec **{4}**.","Voicechan":"Aujourd'hui **{0}** ont été passées en vocal en cumulé. La date record est le **{1}/{2}/{3}** avec **{4}**."}
-            embed.add_field(name="Total",value=dictRecord[option].format(formatCount(option,somme["Count"]),record["Jour"],record["Mois"],record["Annee"],formatCount(option,record["Count"])),inline=False)
     
     if hier!=None and period!="global":
         plus,moins,new=0,0,0
@@ -216,10 +162,7 @@ def anecdotesSpe(date,guildOT,bot,guild,option,page,pagemax,period):
         else:
             title="Par rapport au {0}/{1}/{2}".format(hier[0],hier[1],hier[2])
         for i in result:
-            if period=="jour":
-                count=curseur.execute("SELECT Count FROM ranks WHERE Jour='{0}' AND Mois='{1}' AND Annee='{2}' AND Type='{3}' AND ID={4}".format(hier[0],hier[1],hier[2],option,i["ID"])).fetchone()
-            else:
-                count=curseur.execute("SELECT Count FROM {0}{1} WHERE ID={2}".format(hier[0],hier[1],i["ID"])).fetchone()
+            count=curseur.execute("SELECT Count FROM {0}{1} WHERE ID={2}".format(hier[0],hier[1],i["ID"])).fetchone()
             if count==None:
                 new+=1
             elif count["Count"]>i["Count"]:

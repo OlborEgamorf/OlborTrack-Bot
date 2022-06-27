@@ -12,18 +12,6 @@ def hierMAG(date,period,guild,option,user):
         hier=None
     return hier
 
-def getOlderJour(jour,mois,annee,curseur,option,user):
-    etat=curseur.execute("SELECT Jour,Mois,Annee FROM objs WHERE DateID < {0}{1}{2} AND Type='{3}' AND ID={4} ORDER BY DateID DESC".format(annee,mois,jour,option,user)).fetchone()
-    if etat==None:
-        return None
-    return etat["Jour"],etat["Mois"],etat["Annee"]
-
-def getEarlierJour(jour,mois,annee,curseur,option,user):
-    etat=curseur.execute("SELECT Jour,Mois,Annee FROM objs WHERE DateID > {0}{1}{2} AND Type='{3}' AND ID={4} ORDER BY DateID ASC".format(annee,mois,jour,option,user)).fetchone()
-    if etat==None:
-        return None
-    return etat["Jour"],etat["Mois"],etat["Annee"]
-
 def getOlderMois(mois,annee,guild,option,user):
     curseur=connectSQL(guild.id,"Messages","Stats","GL",None)[1]
     etat=curseur.execute("SELECT Mois,Annee, Annee || '' || Mois AS DateID FROM persoM{0} WHERE DateID < '{1}{2}' ORDER BY DateID DESC".format(user,annee,mois)).fetchone()

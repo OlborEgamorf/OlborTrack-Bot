@@ -5,10 +5,11 @@ from Stats.SQL.ConnectSQL import connectSQL
 from Core.Fonctions.TempsVoice import tempsVoice
 from Core.Fonctions.GetNom import nomsOptions
 from Core.Fonctions.Embeds import createEmbed
+import discord
 
 tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai","06":"Juin","07":"Juillet","08":"Aout","09":"Septembre","10":"Octobre","11":"Novembre","12":"Décembre","TO":"to","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
 
-async def commandeRandom(ctx,ligne,react,guildOT,bot):
+async def commandeRandom(interaction,user,react,guildOT,bot):
     liste=[]
     for i in guildOT.mstats:
         if i["Statut"]==True and i["Module"] not in ("Roles","Mentions","Divers"):
@@ -17,9 +18,8 @@ async def commandeRandom(ctx,ligne,react,guildOT,bot):
     option=choice(liste)
     cible=choice(["user","guild","guild"])
     period=choice(["annee","mois"])
-    connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
-    author=ligne["AuthorID"]
-    user=ctx.guild.get_member(author)
+    connexion,curseur=connectSQL(interaction.guild_id,option,"Stats","GL","")
+    author=user.id
     
     if cible=="user" or option in ("Moyennes","Mots","Messages","Voice"):
         if option in ("Mots","Messages","Voice"):
@@ -28,16 +28,16 @@ async def commandeRandom(ctx,ligne,react,guildOT,bot):
             sub=choice(["evol","perso"])
 
             if period=="mois":
-                table=getTablePerso(ctx.guild.id,option,author,None,"M","random")
+                table=getTablePerso(interaction.guild_id,option,author,None,"M","random")
             else:
-                table=getTablePerso(ctx.guild.id,option,author,None,"A","random")
+                table=getTablePerso(interaction.guild_id,option,author,None,"A","random")
             periodStr=randomPeriod(period,table)
 
             if sub=="evol":
                 if table["Annee"]=="GL":
                     subTable=curseur.execute("SELECT * FROM evolglob{0} ORDER BY RANDOM()".format(author)).fetchone()
                 else:
-                    connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",table["Mois"],table["Annee"])
+                    connexion,curseur=connectSQL(interaction.guild_id,option,"Stats",table["Mois"],table["Annee"])
                     subTable=curseur.execute("SELECT * FROM evol{0}{1}{2} ORDER BY RANDOM()".format(tableauMois[table["Mois"]].lower(),table["Annee"],author)).fetchone()
                 count=tempsVoice(subTable["Count"]) if option=="Voice" else subTable["Count"]
                 descip="Au __{0}/{1}/{2}__ tu avais {3} **{4}** {5} {6}.\nTon rang était **{7}e**, avec une évolution de {8} !".format(subTable["Jour"],subTable["Mois"],subTable["Annee"],dictEnv[option],count,dictEnv2[option],periodStr.lower(),subTable["Rank"],subTable["Evol"])
@@ -59,14 +59,14 @@ async def commandeRandom(ctx,ligne,react,guildOT,bot):
             count=0
             while True:
                 if count==50:
-                    await commandeRandom(ctx,ligne,react,guildOT,bot)
+                    await commandeRandom(interaction,author,react,guildOT,bot)
                     return
                 try:
                     if period=="mois":
                         table=curseur.execute("SELECT * FROM firstM ORDER BY RANDOM()").fetchone()
                     else:
                         table=curseur.execute("SELECT * FROM firstA ORDER BY RANDOM()").fetchone()
-                    connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",table["Mois"],table["Annee"])
+                    connexion,curseur=connectSQL(interaction.guild_id,option,"Stats",table["Mois"],table["Annee"])
                     periodStr=randomPeriod(period,table)
                     tableUser=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY RANDOM()".format(table["Mois"],table["Annee"],author)).fetchone()    
                     break
@@ -88,25 +88,29 @@ async def commandeRandom(ctx,ligne,react,guildOT,bot):
         else:
             table=curseur.execute("SELECT * FROM glob ORDER BY RANDOM()").fetchone()
         if period=="mois":
-            tableObj=getTablePerso(ctx.guild.id,option,author,table["ID"],"M","random")
+            tableObj=getTablePerso(interaction.guild_id,option,author,table["ID"],"M","random")
         else:
-            tableObj=getTablePerso(ctx.guild.id,option,author,table["ID"],"A","random")
+            tableObj=getTablePerso(interaction.guild_id,option,author,table["ID"],"A","random")
         periodStr=randomPeriod(period,tableObj)
         dictPhrase={"Salons":"{0}, le salon {1} a vu **{2}** messages envoyés.\nSon rang est **{3}e** !",
                     "Freq":"{0}, **{2}** messages ont été envoyés entre {1}.\nLe rang de cette heure ci est **{3}e** !",
                     "Emotes":"{0}, l'emote {1} a été utilisée **{2}** fois.\nSon rang est **{3}e** !",
                     "Reactions":"{0}, la réaction {1} a été utilisée **{2}** fois.\nSon rang est **{3}e** !"}
         descip=dictPhrase[option].format(periodStr,nomsOptions(option,tableObj["ID"],guildOT,bot),tableObj["Count"],tableObj["Rank"])
-        embed=createEmbed("Statistique aléatoire",descip,0x3498db,"random",ctx.guild)
+        embed=createEmbed("Statistique aléatoire",descip,0x3498db,"random",interaction.guild)
     
     if react:
-        await ctx.message.edit(embed=embed)
+        await interaction.response.edit_message(embed=embed)
     else:
-        message=await ctx.reply(embed=embed)
-        connexionCMD,curseurCMD=connectSQL(ctx.guild.id,"Commandes","Guild",None,None)
-        curseurCMD.execute("INSERT INTO commandes VALUES({0},{1},'random','None','None','None','None','None',1,1,'countDesc',False)".format(message.id,author))
-        connexionCMD.commit()
-        await message.add_reaction("<:otRELOAD:772766034356076584>")
+        await interaction.response.send_message(embed=embed,view=ViewReload())
+
+class ViewReload(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+
+    @discord.ui.button(label="Encore !",emoji="<:otRELOAD:772766034356076584>",style=discord.ButtonStyle.blurple, custom_id="ot:reload")
+    async def reload(self,interaction:discord.Interaction, button:discord.ui.Button):
+        await commandeRandom(interaction,interaction.user,True,interaction.client.dictGuilds[interaction.guild_id],interaction.client)
 
 
 def randomPeriod(period,table):

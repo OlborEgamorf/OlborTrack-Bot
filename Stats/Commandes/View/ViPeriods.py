@@ -1,34 +1,28 @@
 from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.Embeds import embedAssertClassic, newDescip, sendEmbed
-from Core.Fonctions.GetNom import getAuthor
+from Core.Fonctions.Embeds import embedAssertClassic, newDescip
 from Core.Fonctions.GetTable import getTablePerso
+from Core.Fonctions.SendView import sendView
 from Core.Fonctions.setMaxPage import setMax, setPage
 from Stats.Embeds.Mois import embedMois
 from Stats.SQL.ConnectSQL import connectSQL
-from Stats.SQL.Verification import verifCommands
 
 dictTriField={"countAsc":"Compteur croissant","rankAsc":"Rang croissant","countDesc":"Compteur décroissant","rankDesc":"Rang décroissant","dateAsc":"Date croissante","dateDesc":"Date décroissante","periodAsc":"Date croissante","periodDesc":"Date décroissante","moyDesc":"Moyenne décroissante","nombreDesc":"Compteur décroissant","winAsc":"Victoires croissant","winDesc":"Victoires décroissant","loseAsc":"Défaites croissant","loseDesc":"Défaites décroissant","expDesc":"Expérience décroissant","expAsc":"Expérience croissant"}
 
-async def statsPeriods(ctx,option,turn,react,ligne,guildOT,bot):
+async def statsPeriodsView(interaction,curseurCMD,connexionCMD,turn,ligne,guildOT,bot):
     try:
-        assert verifCommands(guildOT,option)
-        connexionCMD,curseurCMD=connectSQL(ctx.guild.id,"Commandes","Guild",None,None)
-        if not react:
-            author=getAuthor(option,ctx,2)
-            curseurCMD.execute("INSERT INTO commandes VALUES({0},{1},'periods','{2}','None','None','None','None',1,1,'countDesc',False)".format(ctx.message.id,author,option))
-            ligne=curseurCMD.execute("SELECT * FROM commandes WHERE MessageID={0}".format(ctx.message.id)).fetchone()
-        else:
-            author=ligne["AuthorID"]
+        connexionCMD,curseurCMD=connectSQL(interaction.guild_id,"Commandes","Guild",None,None)
+        author=ligne["AuthorID"]
+        option=ligne["Option"]
 
         if option in ("Salons","Voicechan"):
             assert not guildOT.chan[int(author)]["Hide"]
 
-        table=getTablePerso(ctx.guild.id,option,author,False,"M",ligne["Tri"])
+        table=getTablePerso(interaction.guild_id,option,author,False,"M",ligne["Tri"])
         pagemax=setMax(len(table))+1
         page=setPage(ligne["Page"],pagemax,turn)
 
         if page==pagemax:
-            table=getTablePerso(ctx.guild.id,option,author,False,"A","countDesc")
+            table=getTablePerso(interaction.guild_id,option,author,False,"A","countDesc")
             embed=embedMois(table,1,ligne["Mobile"],ligne["Option"])
             embed.add_field(name="Tri <:otTRI:833666016491864114>",value=dictTriField["countDesc"],inline=True)
             embed.set_footer(text="Page {0}/{1}".format(page,pagemax))
@@ -39,7 +33,7 @@ async def statsPeriods(ctx,option,turn,react,ligne,guildOT,bot):
             
         embed.title="Périodes {0}".format(option.lower())
         if option in ("Voice","Messages","Mots","Mentions","Mentionne"):
-            user=ctx.guild.get_member(author)
+            user=interaction.guild.get_member(author)
             if user!=None:
                 embed=auteur(user.id,user.name,user.avatar,embed,"user")
                 embed.colour=user.color.value
@@ -48,12 +42,10 @@ async def statsPeriods(ctx,option,turn,react,ligne,guildOT,bot):
                 embed.colour=0x3498dbed.colour=user.color.value
         else:
             embed.description=newDescip(embed.description,option,author,guildOT,bot)
-            embed=auteur(ctx.guild.id,ctx.guild.name,ctx.guild.icon,embed,"guild")
+            embed=auteur(interaction.guild_id,interaction.guild.name,interaction.guild.icon,embed,"guild")
             embed.colour=0x3498db
-        await sendEmbed(ctx,embed,react,True,curseurCMD,connexionCMD,page,pagemax)
+        await sendView(interaction,embed,curseurCMD,connexionCMD,page,pagemax)
         
     except:
-        if react:
-            await ctx.reply(embed=embedAssertClassic("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée n'existe plus ou alors est masqué par un administrateur."))
-        else:
-            await ctx.reply(embed=embedAssertClassic("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée cherché n'existe pas ou alors est masqué par un administrateur.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))
+        await interaction.response.send_message(embed=embedAssertClassic("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit la table cherchée n'existe plus ou alors est masqué par un administrateur."))
+ 

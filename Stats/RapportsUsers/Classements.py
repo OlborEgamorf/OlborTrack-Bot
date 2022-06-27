@@ -1,5 +1,5 @@
 import discord
-from Stats.RapportsUsers.OlderEarlier import getOlderJour, hierMAG
+from Stats.RapportsUsers.OlderEarlier import hierMAG
 from Stats.RapportsUsers.Description import descipGlobal
 from Stats.RapportsUsers.CreateEmbed import embedRapport
 from Stats.SQL.ConnectSQL import connectSQL
@@ -8,14 +8,9 @@ tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai",
 
 def ranksGlobal(date,guildOT,bot,guild,option,page,pagemax,period,section,user):
     embed=discord.Embed()
-    if period=="jour":
-        connexion,curseur=connectSQL(guild.id,"Rapports","Stats","GL","")
-        hier=getOlderJour(date[0],date[1],date[2],curseur,option,user)
-        result=curseur.execute("SELECT *,IDComp AS ID FROM objs WHERE Jour='{0}' AND Mois='{1}' AND Annee='{2}' AND Type='{3}' AND ID={4} ORDER BY Count DESC".format(date[0],date[1],date[2],option,user)).fetchall()
-    elif period in ("mois","annee","global"):
-        connexion,curseur=connectSQL(guild.id,option,"Stats",tableauMois[date[0]],date[1])
-        hier=hierMAG(date,period,guild,option,user)
-        result=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY Count DESC".format(tableauMois[date[0]],date[1],user)).fetchall()
+    connexion,curseur=connectSQL(guild.id,option,"Stats",tableauMois[date[0]],date[1])
+    hier=hierMAG(date,period,guild,option,user)
+    result=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY Count DESC".format(tableauMois[date[0]],date[1],user)).fetchall()
     if result==[]:
         return embed
     stop=20 if len(result)>20 else len(result)
@@ -24,8 +19,5 @@ def ranksGlobal(date,guildOT,bot,guild,option,page,pagemax,period,section,user):
     if stop2>20:
         embed.add_field(name="Top 20-{0}".format(stop2),value=descipGlobal(option,result,20,stop2,guildOT,bot,hier,period,user),inline=True)
     if hier!=None:
-        if period=="jour":
-            embed.description="*Comparaison avec le {0}/{1}/{2}*".format(hier[0],hier[1],hier[2])
-        elif period=="mois":
-            embed.description="*Comparaison avec le {0}/{1}*".format(tableauMois[hier[0]],hier[1])
+        embed.description="*Comparaison avec le {0}/{1}*".format(tableauMois[hier[0]],hier[1])
     return embedRapport(guild,embed,date,"Section {0} : classement {1}".format(section.lower(),option.lower()),page,pagemax,period,user)

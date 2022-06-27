@@ -10,25 +10,18 @@ tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai",
 def ranksIntoSpes(date,guildOT,bot,guild,option,page,pagenorm,pagemax,period):
     embed=discord.Embed()
 
-    if period=="jour":
-        connexion,curseur=connectSQL(guild.id,"Rapports","Stats","GL","")
-        result=curseur.execute("SELECT * FROM ranks WHERE Jour='{0}' AND Mois='{1}' AND Annee='{2}' AND Type='{3}' ORDER BY Rank ASC".format(date[0],date[1],date[2],option)).fetchall()
-    elif period in ("mois","annee","global"):
-        connexion,curseur=connectSQL(guild.id,option,"Stats",tableauMois[date[0]],date[1])
-        result=curseur.execute("SELECT * FROM {0}{1} ORDER BY Rank ASC".format(date[0],date[1])).fetchall()
+    connexion,curseur=connectSQL(guild.id,option,"Stats",tableauMois[date[0]],date[1])
+    result=curseur.execute("SELECT * FROM {0}{1} ORDER BY Rank ASC".format(date[0],date[1])).fetchall()
 
     if result!=[]:
         start=5*(page-1)
         stop=5*page if len(result)>5*page else len(result)
         for i in range(start,stop):
-            if period=="jour":
-                obj=curseur.execute("SELECT * FROM objs WHERE Jour='{0}' AND Mois='{1}' AND Annee='{2}' AND Type='{3}' AND IDComp={4} ORDER BY Rank ASC".format(date[0],date[1],date[2],option,result[i]["ID"])).fetchall()
-            elif period in ("mois","annee","global"):
-                try:
-                    obj=curseur.execute("SELECT * FROM {0}{1}{2} ORDER BY Rank ASC".format(date[0],date[1],result[i]["ID"])).fetchall()
-                except:
-                    embed.add_field(name="Introuvable",value="Le classement de cet objet est introuvable.",inline=True)
-                    continue
+            try:
+                obj=curseur.execute("SELECT * FROM {0}{1}{2} ORDER BY Rank ASC".format(date[0],date[1],result[i]["ID"])).fetchall()
+            except:
+                embed.add_field(name="Introuvable",value="Le classement de cet objet est introuvable.",inline=True)
+                continue
             stop2=6 if len(obj)>6 else len(obj)
             if option in ("Salons","Voicechan"):
                 nom=guild.get_channel(result[i]["ID"]).name

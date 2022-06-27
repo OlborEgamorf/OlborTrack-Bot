@@ -2,7 +2,6 @@ from time import strftime, time
 
 import discord
 from Core.Decorator import OTCommand
-from Core.Fonctions.Embeds import exeErrorExcept
 from Core.Fonctions.GetPeriod import getAnnee, getMois
 from Core.Fonctions.GraphTheme import setThemeGraph
 from matplotlib import animation

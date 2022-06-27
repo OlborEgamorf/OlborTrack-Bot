@@ -12,36 +12,25 @@ tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai",
 
 def homeSpe(date,guildOT,bot,guild,option,pagemax,period):
     embed=discord.Embed()
-    if period=="jour":
-        connexion,curseur=connectSQL(guild.id,"Rapports","Stats","GL","")
-        result=curseur.execute("SELECT * FROM ranks WHERE Jour='{0}' AND Mois='{1}' AND Annee='{2}' AND Type='{3}' ORDER BY Rank ASC".format(date[0],date[1],date[2],option)).fetchall()
-    elif period in ("mois","annee","global"):
-        connexion,curseur=connectSQL(guild.id,option,"Stats",tableauMois[date[0]],date[1])
-        result=curseur.execute("SELECT * FROM {0}{1} ORDER BY Rank ASC".format(date[0],date[1])).fetchall()
+    connexion,curseur=connectSQL(guild.id,option,"Stats",tableauMois[date[0]],date[1])
+    result=curseur.execute("SELECT * FROM {0}{1} ORDER BY Rank ASC".format(date[0],date[1])).fetchall()
 
     if result!=[]:
         stop=5 if len(result)>5 else len(result)
         embed.add_field(name="Top {0} {1}".format(stop,dictSection[option]),value=descipGlobal(option,result,0,stop,guildOT,bot,None,period),inline=True)
 
         classement=[]
-        if period=="jour":
-            users=curseur.execute("SELECT DISTINCT ID FROM objs WHERE Jour='{0}' AND Mois='{1}' AND Annee='{2}' AND Type='{3}'".format(date[0],date[1],date[2],option)).fetchall()
-            for i in users:
-                total=curseur.execute("SELECT SUM(Count) AS Total FROM objs WHERE Jour='{0}' AND Mois='{1}' AND Annee='{2}' AND Type='{3}' AND ID={4}".format(date[0],date[1],date[2],option,i["ID"])).fetchone()
-                if total["Total"]!=None:
-                    classement.append({"Rank":0,"ID":i["ID"],"Count":total["Total"]})
-        elif period in ("mois","annee","global"):
-            for i in result:
-                try:
-                    for j in curseur.execute("SELECT * FROM {0}{1}{2} ORDER BY Rank ASC".format(date[0],date[1],i["ID"])).fetchall():
-                        exe=dichotomieID(classement,j["ID"],"ID")
-                        if exe[0]:
-                            classement[exe[1]]["Count"]+=j["Count"]
-                        else:
-                            classement.append({"Rank":0,"ID":j["ID"],"Count":j["Count"]})
-                            classement.sort(key=lambda x:x["ID"])
-                except:
-                    pass
+        for i in result:
+            try:
+                for j in curseur.execute("SELECT * FROM {0}{1}{2} ORDER BY Rank ASC".format(date[0],date[1],i["ID"])).fetchall():
+                    exe=dichotomieID(classement,j["ID"],"ID")
+                    if exe[0]:
+                        classement[exe[1]]["Count"]+=j["Count"]
+                    else:
+                        classement.append({"Rank":0,"ID":j["ID"],"Count":j["Count"]})
+                        classement.sort(key=lambda x:x["ID"])
+            except:
+                pass
             
         if classement!=[]:
             rankingClassic(classement)
@@ -52,15 +41,7 @@ def homeSpe(date,guildOT,bot,guild,option,pagemax,period):
         embed.add_field(name="Paliers",value=paliers(curseur,period,date,option),inline=True)
 
         descip=""
-        if period=="jour":
-            annees=curseur.execute("SELECT DISTINCT * FROM ranks WHERE Jour='{0}' AND Mois='{1}' AND Type='{2}' AND Rank=1 ORDER BY Annee ASC".format(date[0],date[1],option)).fetchall()
-            liste=[]
-            if annees!=[]:
-                for i in annees:
-                    if i["Annee"] not in liste:
-                        liste.append(i["Annee"])
-                        descip+="20{0} - {1}".format(i["Annee"],descipGlobal(option,[i],0,1,guildOT,bot,None,period))
-        elif period in ("mois","annee"):
+        if period in ("mois","annee"):
             connexion,curseur=connectSQL(guild.id,option,"Stats","GL","")
             if period=="mois":
                 table=curseur.execute("SELECT DISTINCT * FROM firstM WHERE Mois='{0}' ORDER BY Annee ASC".format(tableauMois[date[0]])).fetchall()

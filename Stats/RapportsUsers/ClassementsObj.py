@@ -11,21 +11,16 @@ tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai",
 def ranksIntoSpes(date,guildOT,bot,guild,option,page,pagenorm,pagemax,period,user):
     embed=discord.Embed()
 
-    if period=="jour":
-        connexion,curseur=connectSQL(guild.id,"Rapports","Stats","GL","")
-        result=curseur.execute("SELECT *,IDComp AS ID FROM objs WHERE Jour='{0}' AND Mois='{1}' AND Annee='{2}' AND Type='{3}' AND ID={4} ORDER BY Rank ASC".format(date[0],date[1],date[2],option,user)).fetchall()
-    elif period in ("mois","annee","global"):
-        connexion,curseur=connectSQL(guild.id,option,"Stats",tableauMois[date[0]],date[1])
-        result=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY Count DESC".format(tableauMois[date[0]],date[1],user)).fetchall()
-        connexion,curseur=connectSQL(guild.id,option,"Stats","GL","")
+    connexion,curseur=connectSQL(guild.id,option,"Stats",tableauMois[date[0]],date[1])
+    result=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY Count DESC".format(tableauMois[date[0]],date[1],user)).fetchall()
+    connexion,curseur=connectSQL(guild.id,option,"Stats","GL","")
+
     if result!=[]:
         start=5*(page-1)
         stop=5*page if len(result)>5*page else len(result)
         for i in range(start,stop):
             try:
-                if period=="jour":
-                    obj=curseur.execute("SELECT *,IDComp AS ID FROM objs WHERE Type='{0}' AND IDComp={1} AND ID={2} AND DateID<={3} ORDER BY DateID DESC".format(option,result[i]["ID"],user,date[2]+date[1]+date[0])).fetchall()
-                elif period=="mois":
+                if period=="mois":
                     obj=curseur.execute("SELECT Count,Rank,ID,Mois,Annee, Annee || '' || Mois AS DateID FROM persoM{0}{1} WHERE DateID<='{2}' ORDER BY DateID DESC".format(user,result[i]["ID"],date[1]+tableauMois[date[0]])).fetchall()
                 else:
                     obj=getTablePerso(guild.id,option,user,result[i]["ID"],"A","countDesc")
@@ -38,9 +33,7 @@ def ranksIntoSpes(date,guildOT,bot,guild,option,page,pagenorm,pagemax,period,use
                 nom=nomsOptions(option,result[i]["ID"],guildOT,bot)
             descip=""
             for j in range(6 if len(obj)>6 else len(obj)):
-                if period=="jour":
-                    descip+="**{0} {1} 20{2}** : {3} - {4}e\n".format(obj[j]["Jour"],tableauMois[obj[j]["Mois"]],obj[j]["Annee"],formatCount(option,obj[j]["Count"]),obj[j]["Rank"])
-                elif obj[j]["Annee"]=="GL":
+                if obj[j]["Annee"]=="GL":
                     descip+="**Global** : {0} - {1}e\n".format(formatCount(option,obj[j]["Count"]),obj[j]["Rank"])
                 else:
                     descip+="**{0} 20{1}** : {2} - {3}e\n".format(tableauMois[obj[j]["Mois"]],obj[j]["Annee"],formatCount(option,obj[j]["Count"]),obj[j]["Rank"])

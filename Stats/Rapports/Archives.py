@@ -8,20 +8,7 @@ tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai",
 def archiveRapport(date,guildOT,bot,guild,option,period,page,pagemax):
     
     embed=discord.Embed()
-    if period=="jour":
-        connexion,curseur=connectSQL(guild.id,"Rapports","Stats","GL","")
-        mois=curseur.execute("SELECT * FROM archives WHERE DateID={0}{1}{2} AND Type='{3}' AND Periode='Mois'".format(date[2],date[1],date[0],option)).fetchall()
-        if mois!=[]:
-            embed.add_field(name="Classement mois {0}/{1}".format(date[1],date[2]),value=descipGlobal(option,mois,0,len(mois),guildOT,bot,None,period),inline=True)
-
-        annee=curseur.execute("SELECT * FROM archives WHERE DateID={0}{1}{2} AND Type='{3}' AND Periode='Annee'".format(date[2],date[1],date[0],option)).fetchall()
-        if annee!=[]:
-            embed.add_field(name="Classement année 20{0}".format(date[2]),value=descipGlobal(option,annee,0,len(annee),guildOT,bot,None,period),inline=True)
-
-        glob=curseur.execute("SELECT * FROM archives WHERE DateID={0}{1}{2} AND Type='{3}' AND Periode='Global'".format(date[2],date[1],date[0],option)).fetchall()
-        if glob!=[]:
-            embed.add_field(name="Classement global",value=descipGlobal(option,glob,0,len(glob),guildOT,bot,None,period),inline=True)
-    elif period=="mois":
+    if period=="mois":
         connexion,curseur=connectSQL(guild.id,"Rapports","Stats","GL","GL")
         demain=getEarlierMois(tableauMois[date[0]],date[1],guild,option)
         if demain==None:

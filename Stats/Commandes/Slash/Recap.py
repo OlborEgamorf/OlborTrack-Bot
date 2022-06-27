@@ -11,28 +11,32 @@ from Stats.SQL.ConnectSQL import connectSQL
 
 tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai","06":"Juin","07":"Juillet","08":"Aout","09":"Septembre","10":"Octobre","11":"Novembre","12":"Décembre","TO":"TO","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
 
-#@OTCommand
-async def recapStats(ctx,bot):
-    if len(ctx.args)==2 or ctx.args[2].lower() not in ("mois","annee"):
-        try:
-            mois,annee=getMois(ctx.args[2].lower()),getAnnee(ctx.args[3].lower())
-        except:
+@OTCommand
+async def recapStats(interaction,bot,periode):
+    if periode==None:
+        mois,annee="glob",""
+    else:
+        periode=periode.split(" ")
+        if periode[0].lower() not in ("mois","annee"):
             try:
-                mois,annee="to",getAnnee(ctx.args[2].lower())
+                mois,annee=getMois(periode[0].lower()),getAnnee(periode[1].lower())
             except:
-                mois,annee="glob",""
-    elif ctx.args[2].lower()=="mois":
-        mois,annee=tableauMois[strftime("%m")].lower(),strftime("%y")
-    elif ctx.args[2].lower()=="annee":
-        mois,annee="to",strftime("%y")
+                try:
+                    mois,annee="to",getAnnee(periode[0].lower())
+                except:
+                    mois,annee="glob",""
+        elif periode[0].lower()=="mois":
+            mois,annee=tableauMois[strftime("%m")].lower(),strftime("%y")
+        elif periode[0].lower()=="annee":
+            mois,annee="to",strftime("%y")
     
     dictMessages,dictSalons,dictEmotes,dictVoc,dictFreq=[],[],{},[],{}
-    guilds=ctx.author.mutual_guilds
+    guilds=interaction.user.mutual_guilds
     dictAutre={"Messages":0,"Vocal":0,"Serveurs":len(guilds)}
     for i in guilds:
         try:
             connexion,curseur=connectSQL(i.id,"Messages","Stats",tableauMois[mois],annee)
-            mess=curseur.execute("SELECT Rank,Count FROM {0}{1} WHERE ID={2}".format(mois,annee,ctx.author.id)).fetchone()
+            mess=curseur.execute("SELECT Rank,Count FROM {0}{1} WHERE ID={2}".format(mois,annee,interaction.user.id)).fetchone()
             if mess!=None:
                 dictMessages.append({"ID":i.id,"Count":mess["Count"],"RankIntern":mess["Rank"],"Rank":0,"Nom":i.name})
                 dictAutre["Messages"]+=mess["Count"]
@@ -43,7 +47,7 @@ async def recapStats(ctx,bot):
         
         try:
             connexion,curseur=connectSQL(i.id,"Voice","Stats",tableauMois[mois],annee)
-            voc=curseur.execute("SELECT Rank,Count FROM {0}{1} WHERE ID={2}".format(mois,annee,ctx.author.id)).fetchone()
+            voc=curseur.execute("SELECT Rank,Count FROM {0}{1} WHERE ID={2}".format(mois,annee,interaction.user.id)).fetchone()
             if mess!=None:
                 dictVoc.append({"ID":i.id,"Count":voc["Count"],"RankIntern":voc["Rank"],"Rank":0,"Nom":i.name})
                 dictAutre["Vocal"]+=voc["Count"]
@@ -57,7 +61,7 @@ async def recapStats(ctx,bot):
 
         try:
             connexion,curseur=connectSQL(i.id,"Salons","Stats",tableauMois[mois],annee)
-            chan=curseur.execute("SELECT Rank,Count,ID FROM perso{0}{1}{2}".format(tableauMois[mois],annee,ctx.author.id)).fetchall()
+            chan=curseur.execute("SELECT Rank,Count,ID FROM perso{0}{1}{2}".format(tableauMois[mois],annee,interaction.user.id)).fetchall()
             if chan!=[]:
                 for j in chan:
                     dictSalons.append({"ID":j["ID"],"Count":j["Count"],"RankIntern":j["Rank"],"Rank":0})
@@ -68,7 +72,7 @@ async def recapStats(ctx,bot):
 
         try:
             connexion,curseur=connectSQL(i.id,"Freq","Stats",tableauMois[mois],annee)
-            freq=curseur.execute("SELECT Rank,Count,ID FROM perso{0}{1}{2}".format(tableauMois[mois],annee,ctx.author.id)).fetchall()
+            freq=curseur.execute("SELECT Rank,Count,ID FROM perso{0}{1}{2}".format(tableauMois[mois],annee,interaction.user.id)).fetchall()
             if freq!=[]:
                 for j in freq:
                     if j["ID"] not in dictFreq:
@@ -82,7 +86,7 @@ async def recapStats(ctx,bot):
 
         try:
             connexion,curseur=connectSQL(i.id,"Emotes","Stats",tableauMois[mois],annee)
-            emotes=curseur.execute("SELECT Rank,Count,ID FROM perso{0}{1}{2}".format(tableauMois[mois],annee,ctx.author.id)).fetchall()
+            emotes=curseur.execute("SELECT Rank,Count,ID FROM perso{0}{1}{2}".format(tableauMois[mois],annee,interaction.user.id)).fetchall()
             if emotes!=[]:
                 for j in emotes:
                     if j["ID"] not in dictEmotes:
@@ -115,7 +119,7 @@ async def recapStats(ctx,bot):
 
     embed=discord.Embed(title=title,color=0x3498db)
     embed.set_footer(text="OT!recap")
-    embed=auteur(ctx.author.id,ctx.author.name,ctx.author.avatar,embed,"user")
+    embed=auteur(interaction.user.id,interaction.user.name,interaction.user.avatar,embed,"user")
     if dictMessages!=[]:
         descip=""
         stop=5 if len(dictMessages)>5 else len(dictMessages)
@@ -149,4 +153,4 @@ async def recapStats(ctx,bot):
 
     embed.add_field(name="Stats diverses",value="Messages envoyés : {0}\nTemps passé en vocal : {1}\nNombre de serveurs en commun : {2}\n[Invitez moi sur votre serveur](https://discord.com/oauth2/authorize?client_id=699728606493933650&permissions=120259472576&scope=bot)".format(dictAutre["Messages"],tempsVoice(dictAutre["Vocal"]),dictAutre["Serveurs"]))
 
-    await ctx.send(embed=embed)
+    await interaction.response.send_message(embed=embed)

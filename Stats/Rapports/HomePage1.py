@@ -1,11 +1,10 @@
 
 
-from Stats.Rapports.Description import descipGlobal
 import discord
-from Stats.Rapports.Pagemax import pagemaxHomeJour
-from Stats.Rapports.CreateEmbed import embedRapport
-from Stats.SQL.ConnectSQL import connectSQL
 from Core.Fonctions.TempsVoice import tempsVoice
+from Stats.Rapports.CreateEmbed import embedRapport
+from Stats.Rapports.Description import descipGlobal
+from Stats.SQL.ConnectSQL import connectSQL
 
 listeType=["Messages","Voice","Salons","Freq","Emotes","Reactions","Voicechan"]
 dictFieldG={"Emotes":"Meilleures emotes","Salons":"Salons les plus actifs","Freq":"Heures les plus actives","Reactions":"Meilleures réactions","Messages":"Messages envoyés","Voice":"Temps en vocal","Mots":"Mots envoyés","Voicechan":"Salons vocaux"}
@@ -18,16 +17,7 @@ tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai",
 def homeGlobal(date,guildOT,bot,guild,pagemax,period):
     """Première page de la section principale"""
     embed=discord.Embed()
-    if period=="jour":
-        connexion,curseur=connectSQL(guild.id,"Rapports","Stats","GL","")
-        for j in listeType:
-            result=curseur.execute("SELECT * FROM ranks WHERE Jour='{0}' AND Mois='{1}' AND Annee='{2}' AND Type='{3}' ORDER BY Rank ASC".format(date[0],date[1],date[2],j)).fetchall()
-            if result!=[]:
-                stop=3 if len(result)>3 else len(result)
-                embed.add_field(name=dictFieldG[j],value=descipGlobal(j,result,0,stop,guildOT,bot,None,period),inline=True)
-        divers=curseur.execute("SELECT * FROM ranks WHERE Jour='{0}' AND Mois='{1}' AND Annee='{2}' AND Type='Divers' ORDER BY Rank ASC".format(date[0],date[1],date[2])).fetchall()
-        liste=pagemaxHomeJour(curseur,date[0],date[1],date[2],period)[1]
-    elif period in ("mois","annee","global"):
+    if period in ("mois","annee","global"):
         liste=[]
         for j in listeType:
             try:

@@ -1,48 +1,49 @@
 from time import strftime
 
 from Core.Fonctions.AuteurIcon import auteur
-from Core.Fonctions.Embeds import embedAssertClassic, newDescip, sendEmbed
-from Core.Fonctions.GetNom import getObj
+from Core.Fonctions.Embeds import embedAssertClassic, newDescip
 from Core.Fonctions.GetPeriod import getAnnee, getMois
-from Core.Fonctions.setMaxPage import setMax, setPage
+from Core.Fonctions.SendSlash import sendSlash
+from Core.Fonctions.setMaxPage import setMax
 from Stats.Embeds.Central import statsEmbed
 from Stats.SQL.ConnectSQL import connectSQL
 from Stats.SQL.Verification import verifCommands
 
 tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai","06":"Juin","07":"Juillet","08":"Aout","09":"Septembre","10":"Octobre","11":"Novembre","12":"Décembre","TO":"Année","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
 
-async def statsRank(ctx,option,turn,react,ligne,guildOT,bot):
+async def statsRank(interaction,periode,obj,option,guildOT,bot):
     try:
         assert verifCommands(guildOT,option)
-        connexionCMD,curseurCMD=connectSQL(ctx.guild.id,"Commandes","Guild",None,None)
-        if not react:
-            if len(ctx.args)==2 or ctx.args[2].lower() not in ("mois","annee"):
+        connexionCMD,curseurCMD=connectSQL(interaction.guild_id,"Commandes","Guild",None,None)
+        if periode==None:
+            mois,annee,obj="glob","",None if obj==None else obj.id
+        else:
+            periode=periode.split(" ")
+            if periode[0].lower() not in ("mois","annee"):
                 try:
-                    mois,annee,obj=getMois(ctx.args[2].lower()),getAnnee(ctx.args[3].lower()),getObj(option,ctx,4)
+                    mois,annee,obj=getMois(periode[0].lower()),getAnnee(periode[1].lower()),None if obj==None else obj.id
                 except:
                     try:
-                        mois,annee,obj="to",getAnnee(ctx.args[2].lower()),getObj(option,ctx,3)
+                        mois,annee,obj="to",getAnnee(periode[0].lower()),None if obj==None else obj.id
                     except:
-                        mois,annee,obj="glob","",getObj(option,ctx,2)
-            elif ctx.args[2].lower()=="mois":
-                mois,annee,obj=tableauMois[strftime("%m")].lower(),strftime("%y"),getObj(option,ctx,3)
-            elif ctx.args[2].lower()=="annee":
-                mois,annee,obj="to",strftime("%y"),getObj(option,ctx,3)
+                        mois,annee,obj="glob","",None if obj==None else obj.id
+            elif periode[0].lower()=="mois":
+                mois,annee,obj=tableauMois[strftime("%m")].lower(),strftime("%y"),None if obj==None else obj.id
+            elif periode[0].lower()=="annee":
+                mois,annee,obj="to",strftime("%y"),None if obj==None else obj.id
 
-            curseurCMD.execute("INSERT INTO commandes VALUES({0},{1},'rank','{2}','{3}','{4}','{5}','None',1,1,'countDesc',False)".format(ctx.message.id,ctx.author.id,option,mois,annee,obj))
-            ligne=curseurCMD.execute("SELECT * FROM commandes WHERE MessageID={0}".format(ctx.message.id)).fetchone()
-        else:
-            mois,annee=ligne["Args1"],ligne["Args2"]
+        curseurCMD.execute("INSERT INTO commandes VALUES({0},{1},'rank','{2}','{3}','{4}','{5}','None',1,1,'countDesc',False)".format(interaction.id,interaction.user.id,option,mois,annee,obj))
+        ligne=curseurCMD.execute("SELECT * FROM commandes WHERE MessageID={0}".format(interaction.id)).fetchone()
         
         
-        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[mois],annee)
+        connexion,curseur=connectSQL(interaction.guild_id,option,"Stats",tableauMois[mois],annee)
 
         if ligne["Args3"]=="None":
             pagemax=setMax(curseur.execute("SELECT COUNT() as Nombre FROM {0}{1}".format(mois,annee)).fetchone()["Nombre"])
         else:
             pagemax=setMax(curseur.execute("SELECT COUNT() as Nombre FROM {0}{1}{2}".format(mois,annee,ligne["Args3"])).fetchone()["Nombre"])
 
-        page=setPage(ligne["Page"],pagemax,turn)
+        page=1
         obj="" if ligne["Args3"]=="None" else ligne["Args3"]
         if obj!="":
             if option in ("Salons","Voicechan"):
@@ -65,14 +66,11 @@ async def statsRank(ctx,option,turn,react,ligne,guildOT,bot):
 
         embed=await statsEmbed("{0}{1}{2}".format(mois,annee,obj),ligne,page,pagemax,option,guildOT,bot,evol,False,curseur)
         embed.title=title
-        embed=auteur(ctx.guild.id,ctx.guild.name,ctx.guild.icon,embed,"guild")
+        embed=auteur(interaction.guild_id,interaction.guild.name,interaction.guild.icon,embed,"guild")
         embed.colour=0x3498db
         if obj!="":
             embed.description=newDescip(embed.description,tempOption,obj,guildOT,bot)
-        await sendEmbed(ctx,embed,react,True,curseurCMD,connexionCMD,page,pagemax)
+        await sendSlash(interaction,embed,curseurCMD,connexionCMD,page,pagemax)
     
     except:
-        if react:
-            await ctx.reply(embed=embedAssertClassic("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit le classement cherché n'existe plus ou alors est masqué par un administrateur."))
-        else:
-            await ctx.reply(embed=embedAssertClassic("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit le classement cherché n'existe pas ou alors est masqué par un administrateur.\nVérifiez les arguments de la commande : {0}".format(ctx.command.usage)))
+        await interaction.response.send_message(embed=embedAssertClassic("Impossible de trouver ce que vous cherchez.\nSoit le module de stats est désactivé, soit le classement cherché n'existe pas ou alors est masqué par un administrateur."))

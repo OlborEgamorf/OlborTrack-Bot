@@ -10,22 +10,14 @@ tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai",
 def secondGlobal(date,guild,pagemax,period,user):
     """Deuxième page de la section principale, analyses grossières"""
     embed=discord.Embed()
-    if period=="jour":
-        connexion,curseur=connectSQL(guild.id,"Rapports","Stats","GL","")
-        for j in listeType:
-            result=curseur.execute("SELECT *,IDComp AS ID FROM objs WHERE Jour='{0}' AND Mois='{1}' AND Annee='{2}' AND Type='{3}' AND ID={4} ORDER BY Count DESC".format(date[0],date[1],date[2],j,user)).fetchall()
+    for j in listeType:
+        try:
+            connexion,curseur=connectSQL(guild.id,j,"Stats",tableauMois[date[0]],date[1])
+            result=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY Rank ASC".format(tableauMois[date[0]].upper(),date[1].upper(),user)).fetchall()
             if result!=[]:
                 descip=descipMoyennes(j,result)
                 embed.add_field(name=dictFieldS[j],value=descip,inline=True)
-    elif period in ("mois","annee","global"):
-        for j in listeType:
-            try:
-                connexion,curseur=connectSQL(guild.id,j,"Stats",tableauMois[date[0]],date[1])
-                result=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY Rank ASC".format(tableauMois[date[0]].upper(),date[1].upper(),user)).fetchall()
-                if result!=[]:
-                    descip=descipMoyennes(j,result)
-                    embed.add_field(name=dictFieldS[j],value=descip,inline=True)
-            except:
-                continue
+        except:
+            continue
 
     return embedRapport(guild,embed,date,"Section principale : moyennes",2,pagemax,period,user)

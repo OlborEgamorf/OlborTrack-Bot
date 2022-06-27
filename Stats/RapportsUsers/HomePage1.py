@@ -1,9 +1,8 @@
-from Stats.RapportsUsers.Description import descipGlobal
 import discord
-from Stats.RapportsUsers.Pagemax import pagemaxHomeJour
-from Stats.RapportsUsers.CreateEmbed import embedRapport
-from Stats.SQL.ConnectSQL import connectSQL
 from Core.Fonctions.TempsVoice import tempsVoice
+from Stats.RapportsUsers.CreateEmbed import embedRapport
+from Stats.RapportsUsers.Description import descipGlobal
+from Stats.SQL.ConnectSQL import connectSQL
 
 listeType=["Salons","Freq","Emotes","Reactions","Voicechan"]
 dictFieldG={"Emotes":"Emotes les plus utilisées","Salons":"Salons les plus utilisés","Freq":"Heures les plus actives","Reactions":"Réactions les plus utilisées","Messages":"Messages envoyés","Voice":"Temps en vocal","Mots":"Mots envoyés","Voicechan":"Salons vocaux les plus utilisés"}
@@ -16,30 +15,20 @@ tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai",
 def homeGlobal(date,guildOT,bot,guild,pagemax,period,user):
     """Première page de la section principale"""
     embed=discord.Embed()
-    if period=="jour":
-        connexion,curseur=connectSQL(guild.id,"Rapports","Stats","GL","")
-        for j in listeType:
-            result=curseur.execute("SELECT *,IDComp AS ID FROM objs WHERE Jour='{0}' AND Mois='{1}' AND Annee='{2}' AND Type='{3}' AND ID={4} ORDER BY Count DESC".format(date[0],date[1],date[2],j,user)).fetchall()
+    liste=[]
+    for j in listeType:
+        try:
+            connexion,curseur=connectSQL(guild.id,j,"Stats",tableauMois[date[0]],date[1])
+            result=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY Count DESC".format(tableauMois[date[0]].upper(),date[1],user)).fetchall()
             if result!=[]:
                 stop=3 if len(result)>3 else len(result)
                 embed.add_field(name=dictFieldG[j],value=descipGlobal(j,result,0,stop,guildOT,bot,None,period,user),inline=True)
-        divers=curseur.execute("SELECT *,IDComp AS ID FROM objs WHERE Jour='{0}' AND Mois='{1}' AND Annee='{2}' AND Type='Divers' AND ID={3} ORDER BY Count DESC".format(date[0],date[1],date[2],user)).fetchall()
-        liste=pagemaxHomeJour(curseur,date[0],date[1],date[2],period,user)[1]
-    elif period in ("mois","annee","global"):
-        liste=[]
-        for j in listeType:
-            try:
-                connexion,curseur=connectSQL(guild.id,j,"Stats",tableauMois[date[0]],date[1])
-                result=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY Count DESC".format(tableauMois[date[0]].upper(),date[1],user)).fetchall()
-                if result!=[]:
-                    stop=3 if len(result)>3 else len(result)
-                    embed.add_field(name=dictFieldG[j],value=descipGlobal(j,result,0,stop,guildOT,bot,None,period,user),inline=True)
-                if j!="Messages":
-                    liste.append(j)
-            except:
-                continue
-        connexion,curseur=connectSQL(guild.id,"Divers","Stats",tableauMois[date[0]],date[1])
-        divers=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY Count DESC".format(tableauMois[date[0]].upper(),date[1],user)).fetchall()
+            if j!="Messages":
+                liste.append(j)
+        except:
+            continue
+    connexion,curseur=connectSQL(guild.id,"Divers","Stats",tableauMois[date[0]],date[1])
+    divers=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY Count DESC".format(tableauMois[date[0]].upper(),date[1],user)).fetchall()
 
     if divers!=[]:
         descip=""

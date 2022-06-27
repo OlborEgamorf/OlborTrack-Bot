@@ -4,9 +4,7 @@ tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai",
 
 def embedRapport(guild,embed,date,title,page,pagemax,period):
     embed=auteur(guild.id,guild.name,guild.icon,embed,"guild")
-    if period=="jour":
-        embed.title="Rapport du {0}/{1}/{2}\n{3}".format(date[0],date[1],date[2],title)
-    elif period=="mois":
+    if period=="mois":
         embed.title="Rapport du {0}/{1}\n{2}".format(tableauMois[date[0]],date[1],title)
     elif period=="annee":
         embed.title="Rapport de l'année 20{0}\n{1}".format(date[1],title)
