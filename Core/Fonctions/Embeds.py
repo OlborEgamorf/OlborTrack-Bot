@@ -9,6 +9,7 @@ from Core.OTGuild import OTGuild
 from discord.ext import commands
 
 
+
 def defEvol(ligne:dict,evol:bool) -> str: 
     """Cette fonction renvoie une emote d'évolution en fonction du nombre de positions indiquées pour la personne.
     Entrées :
@@ -60,7 +61,7 @@ def createFields(mobile,embed,f1,f2,f3,nf1,nf2,nf3):
     return embed
 
 
-def newDescip(descip:(str or discord.embeds._EmptyEmbed),option:str,obj:str,guildOT:OTGuild,bot:commands.Bot) -> str:
+def newDescip(descip:(str or None),option:str,obj:str,guildOT:OTGuild,bot:commands.Bot) -> str:
     """Si les statistiques affichées concernent un objet (salon, rôle, emote, ...), l'ajoute en haut de la description de l'embed. Si l'embed n'a pas de description, devient la description.
     Entrées : 
         descip : la description de l'embed
@@ -70,13 +71,13 @@ def newDescip(descip:(str or discord.embeds._EmptyEmbed),option:str,obj:str,guil
         bot : l'objet bot du bot
     Sortie : 
         descip : la nouvelle description"""
-    if type(descip)==discord.embeds._EmptyEmbed:
+    if descip==None:
         descip=nomsOptions(option,int(obj),guildOT,bot)
     else:
         descip="{0}\n-----\n{1}".format(nomsOptions(option,int(obj),guildOT,bot),descip)
     return descip
 
-async def exeErrorExcept(ctx:commands.Context,bot:commands.Bot,reply) -> discord.Embed:
+async def exeErrorExcept(interaction:discord.Interaction,bot:commands.Bot,reply) -> discord.Embed:
     """Fonction qui envoie deux embeds en cas d'erreur lors d'une commande : un pour l'utilisateur et un autre pour le support, avec des informations plus détaillées.
     Entrées : 
         ctx : toutes les infos de la commande
@@ -85,19 +86,14 @@ async def exeErrorExcept(ctx:commands.Context,bot:commands.Bot,reply) -> discord
     Sortie :
         embedE : l'embed d'erreur pour l'utilisateur"""
 
-    embedUser=createEmbed("<:otROUGE:868535622237818910> Erreur","Une erreur est survenue lors de l'execution de la commande.\nUn rapport a été envoyé au support.\n{0}".format(sys.exc_info()[0]),0xff0000,ctx.invoked_with.lower(),ctx.author)
-    embedLog=createEmbed("Erreur","Commande : {0}\nSalon : {1} | {1.id}\nServeur : {2} | {2.id}\nAuteur : {3} | {3.id}\nInfos : {4}\nArguments : {5}".format(ctx.invoked_with.lower(),ctx.message.channel,ctx.guild,ctx.author,traceback.format_exc(),ctx.args),0x3498db,"Log",ctx.guild)
+    embedUser=createEmbed("<:otROUGE:868535622237818910> Erreur","Une erreur est survenue lors de l'execution de la commande.\nUn rapport a été envoyé au support.\n{0}".format(sys.exc_info()[0]),0xff0000,interaction.command.name,interaction.user)
+    embedLog=createEmbed("Erreur","Commande : {0}\nSalon : {1} | {1.id}\nServeur : {2} | {2.id}\nAuteur : {3} | {3.id}\nInfos : {4}\nArguments : {5}".format(interaction.command.name,interaction.message.channel,interaction.guild,interaction.user,traceback.format_exc(),interaction.namespace),0x3498db,"Log",interaction.guild)
     
     await bot.get_channel(726000546401615912).send(embed=embedLog)
     if reply:
-        try:
-            await ctx.reply(embed=embedUser)
-        except:
-            await ctx.send(embed=embedUser)
+        await interaction.response.send_message(embed=embedUser)
     elif reply==None:
         return embedUser
-    else:
-        await ctx.send(embed=embedUser)
 
 
 def createEmbed(title:str,descip:str,color:int,command:str,author:(discord.Member or discord.Guild)) -> discord.Embed:
@@ -116,11 +112,11 @@ def createEmbed(title:str,descip:str,color:int,command:str,author:(discord.Membe
     if type(author)==discord.Guild:
         auteur(author.id,author.name,author.icon,embed,"guild")
     elif type(author)==discord.Member:
-        auteur(author.id,author.nick or author.name,author.avatar,embed,"user")
+        auteur(author.id,author.nick or author.name,author.display_avatar,embed,"user")
     elif author is None:
         pass
     else:
-        auteur(author.id,author.name,author.avatar,embed,"user")
+        auteur(author.id,author.name,author.display_avatar,embed,"user")
     return embed
 
 
@@ -167,23 +163,17 @@ def embedHisto(ctx:commands.Context,bot:commands.Bot) -> discord.Embed:
         return createEmbed("Commande exécutée","Commande : OT!{0}\nServeur : {1} - {2}\nSalon : {3} - {4}\nAuteur : {5} - {6}\n{7}".format(ctx.command.qualified_name,ctx.guild.name,ctx.guild.id,ctx.channel.name,ctx.channel.id,ctx.author.name,ctx.author.id,ctx.args[2:len(ctx.args)]),0x6ec8fa,"OT Log",bot.user)
 
 
-async def embedAssert(ctx:commands.Context,info:str,reply:bool) -> discord.Embed:
+async def embedAssert(interaction:discord.Interaction,info:str,reply:bool) -> discord.Embed:
     """Génère l'embed à envoyer si une AssertionError est relevée.
     Entrée :
         info : les informations de l'erreur
     Sortie :
         embedTable : l'embed à envoyer"""
     if info=="mp":
-        embed=createEmbed("<:otORANGE:868538903584456745> Erreur","Cette commande n'est pas compatible dans les messages privés !",0xff9900,ctx.invoked_with.lower(),ctx.author)
+        embed=createEmbed("<:otORANGE:868538903584456745> Erreur","Cette commande n'est pas compatible dans les messages privés !",0xff9900,interaction.command.name,interaction.user)
     else:
-        embed=createEmbed("<:otROUGE:868535622237818910> Erreur",str(info),0xff0000,ctx.invoked_with.lower(),ctx.author)
-    if reply:
-        try:
-            await ctx.reply(embed=embed)
-        except:
-            await ctx.send(embed=embed)
-    else:
-        await ctx.send(embed=embed)
+        embed=createEmbed("<:otROUGE:868535622237818910> Erreur",str(info),0xff0000,interaction.command.name,interaction.user)
+    await interaction.response.send_message(embed=embed)
 
 def embedAssertClassic(info:str) -> discord.Embed:
     """Génère l'embed à envoyer si une AssertionError est relevée.

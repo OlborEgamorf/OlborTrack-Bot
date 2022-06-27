@@ -31,10 +31,11 @@ async def getImage(id):
                 await f.write(await resp.read())
                 await f.close()
 
-async def getAvatar(user):
+import discord
+async def getAvatar(user:discord.Member):
     """Récupère et enregistre l'avatar d'un utilisateur Discord."""
     async with aiohttp.ClientSession() as session:
-        async with session.get(str(user.avatar_url_as(format="png",size=128))) as resp:
+        async with session.get(user.display_avatar.url) as resp:
             if resp.status == 200:
                 f = await aiofiles.open("PNG/"+str(user.id)+".png", mode='wb')
                 await f.write(await resp.read())
