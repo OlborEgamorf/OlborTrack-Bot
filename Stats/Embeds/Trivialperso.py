@@ -1,14 +1,13 @@
 import discord
 from Core.Fonctions.Embeds import addtoFields, createFields
 
-def embedTrivialPerso(table:list,page:int,mobile:bool) -> discord.Embed:
+def embedTrivialPerso(table:list,mobile:bool) -> discord.Embed:
     embed=discord.Embed()
     field1,field2,field3="","",""
-    stop=15*page if 15*page<len(table) else len(table)
-    for i in range(15*(page-1),stop):
-        categ=table[i]["Categ"]
-        niveau="Niveau {0}".format(table[i]["Niveau"])
-        exp="{0}/{1}exp".format(round(table[i]["Exp"],2),table[i]["Next"])
+    for ligne in table:
+        categ=ligne["Categ"]
+        niveau="Niveau {0}".format(ligne["Niveau"])
+        exp="{0}/{1}exp".format(round(ligne["Exp"],2),ligne["Next"])
 
         field1,field2,field3=addtoFields(field1,field2,field3,mobile,categ,niveau,exp)
 

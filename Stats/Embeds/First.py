@@ -10,17 +10,16 @@ tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai",
 dictNameF2={"Messages":"Membre","Salons":"Salon","Freq":"Heure","Mots":"Membre","Emotes":"Emote","Reactions":"Emote","Voice":"Membre","Voicechan":"Salon","Mentions":"Membre","Mentionne":"Membre"}
 dictNameF3={"Messages":"Messages","Salons":"Messages","Freq":"Messages","Mots":"Mots","Emotes":"Utilisations","Reactions":"Utilisations","Voice":"Temps","Voicechan":"Temps","Mentions":"Mentions","Mentionne":"Mentions"}
 
-def embedFirst(table,page,option,guildOT,bot,mobile):
+def embedFirst(table,option,guildOT,bot,mobile):
     embed=discord.Embed()
     field1,field2,field3="","",""
-    stop=15*page if 15*page<len(table) else len(table)
-    for i in range(15*(page-1),stop):
-        nom=nomsOptions(option,table[i]["ID"],guildOT,bot)
-        count=formatCount(option,table[i]["Count"])
-        if table[i]["Annee"]=="GL":
+    for ligne in table:
+        nom=nomsOptions(option,ligne["ID"],guildOT,bot)
+        count=formatCount(option,ligne["Count"])
+        if ligne["Annee"]=="GL":
             period="Général"
         else:
-            period="{0} 20{1}".format(tableauMois[table[i]["Mois"]],table[i]["Annee"])
+            period="{0} 20{1}".format(tableauMois[ligne["Mois"]],ligne["Annee"])
         field1,field2,field3=addtoFields(field1,field2,field3,mobile,period,nom,count)
     
     embed=createFields(mobile,embed,field1,field2,field3,"Période",dictNameF2[option],dictNameF3[option]) 

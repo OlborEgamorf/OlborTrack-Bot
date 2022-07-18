@@ -5,26 +5,23 @@ from Core.Fonctions.GetNom import getTitre
 from Stats.SQL.ConnectSQL import connectSQL
 from Titres.Badges import getBadges
 
-dictOption={"tortues":"Tortues","tortuesduo":"TortuesDuo","trivialversus":"TrivialVersus","trivialbr":"TrivialBR","trivialparty":"TrivialParty","p4":"P4","bataillenavale":"BatailleNavale","cross":"Cross","trivial":"trivial","codenames":"CodeNames","matrice":"Matrice","morpion":"Morpion"}
-
-def embedJeux(table,guild,page,mobile,id,evol,option):
+def embedJeux(table,guild,mobile,id,evol,option):
     embed=discord.Embed()
     field1,field2,field3="","",""
     author=False
-    stop=15*page if 15*page<len(table) else len(table)
     wl=""
     connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
-    for i in range(15*(page-1),stop):
-        rank="{0} {1}".format(table[i]["Rank"],defEvol(table[i],evol))
+    for ligne in table:
+        rank="{0} {1}".format(ligne["Rank"],defEvol(ligne,evol))
         if option!="trivial":
-            wl="({0}/{1})".format(table[i]["W"],table[i]["L"])
-        count="{0} {1}".format(int(table[i]["Count"]),wl)
+            wl="({0}/{1})".format(ligne["W"],ligne["L"])
+        count="{0} {1}".format(int(ligne["Count"]),wl)
 
-        nom="{0} {1}".format(getBadges(table[i]["ID"],dictOption[option]),getTitre(curseur,table[i]["ID"]))
-        if type(guild.get_member(table[i]["ID"]))==discord.Member and nom=="Inconnu":
-            nom="<@{0}>".format(table[i]["ID"])
+        nom="{0} {1}".format(getBadges(ligne["ID"],option),getTitre(curseur,ligne["ID"]))
+        if type(guild.get_member(ligne["ID"]))==discord.Member and nom=="Inconnu":
+            nom="<@{0}>".format(ligne["ID"])
         
-        if table[i]["ID"]==id:
+        if ligne["ID"]==id:
             rank="**__{0}__**".format(rank)
             nom="**__{0}__**".format(nom)
             count="**__{0}__**".format(count)
@@ -38,7 +35,7 @@ def embedJeux(table,guild,page,mobile,id,evol,option):
         if etat[0]:
             rank="\n**__{0}__**".format(table[etat[1]]["Rank"])
 
-            nom="**__{0} {1}__**".format(getBadges(id,dictOption[option]),getTitre(curseur,id))
+            nom="**__{0} {1}__**".format(getBadges(id,option),getTitre(curseur,id))
             if nom=="**__Inconnu__**":
                 nom="**__<@{0}>__**".format(id)
 

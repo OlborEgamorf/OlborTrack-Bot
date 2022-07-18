@@ -6,18 +6,17 @@ from Core.Fonctions.TempsVoice import formatCount
 def embedSalon(table,guildOT,page,mobile,evol,option):
     embed=discord.Embed()
     field1,field2,field3="","",""
-    stop=15*page if 15*page<len(table) else len(table)
-    for i in range(15*(page-1),stop):
-        rank="{0} {1}".format(table[i]["Rank"],defEvol(table[i],evol))
-        count=formatCount(option,table[i]["Count"])
+    for ligne in table:
+        rank="{0} {1}".format(ligne["Rank"],defEvol(ligne,evol))
+        count=formatCount(option,ligne["Count"])
         try:
-            if table[i]["ID"]==0:
+            if ligne["ID"]==0:
                 nom="Salons éphémères"
-            elif guildOT.chan[table[i]["ID"]]["Hide"]:
+            elif guildOT.chan[ligne["ID"]]["Hide"]:
                 nom="*Salon masqué*"
                 count="*?*"
             else:
-                nom="<#{0}>".format(table[i]["ID"])
+                nom="<#{0}>".format(ligne["ID"])
         except:
             nom="??"
         field1,field2,field3=addtoFields(field1,field2,field3,mobile,rank,nom,count)

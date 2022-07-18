@@ -6,26 +6,25 @@ from Titres.Badges import getBadges
 
 dictNameF3={"Messages":"Messages","Salons":"Messages","Freq":"Messages","Mots":"Mots","Emotes":"Utilisations","Reactions":"Utilisations","Voice":"Temps","Voicechan":"Temps","Divers":"Nombre"}
 
-def embedMembre(table,guildOT,page,mobile,id,evol,option):
+def embedMembre(table,guildOT,mobile,id,evol,option):
     embed=discord.Embed()
     field1,field2,field3="","",""
     author=False
-    stop=15*page if 15*page<len(table) else len(table)
-    for i in range(15*(page-1),stop):
-        rank="{0} {1}".format(table[i]["Rank"],defEvol(table[i],evol))
-        if option=="Divers" and table[i]["IDComp"]==11:
-            count=tempsVoice(table[i]["Count"])
+    for ligne in table:
+        rank="{0} {1}".format(ligne["Rank"],defEvol(ligne,evol))
+        if option=="Divers" and ligne["IDComp"]==11:
+            count=tempsVoice(ligne["Count"])
         else:
-            count=formatCount(option,table[i]["Count"])
-        if guildOT.users[table[i]["ID"]]["Hide"]:
+            count=formatCount(option,ligne["Count"])
+        if guildOT.users[ligne["ID"]]["Hide"]:
             nom="*Membre masqué*"
             count="*?*"
-        elif guildOT.users[table[i]["ID"]]["Leave"]:
+        elif guildOT.users[ligne["ID"]]["Leave"]:
             nom="*Ancien membre*"
         else:
-            nom="{0}<@{1}>".format(getBadges(table[i]["ID"],None),table[i]["ID"])
+            nom="{0}<@{1}>".format(getBadges(ligne["ID"],None),ligne["ID"])
         
-        if table[i]["ID"]==id:
+        if ligne["ID"]==id:
             rank="**__{0}__**".format(rank)
             nom="**__{0}__**".format(nom)
             count="**__{0}__**".format(count)

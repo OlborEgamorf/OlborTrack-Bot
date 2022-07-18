@@ -4,19 +4,17 @@ from Core.Fonctions.Embeds import addtoFields, createFields, defEvol
 from Core.Fonctions.GetNom import getIndic
 from Core.Fonctions.DichoTri import dichotomieID
 
-def embedServeurs(table,guild,page,mobile,evol):
+def embedServeurs(table,guild,mobile,evol):
     embed=discord.Embed()
     field1,field2,field3="","",""
     author=False
-    stop=15*page if 15*page<len(table) else len(table)
-    wl=""
     connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
-    for i in range(15*(page-1),stop):
-        rank="{0} {1}".format(table[i]["Rank"],defEvol(table[i],evol))
-        count=str(table[i]["Count"])
-        nom=getIndic(curseur,table[i]["ID"])
+    for ligne in table:
+        rank="{0} {1}".format(ligne["Rank"],defEvol(ligne,evol))
+        count=str(ligne["Count"])
+        nom=getIndic(curseur,ligne["ID"])
         
-        if table[i]["ID"]==guild.id:
+        if ligne["ID"]==guild.id:
             rank="**__{0}__**".format(rank)
             nom="**__{0}__**".format(nom)
             count="**__{0}__**".format(count)

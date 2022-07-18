@@ -49,40 +49,40 @@ async def statsEmbed(nom,ligne,page,pagemax,option,guildOT,bot,evol,collapse,cur
     if tri in ("periodAsc","periodDesc"):
         table=triPeriod(curseur,nom,tri)
     else:
-        table=curseur.execute("SELECT * FROM {0} ORDER BY {1} {2}".format(nom,dictTriArg[tri],dictTriSens[tri])).fetchall()
+        table=curseur.execute("SELECT * FROM {0} ORDER BY {1} {2} LIMIT 15 OFFSET {3}".format(nom,dictTriArg[tri],dictTriSens[tri],15*(page-1))).fetchall()
 
     if option in ("Voice","Messages","Mots","Mentions","Mentionne"):
-        embed=embedMembre(table,guildOT,page,mobile,author,evol,option)
+        embed=embedMembre(table,guildOT,mobile,author,evol,option)
     elif option in ("Salons","Voicechan"):
-        embed=embedSalon(table,guildOT,page,mobile,evol,option)
+        embed=embedSalon(table,guildOT,mobile,evol,option)
     elif option=="Freq":
-        embed=embedFreq(table,page,mobile,evol)
+        embed=embedFreq(table,mobile,evol)
     elif option in ("Emotes","Reactions"):
-        embed=embedEmote(table,bot,page,mobile,evol)
+        embed=embedEmote(table,bot,mobile,evol)
     elif option=="Divers":
-        embed=embedDivers(table,page,mobile,evol)
+        embed=embedDivers(table,mobile,evol)
     elif option=="Mois":
-        embed=embedMois(table,page,mobile,ligne["Option"])
+        embed=embedMois(table,mobile,ligne["Option"])
     elif option=="Evol":
-        embed=embedEvol(table,page,mobile,collapse,evol,ligne["Option"])
+        embed=embedEvol(table,mobile,collapse,evol,ligne["Option"])
     elif option=="Moy":
-        embed=embedMoy(table,page,mobile)
-    elif option in ("tortues","tortuesduo","p4","bataillenavale","trivialversus","trivialbr","trivialparty","trivial","codenames","morpion","matrice"):
-        embed=embedJeux(table,guildOT,page,mobile,author,evol,option)
+        embed=embedMoy(table,mobile)
+    elif option in ("Tortues","TortuesDuo","P4","TrivialVersus","TrivialBR","TrivialParty","trivial","CodeNames","Morpion","BatailleNavale"):
+        embed=embedJeux(table,guildOT,mobile,author,evol,option)
     elif option=="trivialperso":
-        embed=embedTrivialPerso(table,page,mobile)
+        embed=embedTrivialPerso(table,mobile)
     elif option=="cross":
-        embed=embedServeurs(table,guildOT,page,mobile,evol)
+        embed=embedServeurs(table,guildOT,mobile,evol)
     elif option=="Status":
-        embed=embedFocusStatus(table,page,mobile,evol)
+        embed=embedFocusStatus(table,mobile,evol)
     elif option=="Device":
-        embed=embedFocusDevice(table,page,mobile,evol)
+        embed=embedFocusDevice(table,mobile,evol)
     elif option=="Game":
-        embed=embedFocusGame(table,page,mobile,evol)
+        embed=embedFocusGame(table,mobile,evol)
     elif option=="FreqFocus":
-        embed=embedFocusFreq(table,page,mobile)
+        embed=embedFocusFreq(table,mobile)
     elif option=="First":
-        embed=embedFirst(table,page,ligne["Option"],guildOT,bot,mobile)
+        embed=embedFirst(table,ligne["Option"],guildOT,bot,mobile)
     
     embed.add_field(name="Tri <:otTRI:833666016491864114>",value=dictTriField[tri],inline=True)
     embed.set_footer(text="Page {0}/{1} | {2}".format(page,pagemax,"OT Companion Bêta : OT!companion"))
