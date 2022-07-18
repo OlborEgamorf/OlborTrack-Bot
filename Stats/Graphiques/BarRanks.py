@@ -10,11 +10,10 @@ from Stats.SQL.ConnectSQL import connectSQL
 
 colorOT=(110/256,200/256,250/256,1)
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TO","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
-dictOption={"tortues":"Tortues","tortuesduo":"TortuesDuo","trivialversus":"TrivialVersus","trivialbr":"TrivialBR","trivialparty":"TrivialParty","p4":"P4","bataillenavale":"BatailleNavale","cross":"Cross","trivial":"trivial","codenames":"CodeNames"}
 
 async def graphRank(ligne,ctx,bot,option,guildOT):
     
-    listeX,listeY,listeN,listeC=[],[],[],[]
+    listeY,listeN,listeC=[],[],[]
     setThemeGraph(plt)
     fig,ax=plt.subplots()
     mois,annee,obj=ligne["Args1"],ligne["Args2"],ligne["Args3"]
@@ -27,13 +26,13 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
         else:
             table=curseur.execute("SELECT * FROM {0}{1}{2} WHERE Rank<=15 ORDER BY Rank DESC".format(mois,annee,obj)).fetchall()
     elif ligne["Commande"]=="jeux":
-        connexion,curseur=connectSQL(ligne["Args3"],dictOption[option],"Jeux",tableauMois[mois],annee)
+        connexion,curseur=connectSQL(ligne["Args3"],option,"Jeux",tableauMois[mois],annee)
         table=curseur.execute("SELECT * FROM {0}{1} WHERE Rank<=15 ORDER BY Rank ASC LIMIT 15".format(mois,annee)).fetchall()
         table.reverse()
         connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
-    elif ligne["Commande"]=="trivial":
+    elif ligne["Commande"]=="trivialrank":
         connexion,curseur=connectSQL("OT","ranks","Trivial",None,None)
-        table=curseur.execute("SELECT * FROM {0} WHERE Rank<=15 ORDER BY Rank ASC LIMIT 15".format(ligne["Args2"])).fetchall()
+        table=curseur.execute("SELECT * FROM {0} WHERE Rank<=15 ORDER BY Rank ASC LIMIT 15".format(ligne["Args1"])).fetchall()
         table.reverse()
         connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
     elif ligne["Commande"]=="first":
@@ -65,7 +64,7 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
                     listeN.append("{0}".format(role.name))
                 else:
                     listeN.append("{0}...".format(role.name[0:15]))
-            elif ligne["Commande"] in ("jeux","trivial"):
+            elif ligne["Commande"] in ("jeux","trivialrank"):
                 listeN.append(getNomGraph(ctx,bot,option,table[i]["ID"]))
                 emote=curseur.execute("SELECT * FROM emotes WHERE ID={0}".format(table[i]["ID"])).fetchone()
                 if emote!=None:
@@ -136,7 +135,7 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
         else:
             titre="Classement {0} 20{1} - {2} - {3}".format(tableauMois[table[0]["Mois"]],table[0]["Annee"],ctx.guild.name,option)
     
-    if option=="trivial":
+    if option=="trivialrank":
         titre+="\n{0}".format(obj)
     elif obj not in ("None","") and ligne["Commande"]!="jeux":
         titre+="\n{0}".format(getNomGraph(ctx,bot,option,int(obj)))

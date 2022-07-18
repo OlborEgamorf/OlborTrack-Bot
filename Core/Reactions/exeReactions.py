@@ -1,12 +1,17 @@
 import discord
 from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.setMaxPage import setPage
-from Stats.Commandes.View.ViRapportsUser import switchRapportUser,changePageUser
+from Savezvous.ListModoView import svPersoModoView
 from Stats.Commandes.View.ViClassements import statsRankView
+from Stats.Commandes.View.ViJeux import statsJeuxView
 from Stats.Commandes.View.ViPeriods import statsPeriodsView
 from Stats.Commandes.View.ViPeriodsInter import statsPeriodsInterView
 from Stats.Commandes.View.ViPerso import statsPersoView
 from Stats.Commandes.View.ViRapports import changePage, switchRapport
+from Stats.Commandes.View.ViRapportsUser import (changePageUser,
+                                                 switchRapportUser)
+from Stats.Commandes.View.ViTrivial import statsTrivialView
+from Stats.Commandes.View.ViTrivialPerso import statsTrivialPersoView
 from Stats.Graphiques.BarRanks import graphRank
 from Stats.Graphiques.Circle import graphCircle
 from Stats.Graphiques.Grouped import graphGroupedMois
@@ -20,10 +25,11 @@ from Stats.Graphiques.Scatter.ScatterPositions import graphScatter
 from Stats.Graphiques.Scatter.ScatterUsers import graphScatterUsers
 from Stats.Graphiques.Spider import graphSpider
 from Stats.SQL.ConnectSQL import connectSQL
+from Titres.ViListesTitres import listesTitresView
 
 
 class InputNbPage(discord.ui.Modal, title="A quelle page voulez-vous aller ?"):
-    name = discord.ui.TextInput(label="Name",style=discord.TextStyle.short,required=True)
+    name = discord.ui.TextInput(label="A quelle page voulez vous aller ?",style=discord.TextStyle.short,required=True)
     async def on_submit(self, interaction: discord.Interaction) -> None:
         try:
             connexionCMD,curseurCMD=connectSQL(interaction.guild_id,"Commandes","Guild",None,None)
@@ -38,6 +44,10 @@ class InputNbPage(discord.ui.Modal, title="A quelle page voulez-vous aller ?"):
                     await changePage(interaction,connexionCMD,curseurCMD,None,ligne,interaction.client.dictGuilds[interaction.guild_id],interaction.client)
                 elif ligne["Commande"]=="rapportUser":
                     await changePageUser(interaction,connexionCMD,curseurCMD,None,ligne,interaction.client.dictGuilds[interaction.guild_id],interaction.client)
+                elif ligne["Commande"]=="savezvous":
+                    await svPersoModoView(interaction,interaction.client,ligne,curseurCMD,connexionCMD,None)
+                elif ligne["Commande"]=="titres":
+                    await listesTitresView(interaction,ligne,connexionCMD,curseurCMD,None)
                 else:
                     await getFunction(ligne["Commande"])(interaction,curseurCMD,connexionCMD,None,ligne,interaction.client.dictGuilds[interaction.guild_id],interaction.client)
         except:
@@ -138,12 +148,16 @@ async def buttonDirection(interaction):
     else:
         sens="+"
 
-    if ligne["Commande"] in ("rank","periods","periodsInter","perso"):
+    if ligne["Commande"] in ("rank","periods","periodsInter","perso","jeux","trivialrank","trivialperso"):
         await getFunction(ligne["Commande"])(interaction,curseurCMD,connexionCMD,sens,ligne,interaction.client.dictGuilds[interaction.guild_id],interaction.client)
     elif ligne["Commande"]=="rapport":
         await changePage(interaction,connexionCMD,curseurCMD,sens,ligne,interaction.client.dictGuilds[interaction.guild_id],interaction.client)
     elif ligne["Commande"]=="rapportUser":
         await changePageUser(interaction,connexionCMD,curseurCMD,sens,ligne,interaction.client.dictGuilds[interaction.guild_id],interaction.client)
+    elif ligne["Commande"]=="savezvous":
+        await svPersoModoView(interaction,interaction.client,ligne,curseurCMD,connexionCMD,sens)
+    elif ligne["Commande"]=="titres":
+        await listesTitresView(interaction,ligne,connexionCMD,curseurCMD,sens)
 
 async def buttonMobile(interaction):
     connexionCMD,curseurCMD=connectSQL(interaction.guild_id,"Commandes","Guild",None,None)
@@ -152,8 +166,10 @@ async def buttonMobile(interaction):
         curseurCMD.execute("UPDATE commandes SET Mobile={0} WHERE MessageID={1}".format(bool(int(ligne["Mobile"])-1),interaction.message.interaction.id))
         ligne["Mobile"]=bool(int(ligne["Mobile"])-1)
         connexionCMD.commit()
-
-        await getFunction(ligne["Commande"])(interaction,curseurCMD,connexionCMD,None,ligne,interaction.client.dictGuilds[interaction.guild_id],interaction.client)
+        if ligne["Commande"]=="titres":
+            await listesTitresView(interaction,ligne,connexionCMD,curseurCMD,None)
+        else:
+            await getFunction(ligne["Commande"])(interaction,curseurCMD,connexionCMD,None,ligne,interaction.client.dictGuilds[interaction.guild_id],interaction.client)
 
 async def buttonTri(interaction):
     connexionCMD,curseurCMD=connectSQL(interaction.guild_id,"Commandes","Guild",None,None)
@@ -252,7 +268,7 @@ async def buttonGraph(interaction):
                     if graphHeat in listeFonc:
                         listeFonc.remove(graphHeat)
             
-            elif ligne["Commande"]=="trivial" and ligne["Option"]!="trivialperso":
+            elif ligne["Commande"]=="trivialrank":
                 listeFonc=[graphRank,graphCircle]
         
             elif ligne["Commande"]=="perso":
@@ -261,12 +277,8 @@ async def buttonGraph(interaction):
                 else:
                     listeFonc=[graphRank,graphScatterPerso,graphCircle]
             
-            elif ligne["Commande"]=="trivial" and ligne["Option"]=="trivialperso":
+            elif ligne["Commande"]=="trivialperso":
                 listeFonc=[graphSpider]
-
-            elif ligne["Commande"] in ("jeux","trivial"):
-                await ctx.reply("Les graphiques pour les classements de jeux ne sont pas encore disponible ! Il manque des choses à régler pour cela...")
-                return
             
             for i,fonc in enumerate(listeFonc):
                 await fonc(ligne,ctx,interaction.client,ligne["Option"],guildOT)
@@ -276,7 +288,7 @@ async def buttonGraph(interaction):
         embed=discord.Embed(title="Graphiques",color=0x3498db)
         embed.set_footer(text="Page 1/{0}".format(len(listeG)))
         embed.set_image(url=listeG[0])
-        embed=auteur(ctx.guild.id,ctx.guild.name,ctx.guild.icon,embed,"guild")
+        embed=auteur(ctx.guild.name,ctx.guild.icon,embed,"guild")
 
         if len(listeG):
             message=await interaction.followup.send(embed=embed,view=ViewPageGraph())
@@ -295,7 +307,7 @@ async def buttonDirectionGraph(interaction):
     connexionCMD,curseurCMD=connectSQL(interaction.guild_id,"Commandes","Guild",None,None)
     ligne=curseurCMD.execute("SELECT * FROM graphs WHERE MessageID={0}".format(interaction.message.id)).fetchone()
     if ligne!=None:
-        if interaction["data"]=="ot:gauchegraph":
+        if interaction.data["custom_id"]=="ot:gauchegraph":
             sens="-"
         else:
             sens="+"
@@ -331,3 +343,9 @@ def getFunction(command):
         return statsPeriodsInterView
     if command=="perso":
         return statsPersoView
+    if command=="jeux":
+        return statsJeuxView
+    if command=="trivialrank":
+        return statsTrivialView
+    if command=="trivialperso":
+        return statsTrivialPersoView

@@ -1,10 +1,7 @@
 from Stats.SQL.EmoteDetector import emoteDetector
 
-def auteur(id,nom,avatar,embed,option):
-    if option=="olbor":
-        embed.set_author(name="Olbor Track Bot",icon_url=id.url)
-        # https://media.discordapp.net/attachments/726034739550486618/768453640943042580/logoBldsqdeuddf.png
-    elif avatar==None and option=="guild":
+def auteur(nom,avatar,embed,option):
+    if avatar==None and option=="guild":
         embed.set_author(name=nom)
     elif avatar==None and option=="user":
         embed.set_author(name=nom)

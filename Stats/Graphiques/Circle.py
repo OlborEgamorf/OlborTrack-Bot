@@ -10,7 +10,6 @@ from Stats.SQL.ConnectSQL import connectSQL
 
 colorOT=(110/256,200/256,250/256,1)
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TOTAL","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
-dictOption={"tortues":"Tortues","tortuesduo":"TortuesDuo","trivialversus":"TrivialVersus","trivialbr":"TrivialBR","trivialparty":"TrivialParty","p4":"P4","bataillenavale":"BatailleNavale","cross":"Cross","trivial":"trivial","codenames":"CodeNames"}
 
 async def graphCircle(ligne,ctx,bot,option,guildOT):
     setThemeGraph(plt)
@@ -22,12 +21,12 @@ async def graphCircle(ligne,ctx,bot,option,guildOT):
         connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",ligne["Args1"],ligne["Args2"])
         table=curseur.execute("SELECT * FROM perso{0}{1}{2} WHERE Count>0 ORDER BY Count DESC LIMIT 100".format(ligne["Args1"],ligne["Args2"],ligne["AuthorID"])).fetchall()
         table.reverse()
-    elif ligne["Commande"]=="trivial":
+    elif ligne["Commande"]=="trivialrank":
         connexion,curseur=connectSQL("OT","ranks","Trivial",None,None)
-        table=curseur.execute("SELECT * FROM {0} WHERE Count>0 ORDER BY Rank DESC LIMIT 100".format(ligne["Args2"])).fetchall()
+        table=curseur.execute("SELECT * FROM {0} WHERE Count>0 ORDER BY Rank DESC LIMIT 100".format(ligne["Args1"])).fetchall()
         connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
     elif ligne["Commande"]=="jeux":
-        connexion,curseur=connectSQL(ligne["Args3"],dictOption[option],"Jeux",tableauMois[ligne["Args1"]],ligne["Args2"])
+        connexion,curseur=connectSQL(ligne["Args3"],option,"Jeux",tableauMois[ligne["Args1"]],ligne["Args2"])
         table=curseur.execute("SELECT * FROM {0}{1} WHERE Count>0 ORDER BY Rank DESC LIMIT 100".format(ligne["Args1"],ligne["Args2"])).fetchall()
         connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
     elif ligne["Commande"]=="first":
@@ -52,7 +51,7 @@ async def graphCircle(ligne,ctx,bot,option,guildOT):
                     listeY.append("{0}".format(role.name))
                 else:
                     listeY.append("{0}...".format(role.name[0:15]))
-            elif ligne["Commande"] in ("jeux","trivial"):
+            elif ligne["Commande"] in ("jeux","trivialrank"):
                 if ligne["Commande"]=="jeux" and obj!="OT":
                     listeY.append(getNomGraph(ctx,bot,"Messages",table[i]["ID"]).name)
                 else:
@@ -125,7 +124,7 @@ async def graphCircle(ligne,ctx,bot,option,guildOT):
         else:
             titre="Bulles {0} 20{1} - {2} - {3}".format(tableauMois[table[0]["Mois"]],table[0]["Annee"],ctx.guild.name,option)
     
-    if option=="trivial":
+    if option=="trivialrank":
         titre+="\n{0}".format(obj)
     elif obj not in ("None","") and ligne["Commande"]!="jeux":
         titre+="\n{0}".format(getNomGraph(ctx,bot,option,int(obj)))

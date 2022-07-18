@@ -1,11 +1,12 @@
 import discord
+from Autre.Events import ViewReloadWiki
 from discord.ext import commands
 from Outils.CommandesAuto import boucleAutoCMD, boucleAutoStats
 from Outils.Twitch.Boucle import boucleTwitch
 from Outils.Twitter.BoucleTwitter import boucleTwitter
 from Outils.VoiceEphem.CheckState import checkAll
 from Outils.YouTube.BoucleYT import boucleYT
-from Sondages.exePolls import recupPoll
+from Sondages.exePolls import ViewGiveaway, ViewPetition, ViewPoll, recupPoll
 from Stats.Commandes.Slash.Random import ViewReload
 from Stats.SQL.NewGuild import alterHBM, createDirSQL
 from Stats.Tracker.Voice import disconnect, reconnect
@@ -40,8 +41,11 @@ class OlborTrack(commands.Bot):
         self.add_view(ViewControls())
         self.add_view(ViewPageGraph())
         self.add_view(ViewReload())
+        self.add_view(ViewReloadWiki())
+        self.add_view(ViewPoll([],True))
+        self.add_view(ViewPetition())
+        self.add_view(ViewGiveaway())
         self.add_view(ViewRapports(["Salons","Voice","Emotes","Reactions","Freq"]))
-
 
         for i in self.commands:
             self.listeOS.append(i.name)
