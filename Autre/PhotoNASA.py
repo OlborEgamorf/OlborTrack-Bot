@@ -19,6 +19,6 @@ async def embedNasaPhoto() -> discord.Embed:
     return embed
 
 @OTCommand
-async def exeNASA(ctx,bot):
+async def exeNASA(interaction,bot):
     """Cette fonction génère les embeds des commandes de type Geo en fonction de quelle commande est invoquée."""
-    await ctx.send(embed=await embedNasaPhoto())
+    await interaction.response.send_message(embed=await embedNasaPhoto())

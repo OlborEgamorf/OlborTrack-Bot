@@ -5,6 +5,7 @@ from Core.Decorator import OTCommand
 from Core.Fonctions.Embeds import createEmbed
 from Core.Fonctions.WebRequest import webRequest
 from Stats.SQL.ConnectSQL import connectSQL
+import discord
 
 tableauMois={"01":"Janvier","02":"Février","03":"Mars","04":"Avril","05":"Mai","06":"Juin","07":"Juillet","08":"Aout","09":"Septembre","10":"Octobre","11":"Novembre","12":"Décembre","TO":"Année","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
 
@@ -34,16 +35,25 @@ async def autoEvents(bot,channel,guild):
     connexionCMD.commit()
 
 @OTCommand
-async def exeWikipedia(ctx,bot,option,ligne):
+async def exeWikipedia(interaction,bot,option,ligne):
     if ligne==None:
-        connexionCMD,curseurCMD=connectSQL(ctx.guild.id,"Commandes","Guild",None,None)
-        embedF=await embedWikiEvents(option,strftime("%d"),strftime("%m"))
-        message=await ctx.send(embed=embedF)
-        await message.add_reaction("<:otRELOAD:772766034356076584>")
+        connexionCMD,curseurCMD=connectSQL(interaction.guild_id,"Commandes","Guild",None,None)
+        embed=await embedWikiEvents(option,strftime("%d"),strftime("%m"))
+        await interaction.response.send_message(embed=embed,view=ViewReloadWiki())
 
-        curseurCMD.execute("INSERT INTO commandes VALUES({0},{1},'wikipedia','events','{2}','{3}','{4}','None',1,1,'None',False)".format(message.id,ctx.author.id,option,strftime("%d"),strftime("%m")))
+        curseurCMD.execute("INSERT INTO commandes VALUES({0},{1},'wikipedia','events','{2}','{3}','{4}','None',1,1,'None',False)".format(interaction.id,interaction.user.id,option,strftime("%d"),strftime("%m")))
         connexionCMD.commit()
     else:
-        embedF=await embedWikiEvents(ligne["Args1"],ligne["Args2"],ligne["Args3"])
-        await ctx.message.edit(embed=embedF)
+        embed=await embedWikiEvents(ligne["Args1"],ligne["Args2"],ligne["Args3"])
+        await interaction.response.edit_message(embed=embed)
 
+class ViewReloadWiki(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+
+    @discord.ui.button(label="Encore !",emoji="<:otRELOAD:772766034356076584>",style=discord.ButtonStyle.blurple, custom_id="ot:reloadwiki")
+    async def reload(self,interaction:discord.Interaction, button:discord.ui.Button):
+        connexionCMD,curseurCMD=connectSQL(interaction.guild_id,"Commandes","Guild",None,None)
+        ligne=curseurCMD.execute("SELECT * FROM commandes WHERE MessageID={0}".format(interaction.message.interaction.id)).fetchone()
+        if ligne!=None:
+            await exeWikipedia(interaction,interaction.client,ligne["Option"],ligne)

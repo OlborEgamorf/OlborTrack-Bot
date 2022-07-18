@@ -6,16 +6,15 @@ from Core.Fonctions.Embeds import createEmbed
 
 
 @OTCommand
-async def exeNeko(ctx,bot):
+async def exeNeko(interaction,bot):
     """La seule et unique commande NSFW du Bot, inspirée par Zeynah suite à une private joke. C'est à cause de lui que vous avez installé la bibliothèque rule34. Son Twitter est @Zeyttsun si vous voulez vous plaindre.
     
     Envoie une image de Neko. Ne fonctionne que si le salon d'invocation est NSFW.
     
     Fuck Zey."""
-    assert ctx.channel.is_nsfw(),"Cette commande doit être effectuée dans un salon NSFW"
-    phrases=["T'as pas honte ?","Gros porc","Tu me dégoutes","Mais sérieux ?","Tu voudrais pas aller voir dehors ?","Tu te branles vraiment sur ça ?","Tes parents le savent ?","Je vais te retirer des stats si tu continues...","C'est dégueulasse","..."]
+    phrases=["T'as pas honte ?","Gros porc","Tu me dégoutes","Mais sérieux ?","Tu voudrais pas aller voir dehors ?","Tu te branles vraiment sur ça ?","Tes parents le savent ?","Je vais te retirer des stats si tu continues...","C'est dégueulasse","...","C'est la faute à Zey si regardes ça..."]
     rule = rule34.Rule34(bot.loop)
     liste=await rule.getImages("neko",singlePage=True,randomPID=True)
-    embed=createEmbed(choice(phrases),"",ctx.author.color.value,ctx.invoked_with.lower(),ctx.author)
+    embed=createEmbed(choice(phrases),"",interaction.user.color.value,interaction.command.name,interaction.user)
     embed.set_image(url=choice(liste).file_url)
-    await ctx.send(embed=embed)
+    await interaction.response.send_message(embed=embed)
