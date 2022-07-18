@@ -94,3 +94,17 @@ def changeIDs():
     for i in range(len(liste)):
         curseur.execute("UPDATE titres SET ID={0} WHERE Nom='{1}'".format(i+1,liste[i]["Nom"]))
     connexion.commit()
+
+def getEmoteJeux(user):
+    connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
+    emote=curseur.execute("SELECT * FROM emotes WHERE ID={0}".format(user)).fetchone()
+    if emote==None:
+        return None
+    return emote["Nom"]
+
+def getColorJeux(user):
+    connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
+    couleur=curseur.execute("SELECT * FROM couleurs WHERE ID={0}".format(user)).fetchone()
+    if couleur==None:
+        return None
+    return int('%02x%02x%02x' % (couleur["R"], couleur["G"], couleur["B"]),base=16)

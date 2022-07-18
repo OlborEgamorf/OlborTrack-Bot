@@ -1,11 +1,12 @@
 from Core.Fonctions.Embeds import createEmbed, embedAssert
+from Titres.Outils import getColorJeux
 from Stats.SQL.ConnectSQL import connectSQL
 
 dictValues={1:"<:BronzeMois:886707210749632542>",2:"<:ArgentMois:886707209797521448>",3:"<:OrMois:886707210472800276>",11:"<:BronzeAnnee:886707210560884776>",12:"<:ArgentAnnee:886707209965277225>",13:"<:OrAnnee:886707210430840862>",101:"<:SaphirGlobal:886707210409893958>",102:"<:RubisGlobal:886707210225332255>",103:"<:DiamantGlobal:886707210560884778>"}
 
-async def showBadges(ctx,bot):
+async def showBadges(interaction):
     try:
-        connexionUser,curseurUser=connectSQL("OT",ctx.author.id,"Titres",None,None)
+        connexionUser,curseurUser=connectSQL("OT",interaction.user.id,"Titres",None,None)
         liste=["P4","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR","Matrice","CodeNames","Morpion"]
         liste.sort()
         listeValues=[1,2,3,11,12,13]
@@ -31,9 +32,9 @@ async def showBadges(ctx,bot):
         else:
             descip+="***Testeur*** : <:Testeur:886707613792862250>\n"
 
-        await ctx.reply(embed=createEmbed("Vos badges",descip,ctx.author.color.value,"{0} {1}".format(ctx.invoked_parents[0],ctx.invoked_with.lower()),ctx.author))
+        await interaction.response.send_message(embed=createEmbed("Vos badges",descip,getColorJeux(interaction.user.id),interaction.command.qualified_name,interaction.user))
     except:
-        await embedAssert(ctx,"Vous n'avez aucun badge visiblement...",True)
+        await embedAssert(interaction,"Vous n'avez aucun badge visiblement...",True)
 
 
 def getBadges(user,jeu):
