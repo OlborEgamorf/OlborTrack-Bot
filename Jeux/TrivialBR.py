@@ -4,7 +4,6 @@ from math import inf
 import discord
 from Core.Fonctions.AuteurIcon import auteurJeux
 from Core.Fonctions.Embeds import createEmbed
-from Core.Fonctions.Unpin import unpin
 
 from Jeux.Outils.AttenteTrivial import attente
 from Jeux.TrivialVersus import JeuTrivialVersus, JoueurVersus
@@ -16,8 +15,8 @@ emotesTrue=["<:ot1VRAI:773993429130149909>", "<:ot2VRAI:773993429050195979>", "<
 emotesFalse=["<:ot1FAUX:773993429315092490>", "<:ot2FAUX:773993429172486145>", "<:ot3FAUX:773993429402779698>", "<:ot4FAUX:773993429373026354>"]
 
 class JoueurBR(JoueurVersus):
-    def __init__(self,user,message):
-        super().__init__(user,message)
+    def __init__(self,user,interaction):
+        super().__init__(user,interaction)
         self.score=3
         self.vivant=True
 
@@ -168,9 +167,8 @@ class JeuTrivialBR(JeuTrivialVersus):
                 winner=vivants[0]
                 await self.stats(winner.id,winner.guild)
                 for mess in self.messages:
-                    await mess.clear_reactions()
+                    await mess.edit(view=None)
                     await mess.reply(embed=self.embedEnd(winner,mess.guild.id))
-                    await unpin(mess)
                 self.playing=False
 
             self.fermeture()

@@ -4,7 +4,6 @@ from random import choice
 
 from Core.Fonctions.AuteurIcon import auteurJeux
 from Core.Fonctions.Embeds import createEmbed
-from Core.Fonctions.Unpin import unpin
 
 from Jeux.Outils.AttenteTrivial import attente
 from Jeux.Outils.Bases import JeuBase, JoueurBase
@@ -18,8 +17,8 @@ emotesFalse=["<:ot1FAUX:773993429315092490>", "<:ot2FAUX:773993429172486145>", "
 emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>"]
 
 class JoueurVersus(JoueurBase):
-    def __init__(self,user,message):
-        super().__init__(user,message)
+    def __init__(self,user,interaction):
+        super().__init__(user,interaction)
         self.histo=""
         self.score=0
 
@@ -27,7 +26,7 @@ class JeuTrivialVersus(Question,JeuBase):
     def __init__(self,message,invoke,trivial,cross):
         self.reponses={}
         self.tour=0
-        self.max=5
+        self.max=1
         self.rota=[]
         self.trivial=trivial
         Question.__init__(self,None,"classic")
@@ -38,8 +37,8 @@ class JeuTrivialVersus(Question,JeuBase):
             return True
         return False
 
-    def addPlayer(self,user,message):
-        self.joueurs.append(JoueurVersus(user,message))
+    def addPlayer(self,user,interaction):
+        self.joueurs.append(JoueurVersus(user,interaction))
         self.reponses[user.id]=None
         self.ids.append(user.id)
     
@@ -159,9 +158,8 @@ class JeuTrivialVersus(Question,JeuBase):
                 winner=count[0]
                 await self.stats(winner.id,winner.guild)
                 for mess in self.messages:
-                    await mess.clear_reactions()
+                    await mess.edit(view=None)
                     await mess.reply(embed=self.embedEnd(winner,mess.guild))
-                    await unpin(mess)
                 self.playing=False
             elif len(count)>1:
                 self.max+=1

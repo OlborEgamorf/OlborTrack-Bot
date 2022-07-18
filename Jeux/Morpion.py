@@ -3,9 +3,9 @@ from random import choice
 
 from Core.Fonctions.AuteurIcon import auteurJeux
 from Core.Fonctions.Embeds import createEmbed
-from Core.Fonctions.Unpin import unpin
 
 from Jeux.Outils.Bases import JeuBase
+from Jeux.Outils.Reactions import ViewMorpion
 
 dictEmote={0:":one:",1:":two:",2:":three:"}
 dictLettre={"A":0,"B":1,"C":2}
@@ -122,23 +122,21 @@ class JeuMorpion(JeuBase):
             return embed
 
 
-    async def play(self,message,bot):
-
-        def check(mess):
-            try:
-                if len(mess.content)!=2 or mess.content[0].upper() not in ("A","B","C") or mess.content[1] not in ("1","2","3") or (int(mess.content[1].upper())-1,dictLettre[mess.content[0].upper()]) not in self.tab.available:
-                    return False
-                return mess.channel.id==message.channel.id and self.joueurs[self.turn].id==mess.author.id
-            except:
-                return False
+    async def play(self,interactionUser,bot):
+        
+        def check(interaction): 
+            jeton=interaction.data["values"][0]
+            
+            return interaction.data["custom_id"]=="ot:morpion" and interaction.message.id==interactionUser.message.id and self.joueurs[self.turn].id==interaction.user.id and (int(jeton[1])-1,dictLettre[jeton[0]]) in self.tab.available
 
         try:
-            mess=await bot.wait_for('message', check=check, timeout=30)
+            interaction=await bot.wait_for('interaction', check=check, timeout=30)
+            jeton=interaction.data["values"][0]
         except asyncio.exceptions.TimeoutError:
             choix=choice(self.tab.available)
             add=self.tab.addJeton(choix[0],choix[1],self.turn+1)
         else:
-            add=self.tab.addJeton(int(mess.content[1].upper())-1,dictLettre[mess.content[0].upper()],self.turn+1)
+            add=self.tab.addJeton(int(jeton[1])-1,dictLettre[jeton[0]],self.turn+1)
         return add
 
     def fermeture(self):
@@ -147,27 +145,25 @@ class JeuMorpion(JeuBase):
 
     async def boucle(self,bot):
         for mess in self.messages:
-            await mess.edit(embed=self.embedGame(mess.guild.id))
+            await mess.edit(embed=self.embedGame(mess.guild.id),view=ViewMorpion(self.tab.available))
         while self.playing:
-            add=await self.play(self.joueurs[self.turn].message,bot)
+            add=await self.play(self.joueurs[self.turn].interaction,bot)
             if add[0]:
                 nul=self.tab.checkNul()
                 win=self.tab.checkTab(add[1],add[2],self.turn+1)
                 if win:
                     nul=False
-                if self.tab.checkTab(add[1],add[2],self.turn+1) or nul:
+                if win or nul:
                     if not nul:
                         await self.stats(self.joueurs[self.turn].id,self.joueurs[self.turn].guild)
                     for mess in self.messages:
-                        await mess.clear_reactions()
+                        await mess.edit(embed=self.embedGame(mess.guild.id),view=None)
                         await mess.reply(embed=self.embedEnd(nul,mess.guild))
-                        await unpin(mess)
                     self.playing=False
                 else:
                     self.tours+=1 
                     if self.turn==0: self.turn=1
                     else: self.turn=0
-            
-            self.fermeture()
-            for mess in self.messages:
-                await mess.edit(embed=self.embedGame(mess.guild.id))
+                    for mess in self.messages:
+                        await mess.edit(embed=self.embedGame(mess.guild.id),view=ViewMorpion(self.tab.available))
+                    self.fermeture()

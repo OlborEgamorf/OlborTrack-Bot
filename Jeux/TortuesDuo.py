@@ -1,7 +1,6 @@
 from random import choice, randint
 
 from Core.Fonctions.Embeds import createEmbed
-from Core.Fonctions.Unpin import unpin
 from Stats.SQL.ConnectSQL import connectSQL
 from Stats.SQL.Execution import exeJeuxSQL
 from Titres.Carte import sendCarte
@@ -14,8 +13,8 @@ dictColor={"bleue":0x00CCFF,"violette":0x993366,"rouge":0xFF0000,"verte":0x77B25
 listeCouleurs=("rouge","jaune","bleue","verte","violette")
 
 class JoueurTortueDuo(JoueurTortue):
-    def __init__(self,user,message,couleur):
-        super().__init__(user,message,couleur)
+    def __init__(self,user,interaction,couleur):
+        super().__init__(user,interaction,couleur)
         self.equipe=0
 
     def setEquipe(self,equipe):
@@ -33,10 +32,10 @@ class JeuTortuesDuo(JeuTortues):
         self.score={1:0,2:0}
         self.fini=[]
     
-    def addPlayer(self,user,message):
+    def addPlayer(self,user,interaction):
         tortue=choice(self.tortues)
         self.tortues.remove(tortue)
-        self.joueurs.append(JoueurTortueDuo(user,message,tortue))
+        self.joueurs.append(JoueurTortueDuo(user,interaction,tortue))
         self.ids.append(user.id)
         
     def embedEnd(self,bot,guild):
@@ -100,7 +99,7 @@ class JeuTortuesDuo(JeuTortues):
                 exeJeuxSQL(i.id,None,state,guild,curseurGuild,self.jeu,None)
             wins=exeJeuxSQL(i.id,None,state,"OT",curseurOT,self.jeu,None)
             if state=="W":
-                await sendCarte(i.user,self.jeu,wins,self.cross)
+                await sendCarte(i.user,self.jeu,wins,i.interaction.message.channel)
         connexionGuild.commit()
         connexionOT.commit()
 
@@ -118,14 +117,14 @@ class JeuTortuesDuo(JeuTortues):
                     self.equipe[1].append(i)
                     i.setEquipe(1)
         for i in self.joueurs:
-            await i.user.send(embed=createEmbed("Course des tortues","Vos deux tortues à faire gagner sont : {0} {1} et {2} {3}".format(self.equipe[i.equipe][0].couleur,dictEmote[self.equipe[i.equipe][0].couleur],self.equipe[i.equipe][1].couleur,dictEmote[self.equipe[i.equipe][1].couleur]),dictColor[i.couleur],"tortuesduo",i.user))
+            await i.interaction.followup.send(embed=createEmbed("Course des tortues","Vos deux tortues à faire gagner sont : {0} {1} et {2} {3}".format(self.equipe[i.equipe][0].couleur,dictEmote[self.equipe[i.equipe][0].couleur],self.equipe[i.equipe][1].couleur,dictEmote[self.equipe[i.equipe][1].couleur]),dictColor[i.couleur],"tortuesduo",i.user),ephemeral=True)
         self.giveCards()
 
     async def boucle(self,bot):
         while self.playing:
             for mess in self.messages:
                 await mess.edit(embed=self.embedGame(self.joueurs[self.turn],mess.guild.id))
-            couleur,valeur,carte=await self.play(bot,self.joueurs[self.turn].message)
+            couleur,valeur,carte=await self.play(bot,self.joueurs[self.turn].interaction)
 
             if self.mouvement(couleur,valeur):
                 for i in range(len(self.plateau[9])):
@@ -139,10 +138,8 @@ class JeuTortuesDuo(JeuTortues):
                                 self.playing=False
                                 await self.stats(win.equipe,win.guild)
                                 for mess in self.messages:
-                                    await mess.edit(embed=self.embedGame(self.joueurs[self.turn],mess.guild.id))
+                                    await mess.edit(embed=self.embedGame(self.joueurs[self.turn],mess.guild.id),view=None)
                                     await mess.reply(embed=self.embedEnd(bot,mess.guild.id))
-                                    await mess.clear_reactions()
-                                    await unpin(mess)
                                 break
             
             self.fermeture()

@@ -25,7 +25,7 @@ async def attenteParty(game,temps,event):
 async def attente(game):
     time,done=0,False
     while time!=20 and not done:
-        await asyncio.sleep(1)
+        await asyncio.sleep(0.5)
         done=True
         for j in game.reponses:
             if game.reponses[j]==None:

@@ -3,12 +3,11 @@ from random import randint
 
 from Core.Fonctions.AuteurIcon import auteurJeux
 from Core.Fonctions.Embeds import createEmbed
-from Core.Fonctions.Unpin import unpin
 
 from Jeux.Outils.Bases import JeuBase
 
 emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>","<:ot5:705766186713088042>","<:ot6:705766187182850148>","<:ot7:705766187115741246>"]
-dictCo={705766186909958185:0,705766186989912154:1,705766186930929685:2,705766186947706934:3,705766186713088042:4,705766187182850148:5,705766187115741246:6}
+dictCo={"ot:p4_1":0,"ot:p4_2":1,"ot:p4_3":2,"ot:p4_4":3,"ot:p4_5":4,"ot:p4_6":5,"ot:p4_7":6}
 
 
 class TabP4:
@@ -152,27 +151,24 @@ class JeuP4(JeuBase):
         if self.tours==6:
             self.paris.ouvert=False
 
-    async def play(self,bot,message):
+    async def play(self,bot,interactionUser):
 
-        def check(reaction,user):
-            if type(reaction.emoji)==str:
-                return False
-            return reaction.emoji.id in (705766186909958185,705766186989912154,705766186930929685,705766186947706934,705766186713088042,705766187182850148,705766187115741246) and reaction.message.id==message.id and self.joueurs[self.turn].id==user.id
+        def check(interaction):
+            return interaction.data["custom_id"] in ("ot:p4_1","ot:p4_2","ot:p4_3","ot:p4_4","ot:p4_5","ot:p4_6","ot:p4_7") and interaction.message.id==interactionUser.message.id and self.joueurs[self.turn].id==interaction.user.id
 
         try:
-            reaction,user=await bot.wait_for('reaction_add', check=check, timeout=60)
-            await reaction.remove(user)
+            interaction=await bot.wait_for('interaction', check=check, timeout=60)
         except asyncio.exceptions.TimeoutError:
             add=self.tab.addJeton(randint(0,6),self.turn+1)
         else:
-            add=self.tab.addJeton(dictCo[reaction.emoji.id],self.turn+1)
+            add=self.tab.addJeton(dictCo[interaction.data["custom_id"]],self.turn+1)
         return add
 
     async def boucle(self,bot):
         for mess in self.messages:
             await mess.edit(embed=self.embedGame(mess.guild.id))
         while self.playing:
-            add=await self.play(bot,self.joueurs[self.turn].message)
+            add=await self.play(bot,self.joueurs[self.turn].interaction)
             if add[0]:
                 nul=self.tab.checkNul()
                 win=self.tab.checkTab(add[1],add[2],self.turn+1)
@@ -182,9 +178,8 @@ class JeuP4(JeuBase):
                     if not nul:
                         await self.stats(self.joueurs[self.turn].id,self.joueurs[self.turn].guild)
                     for mess in self.messages:
-                        await mess.clear_reactions()
+                        await mess.edit(view=None)
                         await mess.reply(embed=self.embedEnd(nul,mess.guild))
-                        await unpin(mess)
                     self.playing=False
                 else:
                     self.tours+=1      

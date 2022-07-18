@@ -3,7 +3,6 @@ from math import inf
 from random import choice, randint
 
 from Core.Fonctions.Embeds import createEmbed
-from Core.Fonctions.Unpin import unpin
 
 from Jeux.Outils.AttenteTrivial import attente
 from Jeux.TrivialVersus import JeuTrivialVersus
@@ -291,9 +290,8 @@ class JeuTrivialParty(JeuTrivialVersus):
                 winner=end[0]
                 await self.stats(winner.id,winner.guild)
                 for mess in self.messages:
-                    await mess.clear_reactions()
+                    await mess.edit(view=None)
                     await mess.reply(embed=self.embedEnd(winner,mess.guild))
-                    await unpin(mess)
                 self.playing=False
             self.fermeture()
             self.tour+=1

@@ -3,28 +3,26 @@ from random import randint
 import discord
 from Core.Fonctions.Embeds import createEmbed
 from Core.Fonctions.GetNom import getTitre
-from Core.Fonctions.Unpin import pin
 from Jeux.Outils.Paris import Pari
+from Stats.SQL.Execution import executeStats, executeStatsObj
 from Stats.SQL.ConnectSQL import connectSQL
-from Stats.SQL.Execution import exeClassic, exeJeuxSQL, exeObj
+from Stats.SQL.Execution import exeJeuxSQL
 from Titres.Carte import sendCarte
-from Titres.Couleur import getColorJeux
-from Titres.Emote import getEmoteJeux
-from Titres.Outils import gainCoins
+from Titres.Outils import gainCoins,getEmoteJeux,getColorJeux
 
 dictTitres={"Tortues":"Course des tortues","TortuesDuo":"Course des tortues DUO","P4":"Puissance 4","Matrice":"Matrice","Morpion":"Morpion","TrivialVersus":"Trivial Versus","TrivialBR":"Trivial Battle Royale","TrivialParty":"Trivial Party"}
 
 
 class JoueurBase():
-    def __init__(self,user:discord.Member,message:discord.Message):
+    def __init__(self,user:discord.Member,interaction:discord.Interaction):
         self.user=user
         self.id=user.id
         self.nom=user.nick or user.name
         self.color=None
         self.titre=None
         self.emote=None
-        self.message=message
-        self.guild=message.guild.id
+        self.interaction=interaction
+        self.guild=interaction.guild_id
 
     def getPerso(self):
         connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
@@ -46,17 +44,16 @@ class JeuBase():
         self.jeu=jeu
         self.cross=cross
 
-    async def startGame(self,inGame:list,emotes:list,mini:int,maxi:int) -> bool:
-        self.playing=True
-        for mess in self.messages:
-            await mess.clear_reactions()        
+    async def startGame(self,inGame:list,view,mini:int,maxi:int) -> bool:
+        self.playing=True     
 
         if len(self.ids)<mini:
             for mess in self.messages:
-                await mess.edit(embed=createEmbed(dictTitres[self.jeu],"Une minute s'est écoulée et pas assez de personnes n'ont répondu à l'invitation.",0xad917b,self.jeu.lower(),mess.guild))
+                await mess.edit(embed=createEmbed(dictTitres[self.jeu],"Une minute s'est écoulée et pas assez de personnes n'ont répondu à l'invitation.",0xad917b,self.jeu.lower(),mess.guild),view=None)
             for i in self.ids:
                 inGame.remove(i)
             return False
+
         elif len(self.ids)>maxi:
             for i in range(maxi-len(self.ids)):
                 kick=self.joueurs.pop()
@@ -66,25 +63,24 @@ class JeuBase():
             i.getPerso()
 
         for mess in self.messages:
-            descip="<:otVERT:868535645897912330> La partie va bientôt commencer pour "
+            descip="<:otVERT:868535645897912330> La partie commence pour "
             for j in self.joueurs:
                 if j.guild!=mess.guild.id:
                     descip+="{0}, ".format(j.titre)
                 else:
                     descip+="<@{0}>, ".format(j.id)
-            await mess.channel.send(descip[:-2])
-            await pin(mess)
-
-            for i in emotes:
-                await mess.add_reaction(i)
-            await mess.add_reaction("<:otCOINS:873226814527520809>")
+            await mess.channel.send(descip[:-2],delete_after=20)
+            self.thread=await mess.create_thread(name="Partie de {0} en cours !".format(self.jeu))
+            
+            await mess.edit(view=view)  
 
         self.turn=randint(0,len(self.joueurs)-1)
         self.paris=Pari(self.ids,self.jeu)
+
         return True
 
-    def addPlayer(self,user:discord.Member,message:discord.Message):
-        self.joueurs.append(JoueurBase(user,message))
+    def addPlayer(self,user:discord.Member,interaction:discord.Interaction):
+        self.joueurs.append(JoueurBase(user,interaction))
         self.ids.append(user.id)
 
     async def stats(self,userWin:int,guild:discord.Guild):
@@ -102,15 +98,16 @@ class JeuBase():
                 exeJeuxSQL(i.id,None,state,guild,curseurGuild,self.jeu,None)
             wins=exeJeuxSQL(i.id,None,state,"OT",curseurOT,self.jeu,None)
             if state=="W":
-                await sendCarte(i.user,self.jeu,wins,i.message.channel)
+                await sendCarte(i.user,self.jeu,wins,i.interaction.message.channel)
 
         count=0
         if len(self.guilds)!=1:
             for i in self.joueurs:
                 if i.guild!=guild:
                     count+=1
-            exeClassic(count,guild,"Cross",curseurOT,fake)
-            exeObj(count,guild,userWin,True,fake,"Cross")
+
+            executeStats("Cross",guild,count,curseurOT)
+            executeStatsObj("Cross",guild,userWin,count,curseurOT)
 
         connexionGuild.commit()
         connexionOT.commit()

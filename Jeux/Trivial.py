@@ -1,4 +1,3 @@
-import asyncio
 import html
 from random import choice, randint
 
@@ -9,6 +8,9 @@ from discord.ext import commands
 from Stats.SQL.Compteur import compteurSQL, compteurTrivialS
 from Stats.SQL.ConnectSQL import connectSQL
 from Titres.Outils import gainCoins, titresTrivial
+
+from Jeux.Outils.AttenteTrivial import attenteParty
+from Jeux.Outils.Reactions import ViewTrivial
 
 emotes=["<:ot1:705766186909958185>","<:ot2:705766186989912154>","<:ot3:705766186930929685>","<:ot4:705766186947706934>"]
 emotesTrue=["<:ot1VRAI:773993429130149909>", "<:ot2VRAI:773993429050195979>", "<:ot3VRAI:773993429331738624>", "<:ot4VRAI:773993429423095859>"]
@@ -79,11 +81,11 @@ class Question:
         else:
             self.multi=multi
     
-    def setCateg(self,args):
+    def setCateg(self,categorie):
         dictNomsVal={"culture":9,"divertissement":choice([10,11,12,13,14,15,16,29,31,32]),"sciences":choice([17,18,19,30]),"mythologie":20,"sport":21,"géographie":22,"histoire":23,"politique":24,"art":25,"célébrités":26,"animaux":27,"véhicules":28,"livres":10,"films":11,"musique":12,"anime":31,"manga":31}
-        try:
-            arg=dictNomsVal[args[0].lower()]
-        except:
+        if categorie!=None:
+            arg=dictNomsVal[categorie]
+        else:
             arg=randint(9,32)
         self.arg=arg
         self.categ=dictCateg[arg]
@@ -188,7 +190,12 @@ class Question:
         embedT.add_field(name="Auteur",value="[{0}](https://forms.gle/RNTGn9tds2LGVkdU8)".format(self.auteur),inline=True)
         return embedT
 
-class Streak(Question):
+class TrivialSolo(Question):
+    def __init__(self, author: discord.Member, option: str):
+        super().__init__(author, option)
+        self.reponses={author.id:None}
+
+class Streak(TrivialSolo):
     def __init__(self, author):
         self.serie=0
         self.rota=["culture","divertissement","sciences","mythologie","sport","géographie","histoire","politique","art","célébrités","animaux","véhicules"]
@@ -233,41 +240,36 @@ class Streak(Question):
 
 
 @OTCommand
-async def embedTrivial(ctx:commands.Context,bot:commands.Bot,args:list,option:str,inGame:list):
-    choix={705766186909958185:0,705766186989912154:1,705766186930929685:2,705766186947706934:3,473254057511878656:4}
-    assert ctx.author.id not in inGame, "Vous êtes déjà en train de répondre à une question !"
-    inGame.append(ctx.author.id)
+async def embedTrivial(interaction:discord.Interaction,bot:commands.Bot,categorie,option:str,inGame:list,dictJeux):
+    choix={1:705766186909958185,2:705766186989912154,3:705766186930929685,4:705766186947706934,5:473254057511878656}
+    assert interaction.user.id not in inGame, "Vous êtes déjà en train de répondre à une question !"
+    inGame.append(interaction.user.id)
     if option=="classic":
-        question=Question(ctx.author,option)
-        if len(args)!=0:
-            if args[0].lower()=="art":
-                args=None
+        question=TrivialSolo(interaction.user,option)
     elif option=="streak":
-        question=Streak(ctx.author)
-        
-    question.setCateg(args)
+        question=Streak(interaction.user)
+    dictJeux[interaction.id]=question
+    
+    if categorie!=None:
+        question.setCateg(categorie.value)
+    else:
+        question.setCateg(None)
+
     question.setUser()
     question.setDiff()
     question.newQuestion()
 
-    message=await ctx.send(embed=question.createEmbed())
-    for i in emotes:
-        await message.add_reaction(i)
-    
-    def checkAnswer(reaction,user):
-        if type(reaction.emoji)==str:
-            return False
-        return user.id==ctx.author.id and reaction.message.id==message.id and reaction.emoji.id in (705766186909958185,705766186989912154,705766186930929685,705766186947706934)
+    await interaction.response.send_message(embed=question.createEmbed(),view=ViewTrivial())
+    message=await interaction.original_message()
 
     play=True
     while play:
-        try:
-            react,user=await bot.wait_for("reaction_add",check=checkAnswer,timeout=question.temps)
-            rep=choix[react.emoji.id]+1
-            emoji=react.emoji.id
-        except asyncio.exceptions.TimeoutError:
-            rep=None
-            emoji=None
+        await attenteParty(question,question.temps,None)
+        if question.reponses[interaction.user.id]==None:
+            rep,emoji=None,None
+        else:
+            rep=question.reponses[interaction.user.id]+1
+            emoji=choix[rep]
 
         if question.vrai==rep:
             question.gestionMulti(True)
@@ -276,7 +278,7 @@ async def embedTrivial(ctx:commands.Context,bot:commands.Bot,args:list,option:st
                 message.embeds[0].colour=0x47b03c
                 message.embeds[0].description=question.affichageWin()
             elif question.option=="streak":
-                await react.remove(user)
+                question.reponses={interaction.user.id:None}
                 question.serie+=1
                 question.changeTime()
                 question.setCateg(None)
@@ -284,6 +286,7 @@ async def embedTrivial(ctx:commands.Context,bot:commands.Bot,args:list,option:st
                 question.setDiff()
                 question.newQuestion()
                 await message.edit(embed=question.createEmbed())
+                continue
         else:
             play=False
             message.embeds[0].colour=0xcf1742
@@ -292,7 +295,8 @@ async def embedTrivial(ctx:commands.Context,bot:commands.Bot,args:list,option:st
             if question.option=="streak":
                 results=compteurTrivialS(question.author.id,(0,question.author.id,13,"TO","GL",question.serie),question.serie)
                 if results[0]:
-                    await ctx.reply("Bravo ! Vous avez battu votre record de série avec **{0}** bonnes réponses ! Votre ancien score était **{1}** bonnes réponses.".format(results[1],results[2]))
-        await message.edit(embed=message.embeds[0])
-    await message.clear_reactions()
-    inGame.remove(ctx.author.id)
+                    await interaction.followup.send("Bravo ! Vous avez battu votre record de série avec **{0}** bonnes réponses ! Votre ancien score était **{1}** bonnes réponses.".format(results[1],results[2]))
+
+        await message.edit(embed=message.embeds[0],view=None)
+
+    inGame.remove(interaction.user.id)
