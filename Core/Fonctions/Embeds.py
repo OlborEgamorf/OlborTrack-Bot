@@ -87,7 +87,7 @@ async def exeErrorExcept(interaction:discord.Interaction,bot:commands.Bot,reply)
         embedE : l'embed d'erreur pour l'utilisateur"""
 
     embedUser=createEmbed("<:otROUGE:868535622237818910> Erreur","Une erreur est survenue lors de l'execution de la commande.\nUn rapport a été envoyé au support.\n{0}".format(sys.exc_info()[0]),0xff0000,interaction.command.name,interaction.user)
-    embedLog=createEmbed("Erreur","Commande : {0}\nSalon : {1} | {1.id}\nServeur : {2} | {2.id}\nAuteur : {3} | {3.id}\nInfos : {4}\nArguments : {5}".format(interaction.command.name,interaction.message.channel,interaction.guild,interaction.user,traceback.format_exc(),interaction.namespace),0x3498db,"Log",interaction.guild)
+    embedLog=createEmbed("Erreur","Commande : {0}\nSalon : {1} | {1.id}\nServeur : {2} | {2.id}\nAuteur : {3} | {3.id}\nInfos : {4}\nArguments : {5}".format(interaction.command.name,interaction.channel,interaction.guild,interaction.user,traceback.format_exc(),interaction.namespace),0x3498db,"Log",interaction.guild)
     
     await bot.get_channel(726000546401615912).send(embed=embedLog)
     if reply:
@@ -108,15 +108,15 @@ def createEmbed(title:str,descip:str,color:int,command:str,author:(discord.Membe
         embed : l'embed créé"""
 
     embed=discord.Embed(title=title,description=descip,color=color)
-    embed.set_footer(text="OT!"+command)
+    embed.set_footer(text="OT - /{0}".format(command))
     if type(author)==discord.Guild:
-        auteur(author.id,author.name,author.icon,embed,"guild")
+        auteur(author.name,author.icon,embed,"guild")
     elif type(author)==discord.Member:
-        auteur(author.id,author.nick or author.name,author.display_avatar,embed,"user")
+        auteur(author.nick or author.name,author.display_avatar,embed,"user")
     elif author is None:
         pass
     else:
-        auteur(author.id,author.name,author.display_avatar,embed,"user")
+        auteur(author.name,author.display_avatar,embed,"user")
     return embed
 
 

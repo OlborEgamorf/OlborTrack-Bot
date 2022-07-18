@@ -42,9 +42,9 @@ async def statsTrivial(ctx,turn,react,ligne,bot,option):
         embed.title="Classement Trivial Mondial {0}".format(mode)
         if option=="trivialperso":
             user=ctx.guild.get_member(ligne["AuthorID"])
-            embed=auteur(user.id,user.name,user.avatar,embed,"user")
+            embed=auteur(user.name,user.avatar,embed,"user")
         else:
-            embed=auteur(ctx.guild.get_member(699728606493933650),None,None,embed,"olbor")
+            embed=auteur("Olbor Track Bot",interaction.guild.get_member(699728606493933650).display_avatar,embed,"user")
         embed.colour=0x3498db
         await sendEmbed(ctx,embed,react,True,curseurCMD,connexionCMD,page,pagemax)
     except:

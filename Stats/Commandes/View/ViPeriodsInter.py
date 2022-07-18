@@ -33,10 +33,10 @@ async def statsPeriodsInterView(interaction,curseurCMD,connexionCMD,turn,ligne,g
         embed.description=newDescip(embed.description,option,obj,guildOT,bot)
         user=interaction.guild.get_member(author)
         if user!=None:
-            embed=auteur(user.id,user.name,user.avatar,embed,"user")
+            embed=auteur(user.name,user.avatar,embed,"user")
             embed.colour=user.color.value
         else:
-            embed=auteur(bot.user.id,"Ancien membre",bot.user.avatar,embed,"user")
+            embed=auteur("Ancien membre",bot.user.avatar,embed,"user")
             embed.colour=0x3498db
         embed.colour=user.color.value
 

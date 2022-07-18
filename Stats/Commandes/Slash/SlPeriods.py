@@ -42,14 +42,14 @@ async def statsPeriods(interaction,option,obj,guildOT,bot):
         if option in ("Voice","Messages","Mots","Mentions","Mentionne"):
             user=interaction.guild.get_member(author)
             if user!=None:
-                embed=auteur(user.id,user.name,user.avatar,embed,"user")
+                embed=auteur(user.name,user.avatar,embed,"user")
                 embed.colour=user.color.value
             else:
-                embed=auteur(bot.user.id,"Ancien membre",bot.user.avatar,embed,"user")
+                embed=auteur("Ancien membre",bot.user.avatar,embed,"user")
                 embed.colour=0x3498dbed.colour=user.color.value
         else:
             embed.description=newDescip(embed.description,option,author,guildOT,bot)
-            embed=auteur(interaction.guild_id,interaction.guild.name,interaction.guild.icon,embed,"guild")
+            embed=auteur(interaction.guild.name,interaction.guild.icon,embed,"guild")
             embed.colour=0x3498db
         await sendSlash(interaction,embed,curseurCMD,connexionCMD,page,pagemax)
         

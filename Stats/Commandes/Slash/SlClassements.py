@@ -66,7 +66,7 @@ async def statsRank(interaction,periode,obj,option,guildOT,bot):
 
         embed=await statsEmbed("{0}{1}{2}".format(mois,annee,obj),ligne,page,pagemax,option,guildOT,bot,evol,False,curseur)
         embed.title=title
-        embed=auteur(interaction.guild_id,interaction.guild.name,interaction.guild.icon,embed,"guild")
+        embed=auteur(interaction.guild.name,interaction.guild.icon,embed,"guild")
         embed.colour=0x3498db
         if obj!="":
             embed.description=newDescip(embed.description,tempOption,obj,guildOT,bot)

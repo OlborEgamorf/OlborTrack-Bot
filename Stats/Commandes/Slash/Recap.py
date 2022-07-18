@@ -119,7 +119,7 @@ async def recapStats(interaction,bot,periode):
 
     embed=discord.Embed(title=title,color=0x3498db)
     embed.set_footer(text="OT!recap")
-    embed=auteur(interaction.user.id,interaction.user.name,interaction.user.avatar,embed,"user")
+    embed=auteur(interaction.user.name,interaction.user.avatar,embed,"user")
     if dictMessages!=[]:
         descip=""
         stop=5 if len(dictMessages)>5 else len(dictMessages)

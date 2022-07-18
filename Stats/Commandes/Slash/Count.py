@@ -1,4 +1,5 @@
 from time import strftime
+from Titres.Outils import getColorJeux
 from Stats.SQL.ConnectSQL import connectSQL
 from Core.Fonctions.Embeds import createEmbed, defEvol
 from Core.Fonctions.TempsVoice import tempsVoice
@@ -43,13 +44,13 @@ async def commandeCount(interaction):
     await interaction.response.send_message(embed=embed)
 
 
-async def jeuxPerso(ctx):
-    embed=createEmbed("Tableau jeux - perso","",ctx.author.color.value,ctx.invoked_with.lower(),ctx.author)
+async def jeuxPerso(interaction):
+    embed=createEmbed("Tableau jeux - perso","",getColorJeux(interaction.user.id),interaction.command.name,interaction.user)
     for i in ["P4","BatailleNavale","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR","Matrice"]:
         descip=""
         try:
             connexion,curseur=connectSQL("OT",i,"Jeux","GL","")
-            glob=curseur.execute("SELECT * FROM glob WHERE ID={0}".format(ctx.author.id)).fetchone()
+            glob=curseur.execute("SELECT * FROM glob WHERE ID={0}".format(interaction.user.id)).fetchone()
             if glob!=None:
                 descip+="**Global** : {0} - {1}e {2}\n".format(glob["Count"],glob["Rank"],defEvol(glob,True))
         except:
@@ -57,7 +58,7 @@ async def jeuxPerso(ctx):
 
         try:
             connexion,curseur=connectSQL("OT",i,"Jeux","TO",strftime("%y"))
-            annee=curseur.execute("SELECT * FROM to{0} WHERE ID={1}".format(strftime("%y"),ctx.author.id)).fetchone()
+            annee=curseur.execute("SELECT * FROM to{0} WHERE ID={1}".format(strftime("%y"),interaction.user.id)).fetchone()
             if annee!=None:
                 descip+="**20{0}** : {1} - {2}e {3}\n".format(strftime("%y"),annee["Count"],annee["Rank"],defEvol(annee,True))
         except:
@@ -65,7 +66,7 @@ async def jeuxPerso(ctx):
 
         try:
             connexion,curseur=connectSQL("OT",i,"Jeux",strftime("%m"),strftime("%y"))
-            mois=curseur.execute("SELECT * FROM {0}{1} WHERE ID={2}".format(tableauMois[strftime("%m")].lower(),strftime("%y"),ctx.author.id)).fetchone()
+            mois=curseur.execute("SELECT * FROM {0}{1} WHERE ID={2}".format(tableauMois[strftime("%m")].lower(),strftime("%y"),interaction.user.id)).fetchone()
             if mois!=None:
                 descip+="**{0} 20{1}** : {2} - {3}e {4}\n".format(tableauMois[strftime("%m")],strftime("%y"),mois["Count"],mois["Rank"],defEvol(mois,True))
         except:
@@ -73,11 +74,11 @@ async def jeuxPerso(ctx):
         
         if descip!="":
             embed.add_field(name=i,value=descip,inline=True)
-    await ctx.reply(embed=embed)
+    await interaction.response.send_message(embed=embed)
 
 
-async def jeuxBoard(ctx,bot):
-    embed=createEmbed("Tableau jeux - premiers","",0x3498db,ctx.invoked_with.lower(),bot.user)
+async def jeuxBoard(interaction,bot):
+    embed=createEmbed("Tableau jeux - premiers","",0x3498db,interaction.command.name,bot.user)
     connexionTitres,curseurTitres=connectSQL("OT","Titres","Titres",None,None)
     for i in ["P4","Tortues","TortuesDuo","TrivialVersus","TrivialParty","TrivialBR","Matrice","Morpion","CodeNames"]:
         descip=""
@@ -107,4 +108,4 @@ async def jeuxBoard(ctx,bot):
         
         if descip!="":
             embed.add_field(name=i,value=descip,inline=True)
-    await ctx.reply(embed=embed)
+    await interaction.response.send_message(embed=embed)

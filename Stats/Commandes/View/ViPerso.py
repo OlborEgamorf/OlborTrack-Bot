@@ -28,10 +28,10 @@ async def statsPersoView(interaction,curseurCMD,connexionCMD,turn,ligne,guildOT,
         embed.title=title
         user=interaction.guild.get_member(author)
         if user!=None:
-            embed=auteur(user.id,user.name,user.avatar,embed,"user")
+            embed=auteur(user.name,user.avatar,embed,"user")
             embed.colour=user.color.value
         else:
-            embed=auteur(bot.user.id,"Ancien membre",bot.user.avatar,embed,"user")
+            embed=auteur("Ancien membre",bot.user.avatar,embed,"user")
             embed.colour=0x3498db
         await sendView(interaction,embed,curseurCMD,connexionCMD,page,pagemax)
         
