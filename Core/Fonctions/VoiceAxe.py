@@ -1,4 +1,4 @@
-dictNameAxis={"Messages":"Messages","Salons":"Messages","Freq":"Messages","Mots":"Mots","Emotes":"Utilisations","Reactions":"Utilisations","Mentions":"Mentions","Mentionne":"Mentions","Divers":"Nombre","trivial":"Exp","tortues":"Points","tortuesduo":"Points","trivialversus":"Points","trivialbr":"Points","trivialparty":"Points","p4":"Points","bataillenavale":"Points"}
+dictNameAxis={"Messages":"Messages","Salons":"Messages","Freq":"Messages","Mots":"Mots","Emotes":"Utilisations","Reactions":"Utilisations","Mentions":"Mentions","Mentionne":"Mentions","Divers":"Nombre","trivial":"Exp","Tortues":"Points","TortuesDuo":"Points","TrivialVersus":"Points","TrivialBR":"Points","TrivialParty":"Points","P4":"Points","BatailleNavale":"Points","Morpion":"Points"}
 
 def voiceAxe(option:str,listeY:list,plt,xy:str) -> int:
     """Pour les graphiques, décide s'il faut convertir les valeurs d'un des axes en minutes, heures ou jours si l'option est une stat vocale. Détermine aussi le nom de l'axe.
