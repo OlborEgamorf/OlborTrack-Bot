@@ -20,7 +20,7 @@ async def commandeCMD(ctx,turn,react,ligne):
     page=setPage(ligne["Page"],pagemax,turn)
 
     embed=embedCMD(table,page,pagemax)
-    embed=auteur(ctx.guild.id,ctx.guild.name,ctx.guild.icon,embed,"guild")
+    embed=auteur(ctx.guild.name,ctx.guild.icon,embed,"guild")
     await sendEmbed(ctx,embed,react,False,curseurCMD,connexionCMD,page,pagemax)
     
 

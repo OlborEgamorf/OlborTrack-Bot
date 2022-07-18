@@ -31,13 +31,13 @@ async def exeCustom(guild:discord.Guild,message:discord.Message,author:discord.M
                 if tableCommande["Author"]!="None":
                     mode="embedAuthor"
                     if tableCommande["Author"]=="guild":
-                        embedC=auteur(guild.id,guild.name,guild.icon,embedC,"guild")
+                        embedC=auteur(guild.name,guild.icon,embedC,"guild")
                     elif tableCommande["Author"]=="user":
-                        embedC=auteur(author.id,author.name,author.avatar,embedC,"user")
+                        embedC=auteur(author.name,author.avatar,embedC,"user")
                     else:
                         try:
                             author=guild.get_member(int(tableCommande["Author"]))
-                            embedC=auteur(author.id,author.name,author.avatar,embedC,"user")
+                            embedC=auteur(author.name,author.avatar,embedC,"user")
                         except:
                             embedC.set_author(name=tableCommande["Author"])
                 if tableCommande["Footer"]!="None":

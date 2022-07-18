@@ -10,9 +10,9 @@ async def newMember(member,chan,bot):
     connexion,curseur=connectSQL(member.guild.id,"Guild","Guild",None,None)
     texte=curseur.execute("SELECT * FROM messagesBV ORDER BY RANDOM()").fetchone()
     if int(strftime("%H"))>8 and int(strftime("%H"))<22:
-        mode="nuit"
+        mode="Nuit"
     else:
-        mode="jour"
+        mode="Jour"
     image=curseur.execute("SELECT * FROM imagesBV WHERE Mode<>'{0}' ORDER BY RANDOM()".format(mode)).fetchone()
 
     if texte==None and image==None:

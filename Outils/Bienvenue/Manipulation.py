@@ -21,7 +21,7 @@ def fusion(back,user,text,couleur,taille,guild):
     img1.paste(img2, ((img1.size[0]-img2.size[0])//2,(img1.size[1]-img2.size[1])//2), mask = img2)
 
     if text not in (None,"None"):
-        setText(img1,img2,back,user,text,couleur,taille,guild)
+        setText(img1,img2,couleur,user,text,taille,guild)
 
     img1.save("Temp/BV{0}.png".format(user.id))
 
@@ -37,7 +37,7 @@ def fusionAdieu(back,user,text,couleur,taille,guild,filtre):
     img1.paste(img3, ((img1.size[0]-img3.size[0])//2,(img1.size[1]-img3.size[1])//2), mask = img3)
     
     if text not in (None,"None"):
-        setText(img1,img2,back,user,text,couleur,taille,guild)
+        setText(img1,img2,couleur,user,text,taille,guild)
     
     if filtre==True:
         img1=img1.convert('L')
@@ -45,52 +45,17 @@ def fusionAdieu(back,user,text,couleur,taille,guild,filtre):
     img1.save("Temp/AD{0}.png".format(user.id))
 
 
-def formatage(alerte,user,guild):
-    new=""
-    mention=alerte.split("{user}")
-    longMention=len(mention)
-    for i in range(longMention):
-        new+=mention[i]
-        if i!=longMention-1:
-            new+="<@{0}>".format(user.id)
-    
-    newN=""
-    name=new.split("{name}")
-    longName=len(name)
-    for i in range(longName):
-        newN+=name[i]
-        if i!=longName-1:
-            newN+="{0}".format(user.name)
+def formatage(alerte:str,user,guild):
 
-    newG=""
-    guildName=newN.split("{guild}")
-    longGuild=len(guildName)
-    for i in range(longGuild):
-        newG+=guildName[i]
-        if i!=longGuild-1:
-            newG+="{0}".format(guild.name)
+    alerte=alerte.replace("{user}","<@{0}>".format(user.id))
+    alerte=alerte.replace("{name}",user.name)
+    alerte=alerte.replace("{guild}",guild.name)
+    alerte=alerte.replace("{number}",str(guild.member_count))
 
-    newN=""
-    number=newG.split("{number}")
-    longNumb=len(number)
-    for i in range(longNumb):
-        newN+=number[i]
-        if i!=longNumb-1:
-            newN+="{0}".format(guild.member_count)
-    
-    return newN
+    return alerte
 
 
-def setText(img1,img2,back,user,text,couleur,taille,guild):
-    if couleur=="default":
-        color=ColorThief(back).get_color(quality=1)
-        if color[0]*0.21+color[1]*0.72+color[2]*0.07<50:
-            color=(255,255,255)
-        else:
-            color=(0,0,0)
-    else:
-        dictColor={"blanc":(255,255,255),"noir":(0,0,0),"rouge":(255,0,0),"vert":(0,255,0),"bleu":(0,0,255),"jaune":(221,255,0),"cyan":(0,251,255)}
-        color=dictColor[couleur]
+def setText(img1,img2,color,user,text,taille,guild):
     font = ImageFont.truetype("Font/RobotoCondensed-Regular.ttf", taille)
     text=formatage(text,user,guild)
     textAlign=""

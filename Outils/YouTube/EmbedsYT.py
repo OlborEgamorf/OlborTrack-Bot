@@ -1,9 +1,8 @@
+import discord
+from Core.Fonctions.Embeds import addtoFields, createFields
 from Core.Fonctions.WebRequest import webRequest
 from Core.OS.Keys3 import ytKey
-import discord
-from Core.Fonctions.Embeds import addtoFields, createFields, sendEmbed
-from Stats.SQL.ConnectSQL import connectSQL
-from Core.Fonctions.AuteurIcon import auteur
+
 
 async def embedAlertYT(data,j,nb):
     user=await webRequest("https://www.googleapis.com/youtube/v3/channels?key={0}&id={1}&part=snippet&maxResults=1".format(ytKey,j.chaine))

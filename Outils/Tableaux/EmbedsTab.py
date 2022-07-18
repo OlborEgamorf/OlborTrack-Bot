@@ -47,7 +47,7 @@ async def commandeSB(ctx,turn,react,ligne,bot,guildOT:OTGuild,curseur):
     page=setPage(ligne["Page"],pagemax,turn)
 
     embed=embedSB(table,page,pagemax,mobile)
-    embed=auteur(ctx.guild.id,ctx.guild.name,ctx.guild.icon,embed,"guild")
+    embed=auteur(ctx.guild.name,ctx.guild.icon,embed,"guild")
     message=await sendEmbed(ctx,embed,react,False,curseurCMD,connexionCMD,page,pagemax)
     if not react:
         await message.add_reaction("<:otMOBILE:833736320919797780>")
