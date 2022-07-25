@@ -1,5 +1,5 @@
 from Stats.SQL.ConnectSQL import connectSQL
-from Stats.SQL.Execution import exeClassic, exeJeuxSQL, exeObj
+from Stats.SQL.Execution import exeJeuxSQL
 
 
 def exeStatsJeux(idW,idL,guild,option,tours,statut):

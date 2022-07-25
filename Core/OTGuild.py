@@ -21,6 +21,7 @@ class OTGuild:
         self.mstats=None
         self.stats=True
         self.gd=False
+        self.gdlist=[]
 
         if get:
             connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)

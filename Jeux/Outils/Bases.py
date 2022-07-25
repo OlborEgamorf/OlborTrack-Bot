@@ -4,7 +4,7 @@ import discord
 from Core.Fonctions.Embeds import createEmbed
 from Core.Fonctions.GetNom import getTitre
 from Jeux.Outils.Paris import Pari
-from Stats.SQL.Execution import executeStats, executeStatsObj
+from Stats.SQL.Execution import exeClassic, exeObj
 from Stats.SQL.ConnectSQL import connectSQL
 from Stats.SQL.Execution import exeJeuxSQL
 from Titres.Carte import sendCarte
@@ -106,8 +106,8 @@ class JeuBase():
                 if i.guild!=guild:
                     count+=1
 
-            executeStats("Cross",guild,count,curseurOT)
-            executeStatsObj("Cross",guild,userWin,count,curseurOT)
+            exeClassic(count,guild,"Cross",curseurOT,fake)
+            exeObj(count,guild,userWin,True,fake,"Cross")
 
         connexionGuild.commit()
         connexionOT.commit()

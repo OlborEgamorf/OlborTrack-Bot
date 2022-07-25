@@ -155,12 +155,19 @@ async def sendEmbed(ctx:commands.Context,embed:discord.Embed,react:bool,boutons:
         await embedAssert(ctx,"Je n'ai pas pu envoyer les réactions de cette commande, qui servent à naviguer dedans. Donnez moi les permissions 'utiliser emojis externes' et 'ajouter des réactions' si vous ne voulez plus voir ce message, et profiter à fond de mes possibilités.",True)
 
 
-def embedHisto(ctx:commands.Context,bot:commands.Bot) -> discord.Embed:
+def embedHistoCtx(ctx:commands.Context,bot:commands.Bot) -> discord.Embed:
     """Fonction qui génère l'embed à envoyer dans l'historique des commandes invoquées sur le serveur de tests."""
     if ctx.guild==None:
         return createEmbed("Commande exécutée","Commande : OT!{0}\nServeur : Message Privé\nAuteur : {1} - {2}\n{3}".format(ctx.command.qualified_name,ctx.author.name,ctx.author.id,ctx.args[2:len(ctx.args)]),0x6ec8fa,"OT Log",bot.user)
     else:
         return createEmbed("Commande exécutée","Commande : OT!{0}\nServeur : {1} - {2}\nSalon : {3} - {4}\nAuteur : {5} - {6}\n{7}".format(ctx.command.qualified_name,ctx.guild.name,ctx.guild.id,ctx.channel.name,ctx.channel.id,ctx.author.name,ctx.author.id,ctx.args[2:len(ctx.args)]),0x6ec8fa,"OT Log",bot.user)
+
+def embedHistoInter(interaction:discord.Interaction,bot:commands.Bot) -> discord.Embed:
+    """Fonction qui génère l'embed à envoyer dans l'historique des commandes invoquées sur le serveur de tests."""
+    if interaction.guild==None:
+        return createEmbed("Commande exécutée","Commande : OT!{0}\nServeur : Message Privé\nAuteur : {1} - {2}".format(interaction.command.qualified_name,interaction.user.name,interaction.user),0x6ec8fa,"OT Log",bot.user)
+    else:
+        return createEmbed("Commande exécutée","Commande : OT!{0}\nServeur : {1} - {2}\nSalon : {3} - {4}\nAuteur : {5} - {6}".format(interaction.command.qualified_name,interaction.guild.name,interaction.guild.id,interaction.channel.name,interaction.channel_id,interaction.user.name,interaction.user.id),0x6ec8fa,"OT Log",bot.user)
 
 
 async def embedAssert(interaction:discord.Interaction,info:str,reply:bool) -> discord.Embed:

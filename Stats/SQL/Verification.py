@@ -6,7 +6,8 @@ dictOptions={"Messages":9,"Salons":0,"Freq":2,"Mots":6,"Emotes":8,"Reactions":3,
 
 def verifExecSQL(guild,channel,author):
     if guild.gd or not guild.stats or os.path.exists("SQL/{0}/GETING".format(guild.id)):
-        return False
+        if channel not in guild.gdlist:
+            return False
     try:
         if guild.users[author.id]["Blind"]:
             return False

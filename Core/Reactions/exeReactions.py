@@ -1,4 +1,5 @@
 import discord
+from Autre.ViHelp import commandeHelpView
 from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.setMaxPage import setPage
 from Savezvous.ListModoView import svPersoModoView
@@ -148,7 +149,7 @@ async def buttonDirection(interaction):
     else:
         sens="+"
 
-    if ligne["Commande"] in ("rank","periods","periodsInter","perso","jeux","trivialrank","trivialperso"):
+    if ligne["Commande"] in ("rank","periods","periodsInter","perso","jeux","trivialrank","trivialperso","help"):
         await getFunction(ligne["Commande"])(interaction,curseurCMD,connexionCMD,sens,ligne,interaction.client.dictGuilds[interaction.guild_id],interaction.client)
     elif ligne["Commande"]=="rapport":
         await changePage(interaction,connexionCMD,curseurCMD,sens,ligne,interaction.client.dictGuilds[interaction.guild_id],interaction.client)
@@ -349,3 +350,5 @@ def getFunction(command):
         return statsTrivialView
     if command=="trivialperso":
         return statsTrivialPersoView
+    if command=="help":
+        return commandeHelpView

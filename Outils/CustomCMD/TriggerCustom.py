@@ -14,7 +14,7 @@ async def exeCustom(guild:discord.Guild,message:discord.Message,author:discord.M
         listeMots=message.content.split(" ")
         command=listeMots[0][3:len(listeMots[0])].lower()
         if command in listeOS:
-            return False, 0
+            return False
         connexion,curseur=connectSQL(guild.id,"CustomCMD","Guild",None,None)
         tableCommande=curseur.execute("SELECT * FROM custom WHERE Nom='{0}'".format(command)).fetchone()
         if tableCommande!=None:
@@ -53,6 +53,9 @@ async def exeCustom(guild:discord.Guild,message:discord.Message,author:discord.M
                 await message.channel.send(embed=embedC)
             else:
                 await message.channel.send(tableCommande["Description"])
+            return True
+        return False
     except:
         embedErr=embedAssertClassic("Votre commande personnalisée présente une erreur qui m'empêche de l'envoyer : \nEmplacement : "+mode+"\nType : "+str(sys.exc_info()[0])) 
         await message.channel.send(embed=embedErr)
+        return True

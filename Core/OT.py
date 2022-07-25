@@ -8,7 +8,7 @@ from Outils.VoiceEphem.CheckState import checkAll
 from Outils.YouTube.BoucleYT import boucleYT
 from Sondages.exePolls import ViewGiveaway, ViewPetition, ViewPoll, recupPoll
 from Stats.Commandes.Slash.Random import ViewReload
-from Stats.SQL.NewGuild import alterHBM, createDirSQL
+from Stats.SQL.NewGuild import createDirSQL
 from Stats.Tracker.Voice import disconnect, reconnect
 
 from Core.Companion.CompConnect import connectCompanion
@@ -21,7 +21,7 @@ class OlborTrack(commands.Bot):
     def __init__(self,version:str,*args,**kwargs):
         super().__init__(*args,**kwargs) 
         self.listeMP=["help","rappel","dice","feedback","roulette","invite","support","avatar","about","test","credits","servcount","rappelmp","recap"]
-        self.listeOS=["messganim","saloganim","emotganim","reacganim","motsganim","freqganim","voicganim","vchaganim","getdata"]
+        self.listeOS=[]
         self.dictGuilds={}
         self.dictJeux={}
         self.dictPolls={}
@@ -35,9 +35,9 @@ class OlborTrack(commands.Bot):
 
         self.dictGuilds[None]=OTGuildCMD("MP",False)
 
-        guild=discord.Object(id=990575111193116682)
-        self.tree.copy_global_to(guild=guild)
-        await self.tree.sync(guild=guild)
+        #guild=discord.Object(id=990575111193116682)
+        #self.tree.copy_global_to(guild=guild)
+        #await self.tree.sync(guild=guild)
         self.add_view(ViewControls())
         self.add_view(ViewPageGraph())
         self.add_view(ViewReload())
@@ -71,10 +71,9 @@ class OlborTrack(commands.Bot):
             try:
                 self.dictGuilds[i.id]=OTGuildCMD(i.id,True)
             except:
-                alterHBM(self)
                 createDirSQL(i)
                 self.dictGuilds[i.id]=OTGuildCMD(i.id,True)
-    
+
         await self.get_channel(712753819447984248).send("TrackOS Commandes : Executé ")
         await disconnect(self)
         await reconnect(self,self.dictGuilds)
