@@ -1,49 +1,9 @@
-import discord
-from Core.Decorator import OTCommand
-from Core.Fonctions.Embeds import sendEmbed
 from Core.Fonctions.Help3 import *
-from Core.Fonctions.setMaxPage import setPage
-from Outils.CustomCMD.ListeCMD import commandeCMD
-from Stats.SQL.ConnectSQL import connectSQL
+import discord
 
 dictDescip={"home":{},"stats":dictStats,"polls":dictPoll,"jeux":dictJeux,"autre":dictAutre,"sv":dictSV,"outils":dictOutils,"admin":dictAdmin,"titres":dictTitres,"alertes":dictAlertes,"anniv":dictAnniv}
 
-@OTCommand
-async def commandeHelp(ctx,turn,react,ligne,bot,guildOT):
-    connexionCMD,curseurCMD=connectSQL(guildOT.id,"Commandes","Guild",None,None)
-    if not react:
-        page=1
-        if len(ctx.args)==2:
-            option="home"
-        else:
-            if ctx.args[2].lower()=="serv":
-                await commandeCMD(ctx,None,False,None)
-                return
-            elif ctx.args[2].lower() in ("polls","stats","jeux","autre","sv","outils","admin","titres","alertes","anniv"):
-                option=ctx.args[2].lower()
-            else:
-                option="home"
-                if ctx.args[2].lower() in ("messganim","saloganim","emotganim","reacganim","motsganim","freqganim","voicganim","vchaganim"):
-                    option,page="stats",13
-                elif ctx.args[2].lower()=="getdata":
-                    option,page="admin",4
-                else:
-                    for i in dictDescip:
-                        for j in dictDescip[i]:
-                            for h in dictDescip[i][j]:
-                                if h==ctx.args[2].lower():
-                                    option,page=i,j
-                                    break
-        curseurCMD.execute("INSERT INTO commandes VALUES({0},{1},'help','{2}','None','None','None','None',{3},99,'countDesc',False)".format(ctx.message.id,ctx.author.id,option,page))
-        ligne=curseurCMD.execute("SELECT * FROM commandes WHERE MessageID={0}".format(ctx.message.id)).fetchone()
-    else:
-        option=ligne["Option"]
-
-    page=setPage(ligne["Page"],ligne["PageMax"],turn)
-    embed,pagemax=embedHelp30(option,guildOT,page,bot)
-    message=await sendEmbed(ctx,embed,react,False,curseurCMD,connexionCMD,page,pagemax)
-
-def embedHelp30(option,guildOT,page,bot):
+def embedHelp(option,guildOT,page,bot):
     dictColor={"home":0x6EC8FA,"stats":0x3498db,"polls":0xfc03d7,"jeux":0xad917b,"outils":0xf54269,"autre":0x6EC8FA,"sv":0x00ffd0,"admin":0x220cc9,"titres":0xf58d1d,"alertes":0xf54269,"anniv":0x11f738}
 
     dictLinks={"home":"https://cdn.discordapp.com/attachments/726034739550486618/870604901334536192/NEW.png","polls":"https://cdn.discordapp.com/attachments/726034739550486618/870604052315136050/poll.png","jeux":"https://cdn.discordapp.com/attachments/726034739550486618/870604061739732992/jeux.png","utile":"https://cdn.discordapp.com/attachments/726034739550486618/870604901334536192/NEW.png","autre":"https://cdn.discordapp.com/attachments/726034739550486618/870604901334536192/NEW.png","sv":"https://cdn.discordapp.com/attachments/726034739550486618/870604056203231252/sv.png","outils":"https://cdn.discordapp.com/attachments/726034739550486618/870604051069407272/outils.png","admin":"https://cdn.discordapp.com/attachments/726034739550486618/870604058883420170/admin.png","titres":"https://cdn.discordapp.com/attachments/726034739550486618/870604901334536192/NEW.png","alertes":"https://cdn.discordapp.com/attachments/726034739550486618/888141463421071420/alertes.png","anniv":"https://cdn.discordapp.com/attachments/726034739550486618/888141462066303056/anniv.png","stats":"https://media.discordapp.net/attachments/726034739550486618/870604054831714344/stats.png"}
@@ -81,7 +41,7 @@ def embedHelp30(option,guildOT,page,bot):
                     if listeOptions[i]!="serv":
                         for j in dictDescip[listeOptions[i]]:
                             for h in dictDescip[listeOptions[i]][j]:
-                                descip+="{0}, ".format(h)
+                                descip+="/{0}, ".format(h)
                         embedHelp.add_field(name=listeName[i], value="`"+descip[0:-2]+"`", inline=False)
         else:
             embedHelp.set_image(url="https://cdn.discordapp.com/attachments/702208752035692654/975873681525993522/OTC.png")
@@ -89,12 +49,15 @@ def embedHelp30(option,guildOT,page,bot):
     else:
         descip=""
         for i in dictDescip[option][page]:
-            com=bot.get_command(i)
-            if com!=None:
-                if com.usage!=None:
-                    descip+="**OT!{0}** *{1}* : {2}\n".format(com.qualified_name,com.usage,com.help)
+            try:
+                com=bot.tree._global_commands[i]
+                if type(com)==discord.app_commands.commands.Command:
+                    descip+="**/{0}** : {1}\n".format(com.name,com.description)
                 else:
-                    descip+="**OT!{0}** : {1}\n".format(com.qualified_name,com.help)
+                    for j in com.commands:
+                        descip+="**/{0} {1}** : {2}\n".format(com.name,j.name,j.description)
+            except:
+                pass
         try:
             embedHelp.description=dictDescipPlus[option][page]+"\n"+descip
         except:
@@ -105,12 +68,10 @@ def embedHelp30(option,guildOT,page,bot):
             descip=""
             for i in range(1,len(dictDescipTitres[option])+1):
                 descip+="*Page {0} :* {1}\n".format(i,dictDescipTitres[option][i])
-                if i==8:
-                    embedHelp.add_field(name="Sommaire",value=descip)
-                    descip=""
             if descip!="":
                 embedHelp.add_field(name="Sommaire",value=descip)
         embedHelp.title=dictDescipTitres[option][page]
+
     embedHelp.set_footer(text=("Page {0}/{1}".format(page,dictLen[option])))
     
     if option=="outils":
