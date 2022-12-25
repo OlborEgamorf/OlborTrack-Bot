@@ -34,8 +34,8 @@ async def recapStats(interaction,bot,periode):
     guilds=interaction.user.mutual_guilds
     dictAutre={"Messages":0,"Vocal":0,"Serveurs":len(guilds)}
     for i in guilds:
+        connexion,curseur=connectSQL(i.id)
         try:
-            connexion,curseur=connectSQL(i.id,"Messages","Stats",tableauMois[mois],annee)
             mess=curseur.execute("SELECT Rank,Count FROM {0}{1} WHERE ID={2}".format(mois,annee,interaction.user.id)).fetchone()
             if mess!=None:
                 dictMessages.append({"ID":i.id,"Count":mess["Count"],"RankIntern":mess["Rank"],"Rank":0,"Nom":i.name})
@@ -46,7 +46,6 @@ async def recapStats(interaction,bot,periode):
             pass
         
         try:
-            connexion,curseur=connectSQL(i.id,"Voice","Stats",tableauMois[mois],annee)
             voc=curseur.execute("SELECT Rank,Count FROM {0}{1} WHERE ID={2}".format(mois,annee,interaction.user.id)).fetchone()
             if mess!=None:
                 dictVoc.append({"ID":i.id,"Count":voc["Count"],"RankIntern":voc["Rank"],"Rank":0,"Nom":i.name})
@@ -60,7 +59,6 @@ async def recapStats(interaction,bot,periode):
             mois,annee="TO","GL"
 
         try:
-            connexion,curseur=connectSQL(i.id,"Salons","Stats",tableauMois[mois],annee)
             chan=curseur.execute("SELECT Rank,Count,ID FROM perso{0}{1}{2}".format(tableauMois[mois],annee,interaction.user.id)).fetchall()
             if chan!=[]:
                 for j in chan:
@@ -71,7 +69,6 @@ async def recapStats(interaction,bot,periode):
             pass
 
         try:
-            connexion,curseur=connectSQL(i.id,"Freq","Stats",tableauMois[mois],annee)
             freq=curseur.execute("SELECT Rank,Count,ID FROM perso{0}{1}{2}".format(tableauMois[mois],annee,interaction.user.id)).fetchall()
             if freq!=[]:
                 for j in freq:
@@ -85,7 +82,6 @@ async def recapStats(interaction,bot,periode):
             pass
 
         try:
-            connexion,curseur=connectSQL(i.id,"Emotes","Stats",tableauMois[mois],annee)
             emotes=curseur.execute("SELECT Rank,Count,ID FROM perso{0}{1}{2}".format(tableauMois[mois],annee,interaction.user.id)).fetchall()
             if emotes!=[]:
                 for j in emotes:

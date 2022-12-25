@@ -22,7 +22,7 @@ async def boucleYT(bot,dictGuilds):
                     liste.reverse()
                     for h in liste:
                         await bot.get_channel(j.salon).send(embed=await embedAlertYT(data,j,h),content=j.descip)
-                    connexion,curseur=connectSQL(dictGuilds[i].id,"Guild","Guild",None,None)
+                    connexion,curseur=connectSQL(dictGuilds[i].id)
                     curseur.execute("UPDATE youtube SET LastID='{0}' WHERE Nombre={1}".format(data["items"][0]["id"]["videoId"],j.numero))
                     j.last=data["items"][0]["id"]["videoId"]
                     connexion.commit()

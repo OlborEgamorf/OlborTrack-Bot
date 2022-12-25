@@ -13,7 +13,7 @@ tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai",
 listeTitres={"Messages":"nombre de messages envoyés","Salons":"nombre de messages envoyés","Freq":"nombre de messages envoyés","Emotes":"nombre d'emotes utilisées","Reactions":"nombre de réactions utilisées","Voice":"temps passé en vocal","Voicechan":"temps passé en vocal","Divers":"nombre d'occurences de la statistique diverse"}
 
 async def graphHeatGlobal(ligne,ctx,bot,option,guildOT):
-    connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
+    connexion,curseur=connectSQL(ctx.guild.id)
     obj="" if ligne["Args3"]=="None" else ligne["Args3"]
     setThemeGraph(plt)
 
@@ -33,7 +33,6 @@ async def graphHeatGlobal(ligne,ctx,bot,option,guildOT):
     listeHeat=[[0]*12 for i in range(len(dates))]
     labels=[[""]*12 for i in range(len(dates))]
     listeMois=["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Aout","Septembre","Octobre","Novembre","Décembre"]
-    connexion,curseur=connectSQL(ctx.guild.id,"Rapports","Stats","GL","")
 
     if ligne["Commande"]=="roles" and ligne["Args4"]!="None":
         descip=""

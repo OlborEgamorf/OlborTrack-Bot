@@ -35,7 +35,7 @@ class PollTime():
         if counts==None:
             self.propositions=[Proposition(emotes[i],props[i]) for i in range(len(props))]
             self.total=0
-            connexion,curseur=connectSQL(guild.id,"Guild","Guild",None,None)
+            connexion,curseur=connectSQL(guild.id)
             curseur.execute("CREATE TABLE IF NOT EXISTS polls (ID INT, Question TEXT, Propositions TEXT, Results TEXT, Active BOOL, Multiple BOOL, Total INT, Start INT, End INT, Auteur INT, Channel INT)")
             curseur.execute("INSERT INTO polls VALUES ({0},'{1}','{2}','0',True,{3},1,{4},{5},{6},{7})".format(message.id,question,";".join(props),multiple,self.start,self.end,author,message.channel.id))
             connexion.commit()
@@ -57,7 +57,7 @@ class PollTime():
                 await self.message.edit(embed=embed)
             except discord.NotFound:
                 self.active=False
-                connexion,curseur=connectSQL(self.guild.id,"Guild","Guild",None,None)
+                connexion,curseur=connectSQL(self.guild.id)
                 curseur.execute("DELETE FROM polls WHERE ID={0}".format(self.id))
                 connexion.commit()
                 return
@@ -67,23 +67,13 @@ class PollTime():
         await self.message.edit(view=None)
         self.active=False
 
-        connexion,curseur=connectSQL(self.guild.id,"Guild","Guild",None,None)
+        connexion,curseur=connectSQL(self.guild.id)
         if self.total==0:
             total=1
         else:
             total=self.total
         curseur.execute("UPDATE polls SET Active=False, Results='{0}', Total={1} WHERE ID={2}".format(";".join(list(map(lambda x:str(x.count), self.propositions))),total,self.id))
         connexion.commit()
-
-        if self.total==0:
-            return None
-        else:
-            all=list(map(lambda x:x.count, self.propositions))
-            propMax=max(self.propositions, key=lambda x:x.count)
-            if all.count(self.propositions[propMax].count)>1:
-                return None
-            else:
-                return propMax
 
     def affichage(self,total,guild):
         descip=""
@@ -115,7 +105,7 @@ class PetiGive():
         self.option=option
 
         if new:
-            connexion,curseur=connectSQL(message.guild.id,"Guild","Guild",None,None)
+            connexion,curseur=connectSQL(message.guild.id)
             if option=="petition":
                 curseur.execute("CREATE TABLE IF NOT EXISTS petitions (ID INT, Petition INT, Nb INT, Final INT, Active INT, Debut INT, Fin INT, Auteur INT, Channel INT, Description TEXT)")
                 curseur.execute("INSERT INTO petitions VALUES ({0},'{1}',{2},0,True,{3},{4},{5},{6},'{7}')".format(message.id,proposition,personnes,self.start,self.end,author,message.channel.id,description))
@@ -136,7 +126,7 @@ class PetiGive():
                 await self.message.edit(embed=embed)
             except discord.NotFound:
                 self.active=False
-                connexion,curseur=connectSQL(self.guild.id,"Guild","Guild",None,None)
+                connexion,curseur=connectSQL(self.guild.id)
                 curseur.execute("DELETE FROM petitions WHERE ID={0}".format(self.id))
                 connexion.commit()
                 return
@@ -146,7 +136,7 @@ class PetiGive():
         await self.message.edit(view=None)
         self.active=False
 
-        connexion,curseur=connectSQL(self.guild.id,"Guild","Guild",None,None)
+        connexion,curseur=connectSQL(self.guild.id)
         curseur.execute("UPDATE petitions SET Active=False, Final={0} WHERE ID={1}".format(self.total,self.id))
         connexion.commit()
 
@@ -180,7 +170,7 @@ class PetiGive():
                 await self.message.reply("<:otVERT:868535645897912330> Bravo à {0}qui ont gagné **{1}** !".format(descip,self.proposition))
             await self.message.edit(embed=embed)
 
-        connexion,curseur=connectSQL(self.guild.id,"Guild","Guild",None,None)
+        connexion,curseur=connectSQL(self.guild.id)
         curseur.execute("UPDATE giveaways SET Active=False, Winner='{0}', Participants='{1}' WHERE ID={2}".format(";".join(winner),";".join(self.participants),self.id))
         connexion.commit()
         self.active=False

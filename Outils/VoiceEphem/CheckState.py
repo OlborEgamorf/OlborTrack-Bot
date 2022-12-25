@@ -6,7 +6,7 @@ async def connectionVoiceEphem(guildOT,before,after,member):
         if after.channel!=None:
             hub=after.channel.id
             assert hub in guildOT.voicehub
-            connexion,curseur=connectSQL(member.guild.id,"VoiceEphem","Guild",None,None)
+            connexion,curseur=connectSQL(member.guild.id)
             nb=curseur.execute("SELECT Count() AS Count FROM salons WHERE IDHub={0}".format(hub)).fetchone()
             if guildOT.voicehub[hub].limite==0:
                 limite=None
@@ -23,7 +23,7 @@ async def connectionVoiceEphem(guildOT,before,after,member):
     try:
         if before.channel!=None:
             assert before.channel.id in guildOT.voiceephem
-            connexion,curseur=connectSQL(member.guild.id,"VoiceEphem","Guild",None,None)
+            connexion,curseur=connectSQL(member.guild.id)
             if len(before.channel.voice_states)==0:
                 guildOT.voiceephem.remove(before.channel.id)
                 curseur.execute("DELETE FROM salons WHERE IDChannel={0}".format(before.channel.id))
@@ -37,7 +37,7 @@ async def connectionVoiceEphem(guildOT,before,after,member):
 
 async def checkAll(guildOT,bot):
     if guildOT.voiceephem!=[]:
-        connexion,curseur=connectSQL(guildOT.id,"VoiceEphem","Guild",None,None)
+        connexion,curseur=connectSQL(guildOT.id)
         for i in guildOT.voiceephem:
             try:
                 chan=bot.get_channel(i)

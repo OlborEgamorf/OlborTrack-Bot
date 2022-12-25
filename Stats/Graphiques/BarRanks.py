@@ -20,30 +20,30 @@ async def graphRank(ligne,ctx,bot,option,guildOT):
     colorBase=colorOT
     
     if ligne["Commande"]=="rank":
-        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[mois],annee)
+        connexion,curseur=connectSQL(ctx.guild.id)
         if obj=="None":
             table=curseur.execute("SELECT * FROM {0}{1} WHERE Rank<=15 ORDER BY Rank DESC".format(mois,annee)).fetchall()
         else:
             table=curseur.execute("SELECT * FROM {0}{1}{2} WHERE Rank<=15 ORDER BY Rank DESC".format(mois,annee,obj)).fetchall()
     elif ligne["Commande"]=="jeux":
-        connexion,curseur=connectSQL(ligne["Args3"],option,"Jeux",tableauMois[mois],annee)
+        connexion,curseur=connectSQL(ligne["Args3"])
         table=curseur.execute("SELECT * FROM {0}{1} WHERE Rank<=15 ORDER BY Rank ASC LIMIT 15".format(mois,annee)).fetchall()
         table.reverse()
-        connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
+        connexion,curseur=connectSQL("OT")
     elif ligne["Commande"]=="trivialrank":
         connexion,curseur=connectSQL("OT","ranks","Trivial",None,None)
         table=curseur.execute("SELECT * FROM {0} WHERE Rank<=15 ORDER BY Rank ASC LIMIT 15".format(ligne["Args1"])).fetchall()
         table.reverse()
-        connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
+        connexion,curseur=connectSQL("OT")
     elif ligne["Commande"]=="first":
-        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
+        connexion,curseur=connectSQL(ctx.guild.id)
         first=curseur.execute("SELECT DISTINCT ID FROM firstM").fetchall()
         table=[]
         for i in first:
             table.append({"ID":i["ID"],"Count":curseur.execute("SELECT Count() AS Nombre FROM firstM WHERE ID={0}".format(i["ID"])).fetchone()["Nombre"]})
         table.sort(key=lambda x:x["Count"])
     else:
-        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",mois,annee)
+        connexion,curseur=connectSQL(ctx.guild.id)
         table=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY Count DESC LIMIT 15".format(mois,annee,ligne["AuthorID"])).fetchall()
         table.reverse()
         user=getNomGraph(ctx,bot,"Messages",ligne["AuthorID"])

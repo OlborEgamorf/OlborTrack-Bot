@@ -19,7 +19,7 @@ def graphPerso(ligne,ctx,option,bot,period,categ):
     else:
         obj=int(ligne["Args1"])
     if ligne["Commande"]=="first":
-        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
+        connexion,curseur=connectSQL(ctx.guild.id)
         if period=="mois":
             table=curseur.execute("SELECT * FROM firstM ORDER BY DateID ASC").fetchall()
         else:

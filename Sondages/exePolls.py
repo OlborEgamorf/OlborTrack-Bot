@@ -58,9 +58,8 @@ async def exePolltime(interaction,bot,question,propositions,temps,multiple,image
     for i in propositions:
         allProps.append(createPhrase(i))
     dictPolls[interaction.id]=PollTime(await interaction.original_message(),interaction.guild,somme,allProps,createPhrase(question),multiple,interaction.user.id)
-    result=await dictPolls[interaction.id].trigger(bot)
+    await dictPolls[interaction.id].trigger(bot)
     del dictPolls[interaction.id]
-    return result
 
 @OTCommand
 async def exePetition(interaction,bot,objet,signatures,temps,image):
@@ -128,7 +127,7 @@ async def exeReminder(interaction,bot,rappel,temps,option):
 
 
 def sauvegardePoll(bot):
-    connexion,curseur=connectSQL("OT","Polls","Guild",None,None)
+    connexion,curseur=connectSQL("OT")
     curseur.execute("CREATE TABLE IF NOT EXISTS Polls (ID INT, Guild INT, Temps INT, Question TEXT, Start INT, Salon INT, Multiple BOOL, Author INT)")
     curseur.execute("CREATE TABLE IF NOT EXISTS Petitions (ID INT, Guild INT, Temps INT, Question TEXT, Start INT, Salon INT, Signatures INT, Author INT, Option TEXT)")
     curseur.execute("CREATE TABLE IF NOT EXISTS Reminders (ID INT, User INT, Temps INT, Remind TEXT, Start INT)")
@@ -162,7 +161,7 @@ def sauvegardePoll(bot):
     connexion.commit()
 
 async def recupPoll(bot):
-    connexion,curseur=connectSQL("OT","Polls","Guild",None,None)
+    connexion,curseur=connectSQL("OT")
     curseur.execute("CREATE TABLE IF NOT EXISTS Polls (ID INT, Guild INT, Temps INT, Question TEXT, Start INT, Salon INT, Multiple BOOL, Author INT)")
     curseur.execute("CREATE TABLE IF NOT EXISTS Petitions (ID INT, Guild INT, Temps INT, Question TEXT, Start INT, Salon INT, Signatures INT, Author INT)")
     curseur.execute("CREATE TABLE IF NOT EXISTS Reminders (ID INT, User INT, Temps INT, Remind TEXT, Start INT)")

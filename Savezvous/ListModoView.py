@@ -8,7 +8,7 @@ from Stats.SQL.ConnectSQL import connectSQL
 from Savezvous.ListModoEmbed import embedSV
 
 async def svPersoModoView(interaction,bot,ligne,connexionCMD,curseurCMD,turn):
-    connexion,curseur=connectSQL(interaction.guild_id,"Guild","Guild",None,None)
+    connexion,curseur=connectSQL(interaction.guild_id)
 
     option=ligne["Option"]
     table=getTableSV(curseur,option,ligne["AuthorID"])

@@ -32,7 +32,7 @@ async def boucleTwitch(bot,dictGuilds):
                     else:
                         live=False
                     if live!=j.sent:
-                        connexion,curseur=connectSQL(dictGuilds[i].id,"Guild","Guild",None,None)
+                        connexion,curseur=connectSQL(dictGuilds[i].id)
                         curseur.execute("UPDATE twitch SET Sent={0} WHERE Nombre={1}".format(live,j.numero))
                         j.sent=live
                         connexion.commit()

@@ -17,11 +17,12 @@ tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai",
 def homeGlobal(date,guildOT,bot,guild,pagemax,period):
     """Première page de la section principale"""
     embed=discord.Embed()
+    connexion,curseur=connectSQL(guild.id)
     if period in ("mois","annee","global"):
         liste=[]
         for j in listeType:
             try:
-                connexion,curseur=connectSQL(guild.id,j,"Stats",tableauMois[date[0]],date[1])
+                
                 result=curseur.execute("SELECT * FROM {0}{1} ORDER BY Rank ASC".format(date[0],date[1])).fetchall()
                 if result!=[]:
                     stop=3 if len(result)>3 else len(result)
@@ -30,7 +31,6 @@ def homeGlobal(date,guildOT,bot,guild,pagemax,period):
                     liste.append(j)
             except:
                 continue
-        connexion,curseur=connectSQL(guild.id,"Divers","Stats",tableauMois[date[0]],date[1])
         divers=curseur.execute("SELECT * FROM {0}{1} ORDER BY Rank ASC".format(date[0],date[1])).fetchall()
 
     if "Messages" in liste:

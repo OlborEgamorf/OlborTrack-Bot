@@ -17,7 +17,7 @@ async def exeHBM(interaction:discord.Interaction,salon:discord.TextChannel,bot:O
     Connexion à la base de données et reset dans l'objet OTGuild
     
     Commande Admin."""
-    connexion,curseur=connectSQL(interaction.guild_id,"Guild","Guild",None,None)
+    connexion,curseur=connectSQL(interaction.guild_id)
     dictEmbed={"Hide":"masqués","Blind":"bloqués","Mute":"muets","Tab":"tableau-masqués"}
     dictBool={False:"",True:"dé"}
 

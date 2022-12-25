@@ -20,7 +20,7 @@ async def graphHeat(ligne,ctx,bot,option,guildOT):
     annee=ligne["Args2"]
     anneeDate="20{0}".format(annee)
     obj="" if ligne["Args3"]=="None" else ligne["Args3"]
-    connexion,curseur=connectSQL(ctx.guild.id,"Rapports","Stats","GL","")
+    connexion,curseur=connectSQL(ctx.guild.id)
     setThemeGraph(plt)
     if obj=="":
         dates=curseur.execute("SELECT DISTINCT Jour FROM ranks WHERE Mois='{0}' AND Annee='{1}' AND Type='{2}'".format(mois,annee,option)).fetchall()

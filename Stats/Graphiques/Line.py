@@ -18,16 +18,11 @@ async def graphLine(ligne,ctx,bot,option,guildOT):
     setThemeGraph(plt)
     obj=ligne["Args3"] if ligne["Args3"]!="None" else ""
     if ligne["Commande"]=="jeux":
-        connexion,curseur=connectSQL(ligne["Args3"],dictOption[option],"Jeux",tableauMois[ligne["Args1"]],ligne["Args2"])
+        connexion,curseur=connectSQL(ligne["Args3"])
         obj=""
     else:
-        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[ligne["Args1"]],ligne["Args2"])
+        connexion,curseur=connectSQL(ctx.guild.id)
     table=curseur.execute("SELECT * FROM {0}{1}{2} ORDER BY Rank ASC".format(ligne["Args1"],ligne["Args2"],obj)).fetchall()
-
-    if ligne["Commande"]=="jeux":
-        connexion,curseur=connectSQL(ligne["Args3"],dictOption[option],"Jeux","GL","")
-    else:
-        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
 
     if obj=="":
         old10=curseur.execute("SELECT * FROM firstM WHERE DateID<={0}{1} ORDER BY DateID DESC".format(ligne["Args2"],tableauMois[ligne["Args1"]])).fetchall()
@@ -44,10 +39,6 @@ async def graphLine(ligne,ctx,bot,option,guildOT):
     stop=3 if len(table)>3 else len(table)
     for i in range(stop-1,-1,-1):
         for j in range(len(old10)-1,-1,-1):
-            if ligne["Commande"]=="jeux":
-                connexion,curseur=connectSQL(ligne["Args3"],dictOption[option],"Jeux",old10[j]["Mois"],old10[j]["Annee"])
-            else:
-                connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",old10[j]["Mois"],old10[j]["Annee"])
             count=curseur.execute("SELECT Count,Rank FROM {0}{1}{2} WHERE ID={3}".format(tableauMois[old10[j]["Mois"]],old10[j]["Annee"],obj,table[i]["ID"])).fetchone()
             if count!=None:
                 if old10[j]["DateID"] not in listeDates:
@@ -72,7 +63,7 @@ async def graphLine(ligne,ctx,bot,option,guildOT):
     listeColors=[]
     dictLine={1:"-",2:"--",3:"-."}
 
-    connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
+    connexion,curseur=connectSQL("OT")
     for i in range(stop):
         if ligne["Commande"]=="jeux":
             df=pd.DataFrame({"Date": listeX[i], "Count": listeY[i]})

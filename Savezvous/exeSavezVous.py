@@ -16,7 +16,7 @@ async def randomSV(interaction,bot):
 def showSV(guild:discord.Guild,bot:commands.Bot,number=None) -> discord.Embed:
     """Fonction qui génère un Embed contenant une phrase venant de la boîte SavezVous d'un serveur donné. Fonctionne pour la commande normale et la commande automatique.
     Renvoie une erreur si la boîte est vide."""
-    connexion,curseur=connectSQL(guild.id,"Guild","Guild",None,None)
+    connexion,curseur=connectSQL(guild.id)
     
     if number==None:
         ligne=curseur.execute("SELECT * FROM savezvous ORDER BY RANDOM() ASC").fetchone()
@@ -61,7 +61,7 @@ def showSV(guild:discord.Guild,bot:commands.Bot,number=None) -> discord.Embed:
 @OTCommand
 async def addSV(interaction,bot,phrase,source,image) -> None:
     """Fonction qui ajoute une phrase à la boîte SavezVous d'un serveur. Renvoie une erreur si la phrase contenue dans args est vide ou si la phrase dépasse les 2000 caractères."""
-    connexion,curseur=connectSQL(interaction.guild_id,"Guild","Guild",None,None)
+    connexion,curseur=connectSQL(interaction.guild_id)
 
     if image!=None:
         image=image.url
@@ -89,7 +89,7 @@ async def addSV(interaction,bot,phrase,source,image) -> None:
 @OTCommand
 async def deleteSV(interaction:commands.Context,bot,numero:int) -> None:
     """Fonction qui supprime une phrase de la boite SavezVous d'un serveur. Doit être accompagné d'un numéro de phrase valide pour le serveur dans args, sinon renvoie une erreur. Une phrase ne peut être supprimée que par son auteur ou un modérateur."""
-    connexion,curseur=connectSQL(interaction.guild_id,"Guild","Guild",None,None)
+    connexion,curseur=connectSQL(interaction.guild_id)
     try:
         descip=curseur.execute("SELECT * FROM savezvous WHERE Count={0}".format(numero)).fetchone()
     except:
@@ -104,7 +104,7 @@ async def deleteSV(interaction:commands.Context,bot,numero:int) -> None:
 async def editSV(interaction:commands.Context,bot,numero,newphrase,source) -> None:
     """Fonction qui édite une phrase de la boite SavezVous d'un serveur. La phrase doit appartenir à l'auteur de la commande, doit être accompagné d'un numéro de phrase valide pour le serveur dans args, et d'une nouvelle phrase, sinon renvoie une erreur."""
 
-    connexion,curseur=connectSQL(interaction.guild_id,"Guild","Guild",None,None)
+    connexion,curseur=connectSQL(interaction.guild_id)
     assert newphrase!=None or source!=None, "Vous devez modifier soit votre phrase soit sa source !"
     try:
         phrase=curseur.execute("SELECT * FROM savezvous WHERE Count={0}".format(numero)).fetchone()
@@ -136,7 +136,7 @@ async def editSV(interaction:commands.Context,bot,numero,newphrase,source) -> No
 async def commentSV(interaction:discord.Interaction,bot:commands.Bot,numero,commentaire) -> discord.Embed:
     """Fonction qui ajoute une source à une phrase de la boite SavezVous d'un serveur. La phrase doit appartenir à l'auteur de la commande, doit être accompagné d'un numéro de phrase valide pour le serveur dans args, et d'une nouvelle phrase, sinon renvoie une erreur."""
     
-    connexion,curseur=connectSQL(interaction.guild_id,"Guild","Guild",None,None)
+    connexion,curseur=connectSQL(interaction.guild_id)
     try:
         phrase=curseur.execute("SELECT * FROM savezvous WHERE Count={0}".format(numero)).fetchone()
         assert phrase!=None, "Le numéro donné ne correspond à aucune phrase."

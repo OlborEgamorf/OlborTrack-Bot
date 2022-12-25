@@ -19,11 +19,13 @@ async def exeModules(interaction:discord.Interaction,bot:OlborTrack,module:str,g
     
     Commande Admin."""
     descip=""
-    dictCommande={"modulestat":"modulesStats","modulecmd":"modulesCMD"}
+    dictCommande={"modulesstats":"etatStats","modulescmd":"etatModules"}
     dictBool={False:"désactivé",True:"activé"}
-    connexion,curseur=connectSQL(interaction.guild_id,"Guild","Guild",None,None)
+    listeN=["Messages","Voice","Emotes","Reactions","Divers"]
+    listeC=["BV","AD","DynIcon","Stats","Polls","Twitch","Twitter","YouTube","Tableaux","VoiceEphem","CMDAuto","SavezVous","Jeux","Anniv","Timeline","RoleSelector","CMDCustom"]
 
-    if module==0:
+    connexion,curseur=connectSQL(interaction.guild_id)
+    if module==None:
         await interaction.response.send_message(embed=commandePerms(interaction,interaction.command.name,guild))
     else:
         module=module.value

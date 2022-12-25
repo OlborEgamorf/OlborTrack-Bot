@@ -1,6 +1,6 @@
 from Stats.SQL.ConnectSQL import connectSQL
 import discord
-from Stats.Rapports.OlderEarlier import getEarlierAnnee, getEarlierMois, getOlderMois
+from Stats.Rapports.OlderEarlier import getEarlierAnnee, getEarlierMois
 from Stats.Rapports.Description import descipGlobal
 from Stats.Rapports.CreateEmbed import embedRapport
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TOTAL","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12"}
@@ -8,9 +8,9 @@ tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai",
 def archiveRapport(date,guildOT,bot,guild,option,period,page,pagemax):
     
     embed=discord.Embed()
+    connexion,curseur=connectSQL(guild.id)
     if period=="mois":
-        connexion,curseur=connectSQL(guild.id,"Rapports","Stats","GL","GL")
-        demain=getEarlierMois(tableauMois[date[0]],date[1],guild,option)
+        demain=getEarlierMois(tableauMois[date[0]],date[1],curseur)
         if demain==None:
             dateArch=curseur.execute("SELECT Jour,Mois,Annee FROM archives WHERE Type='{0}' AND Periode='Annee' ORDER BY DateID DESC".format(option)).fetchone()
         else:
@@ -24,8 +24,7 @@ def archiveRapport(date,guildOT,bot,guild,option,period,page,pagemax):
             if glob!=[]:
                 embed.add_field(name="Classement global",value=descipGlobal(option,glob,0,len(glob),guildOT,bot,None,period),inline=True)
     elif period=="annee":
-        connexion,curseur=connectSQL(guild.id,"Rapports","Stats","GL","")
-        demain=getEarlierAnnee(date[1],guild,option)
+        demain=getEarlierAnnee(date[1],curseur)
         
         if demain==None:
             dateArch=curseur.execute("SELECT Jour,Mois,Annee FROM archives WHERE Type='{0}' AND Periode='Global' ORDER BY DateID DESC".format(option)).fetchone()

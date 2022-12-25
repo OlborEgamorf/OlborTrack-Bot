@@ -6,7 +6,7 @@ from Stats.SQL.ConnectSQL import connectSQL
 
 
 async def rotation(guild,channel):
-    connexion,curseur=connectSQL(guild.id,"Guild","Guild",None,None)
+    connexion,curseur=connectSQL(guild.id)
     icons=curseur.execute("SELECT * FROM icons WHERE Rotation=0").fetchall()
     if len(icons)==0:
         curseur.execute("UPDATE icons SET Rotation=0")

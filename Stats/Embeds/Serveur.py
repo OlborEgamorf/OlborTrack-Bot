@@ -8,7 +8,7 @@ def embedServeurs(table,guild,mobile,evol):
     embed=discord.Embed()
     field1,field2,field3="","",""
     author=False
-    connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
+    connexion,curseur=connectSQL("OT")
     for ligne in table:
         rank="{0} {1}".format(ligne["Rank"],defEvol(ligne,evol))
         count=str(ligne["Count"])

@@ -4,9 +4,8 @@ import discord
 from Core.Fonctions.Embeds import createEmbed
 from Core.Fonctions.GetNom import getTitre
 from Jeux.Outils.Paris import Pari
-from Stats.SQL.Execution import exeClassic, exeObj
+from Stats.SQL.Execution import executeJeux
 from Stats.SQL.ConnectSQL import connectSQL
-from Stats.SQL.Execution import exeJeuxSQL
 from Titres.Carte import sendCarte
 from Titres.Outils import gainCoins,getEmoteJeux,getColorJeux
 
@@ -25,10 +24,10 @@ class JoueurBase():
         self.guild=interaction.guild_id
 
     def getPerso(self):
-        connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
-        self.color=getColorJeux(self.id) or self.user.color.value
+        connexion,curseur=connectSQL("OT")
+        self.color=getColorJeux(self.id,curseur) or self.user.color.value
         self.titre=getTitre(curseur,self.id)
-        self.emote=getEmoteJeux(self.id)
+        self.emote=getEmoteJeux(self.id,curseur)
 
 class JeuBase():
     def __init__(self,message:discord.Message,invoke:int,jeu:str,cross:bool):
@@ -84,8 +83,7 @@ class JeuBase():
         self.ids.append(user.id)
 
     async def stats(self,userWin:int,guild:discord.Guild):
-        connexionGuild,curseurGuild=connectSQL(guild,"Guild","Guild",None,None)
-        connexionOT,curseurOT=connectSQL("OT","Guild","Guild",None,None)
+        connexionOT,curseurOT=connectSQL("OT")
         
         for i in self.joueurs:
             if i.id==userWin:
@@ -94,9 +92,9 @@ class JeuBase():
                 state="W"
             else:
                 state="L"
-            if len(self.guilds)==1:
-                exeJeuxSQL(i.id,None,state,guild,curseurGuild,self.jeu,None)
-            wins=exeJeuxSQL(i.id,None,state,"OT",curseurOT,self.jeu,None)
+
+            wins=executeJeux(self.jeu,i.id,guild,state,curseurOT)
+        
             if state=="W":
                 await sendCarte(i.user,self.jeu,wins,i.interaction.message.channel)
 
@@ -106,10 +104,8 @@ class JeuBase():
                 if i.guild!=guild:
                     count+=1
 
-            exeClassic(count,guild,"Cross",curseurOT,fake)
-            exeObj(count,guild,userWin,True,fake,"Cross")
+            executeJeux("Cross",i.id,guild,state,curseurOT)
 
-        connexionGuild.commit()
         connexionOT.commit()
 
 class FakeGuild:

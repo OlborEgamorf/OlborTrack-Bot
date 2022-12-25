@@ -18,24 +18,24 @@ async def graphCircle(ligne,ctx,bot,option,guildOT):
     obj=ligne["Args3"] if ligne["Args3"]!="None" else ""
 
     if ligne["Commande"]=="perso":
-        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",ligne["Args1"],ligne["Args2"])
+        connexion,curseur=connectSQL(ctx.guild.id)
         table=curseur.execute("SELECT * FROM perso{0}{1}{2} WHERE Count>0 ORDER BY Count DESC LIMIT 100".format(ligne["Args1"],ligne["Args2"],ligne["AuthorID"])).fetchall()
         table.reverse()
     elif ligne["Commande"]=="trivialrank":
-        connexion,curseur=connectSQL("OT","ranks","Trivial",None,None)
+        connexion,curseur=connectSQL("OT")
         table=curseur.execute("SELECT * FROM {0} WHERE Count>0 ORDER BY Rank DESC LIMIT 100".format(ligne["Args1"])).fetchall()
-        connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
+        connexion,curseur=connectSQL("OT")
     elif ligne["Commande"]=="jeux":
         connexion,curseur=connectSQL(ligne["Args3"],option,"Jeux",tableauMois[ligne["Args1"]],ligne["Args2"])
         table=curseur.execute("SELECT * FROM {0}{1} WHERE Count>0 ORDER BY Rank DESC LIMIT 100".format(ligne["Args1"],ligne["Args2"])).fetchall()
-        connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
+        connexion,curseur=connectSQL("OT")
     elif ligne["Commande"]=="first":
-        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
+        connexion,curseur=connectSQL(ctx.guild.id)
         table=curseur.execute("SELECT * FROM firstM ORDER BY Count ASC").fetchall()
         for i in table:
             i["Rank"]=1
     else:
-        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[ligne["Args1"]],ligne["Args2"])
+        connexion,curseur=connectSQL(ctx.guild.id)
         table=curseur.execute("SELECT * FROM {0}{1}{2} WHERE Count>0 ORDER BY Rank ASC LIMIT 100".format(ligne["Args1"],ligne["Args2"],obj)).fetchall()
         table.reverse()
 

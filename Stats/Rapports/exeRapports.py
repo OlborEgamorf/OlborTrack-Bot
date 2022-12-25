@@ -20,16 +20,15 @@ dictSection={"Voice":"vocal","Reactions":"réactions","Emotes":"emotes","Salons"
 
 
 async def rapportGlobal(interaction,guildOT,bot):
-    connexionCMD,curseurCMD=connectSQL(interaction.guild_id,"Commandes","Guild",None,None)
+    connexion,curseur=connectSQL(interaction.guild_id)
 
-    connexion,curseur=connectSQL(interaction.guild_id,"Rapports","Stats","GL","")
     date=("glob","")
     pagemax,listeOptions=pagemaxHome(curseur,"glob","","global")
     assert listeOptions!=[]
 
     embed=homeGlobal(date,guildOT,bot,interaction.guild,pagemax,"global")
     
-    curseurCMD.execute("INSERT INTO commandes VALUES({0},{1},'rapport','{2}','Home','{3}','{4}','None',1,{5},'countDesc',False)".format(interaction.id,interaction.user.id,"global","glob","",pagemax))
+    curseur.execute("INSERT INTO commandes VALUES({0},{1},'rapport','{2}','Home','{3}','{4}','None',1,{5},'countDesc',False)".format(interaction.id,interaction.user.id,"global","glob","",pagemax))
 
     if "Messages" in listeOptions:
         listeOptions.remove("Messages")
@@ -37,24 +36,23 @@ async def rapportGlobal(interaction,guildOT,bot):
         listeOptions.remove("Voicechan")
 
     view=ViewRapports(listeOptions,archives=False)
-    await sendSlash(interaction,embed,curseurCMD,connexionCMD,1,pagemax,customView=view)
+    await sendSlash(interaction,embed,curseur,connexion,1,pagemax,customView=view)
 
 async def rapportMois(interaction,periode,guildOT,bot):
-    connexionCMD,curseurCMD=connectSQL(interaction.guild_id,"Commandes","Guild",None,None)
+    connexion,curseur=connectSQL(interaction.guild_id)
     if periode==None:
         mois,annee=tableauMois[strftime("%m")].lower(),strftime("%y")
     else:
         periode=periode.split(" ")
         mois,annee=getMois(periode[0].lower()),getAnnee(periode[1].lower())
 
-    connexion,curseur=connectSQL(interaction.guild_id,"Rapports","Stats","GL","")
     date=(mois,annee)
     pagemax,listeOptions=pagemaxHome(curseur,mois,annee,"mois")
     assert listeOptions!=[]
 
     embed=homeGlobal(date,guildOT,bot,interaction.guild,pagemax,"mois")
     
-    curseurCMD.execute("INSERT INTO commandes VALUES({0},{1},'rapport','{2}','Home','{3}','{4}','None',1,{5},'countDesc',False)".format(interaction.id,interaction.user.id,"mois",mois,annee,pagemax))
+    curseur.execute("INSERT INTO commandes VALUES({0},{1},'rapport','{2}','Home','{3}','{4}','None',1,{5},'countDesc',False)".format(interaction.id,interaction.user.id,"mois",mois,annee,pagemax))
 
     if "Messages" in listeOptions:
         listeOptions.remove("Messages")
@@ -62,23 +60,22 @@ async def rapportMois(interaction,periode,guildOT,bot):
         listeOptions.remove("Voicechan")
 
     view=ViewRapports(listeOptions)
-    await sendSlash(interaction,embed,curseurCMD,connexionCMD,1,pagemax,customView=view)
+    await sendSlash(interaction,embed,curseur,connexion,1,pagemax,customView=view)
 
 async def rapportAnnee(interaction,periode,guildOT,bot):
-    connexionCMD,curseurCMD=connectSQL(interaction.guild_id,"Commandes","Guild",None,None)
+    connexion,curseur=connectSQL(interaction.guild_id)
     if periode==None:
         annee=strftime("%y")
     else:
         annee=getAnnee(periode)
 
-    connexion,curseur=connectSQL(interaction.guild_id,"Rapports","Stats","GL","")
     date=("to",annee)
     pagemax,listeOptions=pagemaxHome(curseur,"to",annee,"annee")
     assert listeOptions!=[]
 
     embed=homeGlobal(date,guildOT,bot,interaction.guild,pagemax,"annee")
     
-    curseurCMD.execute("INSERT INTO commandes VALUES({0},{1},'rapport','{2}','Home','{3}','{4}','None',1,{5},'countDesc',False)".format(interaction.id,interaction.user.id,"annee","to",annee,pagemax))
+    curseur.execute("INSERT INTO commandes VALUES({0},{1},'rapport','{2}','Home','{3}','{4}','None',1,{5},'countDesc',False)".format(interaction.id,interaction.user.id,"annee","to",annee,pagemax))
 
     if "Messages" in listeOptions:
         listeOptions.remove("Messages")
@@ -86,17 +83,16 @@ async def rapportAnnee(interaction,periode,guildOT,bot):
         listeOptions.remove("Voicechan")
 
     view=ViewRapports(listeOptions)
-    await sendSlash(interaction,embed,curseurCMD,connexionCMD,1,pagemax,customView=view)
+    await sendSlash(interaction,embed,curseur,connexion,1,pagemax,customView=view)
 
 
 async def autoRapport(guild,channel,guildOT,bot,option,date):
-    connexionCMD,curseurCMD=connectSQL(guild.id,"Commandes","Guild",None,None)
+    connexion,curseur=connectSQL(guild.id,"Rapports","Stats","GL","")
     if option=="mois":
         mois,annee,option=tableauMois[date[0]],date[1],"mois"
     elif option=="annee":
         mois,annee,option="to",date,"annee"
     
-    connexion,curseur=connectSQL(guild.id,"Rapports","Stats","GL","")
     date=(mois,annee)
     pagemax,listeOptions=pagemaxHome(curseur,mois,annee,option)
     assert listeOptions!=[]
@@ -105,5 +101,5 @@ async def autoRapport(guild,channel,guildOT,bot,option,date):
     view=ViewRapports(listeOptions)
     message=await bot.get_channel(channel).send(embed=embed,view=view)
     
-    curseurCMD.execute("INSERT INTO commandes VALUES({0},{1},'rapport','{2}','Home','{3}','{4}','None',1,{5},'countDesc',False)".format(message.id,699728606493933650,option,mois,annee,pagemax))
-    connexionCMD.commit()
+    curseur.execute("INSERT INTO commandes VALUES({0},{1},'rapport','{2}','Home','{3}','{4}','None',1,{5},'countDesc',False)".format(message.id,699728606493933650,option,mois,annee,pagemax))
+    connexion.commit()

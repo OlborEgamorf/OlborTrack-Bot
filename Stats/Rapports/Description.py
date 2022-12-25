@@ -7,7 +7,7 @@ tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai",
 def descipGlobal(option,result,start,stop,guildOT,bot,hier,period):
     descip=""
     if hier!=None:
-        curseur=connectSQL(guildOT.id,option,"Stats",tableauMois[hier[0]],hier[1])[1]
+        curseur=connectSQL(guildOT.id)[1]
     for i in range(start,stop):
         try:
             assert hier!=None

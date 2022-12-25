@@ -211,8 +211,8 @@ async def setMisePari(interaction):
         assert message.id in dictJeux
         game=dictJeux[message.id]
 
-        connexionUser,curseurUser=connectSQL("OT",user.id,"Titres",None,None)
-        createAccount(connexionUser,curseurUser)
+        connexionUser,curseurUser=connectSQL("OT")
+        createAccount(connexionUser,curseurUser,user.id)
         coins=int(curseurUser.execute("SELECT * FROM coins").fetchone()["Coins"])
         connexionUser.close()
 
@@ -261,7 +261,7 @@ async def setMisePari(interaction):
 
 async def validMise(interaction,mise,game):
     assert mise>0, "Vous ne pouvez pas miser un nombre négatif d'OT Coins."
-    connexionUser,curseurUser=connectSQL("OT",interaction.user.id,"Titres",None,None)
+    connexionUser,curseurUser=connectSQL("OT")
     coins=curseurUser.execute("SELECT * FROM coins").fetchone()["Coins"]
     assert mise<coins, "Vous ne pouvez pas miser plus que ce que vous n'avez !"
     game.paris.mises[interaction.user.id]+=mise
@@ -271,7 +271,7 @@ async def validMise(interaction,mise,game):
 
 async def validPari(interaction,mise,joueur,game):
     assert mise>0, "Vous ne pouvez pas miser un nombre négatif d'OT Coins."
-    connexionUser,curseurUser=connectSQL("OT",interaction.user.id,"Titres",None,None)
+    connexionUser,curseurUser=connectSQL("OT")
     coins=curseurUser.execute("SELECT * FROM coins").fetchone()["Coins"]
     assert mise<coins, "Vous ne pouvez pas miser plus que ce que vous n'avez !"
     game.paris.paris[interaction.user.id]=joueur

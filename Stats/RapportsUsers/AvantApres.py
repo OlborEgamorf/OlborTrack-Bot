@@ -9,18 +9,17 @@ dictSection={"Voice":"vocal","Reactions":"réactions","Emotes":"emotes","Salons"
 
 def avantapresSpe(date,guildOT,bot,guild,option,page,pagemax,period,user):
     embed=discord.Embed()
-    connexion,curseur=connectSQL(guild.id,option,"Stats",tableauMois[date[0]],date[1])
+    connexion,curseur=connectSQL(guild.id)
     result=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY Count DESC".format(tableauMois[date[0]],date[1],user)).fetchall()
     hier=hierMAG(date,period,guild,option,user)
     if period=="mois":
-        demain=getEarlierMois(tableauMois[date[0]],date[1],guild,option,user)
+        demain=getEarlierMois(tableauMois[date[0]],date[1],curseur,user)
     elif period=="annee":
-        demain=getEarlierAnnee(date[1],guild,option,user)
+        demain=getEarlierAnnee(date[1],guild,user)
     elif period=="global":
         demain=None
 
     if hier!=None:
-        connexion,curseur=connectSQL(guild.id,option,"Stats",tableauMois[hier[0]],hier[1])
         resultH=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY Count DESC".format(tableauMois[hier[0]],hier[1],user)).fetchall()
         if period=="mois":
             title="{0}/{1}".format(tableauMois[hier[0]],hier[1])
@@ -38,7 +37,6 @@ def avantapresSpe(date,guildOT,bot,guild,option,page,pagemax,period,user):
         embed.add_field(name="Global",value=descipGlobal(option,result,0,stop,guildOT,bot,hier,period,user),inline=True)
 
     if demain!=None:
-        connexion,curseur=connectSQL(guild.id,option,"Stats",tableauMois[demain[0]],demain[1])
         resultD=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY Count DESC".format(tableauMois[demain[0]],demain[1],user)).fetchall()
         if period=="mois":
             title="{0}/{1}".format(tableauMois[demain[0]],demain[1])

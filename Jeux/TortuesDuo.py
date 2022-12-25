@@ -2,7 +2,7 @@ from random import choice, randint
 
 from Core.Fonctions.Embeds import createEmbed
 from Stats.SQL.ConnectSQL import connectSQL
-from Stats.SQL.Execution import exeJeuxSQL
+from Stats.SQL.Execution import executeJeux
 from Titres.Carte import sendCarte
 from Titres.Outils import gainCoins
 
@@ -86,8 +86,8 @@ class JeuTortuesDuo(JeuTortues):
         return winID[0]
 
     async def stats(self,team,guild):
-        connexionGuild,curseurGuild=connectSQL(guild,"Guild","Guild",None,None)
-        connexionOT,curseurOT=connectSQL("OT","Guild","Guild",None,None)
+        connexionGuild,curseurGuild=connectSQL(guild)
+        connexionOT,curseurOT=connectSQL("OT")
         for i in self.joueurs:
             if i.equipe==team:
                 gainCoins(i.id,len(self.ids)*25+sum(self.paris.mises.values()))
@@ -95,9 +95,9 @@ class JeuTortuesDuo(JeuTortues):
                 state="W"
             else:
                 state="L"
-            if len(self.guilds)==1:
-                exeJeuxSQL(i.id,None,state,guild,curseurGuild,self.jeu,None)
-            wins=exeJeuxSQL(i.id,None,state,"OT",curseurOT,self.jeu,None)
+                
+            wins=executeJeux(self.jeu,i.id,guild,state,curseurOT)
+
             if state=="W":
                 await sendCarte(i.user,self.jeu,wins,i.interaction.message.channel)
         connexionGuild.commit()

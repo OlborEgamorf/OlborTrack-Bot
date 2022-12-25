@@ -11,9 +11,8 @@ tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai",
 def ranksIntoSpes(date,guildOT,bot,guild,option,page,pagenorm,pagemax,period,user):
     embed=discord.Embed()
 
-    connexion,curseur=connectSQL(guild.id,option,"Stats",tableauMois[date[0]],date[1])
+    connexion,curseur=connectSQL(guild.id)
     result=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY Count DESC".format(tableauMois[date[0]],date[1],user)).fetchall()
-    connexion,curseur=connectSQL(guild.id,option,"Stats","GL","")
 
     if result!=[]:
         start=5*(page-1)

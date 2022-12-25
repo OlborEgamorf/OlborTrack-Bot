@@ -8,7 +8,7 @@ tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai",
 
 def ranksGlobal(date,guildOT,bot,guild,option,page,pagemax,period,section,user):
     embed=discord.Embed()
-    connexion,curseur=connectSQL(guild.id,option,"Stats",tableauMois[date[0]],date[1])
+    connexion,curseur=connectSQL(guild.id)
     hier=hierMAG(date,period,guild,option,user)
     result=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY Count DESC".format(tableauMois[date[0]],date[1],user)).fetchall()
     if result==[]:

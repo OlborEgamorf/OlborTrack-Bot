@@ -8,7 +8,7 @@ from Savezvous.exeSavezVous import showSV
 from Stats.Rapports.exeRapports import autoRapport
 from Stats.SQL.ConnectSQL import connectSQL
 from Stats.Tracker.Voice import endNight
-from Titres.Auto import (annualyBadges, annualyTitles, dailyCoins,
+from Titres.Auto import (annualyBadges, annualyTitles,
                          monthlyBadges, monthlyTitles)
 from Titres.Outils import setMarketPlace
 
@@ -28,13 +28,13 @@ def embedAuto(ctx,guildOT):
     return embedTable
 
 def checkSoloEmotes(guild,mois,annee):
-    connexion,curseur=connectSQL(guild,"Emotes","Stats",mois,annee)
+    connexion,curseur=connectSQL(guild)
     for i in curseur.execute("SELECT * FROM {0}{1}".format(tableauMois[mois],annee)).fetchall():
         if curseur.execute("SELECT Count() AS Total FROM {0}{1}{2}".format(tableauMois[mois],annee,i["ID"])).fetchone()["Count"]==1:
             curseur.execute("DROP TABLE {0}{1}{2}".format(tableauMois[mois],annee,i["ID"]))
     connexion.commit()
 
-    connexion,curseur=connectSQL(guild,"Reactions","Stats",mois,annee)
+    connexion,curseur=connectSQL(guild)
     for i in curseur.execute("SELECT * FROM {0}{1}".format(tableauMois[mois],annee)).fetchall():
         if curseur.execute("SELECT Count() AS Total FROM {0}{1}{2}".format(tableauMois[mois],annee,i["ID"])).fetchone()["Count"]==1:
             curseur.execute("DROP TABLE {0}{1}{2}".format(tableauMois[mois],annee,i["ID"]))
@@ -60,7 +60,6 @@ async def boucleAutoCMD(bot,dictGuilds):
             await annualyTitles(annee,bot)
             await annualyBadges(annee)
         
-        dailyCoins()
         setMarketPlace()
 
         for i in bot.guilds:

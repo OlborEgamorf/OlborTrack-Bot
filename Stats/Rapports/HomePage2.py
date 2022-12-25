@@ -11,9 +11,9 @@ tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai",
 def secondGlobal(date,guild,pagemax,period):
     """Deuxième page de la section principale, analyses grossières"""
     embed=discord.Embed()
+    connexion,curseur=connectSQL(guild.id)
     for j in listeType:
         try:
-            connexion,curseur=connectSQL(guild.id,j,"Stats",tableauMois[date[0]],date[1])
             result=curseur.execute("SELECT * FROM {0}{1} ORDER BY Rank ASC".format(date[0],date[1])).fetchall()
             if result!=[]:
                 descip=descipMoyennes(j,result)

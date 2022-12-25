@@ -7,7 +7,7 @@ from Stats.SQL.ConnectSQL import connectSQL
 
 
 async def newMember(member,chan,bot):
-    connexion,curseur=connectSQL(member.guild.id,"Guild","Guild",None,None)
+    connexion,curseur=connectSQL(member.guild.id)
     texte=curseur.execute("SELECT * FROM messagesBV ORDER BY RANDOM()").fetchone()
     if int(strftime("%H"))>8 and int(strftime("%H"))<22:
         mode="Nuit"
@@ -33,7 +33,7 @@ async def newMember(member,chan,bot):
         await bot.get_channel(chan).send(content=content,file=discord.File("Temp/BV{0}.png".format(member.id)))
 
 async def oldMember(member,chan,bot):
-    connexion,curseur=connectSQL(member.guild.id,"Guild","Guild",None,None)
+    connexion,curseur=connectSQL(member.guild.id)
     texte=curseur.execute("SELECT * FROM messagesAD ORDER BY RANDOM()").fetchone()
     if int(strftime("%H"))>8 and int(strftime("%H"))<22:
         mode="nuit"

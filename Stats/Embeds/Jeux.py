@@ -10,7 +10,7 @@ def embedJeux(table,guild,mobile,id,evol,option):
     field1,field2,field3="","",""
     author=False
     wl=""
-    connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
+    connexion,curseur=connectSQL("OT")
     for ligne in table:
         rank="{0} {1}".format(ligne["Rank"],defEvol(ligne,evol))
         if option!="trivial":

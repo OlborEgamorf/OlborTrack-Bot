@@ -18,12 +18,12 @@ async def graphEvol(ligne,ctx,bot,option,guildOT):
     setThemeGraph(plt)
     mois,annee=ligne["Args1"],ligne["Args2"]
     if ligne["Commande"]=="day":
-        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
+        connexion,curseur=connectSQL(ctx.guild.id)
         table=getTableDay(curseur,mois,annee,"dateAsc")
         for i in table:
             i["Evol"]=0
     else:
-        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[mois],annee)
+        connexion,curseur=connectSQL(ctx.guild.id)
         table=curseur.execute("SELECT * FROM evol{0}{1}{2} ORDER BY DateID ASC".format(mois,annee,ligne["Args3"])).fetchall()
     collapse=collapseEvol(table)
     dates=[]
@@ -74,7 +74,7 @@ async def graphEvolAA(ligne,ctx,bot,option,guildOT):
     listeX,listeY,listeT=[],[],[]
     setThemeGraph(plt)
     mois,annee=ligne["Args1"],ligne["Args2"]
-    connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[mois],annee)
+    connexion,curseur=connectSQL(ctx.guild.id)
     table=curseur.execute("SELECT * FROM evol{0}{1}{2} ORDER BY DateID ASC".format(mois,annee,ligne["Args3"])).fetchall()
     mini=curseur.execute("SELECT MIN(Count) AS Min FROM evol{0}{1}{2} ORDER BY DateID ASC".format(mois,annee,ligne["Args3"])).fetchone()["Min"]
 
@@ -87,7 +87,7 @@ async def graphEvolAA(ligne,ctx,bot,option,guildOT):
 
     df=pd.DataFrame({"Date": listeX, "Count": listeY})
 
-    connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
+    connexion,curseur=connectSQL(ctx.guild.id)
     if ligne["Args1"]=="to":
         tableDemain=getTablePerso(ctx.guild.id,option,ligne["Args3"],False,"A","periodAsc")
         tableDemain=list(filter(lambda x:x["Annee"]!="GL" and x["Annee"]>annee, table))
@@ -105,7 +105,7 @@ async def graphEvolAA(ligne,ctx,bot,option,guildOT):
 
     if tableDemain!=None:
         listeX2,listeY2=[],[]
-        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableDemain["Mois"],tableDemain["Annee"])
+        connexion,curseur=connectSQL(ctx.guild.id)
         mini=min(mini,round(curseur.execute("SELECT MIN(Count) AS Min FROM evol{0}{1}{2} ORDER BY DateID ASC".format(tableauMois[tableDemain["Mois"]],tableDemain["Annee"],ligne["Args3"])).fetchone()["Min"]/div,2))
         demain=curseur.execute("SELECT * FROM evol{0}{1}{2} ORDER BY DateID ASC".format(tableauMois[tableDemain["Mois"]],tableDemain["Annee"],ligne["Args3"])).fetchall()
         for i in range(len(demain)):
@@ -115,7 +115,7 @@ async def graphEvolAA(ligne,ctx,bot,option,guildOT):
     
     if tableHier!=None:
         listeX3,listeY3=[],[]
-        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableHier["Mois"],tableHier["Annee"])
+        connexion,curseur=connectSQL(ctx.guild.id)
         mini=min(mini,round(curseur.execute("SELECT MIN(Count) AS Min FROM evol{0}{1}{2} ORDER BY DateID ASC".format(tableauMois[tableHier["Mois"]],tableHier["Annee"],ligne["Args3"])).fetchone()["Min"]/div,2))
         hier=curseur.execute("SELECT * FROM evol{0}{1}{2} ORDER BY DateID ASC".format(tableauMois[tableHier["Mois"]],tableHier["Annee"],ligne["Args3"])).fetchall()
         for i in range(len(hier)):
@@ -157,7 +157,7 @@ async def graphEvolBest(ligne,ctx,bot,option,guildOT):
     listeX,listeY,listeT=[],[],[]
     setThemeGraph(plt)
     mois,annee=ligne["Args1"],ligne["Args2"]
-    connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[mois],annee)
+    connexion,curseur=connectSQL(ctx.guild.id)
     table=curseur.execute("SELECT * FROM evol{0}{1}{2} ORDER BY DateID ASC".format(mois,annee,ligne["Args3"])).fetchall()
     mini=curseur.execute("SELECT MIN(Count) AS Min FROM evol{0}{1}{2} ORDER BY DateID ASC".format(mois,annee,ligne["Args3"])).fetchone()["Min"]
     for i in range(len(table)):
@@ -169,7 +169,7 @@ async def graphEvolBest(ligne,ctx,bot,option,guildOT):
 
     df=pd.DataFrame({"Date": listeX, "Count": listeY})
 
-    connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
+    connexion,curseur=connectSQL(ctx.guild.id)
     if ligne["Args1"]=="to":
         tableMeilleur=getTablePerso(ctx.guild.id,option,ligne["Args3"],False,"A","countDesc")
         tableMeilleur=list(filter(lambda x:x["Annee"]!="GL" and x["Annee"]!=annee, table))
@@ -181,7 +181,7 @@ async def graphEvolBest(ligne,ctx,bot,option,guildOT):
     
     if tableMeilleur!=None:
         listeX2,listeY2=[],[]
-        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableMeilleur["Mois"],tableMeilleur["Annee"])
+        connexion,curseur=connectSQL(ctx.guild.id)
         mini=min(mini,round(curseur.execute("SELECT MIN(Count) AS Min FROM evol{0}{1}{2} ORDER BY DateID ASC".format(tableauMois[tableMeilleur["Mois"]],tableMeilleur["Annee"],ligne["Args3"])).fetchone()["Min"]/div,2))
         tableM=curseur.execute("SELECT * FROM evol{0}{1}{2} ORDER BY DateID ASC".format(tableauMois[tableMeilleur["Mois"]],tableMeilleur["Annee"],ligne["Args3"])).fetchall()
         for i in range(len(tableM)):
@@ -222,7 +222,7 @@ async def graphEvolAutour(ligne,ctx,bot,option,guildOT):
     listeX,listeY,listeT=[],[],[]
     setThemeGraph(plt)
     mois,annee=ligne["Args1"],ligne["Args2"]
-    connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[mois],annee)
+    connexion,curseur=connectSQL(ctx.guild.id)
     table=curseur.execute("SELECT * FROM evol{0}{1}{2} ORDER BY DateID ASC".format(mois,annee,ligne["Args3"])).fetchall()
     mini=curseur.execute("SELECT MIN(Count) AS Min FROM evol{0}{1}{2} ORDER BY DateID ASC".format(mois,annee,ligne["Args3"])).fetchone()["Min"]
     rank=table[-1]["Rank"]
@@ -305,7 +305,7 @@ async def graphEvolBestUser(ligne,ctx,bot,option,guildOT):
     listeX,listeY,listeT=[],[],[]
     setThemeGraph(plt)
     mois,annee=ligne["Args1"],ligne["Args2"]
-    connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[mois],annee)
+    connexion,curseur=connectSQL(ctx.guild.id)
     table=curseur.execute("SELECT * FROM evol{0}{1}{2} ORDER BY DateID ASC".format(mois,annee,ligne["Args3"])).fetchall()
     mini=curseur.execute("SELECT MIN(Count) AS Min FROM evol{0}{1}{2} ORDER BY DateID ASC".format(mois,annee,ligne["Args3"])).fetchone()["Min"]
     rank=table[len(table)-1]["Rank"]
@@ -393,7 +393,7 @@ async def graphEvolRank(ligne,ctx,bot,option,guildOT):
     listeX,listeY,listeR=[],[],[]
     setThemeGraph(plt)
     mois,annee=ligne["Args1"],ligne["Args2"]
-    connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[mois],annee)
+    connexion,curseur=connectSQL(ctx.guild.id)
     table=curseur.execute("SELECT * FROM evol{0}{1}{2} ORDER BY DateID ASC".format(mois,annee,ligne["Args3"])).fetchall()
     collapse=collapseEvol(table)
     dates=[]
@@ -431,7 +431,7 @@ async def graphEvolJoursAA(ligne,ctx,bot,option,guildOT):
     listeX,listeY,listeT=[],[],[]
     setThemeGraph(plt)
     mois,annee=ligne["Args1"],ligne["Args2"]
-    connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
+    connexion,curseur=connectSQL(ctx.guild.id)
     table=getTableDay(curseur,mois,annee,"dateAsc")
     mini=curseur.execute("SELECT MIN(Count) AS Min FROM dayRank").fetchone()["Min"]
 

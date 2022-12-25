@@ -1,3 +1,4 @@
+import asyncio
 from Stats.SQL.ConnectSQL import connectSQL
 
 class OTGuild:
@@ -13,7 +14,7 @@ class OTGuild:
             - si la commande Wikipedia est NSFW
     
     Elle est accompagnée de méthodes pour récupérer ces informations et de deux autres classes pour faciliter le stockage."""
-    def __init__(self,id,get):
+    def __init__(self,id,get,):#bot):
         self.id=id
         self.chan=None
         self.users=None
@@ -22,21 +23,24 @@ class OTGuild:
         self.stats=True
         self.gd=False
         self.gdlist=[]
+        self.curseur=None
+        self.connexion=None
+        self.timeSQL=0
 
         if get:
-            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+            connexion,curseur=connectSQL(self.id)
             self.getHBM(curseur)
             self.getPerms(curseur)
             self.getStats(curseur)
 
     def getStats(self,curseur=None):
         if curseur==None:
-            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+            connexion,curseur=connectSQL(self.id)
         self.stats=curseur.execute("SELECT * FROM stats").fetchone()["Active"]
 
     def getHBM(self,curseur=None):
         if curseur==None:
-            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+            connexion,curseur=connectSQL(self.id)
         self.chan={}
         self.users={}
         for i in curseur.execute("SELECT * FROM chans").fetchall():
@@ -46,14 +50,34 @@ class OTGuild:
     
     def getPerms(self,curseur=None):
         if curseur==None:
-            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+            connexion,curseur=connectSQL(self.id)
         self.mcmd=curseur.execute("SELECT * FROM modulesCMD").fetchall()
         self.mstats=curseur.execute("SELECT * FROM modulesStats").fetchall()
+    
+    async def timeoutSQL(self,temps):
+        while self.timeSQL < temps:
+            await asyncio.sleep(10)
+            self.timeSQL += 10
+
+        self.connexion.close()
+        self.connexion, self.curseur = None, None
+
+
+    def initSQL(self,bot,onlycurseur=False):
+        if self.curseur == None:
+            self.connexion, self.curseur = connectSQL(self.id)
+            bot.loop.create.create_task(self.timeoutSQL(300))
+        else:
+            self.timeoutSQL = 0
+
+        if onlycurseur:
+            return self.curseur
+        else:
+            return self.connexion, self.curseur
 
 class OTGuildCMD(OTGuild):
     def __init__(self,id,get):
         super().__init__(id,get)
-        self.wikinsfw=None
         self.twitch=[]
         self.yt=[]
         self.snipe=OTSnipe()
@@ -68,7 +92,7 @@ class OTGuildCMD(OTGuild):
         self.anniv=None
 
         if get:
-            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+            connexion,curseur=connectSQL(self.id)
             self.getStar(curseur)
             self.getAuto(curseur)
             self.getWikiNSFW(curseur)
@@ -83,7 +107,7 @@ class OTGuildCMD(OTGuild):
 
     def getStar(self,curseur=None):
         if curseur==None:
-            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+            connexion,curseur=connectSQL(self.id)
         self.stardict={}
         self.starlist={}
         for i in curseur.execute("SELECT * FROM sb").fetchall():
@@ -94,31 +118,26 @@ class OTGuildCMD(OTGuild):
     
     def getAuto(self,curseur=None):
         if curseur==None:
-            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+            connexion,curseur=connectSQL(self.id)
         self.auto=curseur.execute("SELECT * FROM auto").fetchall()
-    
-    def getWikiNSFW(self,curseur=None):
-        if curseur==None:
-            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
-        self.wikinsfw=curseur.execute("SELECT * FROM wikinsfw").fetchone()["Active"]
     
     def getTwitch(self,curseur=None):
         if curseur==None:
-            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+            connexion,curseur=connectSQL(self.id)
         self.twitch=[]
         for i in curseur.execute("SELECT * FROM twitch").fetchall():
             self.twitch.append(OTTwitch(i))
 
     def getYouTube(self,curseur=None):
         if curseur==None:
-            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+            connexion,curseur=connectSQL(self.id)
         self.yt=[]
         for i in curseur.execute("SELECT * FROM youtube").fetchall():
             self.yt.append(OTYouTube(i))
     
     def getTwitter(self,curseur=None):
         if curseur==None:
-            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+            connexion,curseur=connectSQL(self.id)
         self.twitter=[]
         for i in curseur.execute("SELECT * FROM twitter").fetchall():
             self.twitter.append(OTTwitter(i))
@@ -141,7 +160,7 @@ class OTGuildCMD(OTGuild):
         self.bv=None
         self.ad=None
         if curseur==None:
-            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+            connexion,curseur=connectSQL(self.id)
         if curseur.execute("SELECT * FROM etatBVAD WHERE Type='BV'").fetchone()["Statut"]==True:
             self.bv=curseur.execute("SELECT * FROM etatBVAD WHERE Type='BV'").fetchone()["Salon"]
         if curseur.execute("SELECT * FROM etatBVAD WHERE Type='AD'").fetchone()["Statut"]==True:
@@ -150,14 +169,14 @@ class OTGuildCMD(OTGuild):
     def getAnniv(self,curseur=None):
         self.anniv=None
         if curseur==None:
-            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+            connexion,curseur=connectSQL(self.id)
         anniv=curseur.execute("SELECT * FROM etatAnniv").fetchone()
         if anniv["Statut"]==True:
             self.anniv=OTAnniv(anniv)
 
     def getDynIcon(self,curseur=None):
         if curseur==None:
-            connexion,curseur=connectSQL(self.id,"Guild","Guild",None,None)
+            connexion,curseur=connectSQL(self.id)
         dyn=curseur.execute("SELECT * FROM etatPP").fetchone()
         if dyn["Statut"]==True:
             self.dynicon=dyn["Salon"]

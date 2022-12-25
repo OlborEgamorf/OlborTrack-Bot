@@ -21,10 +21,10 @@ async def graphScatterUsers(ligne,ctx,bot,option,guildOT):
     count=0
     obj=False if ligne["Args3"]=="None" else ligne["Args3"]
     if ligne["Commande"]=="jeux":
-        connexion,curseur=connectSQL(ligne["Args3"],dictOption[option],"Jeux",tableauMois[ligne["Args1"]],ligne["Args2"])
+        connexion,curseur=connectSQL(ligne["Args3"])
         obj=False
     else:
-        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[ligne["Args1"]],ligne["Args2"])
+        connexion,curseur=connectSQL(ctx.guild.id)
     if obj==False:
         table=curseur.execute("SELECT * FROM {0}{1} WHERE Rank<=15 ORDER BY Rank ASC LIMIT 15".format(ligne["Args1"],ligne["Args2"])).fetchall()
     else:

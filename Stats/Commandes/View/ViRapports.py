@@ -14,23 +14,21 @@ from Stats.SQL.ConnectSQL import connectSQL
 dictEmote={"ot:voicerapport":"Voicechan","ot:reactionsrapport":"Reactions","ot:emotesrapport":"Emotes","ot:salonsrapport":"Salons","ot:freqrapport":"Freq"}
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TOTAL","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","glob":"GL","to":"TO"}
 
-async def switchRapport(interaction,connexionCMD,curseurCMD,ligne,guildOT,bot):
-    connexion,curseur=connectSQL(interaction.guild_id,"Rapports","Stats","GL","")
+async def switchRapport(interaction,connexion,curseur,ligne,guildOT,bot):
     mois,annee,categ=ligne["Args2"],ligne["Args3"],ligne["Option"]
     date=(mois,annee)
 
     if interaction.data["custom_id"]=="ot:homerapport":
         pagemax=pagemaxHome(curseur,mois,annee,categ)[0]
         embed=homeGlobal(date,guildOT,bot,interaction.guild,pagemax,categ)
-        curseurCMD.execute("UPDATE commandes SET Args1='Home' WHERE MessageID={0}".format(interaction.message.interaction.id))
+        curseur.execute("UPDATE commandes SET Args1='Home' WHERE MessageID={0}".format(interaction.message.interaction.id))
     elif interaction.data["custom_id"]=="ot:archiverapport":
         pagemax,listeOptions=pagemaxHome(curseur,mois,annee,categ)
         pagemax-=2
         embed=archiveRapport(date,guildOT,bot,interaction.guild,listeOptions[0],categ,1,pagemax)
-        curseurCMD.execute("UPDATE commandes SET Args1='Archives' WHERE MessageID={0}".format(interaction.message.interaction.id))
+        curseur.execute("UPDATE commandes SET Args1='Archives' WHERE MessageID={0}".format(interaction.message.interaction.id))
     else:
         option=dictEmote[interaction.data["custom_id"]]
-        connexion,curseur=connectSQL(interaction.guild_id,option,"Stats",tableauMois[mois],annee)
         pagemax=pagemaxSpeMois(curseur,mois,annee)
         if categ=="global":
             pagemax-=1
@@ -39,13 +37,12 @@ async def switchRapport(interaction,connexionCMD,curseurCMD,ligne,guildOT,bot):
             if categ=="global":
                 pagemax-=1
         embed=homeSpe(date,guildOT,bot,interaction.guild,option,pagemax,categ)
-        curseurCMD.execute("UPDATE commandes SET Args1='{0}' WHERE MessageID={1}".format(option,interaction.message.interaction.id))
+        curseur.execute("UPDATE commandes SET Args1='{0}' WHERE MessageID={1}".format(option,interaction.message.interaction.id))
         
-    await sendView(interaction,embed,curseurCMD,connexionCMD,1,pagemax)
+    await sendView(interaction,embed,curseur,connexion,1,pagemax)
     
-async def changePage(interaction,connexionCMD,curseurCMD,turn,ligne,guildOT,bot):
+async def changePage(interaction,connexion,curseur,turn,ligne,guildOT,bot):
     mois,annee,categ=ligne["Args2"],ligne["Args3"],ligne["Option"]
-    connexion,curseur=connectSQL(interaction.guild_id,"Rapports","Stats","GL","")
     option=ligne["Args1"]
     date=(mois,annee)
 
@@ -55,7 +52,6 @@ async def changePage(interaction,connexionCMD,curseurCMD,turn,ligne,guildOT,bot)
         pagemax,listeOptions=pagemaxHome(curseur,mois,annee,categ)
         pagemax-=2
     else:
-        connexion,curseur=connectSQL(interaction.guild_id,option,"Stats",tableauMois[mois],annee)
         pagemax=pagemaxSpeMois(curseur,mois,annee)
     if categ=="global":
         pagemax-=1
@@ -161,4 +157,4 @@ async def changePage(interaction,connexionCMD,curseurCMD,turn,ligne,guildOT,bot)
             else:
                 embed=ranksIntoSpes(date,guildOT,bot,interaction.guild,option,page-3,page,pagemax,categ)
 
-    await sendView(interaction,embed,curseurCMD,connexionCMD,page,pagemax)
+    await sendView(interaction,embed,curseur,connexion,page,pagemax)

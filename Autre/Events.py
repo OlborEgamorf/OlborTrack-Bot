@@ -27,7 +27,7 @@ async def embedWikiEvents(option,jour,mois):
     return embed
 
 async def autoEvents(bot,channel,guild):
-    connexionCMD,curseurCMD=connectSQL(guild,"Commandes","Guild",None,None)
+    connexionCMD,curseurCMD=connectSQL(guild)
     embed=await embedWikiEvents("events",strftime("%d"),strftime("%m"))
     message=await bot.get_channel(channel).send(embed=embed)
     await message.add_reaction("<:otRELOAD:772766034356076584>")
@@ -37,7 +37,7 @@ async def autoEvents(bot,channel,guild):
 @OTCommand
 async def exeWikipedia(interaction,bot,option,ligne):
     if ligne==None:
-        connexionCMD,curseurCMD=connectSQL(interaction.guild_id,"Commandes","Guild",None,None)
+        connexionCMD,curseurCMD=connectSQL(interaction.guild_id)
         embed=await embedWikiEvents(option,strftime("%d"),strftime("%m"))
         await interaction.response.send_message(embed=embed,view=ViewReloadWiki())
 
@@ -53,7 +53,7 @@ class ViewReloadWiki(discord.ui.View):
 
     @discord.ui.button(label="Encore !",emoji="<:otRELOAD:772766034356076584>",style=discord.ButtonStyle.blurple, custom_id="ot:reloadwiki")
     async def reload(self,interaction:discord.Interaction, button:discord.ui.Button):
-        connexionCMD,curseurCMD=connectSQL(interaction.guild_id,"Commandes","Guild",None,None)
+        connexionCMD,curseurCMD=connectSQL(interaction.guild_id)
         ligne=curseurCMD.execute("SELECT * FROM commandes WHERE MessageID={0}".format(interaction.message.interaction.id)).fetchone()
         if ligne!=None:
             await exeWikipedia(interaction,interaction.client,ligne["Option"],ligne)

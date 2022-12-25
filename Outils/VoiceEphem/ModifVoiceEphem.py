@@ -6,7 +6,7 @@ from Stats.SQL.ConnectSQL import connectSQL
 @OTCommand
 async def voiceEphemRename(interaction,bot,nom):
 
-    connexion,curseur=connectSQL(interaction.guild_id,"VoiceEphem","Guild",None,None)
+    connexion,curseur=connectSQL(interaction.guild_id)
 
     assert interaction.user.author.voice!=None, "Vous n'êtes dans aucun salon vocal"
     salon=curseur.execute("SELECT * FROM salons WHERE IDOwner={0} AND IDChannel={1}".format(interaction.user.id,interaction.user.voice.channel.id)).fetchone()
@@ -18,7 +18,7 @@ async def voiceEphemRename(interaction,bot,nom):
 
 @OTCommand
 async def voiceEphemLock(interaction,bot):
-    connexion,curseur=connectSQL(interaction.guild_id,"VoiceEphem","Guild",None,None)
+    connexion,curseur=connectSQL(interaction.guild_id)
 
     assert interaction.user.voice!=None, "Vous n'êtes dans aucun salon vocal"
     salon=curseur.execute("SELECT * FROM salons WHERE IDOwner={0} AND IDChannel={1}".format(interaction.user.id,interaction.user.voice.channel.id)).fetchone()
@@ -44,7 +44,7 @@ async def voiceEphemLock(interaction,bot):
 
 @OTCommand
 async def voiceEphemLimit(interaction,bot,nombre):
-    connexion,curseur=connectSQL(interaction.guild.id,"VoiceEphem","Guild",None,None)
+    connexion,curseur=connectSQL(interaction.guild.id)
 
     assert interaction.user.voice!=None, "Vous n'êtes dans aucun salon vocal"
     salon=curseur.execute("SELECT * FROM salons WHERE IDOwner={0} AND IDChannel={1}".format(interaction.user.id,interaction.user.voice.channel.id)).fetchone()
@@ -59,7 +59,7 @@ async def voiceEphemLimit(interaction,bot,nombre):
 
 @OTCommand
 async def infosVoiceEphem(interaction,bot):
-    connexion,curseur=connectSQL(interaction.guild.id,"VoiceEphem","Guild",None,None)
+    connexion,curseur=connectSQL(interaction.guild.id)
 
     assert interaction.user.voice!=None, "Vous n'êtes dans aucun salon vocal"
     chan=interaction.user.voice.channel

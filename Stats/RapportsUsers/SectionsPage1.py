@@ -11,7 +11,7 @@ tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai",
 
 def homeSpe(date,guildOT,bot,guild,option,pagemax,period,user):
     embed=discord.Embed()
-    connexion,curseur=connectSQL(guild.id,option,"Stats",tableauMois[date[0]],date[1])
+    connexion,curseur=connectSQL(guild.id)
     result=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY Count DESC".format(tableauMois[date[0]],date[1],user)).fetchall()
 
     if result!=[]:
@@ -23,7 +23,6 @@ def homeSpe(date,guildOT,bot,guild,option,pagemax,period,user):
 
         descip=""
         if period in ("mois","annee"):
-            connexion,curseur=connectSQL(guild.id,"Messages","Stats","GL","")
             if period=="mois":
                 table=getTablePerso(guild.id,option,user,False,"M","periodAsc")
                 table=list(filter(lambda x:x["Mois"]==tableauMois[date[0]], table))
@@ -31,7 +30,6 @@ def homeSpe(date,guildOT,bot,guild,option,pagemax,period,user):
                 table=getTablePerso(guild.id,option,user,False,"A","periodAsc")
                 table=list(filter(lambda x:x["Annee"]!="GL", table))
             for j in table:
-                connexion,curseur=connectSQL(guild.id,option,"Stats",j["Mois"],j["Annee"])
                 try:
                     i=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY Count DESC".format(j["Mois"],j["Annee"],user)).fetchone()
                     i["Rank"]=1

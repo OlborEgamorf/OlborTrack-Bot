@@ -31,7 +31,7 @@ async def boucleTwitter(bot,dictGuilds):
                                     await bot.get_channel(j.salon).send(content="{0} (**RT**)\nhttps://twitter.com/{1}/status/{2}".format(j.descip,j.compte,h["id"]))
                         if not special:
                             await bot.get_channel(j.salon).send(content="{0}\nhttps://twitter.com/{1}/status/{2}".format(j.descip,j.compte,h["id"]))
-                    connexion,curseur=connectSQL(dictGuilds[i].id,"Guild","Guild",None,None)
+                    connexion,curseur=connectSQL(dictGuilds[i].id)
                     curseur.execute("UPDATE twitter SET LastID={0} WHERE Nombre={1}".format(data["data"][0]["id"],j.numero))
                     j.last=int(data["data"][0]["id"])
                     connexion.commit()

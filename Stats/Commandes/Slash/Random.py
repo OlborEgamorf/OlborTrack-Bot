@@ -18,7 +18,7 @@ async def commandeRandom(interaction,user,react,guildOT,bot):
     option=choice(liste)
     cible=choice(["user","guild","guild"])
     period=choice(["annee","mois"])
-    connexion,curseur=connectSQL(interaction.guild_id,option,"Stats","GL","")
+    connexion,curseur=connectSQL(interaction.guild_id)
     author=user.id
     
     if cible=="user" or option in ("Moyennes","Mots","Messages","Voice"):
@@ -37,7 +37,6 @@ async def commandeRandom(interaction,user,react,guildOT,bot):
                 if table["Annee"]=="GL":
                     subTable=curseur.execute("SELECT * FROM evolglob{0} ORDER BY RANDOM()".format(author)).fetchone()
                 else:
-                    connexion,curseur=connectSQL(interaction.guild_id,option,"Stats",table["Mois"],table["Annee"])
                     subTable=curseur.execute("SELECT * FROM evol{0}{1}{2} ORDER BY RANDOM()".format(tableauMois[table["Mois"]].lower(),table["Annee"],author)).fetchone()
                 count=tempsVoice(subTable["Count"]) if option=="Voice" else subTable["Count"]
                 descip="Au __{0}/{1}/{2}__ tu avais {3} **{4}** {5} {6}.\nTon rang était **{7}e**, avec une évolution de {8} !".format(subTable["Jour"],subTable["Mois"],subTable["Annee"],dictEnv[option],count,dictEnv2[option],periodStr.lower(),subTable["Rank"],subTable["Evol"])
@@ -66,7 +65,6 @@ async def commandeRandom(interaction,user,react,guildOT,bot):
                         table=curseur.execute("SELECT * FROM firstM ORDER BY RANDOM()").fetchone()
                     else:
                         table=curseur.execute("SELECT * FROM firstA ORDER BY RANDOM()").fetchone()
-                    connexion,curseur=connectSQL(interaction.guild_id,option,"Stats",table["Mois"],table["Annee"])
                     periodStr=randomPeriod(period,table)
                     tableUser=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY RANDOM()".format(table["Mois"],table["Annee"],author)).fetchone()    
                     break

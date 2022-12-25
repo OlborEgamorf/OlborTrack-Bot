@@ -18,7 +18,7 @@ async def exeHBUser(interaction:discord.Interaction,bot:OlborTrack,option:str,gu
 
     Options possibles : hide, blind, mute"""
 
-    connexion,curseur=connectSQL(interaction.guild_id,"Guild","Guild",None,None)
+    connexion,curseur=connectSQL(interaction.guild_id)
     dictEmbed={"HideFalse":"masqué","BlindFalse":"invisible","HideTrue":"démasqué","BlindTrue":"visible"}
     etat=curseur.execute("SELECT * FROM users WHERE ID={0}".format(interaction.user.id)).fetchone()
     curseur.execute("UPDATE users SET {0}={1} WHERE ID={2}".format(option,bool(int(etat[option])-1),interaction.user.id))

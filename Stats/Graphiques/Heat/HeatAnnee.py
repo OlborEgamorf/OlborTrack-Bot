@@ -21,7 +21,7 @@ async def graphHeatAnnee(ligne,ctx,bot,option,guildOT):
     anneeDate=int("20{0}".format(annee))
     obj="" if ligne["Args3"]=="None" else ligne["Args3"]
     setThemeGraph(plt)
-    connexion,curseur=connectSQL(ctx.guild.id,"Rapports","Stats","GL","")
+    connexion,curseur=connectSQL(ctx.guild.id)
 
     if ligne["Commande"]=="roles" and ligne["Args4"]!="None":
         descip=""

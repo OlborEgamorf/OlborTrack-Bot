@@ -15,7 +15,7 @@ async def exeCustom(guild:discord.Guild,message:discord.Message,author:discord.M
         command=listeMots[0][3:len(listeMots[0])].lower()
         if command in listeOS:
             return False
-        connexion,curseur=connectSQL(guild.id,"CustomCMD","Guild",None,None)
+        connexion,curseur=connectSQL(guild.id)
         tableCommande=curseur.execute("SELECT * FROM custom WHERE Nom='{0}'".format(command)).fetchone()
         if tableCommande!=None:
             if bool(tableCommande["Embed"])==True:

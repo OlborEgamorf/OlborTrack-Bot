@@ -2,7 +2,7 @@ from Stats.SQL.ConnectSQL import connectSQL
 from Outils.Tableaux.EmbedsTab import embedStarBoard
 
 async def checkTabEdit(message,bot,guild):
-    connexion,curseur=connectSQL(guild.id,"Guild","Guild",None,None)
+    connexion,curseur=connectSQL(guild.id)
     for i in curseur.execute("SELECT * FROM sbmessages WHERE IDMess={0}".format(message.id)).fetchall():
         try:
             idchan=guild.stardict[i["Nombre"]].salon
@@ -28,7 +28,7 @@ async def checkTabReact(message,emoji,count,bot,guild):
             id=0
         assert id in guild.starlist
         assert not guild.chan[message.channel.id]["Tab"]
-        connexion,curseur=connectSQL(guild.id,"Guild","Guild",None,None)
+        connexion,curseur=connectSQL(guild.id)
         for i in guild.starlist[id]:
             if count>=guild.stardict[i].count:
                 etat=curseur.execute("SELECT IDStar FROM sbmessages WHERE Nombre={0} AND IDMess={1}".format(guild.stardict[i].nombre,message.id)).fetchone()
@@ -54,7 +54,7 @@ async def checkTabReact(message,emoji,count,bot,guild):
 
 
 async def checkTabDelete(listeid,bot,guild):
-    connexion,curseur=connectSQL(guild.id,"Guild","Guild",None,None)
+    connexion,curseur=connectSQL(guild.id)
     for messageid in listeid:
         for i in curseur.execute("SELECT * FROM sbmessages WHERE IDMess={0}".format(messageid)).fetchall():
             idchan=guild.stardict[i["Nombre"]].salon

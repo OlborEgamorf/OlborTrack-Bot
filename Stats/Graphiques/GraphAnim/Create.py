@@ -7,7 +7,7 @@ tableauSiom={"janvier":"01","février":"02","mars":"03","avril":"04","mai":"05",
 
 def createEvol(ctx,bot,ligne,option):
     listeMois=[]
-    connexion,curseur=connectSQL(ctx.guild.id,"Rapports","Stats","GL","")
+    connexion,curseur=connectSQL(ctx.guild.id)
     dates=curseur.execute("SELECT DISTINCT Jour FROM ranks WHERE Mois='{0}' AND Annee='{1}' AND Type='{2}' ORDER BY Jour ASC".format(tableauSiom[ligne["Args1"]],ligne["Args2"],option)).fetchall()
     for i in dates:
         table=curseur.execute("SELECT * FROM ranks WHERE Mois='{0}' AND Annee='{1}' AND Type='{2}' AND Jour='{3}' ORDER BY Rank ASC".format(tableauSiom[ligne["Args1"]],ligne["Args2"],option,i["Jour"])).fetchall()

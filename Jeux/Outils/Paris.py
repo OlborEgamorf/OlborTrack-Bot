@@ -22,7 +22,7 @@ class Pari:
         points={}
         victoires={}
         defaites={}
-        connexion,curseur=connectSQL("OT",self.option,"Jeux","GL","")
+        connexion,curseur=connectSQL("OT")
         for i in self.ids:
             user=curseur.execute("SELECT * FROM glob WHERE ID={0}".format(i)).fetchone()
             if user==None:

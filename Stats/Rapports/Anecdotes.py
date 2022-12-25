@@ -13,8 +13,7 @@ dictTrivia={3:"Images",2:"GIFs",1:"Fichiers",4:"Liens",5:"Réponses",6:"Réactio
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TOTAL","1":"janvier","2":"février","3":"mars","4":"avril","5":"mai","6":"juin","7":"juillet","8":"aout","9":"septembre","janvier":"01","février":"02","mars":"03","avril":"04","mai":"05","juin":"06","juillet":"07","aout":"08","septembre":"09","octobre":"10","novembre":"11","décembre":"12","to":"TO","glob":"GL"}
 
 def anecdotesSpe(date,guildOT,bot,guild,option,page,pagemax,period):
-    connexion,curseur=connectSQL(guild.id,option,"Stats",tableauMois[date[0]],date[1])
-    conGL,curGL=connectSQL(guild.id,option,"Stats","GL","")
+    connexion,curseur=connectSQL(guild.id)
     embed=discord.Embed()
 
     if period in ("mois","annee"):
@@ -22,9 +21,9 @@ def anecdotesSpe(date,guildOT,bot,guild,option,page,pagemax,period):
         premiers=curseur.execute("SELECT * FROM {0}{1} WHERE Rank=1 ORDER BY Rank ASC".format(date[0],date[1])).fetchall()
         alea=choice(premiers)
         if period=="mois":
-            first=curGL.execute("SELECT COUNT() AS Premier FROM firstM WHERE DateID<{0} AND ID={1}".format(date[1]+tableauMois[date[0]],alea["ID"])).fetchone()
+            first=curseur.execute("SELECT COUNT() AS Premier FROM firstM WHERE DateID<{0} AND ID={1}".format(date[1]+tableauMois[date[0]],alea["ID"])).fetchone()
         else:
-            first=curGL.execute("SELECT COUNT() AS Premier FROM firstA WHERE DateID<{0} AND ID={1}".format(date[1],alea["ID"])).fetchone()
+            first=curseur.execute("SELECT COUNT() AS Premier FROM firstA WHERE DateID<{0} AND ID={1}".format(date[1],alea["ID"])).fetchone()
     elif period=="global":
         result=curseur.execute("SELECT * FROM glob ORDER BY Rank ASC").fetchall()
         premiers=curseur.execute("SELECT * FROM glob WHERE Rank=1 ORDER BY Rank ASC".format()).fetchall()
@@ -43,14 +42,14 @@ def anecdotesSpe(date,guildOT,bot,guild,option,page,pagemax,period):
     dictPremier={"Salons":"Le salon le plus actif est {0}{1}{2}","Freq":"L'heure la plus active est {0}{1}{2}","Emotes":"L'emote la plus utilisée est {0}{1}{2}","Reactions":"La réaction la plus utilisée est {0}{1}{2}","Messages":"Le membre le plus actif est {0}{1}{2}","Voice":"Le membre le plus actif est {0}{1}{2}","Voicechan":"Le salon le plus actif est {0}{1}{2}"}
     embed.add_field(name="Premier",value=dictPremier[option].format(nom,count,ex),inline=False)
 
-    hier=hierMAG(date,period,guild,option)
+    hier=hierMAG(date,period,curseur)
     if period!="global":
         if hier!=None:
             if True:
                 if period=="mois":
-                    premierH=curGL.execute("SELECT ID FROM firstM WHERE Mois='{0}' AND Annee='{1}'".format(tableauMois[hier[0]],hier[1])).fetchone()["ID"]
+                    premierH=curseur.execute("SELECT ID FROM firstM WHERE Mois='{0}' AND Annee='{1}'".format(tableauMois[hier[0]],hier[1])).fetchone()["ID"]
                     if premierH!=alea["ID"]:
-                        consec=curGL.execute("SELECT ID FROM firstM WHERE DateID<={0} ORDER BY DateID DESC".format(hier[1]+tableauMois[hier[0]])).fetchall()
+                        consec=curseur.execute("SELECT ID FROM firstM WHERE DateID<={0} ORDER BY DateID DESC".format(hier[1]+tableauMois[hier[0]])).fetchall()
                         try:
                             i=0
                             while consec[i]["ID"]==premierH:
@@ -59,7 +58,7 @@ def anecdotesSpe(date,guildOT,bot,guild,option,page,pagemax,period):
                             i=len(consec)
                         embed.add_field(name="Série première place",value="Il arrête la série de {0}, premier **{1} fois** d'affilée jusque là".format(nomsOptions(option,premierH,guildOT,bot),i),inline=False)
                     else:
-                        consec=curGL.execute("SELECT ID FROM firstM WHERE DateID<={0} ORDER BY DateID DESC".format(hier[1]+tableauMois[hier[0]])).fetchall()
+                        consec=curseur.execute("SELECT ID FROM firstM WHERE DateID<={0} ORDER BY DateID DESC".format(hier[1]+tableauMois[hier[0]])).fetchall()
                         try:
                             i=1
                             while consec[i]["ID"]==alea["ID"]:
@@ -69,9 +68,9 @@ def anecdotesSpe(date,guildOT,bot,guild,option,page,pagemax,period):
                             embed.add_field(name="Série première place",value="Il n'a **jamais arrêté** d'être premier.",inline=False)
 
                 elif period=="annee":
-                    premierH=curGL.execute("SELECT ID FROM firstA WHERE Annee='{0}'".format(hier[1])).fetchone()["ID"]
+                    premierH=curseur.execute("SELECT ID FROM firstA WHERE Annee='{0}'".format(hier[1])).fetchone()["ID"]
                     if premierH!=alea["ID"]:
-                        consec=curGL.execute("SELECT ID FROM firstA WHERE DateID<={0} ORDER BY DateID DESC".format(hier[1])).fetchall()
+                        consec=curseur.execute("SELECT ID FROM firstA WHERE DateID<={0} ORDER BY DateID DESC".format(hier[1])).fetchall()
                         try:
                             i=0
                             while consec[i]["ID"]==premierH:
@@ -80,7 +79,7 @@ def anecdotesSpe(date,guildOT,bot,guild,option,page,pagemax,period):
                             i=len(consec)
                         embed.add_field(name="Série première place",value="Il arrête la série de {0}, premier **{1} fois** d'affilée jusque là".format(nomsOptions(option,premierH,guildOT,bot),i),inline=False)
                     else:
-                        consec=curGL.execute("SELECT ID FROM firstA WHERE DateID<={0} ORDER BY DateID DESC".format(hier[1])).fetchall()
+                        consec=curseur.execute("SELECT ID FROM firstA WHERE DateID<={0} ORDER BY DateID DESC".format(hier[1])).fetchall()
                         try:
                             i=1
                             while consec[i]["ID"]==alea["ID"]:
@@ -102,7 +101,7 @@ def anecdotesSpe(date,guildOT,bot,guild,option,page,pagemax,period):
                     tablePerso=getTablePerso(guild.id,option,i["ID"],False,"M","countDesc")
                     tablePerso=list(filter(lambda x:x["Annee"]+x["Mois"]<=date[1]+tableauMois[date[0]]))
                     tablePerso.sort(key=lambda x:x["Count"], reverse=True)
-                    tablePerso=curGL.execute("SELECT Mois, Annee, Annee || '' || Mois AS DateID, Count FROM persoM{0} WHERE DateID<='{1}{2}' ORDER BY Count DESC".format(i["ID"],date[1],tableauMois[date[0]])).fetchone()
+                    tablePerso=curseur.execute("SELECT Mois, Annee, Annee || '' || Mois AS DateID, Count FROM persoM{0} WHERE DateID<='{1}{2}' ORDER BY Count DESC".format(i["ID"],date[1],tableauMois[date[0]])).fetchone()
                     if tablePerso[0]["Mois"]==tableauMois[date[0]] and tablePerso[0]["Annee"]==date[1]:
                         records.append({"ID":i["ID"],"Count":formatCount(option,tablePerso["Count"])})
                 except:
@@ -154,7 +153,6 @@ def anecdotesSpe(date,guildOT,bot,guild,option,page,pagemax,period):
     if hier!=None and period!="global":
         plus,moins,new=0,0,0
         if period in ("mois","annee"):
-            connexion,curseur=connectSQL(guild.id,option,"Stats",tableauMois[hier[0]],hier[1])
             if period=="mois":
                 title="Par rapport au {0}/{1}".format(tableauMois[hier[0]],hier[1])
             else:

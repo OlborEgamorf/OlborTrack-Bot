@@ -66,7 +66,7 @@ def getNomGraph(ctx:commands.Context,bot:commands.Bot,option:str,id:int) -> (str
     Sortie :
         nom : le formatage ou alors un membre en fonction de l'option donnée."""
     if option in ("Tortues","TortuesDuo","P4","bataillenavale","TrivialVersus","TrivialBR","TrivialParty","trivial","Morpion"):
-        connexion,curseur=connectSQL("OT","Titres","Titres",None,None)
+        connexion,curseur=connectSQL("OT")
         nom=getTitre(curseur,id)
         nom=nom if len(nom)<=15 else "{0}...".format(nom[0:15])
         return nom

@@ -19,10 +19,10 @@ async def graphScatter(ligne,ctx,bot,option,guildOT):
     listeTick=[]
     obj="" if ligne["Args3"]=="None" else ligne["Args3"]
     if ligne["Commande"]=="jeux":
-        connexion,curseur=connectSQL(ligne["Args3"],dictOption[option],"Jeux",tableauMois[ligne["Args1"]],ligne["Args2"])
+        connexion,curseur=connectSQL(ligne["Args3"])
         obj=""
     else:
-        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",tableauMois[ligne["Args1"]],ligne["Args2"])
+        connexion,curseur=connectSQL(ctx.guild.id)
     mois=curseur.execute("SELECT * FROM {0}{1}{2} WHERE Rank<=15".format(ligne["Args1"],ligne["Args2"],obj)).fetchall()
     
     for i in mois:
@@ -39,11 +39,6 @@ async def graphScatter(ligne,ctx,bot,option,guildOT):
     dfMois=pd.DataFrame({'Rank': listeX, "Count":listeY})
 
     listeX,listeY=[],[]
-
-    if ligne["Commande"]=="jeux":
-        connexion,curseur=connectSQL(ligne["Args3"],dictOption[option],"Jeux","GL","")
-    else:
-        connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
         
     if ligne["Args1"]=="to":
         allMois=curseur.execute("SELECT Mois,Annee FROM firstA WHERE Annee<>'GL'").fetchall()
@@ -53,10 +48,6 @@ async def graphScatter(ligne,ctx,bot,option,guildOT):
         labelO="Autre mois"
     for i in allMois:
         try:
-            if ligne["Commande"]=="jeux":
-                connexion,curseur=connectSQL(ligne["Args3"],dictOption[option],"Jeux",i["Mois"],i["Annee"])
-            else:
-                connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",i["Mois"],i["Annee"])
             for j in curseur.execute("SELECT * FROM {0}{1}{2} WHERE Rank<=15".format(tableauMois[i["Mois"].lower()],i["Annee"],obj)).fetchall():
                 listeX.append(j["Rank"])
                 listeY.append(j["Count"])

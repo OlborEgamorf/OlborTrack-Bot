@@ -8,7 +8,7 @@ from Autre.EmbedHelp import embedHelp
 
 @OTCommand
 async def commandeHelpSlash(interaction,bot,option,guildOT):
-    connexionCMD,curseurCMD=connectSQL(guildOT.id,"Commandes","Guild",None,None)
+    connexionCMD,curseurCMD=connectSQL(guildOT.id)
 
     if option==None:
         option="home"

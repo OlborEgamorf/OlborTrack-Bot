@@ -17,10 +17,10 @@ async def graphScatterPerso(ligne,ctx,bot,option,guildOT):
     listeX,listeY,listeXU,listeYU=[],[],[],[]
     listeN=[]
     count=0
-    connexion,curseur=connectSQL(ctx.guild.id,option,"Stats",ligne["Args1"],ligne["Args2"])
+    connexion,curseur=connectSQL(ctx.guild.id)
     table=curseur.execute("SELECT * FROM perso{0}{1}{2} ORDER BY Count DESC LIMIT 15".format(ligne["Args1"],ligne["Args2"],ligne["AuthorID"])).fetchall()
     table.reverse()
-    connexion,curseur=connectSQL(ctx.guild.id,option,"Stats","GL","")
+    
     for i in range(len(table)):
         if option in ("Salons","Voicechan"):
             if guildOT.chan[table[i]["ID"]]["Hide"]:

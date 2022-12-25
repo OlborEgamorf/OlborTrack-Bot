@@ -12,7 +12,7 @@ tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai",
 
 def homeSpe(date,guildOT,bot,guild,option,pagemax,period):
     embed=discord.Embed()
-    connexion,curseur=connectSQL(guild.id,option,"Stats",tableauMois[date[0]],date[1])
+    connexion,curseur=connectSQL(guild.id)
     result=curseur.execute("SELECT * FROM {0}{1} ORDER BY Rank ASC".format(date[0],date[1])).fetchall()
 
     if result!=[]:
@@ -42,7 +42,6 @@ def homeSpe(date,guildOT,bot,guild,option,pagemax,period):
 
         descip=""
         if period in ("mois","annee"):
-            connexion,curseur=connectSQL(guild.id,option,"Stats","GL","")
             if period=="mois":
                 table=curseur.execute("SELECT DISTINCT * FROM firstM WHERE Mois='{0}' ORDER BY Annee ASC".format(tableauMois[date[0]])).fetchall()
             elif period=="annee":

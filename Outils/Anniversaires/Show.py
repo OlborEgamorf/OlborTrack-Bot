@@ -5,7 +5,7 @@ from Stats.SQL.ConnectSQL import connectSQL
 
 @OTCommand
 async def showAnniversaire(interaction,bot,user,ephem):
-    connexion,curseur=connectSQL("OT","Guild","Guild",None,None)
+    connexion,curseur=connectSQL("OT")
 
     if user!=None:
         userAnniv=curseur.execute("SELECT * FROM anniversaires WHERE ID={0}".format(user.id)).fetchone()
