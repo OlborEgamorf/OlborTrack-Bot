@@ -11,9 +11,9 @@ def embedMois(table,mobile,option):
     for ligne in table:
         rank=ligne["Rank"]
         if option=="Divers" and ligne["ID"]==11:
-            count=tempsVoice(ligne["Count"])
+            count=tempsVoice(ligne["Final"])
         else:
-            count=formatCount(option,ligne["Count"])
+            count=formatCount(option,ligne["Final"])
         if ligne["Annee"]=="GL":
             nom="Général"
         else:

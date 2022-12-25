@@ -1,18 +1,9 @@
 import discord
-from Autre.ViHelp import commandeHelpView
 from Core.Fonctions.AuteurIcon import auteur
 from Core.Fonctions.setMaxPage import setPage
-from Savezvous.ListModoView import svPersoModoView
-from Stats.Commandes.View.ViClassements import statsRankView
-from Stats.Commandes.View.ViJeux import statsJeuxView
-from Stats.Commandes.View.ViPeriods import statsPeriodsView
-from Stats.Commandes.View.ViPeriodsInter import statsPeriodsInterView
-from Stats.Commandes.View.ViPerso import statsPersoView
-from Stats.Commandes.View.ViRapports import changePage, switchRapport
-from Stats.Commandes.View.ViRapportsUser import (changePageUser,
-                                                 switchRapportUser)
-from Stats.Commandes.View.ViTrivial import statsTrivialView
-from Stats.Commandes.View.ViTrivialPerso import statsTrivialPersoView
+from Core.Reactions.Recall import recall
+from Stats.Commandes.View.ViRapports import switchRapport
+from Stats.Commandes.View.ViRapportsUser import (switchRapportUser)
 from Stats.Graphiques.BarRanks import graphRank
 from Stats.Graphiques.Circle import graphCircle
 from Stats.Graphiques.Grouped import graphGroupedMois
@@ -26,31 +17,21 @@ from Stats.Graphiques.Scatter.ScatterPositions import graphScatter
 from Stats.Graphiques.Scatter.ScatterUsers import graphScatterUsers
 from Stats.Graphiques.Spider import graphSpider
 from Stats.SQL.ConnectSQL import connectSQL
-from Titres.ViListesTitres import listesTitresView
 
 
 class InputNbPage(discord.ui.Modal, title="A quelle page voulez-vous aller ?"):
     name = discord.ui.TextInput(label="A quelle page voulez vous aller ?",style=discord.TextStyle.short,required=True)
     async def on_submit(self, interaction: discord.Interaction) -> None:
         try:
-            connexionCMD,curseurCMD=connectSQL(interaction.guild_id,"Commandes","Guild",None,None)
-            ligne=curseurCMD.execute("SELECT * FROM commandes WHERE MessageID={0}".format(interaction.message.interaction.id)).fetchone()
+            connexion,curseur=connectSQL(interaction.guild_id)
+            ligne=curseur.execute("SELECT * FROM commandes WHERE MessageID={0}".format(interaction.message.interaction.id)).fetchone()
             if ligne!=None:
                 pagemax=ligne["PageMax"]
                 assert int(self.name.value)<=pagemax
-                curseurCMD.execute("UPDATE commandes SET Page={0} WHERE MessageID={1}".format(int(self.name.value),interaction.message.interaction.id))
-                connexionCMD.commit()
+                curseur.execute("UPDATE commandes SET Page={0} WHERE MessageID={1}".format(int(self.name.value),interaction.message.interaction.id))
+                connexion.commit()
                 ligne["Page"]=int(self.name.value)
-                if ligne["Commande"]=="rapport":
-                    await changePage(interaction,connexionCMD,curseurCMD,None,ligne,interaction.client.dictGuilds[interaction.guild_id],interaction.client)
-                elif ligne["Commande"]=="rapportUser":
-                    await changePageUser(interaction,connexionCMD,curseurCMD,None,ligne,interaction.client.dictGuilds[interaction.guild_id],interaction.client)
-                elif ligne["Commande"]=="savezvous":
-                    await svPersoModoView(interaction,interaction.client,ligne,curseurCMD,connexionCMD,None)
-                elif ligne["Commande"]=="titres":
-                    await listesTitresView(interaction,ligne,connexionCMD,curseurCMD,None)
-                else:
-                    await getFunction(ligne["Commande"])(interaction,curseurCMD,connexionCMD,None,ligne,interaction.client.dictGuilds[interaction.guild_id],interaction.client)
+                await recall(interaction,ligne,curseur,connexion)
         except:
             await interaction.response.send_message("La page fournie n'est pas correcte.", ephemeral=True) 
 
@@ -132,7 +113,7 @@ class ViewRapports(discord.ui.View):
 class ViewPageGraph(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
-
+    
     @discord.ui.button(label="Page -1",emoji="<:otGAUCHE:772766034335236127>",style=discord.ButtonStyle.blurple, custom_id="ot:gauchegraph")
     async def gauche(self,interaction:discord.Interaction, button:discord.ui.Button):
         await buttonDirectionGraph(interaction)
@@ -140,41 +121,38 @@ class ViewPageGraph(discord.ui.View):
     async def droite(self,interaction:discord.Interaction, button:discord.ui.Button):
         await buttonDirectionGraph(interaction)
 
+
 async def buttonDirection(interaction):
-    connexionCMD,curseurCMD=connectSQL(interaction.guild_id,"Commandes","Guild",None,None)
-    ligne=curseurCMD.execute("SELECT * FROM commandes WHERE MessageID={0}".format(interaction.message.interaction.id)).fetchone()
+    connexion,curseur=connectSQL(interaction.guild_id)
+    ligne=curseur.execute("SELECT * FROM commandes WHERE MessageID={0}".format(interaction.message.interaction.id)).fetchone()
 
     if interaction.data["custom_id"] in ("ot:gauche","ot:gaucherapport"):
-        sens="-"
+        page=setPage(ligne["Page"],ligne["PageMax"],"-")
+    elif interaction.data["custom_id"] in ("ot:droite","ot:droiterapport"):
+        page=setPage(ligne["Page"],ligne["PageMax"],"+")
     else:
-        sens="+"
+        page=ligne["Page"]
 
-    if ligne["Commande"] in ("rank","periods","periodsInter","perso","jeux","trivialrank","trivialperso","help"):
-        await getFunction(ligne["Commande"])(interaction,curseurCMD,connexionCMD,sens,ligne,interaction.client.dictGuilds[interaction.guild_id],interaction.client)
-    elif ligne["Commande"]=="rapport":
-        await changePage(interaction,connexionCMD,curseurCMD,sens,ligne,interaction.client.dictGuilds[interaction.guild_id],interaction.client)
-    elif ligne["Commande"]=="rapportUser":
-        await changePageUser(interaction,connexionCMD,curseurCMD,sens,ligne,interaction.client.dictGuilds[interaction.guild_id],interaction.client)
-    elif ligne["Commande"]=="savezvous":
-        await svPersoModoView(interaction,interaction.client,ligne,curseurCMD,connexionCMD,sens)
-    elif ligne["Commande"]=="titres":
-        await listesTitresView(interaction,ligne,connexionCMD,curseurCMD,sens)
+    ligne["Page"]=page
+
+    curseur.execute("UPDATE commandes SET Page={0} WHERE MessageID={1}".format(page,interaction.message.interaction.id))
+    connexion.commit()
+    await recall(interaction,ligne,curseur,connexion)
+
 
 async def buttonMobile(interaction):
-    connexionCMD,curseurCMD=connectSQL(interaction.guild_id,"Commandes","Guild",None,None)
-    ligne=curseurCMD.execute("SELECT * FROM commandes WHERE MessageID={0}".format(interaction.message.interaction.id)).fetchone()
+    connexion,curseur=connectSQL(interaction.guild_id)
+    ligne=curseur.execute("SELECT * FROM commandes WHERE MessageID={0}".format(interaction.message.interaction.id)).fetchone()
     if ligne!=None:
-        curseurCMD.execute("UPDATE commandes SET Mobile={0} WHERE MessageID={1}".format(bool(int(ligne["Mobile"])-1),interaction.message.interaction.id))
+        curseur.execute("UPDATE commandes SET Mobile={0} WHERE MessageID={1}".format(bool(int(ligne["Mobile"])-1),interaction.message.interaction.id))
         ligne["Mobile"]=bool(int(ligne["Mobile"])-1)
-        connexionCMD.commit()
-        if ligne["Commande"]=="titres":
-            await listesTitresView(interaction,ligne,connexionCMD,curseurCMD,None)
-        else:
-            await getFunction(ligne["Commande"])(interaction,curseurCMD,connexionCMD,None,ligne,interaction.client.dictGuilds[interaction.guild_id],interaction.client)
+        connexion.commit()
+        await recall(interaction,ligne,curseur,connexion) 
+        
 
 async def buttonTri(interaction):
-    connexionCMD,curseurCMD=connectSQL(interaction.guild_id,"Commandes","Guild",None,None)
-    ligne=curseurCMD.execute("SELECT * FROM commandes WHERE MessageID={0}".format(interaction.message.interaction.id)).fetchone()
+    connexion,curseur=connectSQL(interaction.guild_id)
+    ligne=curseur.execute("SELECT * FROM commandes WHERE MessageID={0}".format(interaction.message.interaction.id)).fetchone()
     if ligne!=None:
         if ligne["Commande"]=="rank":
             dictNext={"countDesc":"countAsc","countAsc":"countDesc"}
@@ -189,16 +167,16 @@ async def buttonTri(interaction):
         elif ligne["Commande"]=="trivial" and ligne["Option"]=="trivialperso":
             dictNext={"expDesc":"expAsc","expAsc":"expDesc"}
         
-        curseurCMD.execute("UPDATE commandes SET Tri='{0}' WHERE MessageID={1}".format(dictNext[ligne["Tri"]],interaction.message.interaction.id))
-        connexionCMD.commit()
+        curseur.execute("UPDATE commandes SET Tri='{0}' WHERE MessageID={1}".format(dictNext[ligne["Tri"]],interaction.message.interaction.id))
+        connexion.commit()
 
         ligne["Tri"]=dictNext[ligne["Tri"]]
-        await getFunction(ligne["Commande"])(interaction,curseurCMD,connexionCMD,None,ligne,interaction.client.dictGuilds[interaction.guild_id],interaction.client)
+        await recall(interaction,ligne,curseur,connexion)
 
 async def buttonGraph(interaction):
     await interaction.response.defer(thinking=True) 
 
-    connexionCMD,curseurCMD=connectSQL(interaction.guild_id,"Commandes","Guild",None,None)
+    connexionCMD,curseurCMD=connectSQL(interaction.guild_id)
     ligne=curseurCMD.execute("SELECT * FROM commandes WHERE MessageID={0}".format(interaction.message.interaction.id)).fetchone()
     listeG=[]
     guildOT=interaction.client.dictGuilds[interaction.guild_id]
@@ -305,7 +283,7 @@ async def buttonGraph(interaction):
         connexionCMD.commit()
 
 async def buttonDirectionGraph(interaction):
-    connexionCMD,curseurCMD=connectSQL(interaction.guild_id,"Commandes","Guild",None,None)
+    connexionCMD,curseurCMD=connectSQL(interaction.guild_id)
     ligne=curseurCMD.execute("SELECT * FROM graphs WHERE MessageID={0}".format(interaction.message.id)).fetchone()
     if ligne!=None:
         if interaction.data["custom_id"]=="ot:gauchegraph":
@@ -325,7 +303,7 @@ async def buttonPage(interaction):
     await interaction.response.send_modal(InputNbPage())
 
 async def buttonSwithRapport(interaction):
-    connexionCMD,curseurCMD=connectSQL(interaction.guild_id,"Commandes","Guild",None,None)
+    connexionCMD,curseurCMD=connectSQL(interaction.guild_id)
     ligne=curseurCMD.execute("SELECT * FROM commandes WHERE MessageID={0}".format(interaction.message.interaction.id)).fetchone()
     if ligne!=None:
         if ligne["Commande"]=="rapport":
@@ -335,20 +313,3 @@ async def buttonSwithRapport(interaction):
 
 
 
-def getFunction(command):
-    if command=="rank":
-        return statsRankView
-    if command=="periods":
-        return statsPeriodsView
-    if command=="periodsInter":
-        return statsPeriodsInterView
-    if command=="perso":
-        return statsPersoView
-    if command=="jeux":
-        return statsJeuxView
-    if command=="trivialrank":
-        return statsTrivialView
-    if command=="trivialperso":
-        return statsTrivialPersoView
-    if command=="help":
-        return commandeHelpView

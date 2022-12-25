@@ -1,7 +1,7 @@
 from random import choice
 import sqlite3
 
-from Stats.SQL.ConnectSQL import connectSQL
+from Stats.SQL.ConnectSQL import CustomCursor, connectSQL
 
 dictTriArg={"countAsc":"Count","rankAsc":"Rank","countDesc":"Count","rankDesc":"Rank","dateAsc":"DateID","dateDesc":"DateID","periodAsc":"None","periodDesc":"None","moyDesc":"Moyenne","nombreDesc":"Nombre"}
 dictTriSens={"countAsc":"ASC","rankAsc":"ASC","countDesc":"DESC","rankDesc":"DESC","dateAsc":"ASC","dateDesc":"DESC","periodAsc":"None","periodDesc":"None","moyDesc":"DESC","nombreDesc":"DESC"}
@@ -52,25 +52,20 @@ def collapseEvol(table:list) -> list:
         return newTable
     return table
 
-def getTablePerso(guild,option,id,idobj,period,tri):
+def getTablePeriods(curseur,option,id,period,column,tri):
     liste=[]
-    connectionF,curseurF=connectSQL(guild,option,"Stats","GL","")
-    for i in curseurF.execute("SELECT Mois,Annee FROM first{0}".format(period)).fetchall():
-        try:
-            connection,curseur=connectSQL(guild,option,"Stats",i["Mois"],i["Annee"])
-            if not idobj:
-                if i["Annee"]=="GL":
-                    stat=curseur.execute("SELECT Rank,Count,Mois,Annee,ID FROM glob WHERE ID={0}".format(id)).fetchone()
-                else:
-                    stat=curseur.execute("SELECT Rank,Count,Mois,Annee,ID FROM {0}{1} WHERE ID={2}".format(tableauMois[i["Mois"]],i["Annee"],id)).fetchone()
-            else:
-                stat=curseur.execute("SELECT Rank,Count,Mois,Annee,ID FROM perso{0}{1}{2} WHERE ID={3}".format(i["Mois"],i["Annee"],id,idobj)).fetchone()
-            if stat!=None:
-                liste.append(stat)
-        except:
-            pass
+
+    if period == "M":
+        liste = curseur.execute(f"SELECT {column}, SUM(Count) AS Final, Mois, Annee, RANK() OVER (partition by Mois,Annee ORDER BY SUM(Count) DESC) AS 'Rank' FROM {option}_ranks GROUP BY {column}, Mois, Annee").fetchall()
+    else:
+        liste = curseur.execute(f"SELECT {column}, SUM(Count) AS Final, Annee, RANK() OVER (partition by Annee ORDER BY SUM(Count) DESC) AS 'Rank' FROM {option}_ranks GROUP BY {column}, Annee").fetchall()
+        for i in liste:
+            i["Mois"] = "TO"
+
+    liste = list(filter(lambda x:x[column] == id, liste))
+    
     if tri=="countDesc":
-        liste.sort(key=lambda x:x["Count"],reverse=True)
+        liste.sort(key=lambda x:x["Final"],reverse=True)
     elif tri=="periodAsc":
         liste.sort(key=lambda x:x["Annee"]+x["Mois"])
     elif tri=="periodDesc":
@@ -82,4 +77,70 @@ def getTablePerso(guild,option,id,idobj,period,tri):
             liste=choice(liste)
         else:
             liste=None
+
     return liste
+
+def getTablePeriodsInter(curseur,option,id,obj,period,column,tri):
+    liste=[]
+
+    if period == "M":
+        liste = curseur.execute(f"SELECT User, {column}, SUM(Count) AS Final, Mois, Annee, RANK() OVER (partition by {column}, Mois, Annee ORDER BY SUM(Count) DESC) AS 'Rank' FROM {option}_ranks WHERE {column} = {obj} GROUP BY User, Mois, Annee").fetchall()
+    else:
+        liste = curseur.execute(f"SELECT User, {column}, SUM(Count) AS Final, Annee, RANK() OVER (partition by {column}, Annee ORDER BY SUM(Count) DESC) AS 'Rank' FROM {option}_ranks WHERE {column} = {obj} GROUP BY User, Annee").fetchall()
+        for i in liste:
+            i["Mois"] = "TO"
+
+    liste = list(filter(lambda x:x[column] == id, liste))
+    
+    if tri=="countDesc":
+        liste.sort(key=lambda x:x["Final"],reverse=True)
+    elif tri=="periodAsc":
+        liste.sort(key=lambda x:x["Annee"]+x["Mois"])
+    elif tri=="periodDesc":
+        liste.sort(key=lambda x:x["Annee"]+x["Mois"],reverse=True)
+    elif tri=="rankAsc":
+        liste.sort(key=lambda x:x["Rank"])
+    elif tri=="random":
+        if liste!=[]:
+            liste=choice(liste)
+        else:
+            liste=None
+
+    return liste
+
+def getTablePerso(curseur,option,id,mois,annee,column):
+    if mois != "None":
+        liste = curseur.execute(f"SELECT User, {column}, SUM(Count) AS Final, Mois, Annee, RANK() OVER (partition by {column}, Mois, Annee ORDER BY SUM(Count) DESC) AS 'Rank' FROM {option}_ranks WHERE Mois='{mois}' AND Annee='{annee}' GROUP BY Salon, User").fetchall()
+    elif annee != "None":
+        liste = curseur.execute(f"SELECT User, {column}, SUM(Count) AS Final, Annee, RANK() OVER (partition by {column}, Annee ORDER BY SUM(Count) DESC) AS 'Rank' FROM {option}_ranks WHERE Annee='{annee}' GROUP BY Salon, User").fetchall()
+    else:
+        liste = curseur.execute(f"SELECT User, {column}, SUM(Count) AS Final, RANK() OVER (partition by {column} ORDER BY SUM(Count) DESC) AS 'Rank' FROM {option}_ranks GROUP BY Salon, User").fetchall()
+
+    return list(filter(lambda x:x[column] == id, liste))
+    
+
+def getTableRanks(curseur:CustomCursor,option:str,mois:str,annee:str,column:str,obj:int,dateMax=300000) -> list:
+    if obj == None:
+        strObj = ""
+    else:
+        strObj = "AND Salon={0}".format(obj)
+
+    if mois != "None":
+        return curseur.execute("SELECT {0}, SUM(Count) AS Final, RANK() OVER (ORDER BY SUM(Count) DESC) AS 'Rank' FROM {1}_ranks WHERE Mois='{2}' AND Annee='{3}' AND DateID<{4} {5} GROUP BY {0}".format(column,option,mois,annee,dateMax,strObj)).fetchall()
+    elif annee != "None":
+        return curseur.execute("SELECT {0}, SUM(Count) AS Final, RANK() OVER (ORDER BY SUM(Count) DESC) AS 'Rank' FROM {1}_ranks WHERE Annee='{2}' AND DateID<{3} {4} GROUP BY {0}".format(column,option,annee,dateMax,strObj)).fetchall()
+    else:
+        return curseur.execute("SELECT {0}, SUM(Count) AS Final, RANK() OVER (ORDER BY SUM(Count) DESC) AS 'Rank' FROM {1}_ranks WHERE DateID<{2} {3} GROUP BY {0}".format(column,option,dateMax,strObj)).fetchall()
+
+def getTableRanksJeux(curseur:CustomCursor,option:str,mois:str,annee:str,guild=None,dateMax=300000):
+    if guild == None:
+        strObj = ""
+    else:
+        strObj = "AND Guild={0}".format(guild)
+
+    if mois != "None":
+        return curseur.execute("SELECT User, SUM(Count) AS Final, SUM(W) AS WFinal, SUM(L) AS LFinal, RANK() OVER (ORDER BY SUM(Count) DESC) AS 'Rank' FROM {0}_ranks WHERE Mois='{1}' AND Annee='{2}' AND DateID<{3} {4} GROUP BY User".format(option,mois,annee,dateMax,strObj)).fetchall()
+    elif annee != "None":
+        return curseur.execute("SELECT User, SUM(Count) AS Final, RANK() OVER (ORDER BY SUM(Count) DESC) AS 'Rank' FROM {0}_ranks WHERE Annee='{1}' AND DateID<{2} {3} GROUP BY User".format(option,annee,dateMax,strObj)).fetchall()
+    else:
+        return curseur.execute("SELECT User, SUM(Count) AS Final, RANK() OVER (ORDER BY SUM(Count) DESC) AS 'Rank' FROM {0}_ranks WHERE DateID<{1} {2} GROUP BY User".format(option,dateMax,strObj)).fetchall()

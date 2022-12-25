@@ -8,7 +8,7 @@ def embedSalon(table,guildOT,page,mobile,evol,option):
     field1,field2,field3="","",""
     for ligne in table:
         rank="{0} {1}".format(ligne["Rank"],defEvol(ligne,evol))
-        count=formatCount(option,ligne["Count"])
+        count=formatCount(option,ligne["Final"])
         try:
             if ligne["ID"]==0:
                 nom="Salons éphémères"

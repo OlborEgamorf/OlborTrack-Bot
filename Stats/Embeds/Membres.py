@@ -13,18 +13,18 @@ def embedMembre(table,guildOT,mobile,id,evol,option):
     for ligne in table:
         rank="{0} {1}".format(ligne["Rank"],defEvol(ligne,evol))
         if option=="Divers" and ligne["IDComp"]==11:
-            count=tempsVoice(ligne["Count"])
+            count=tempsVoice(ligne["Final"])
         else:
-            count=formatCount(option,ligne["Count"])
-        if guildOT.users[ligne["ID"]]["Hide"]:
+            count=formatCount(option,ligne["Final"])
+        """if guildOT.users[ligne["User"]]["Hide"]:
             nom="*Membre masqué*"
             count="*?*"
-        elif guildOT.users[ligne["ID"]]["Leave"]:
+        elif guildOT.users[ligne["User"]]["Leave"]:
             nom="*Ancien membre*"
-        else:
-            nom="{0}<@{1}>".format(getBadges(ligne["ID"],None),ligne["ID"])
+        else:"""
+        nom="{0}<@{1}>".format(getBadges(ligne["User"],None),ligne["User"])
         
-        if ligne["ID"]==id:
+        if ligne["User"]==id:
             rank="**__{0}__**".format(rank)
             nom="**__{0}__**".format(nom)
             count="**__{0}__**".format(count)
@@ -32,17 +32,17 @@ def embedMembre(table,guildOT,mobile,id,evol,option):
 
         field1,field2,field3=addtoFields(field1,field2,field3,mobile,rank,nom,count)
     
-    if not author and not guildOT.users[id]["Hide"]:
-        table.sort(key=lambda x:x["ID"])
-        etat=dichotomieID(table,id,"ID")
+    if not author :#and not guildOT.users[id]["Hide"]:
+        table.sort(key=lambda x:x["User"])
+        etat=dichotomieID(table,id,"User")
         if etat[0]:
             rank="\n**__{0}__**".format(table[etat[1]]["Rank"])
             if mobile:
                 nom="**__<@{0}>__**".format(id)
-                count="**__{0}__**".format(formatCount(option,table[etat[1]]["Count"]))
+                count="**__{0}__**".format(formatCount(option,table[etat[1]]["Final"]))
             else:
                 nom="\n**__<@{0}>__**".format(id)
-                count="\n**__{0}__**".format(formatCount(option,table[etat[1]]["Count"]))
+                count="\n**__{0}__**".format(formatCount(option,table[etat[1]]["Final"]))
             field1,field2,field3=addtoFields(field1,field2,field3,mobile,rank,nom,count)
 
     embed=createFields(mobile,embed,field1,field2,field3,"Rang","Membre",dictNameF3[option])
