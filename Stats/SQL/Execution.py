@@ -1,94 +1,151 @@
 from time import strftime
-from Stats.SQL.Compteur import compteurSQL
-from Stats.SQL.Rapports import rapportsSQL
-from Stats.SQL.Daily import dailySQL
-from Stats.SQL.CompteurJeux import compteurJeuxSQL
-from Stats.SQL.Historique import histoSQL, histoSQLJeux
-from Stats.SQL.ConnectSQL import connectSQL
+
 from Titres.Outils import titresJeux
 
 tableauMois={"01":"janvier","02":"février","03":"mars","04":"avril","05":"mai","06":"juin","07":"juillet","08":"aout","09":"septembre","10":"octobre","11":"novembre","12":"décembre","TO":"TOTAL"}
 
-def exeClassic(count,id,nom,curseurGuild,guild):
-    option="Stats"
-    if nom=="Cross":
-        option=="Jeux"
-    dateID=int(strftime("%y")+strftime("%m")+strftime("%d"))
-    connexionGL,curseurGL=connectSQL(guild.id,nom,option,"GL","")
 
-    connexion,curseur=connectSQL(guild.id,nom,option,strftime("%m"),strftime("%y"))
+def executeStats(option,user,salon,count,curseur,jour=None,mois=None,annee=None):
+    if jour==None:
+        jour,mois,annee,dateID=strftime("%d"),strftime("%m"),strftime("%y"),strftime("%y%m%d")
+    else:
+        dateID="{0}{1}{2}".format(annee,mois,jour)
+
+    curseur.execute("CREATE TABLE IF NOT EXISTS {0}_ranks (`Jour` varchar(2), `Mois` varchar(2), `Annee` varchar(2), `DateID` INT, `User` BIGINT, `Salon` BIGINT,`Count` INT, PRIMARY KEY (`DateID`, `User`, `Salon`))".format(option))
+    ishere=curseur.execute("SELECT * FROM {0}_ranks WHERE User={1} AND DateID={2} AND Salon={3}".format(option,user,dateID,salon)).fetchone()
+    if ishere==None:
+        curseur.execute("INSERT INTO {0}_ranks VALUES ('{1}','{2}','{3}',{4},{5},{6},{7})".format(option,jour,mois,annee,dateID,user,salon,count))
+    else:
+        curseur.execute("UPDATE {0}_ranks SET Count=Count+{1} WHERE User={2} AND DateID={3} AND Salon={4}".format(option,count,user,dateID,salon))
+
+def executeStatsObj(option,user,salon,obj,count,curseur,jour=None,mois=None,annee=None):
+    if jour==None:
+        jour,mois,annee,dateID=strftime("%d"),strftime("%m"),strftime("%y"),strftime("%y%m%d")
+    else:
+        dateID="{0}{1}{2}".format(annee,mois,jour)
+
+    curseur.execute("CREATE TABLE IF NOT EXISTS {0}_ranks (`Jour` varchar(2), `Mois` varchar(2), `Annee` varchar(2), `DateID` INT, `User` BIGINT, `Salon` BIGINT, `Obj` BIGINT, `Count` INT, PRIMARY KEY(`DateID`, `User`, `Obj`, `Salon`))".format(option))
+    ishere=curseur.execute("SELECT * FROM {0}_ranks WHERE User={1} AND DateID={2} AND Obj={3} AND Salon={4}".format(option,user,dateID,obj,salon)).fetchone()
+    if ishere==None:
+        curseur.execute("INSERT INTO {0}_ranks VALUES ('{1}','{2}','{3}',{4},{5},{6},{7},{8})".format(option,jour,mois,annee,dateID,user,salon,obj,count))
+    else:
+        curseur.execute("UPDATE {0}_ranks SET Count=Count+{1} WHERE User={2} AND DateID={3} AND Obj={4} AND Salon={5}".format(option,count,user,dateID,obj,salon))
+
+def executeStatsFreq(option,user,salon,heure,count,curseur,mois=None,annee=None):
+    if mois==None:
+        mois,annee,dateID=strftime("%m"),strftime("%y"),strftime("%y%m")
+    else:
+        dateID="{0}{1}".format(annee,mois)
+
+    curseur.execute("CREATE TABLE IF NOT EXISTS {0}_freq (`Mois` varchar(2), `Annee` varchar(2), `DateID` INT, `Heure` varchar(2), `User` BIGINT, `Salon` BIGINT,`Count` INT, PRIMARY KEY (`DateID`, `User`, `Salon`, `Heure`))".format(option))
+    ishere=curseur.execute("SELECT * FROM {0}_freq WHERE User={1} AND DateID={2} AND Heure='{3}' AND Salon={4}".format(option,user,dateID,heure,salon)).fetchone()
+    if ishere==None:
+        curseur.execute("INSERT INTO {0}_freq VALUES ('{1}','{2}',{3},'{4}',{5},{6},{7})".format(option,mois,annee,dateID,heure,user,salon,count))
+    else:
+        curseur.execute("UPDATE {0}_freq SET Count=Count+{1} WHERE User={2} AND DateID={3} AND Heure='{4}' AND Salon={5}".format(option,count,user,dateID,heure,salon))
+
+def executeJeux(option,user,guild,state,curseur,jour=None,mois=None,annee=None):
+    if jour==None:
+        jour,mois,annee,dateID=strftime("%d"),strftime("%m"),strftime("%y"),strftime("%y%m%d")
+    else:
+        dateID="{0}{1}{2}".format(annee,mois,jour)
+
+    curseur.execute("CREATE TABLE IF NOT EXISTS {0}_ranks (`Jour` varchar(2), `Mois` varchar(2), `Annee` varchar(2), `DateID` INT, `User` BIGINT, `Guild` BIGINT,`W` INT, `L` INT, PRIMARY KEY (`DateID`, `User`, `Guild`))".format(option))
+    ishere=curseur.execute("SELECT * FROM {0}_ranks WHERE User={1} AND DateID={2} AND Guild={3}".format(option,user,dateID,guild)).fetchone()
+    if ishere==None:
+        if state == "W":
+            curseur.execute("INSERT INTO {0}_ranks VALUES ('{1}','{2}','{3}',{4},{5},{6},1,0)".format(option,jour,mois,annee,dateID,user,guild))
+        else:
+            curseur.execute("INSERT INTO {0}_ranks VALUES ('{1}','{2}','{3}',{4},{5},{6},0,1)".format(option,jour,mois,annee,dateID,user,guild))
+    else:
+        curseur.execute("UPDATE {0}_ranks SET {1}={1}+1 WHERE User={2} AND DateID={3} AND Guild={4}".format(option,state,user,dateID,guild))
+    
+    if state == "W":
+        countW=curseur.execute("SELECT W FROM {0}_ranks WHERE User = {1}".format(option,user)).fetchone()["W"]
+        if countW in (5,10):
+            titresJeux(countW,option,user)
+        return countW
+
+def executeStatsTrivial(user,categ,guild,count,curseur,jour=None,mois=None,annee=None):
+    if jour==None:
+        jour,mois,annee,dateID=strftime("%d"),strftime("%m"),strftime("%y"),strftime("%y%m%d")
+    else:
+        dateID="{0}{1}{2}".format(annee,mois,jour)
+
+    curseur.execute("CREATE TABLE IF NOT EXISTS trivial_ranks (`Jour` varchar(2), `Mois` varchar(2), `Annee` varchar(2), `DateID` INT, `User` BIGINT, `Guild` BIGINT, `Categ` INT, Count` INT, PRIMARY KEY (`DateID`, `User`, `Guild`, `Categ`))")
+    ishere=curseur.execute("SELECT * FROM trivial_ranks WHERE User={0} AND DateID={1} AND Guild={2} AND Categ={3}".format(user,dateID,guild,categ)).fetchone()
+    if ishere==None:
+        curseur.execute("INSERT INTO trivial_ranks VALUES ('{0}','{1}','{2}',{3},{4},{5},{6},{7})".format(jour,mois,annee,dateID,user,guild,categ,count))
+    else:
+        curseur.execute("UPDATE trivial_ranks SET Count=Count+{0} WHERE User={1} AND DateID={2} AND Guild={3} AND Categ={4}".format(count,user,dateID,guild,categ))
+
+def executeTrivialStreak(user,count,curseur,jour=None,mois=None,annee=None):
+    if jour==None:
+        jour,mois,annee,dateID=strftime("%d"),strftime("%m"),strftime("%y"),strftime("%y%m%d")
+    else:
+        dateID="{0}{1}{2}".format(annee,mois,jour)
+
+    curseur.execute("CREATE TABLE IF NOT EXISTS trivialStreak_ranks (`Jour` varchar(2), `Mois` varchar(2), `Annee` varchar(2), `DateID` INT, `User` BIGINT, `Count` INT, PRIMARY KEY (`DateID`, `User`))")
+
+    ishere=curseur.execute("SELECT * FROM trivialStreak_ranks WHERE User={0}".format(user)).fetchone()
+    if ishere==None:
+        curseur.execute("INSERT INTO trivialStreak_ranks VALUES ('{0}','{1}','{2}',{3},{4},{5})".format(jour,mois,annee,dateID,user,count))
+    else:
+        if count > ishere["Count"]:
+            curseur.execute("UPDATE trivialStreak_ranks SET Count={0}, Jour={1}, Mois={2}, Annee={3}, DateID={4} WHERE User={5}".format(count,jour,mois,annee,dateID,user))
+            return True, ishere["Count"]
+    return False, ishere["Count"]
+
+
+
+"""def exeClassicFocus(count,id,user,option):
+    dateID=int(strftime("%y")+strftime("%m")+strftime("%d"))
+    connexionUser,curseurUser=connectSQL(user,"Settings","Focus","GL","")
+    connexionGL,curseurGL=connectSQL(user,option,"Focus","GL","")
+
+    connexion,curseur=connectSQL(user,option,"Focus",strftime("%m"),strftime("%y"))
     compteurSQL(curseur,tableauMois[strftime("%m")]+strftime("%y"),id,(0,id,strftime("%m"),strftime("%y"),count,0),count,(strftime("%d"),strftime("%m"),strftime("%y")),(strftime("%m"),strftime("%y")),False,True,1,curseurGL)
     connexion.commit()
 
-    connexion,curseur=connectSQL(guild.id,nom,option,"TO",strftime("%y"))
+    connexion,curseur=connectSQL(user,option,"Focus","TO",strftime("%y"))
     compteurSQL(curseur,"to"+strftime("%y"),id,(0,id,"TO",strftime("%y"),count,0),count,(strftime("%d"),strftime("%m"),strftime("%y")),("TO",strftime("%y")),False,True,1,curseurGL)
     connexion.commit()
 
     compteurSQL(curseurGL,"glob",id,(0,id,"TO","GL",count,0),count,(strftime("%d"),strftime("%m"),strftime("%y")),("TO","GL"),False,True,1,curseurGL)
-    if nom in ("Messages","Voice"):
-        compteurSQL(curseurGL,"dayRank",int(strftime("%y")+strftime("%m")+strftime("%d")),(0,int(strftime("%y")+strftime("%m")+strftime("%d")),strftime("%d"),strftime("%m"),strftime("%y"),count),count,None,None,None,False,3,curseurGL)
+    connexionGL.commit()
     
+    dailySQL(dateID,(strftime("%d"),strftime("%m"),strftime("%y")),option,curseurUser,user,"Focus")
+    rapportsFocus(user,"ranks",id,None,count,(0,id,strftime("%d"),strftime("%m"),strftime("%y"),dateID,count,option),strftime("%d"),strftime("%m"),strftime("%y"),option)
+    connexionUser.commit()
     connexionGL.commit()
 
-    dailySQL(dateID,(strftime("%d"),strftime("%m"),strftime("%y")),nom,curseurGuild,guild.id,option)
-    rapportsSQL(guild,"ranks",id,None,count,(0,id,strftime("%d"),strftime("%m"),strftime("%y"),dateID,count,nom),strftime("%d"),strftime("%m"),strftime("%y"),nom)
 
-def exeObj(count,idObj,id,obj,guild,nom):
-    option="Stats"
-    if nom=="Cross":
-        option=="Jeux"
-    dateID=int(strftime("%y")+strftime("%m")+strftime("%d"))
-    connexionGL,curseurGL=connectSQL(guild.id,nom,option,"GL","")
+def exeFocusFreq(start,stop,user,option,id):
+    import datetime
+    dateStart=datetime.datetime.fromtimestamp(start)
+    dateStop=datetime.datetime.fromtimestamp(stop)
+    heureStart,minStart,secStart=int(dateStart.strftime("%H")),int(dateStart.strftime("%M")),int(dateStart.strftime("%S"))
+    heureStop,minStop,secStop=int(dateStop.strftime("%H")),int(dateStop.strftime("%M")),int(dateStop.strftime("%S"))
 
-    connexion,curseur=connectSQL(guild.id,nom,option,strftime("%m"),strftime("%y"))
-    compteurSQL(curseur,tableauMois[strftime("%m")]+strftime("%y")+str(idObj),id,(0,id,idObj,strftime("%m"),strftime("%y"),count),count,(strftime("%d"),strftime("%m"),strftime("%y")),(strftime("%m"),strftime("%y")),obj,False,2,curseurGL)
-    if nom in ("Emotes","Reactions") and curseur.execute("SELECT Count FROM {0}{1} WHERE ID={2}".format(tableauMois[strftime("%m")],strftime("%y"),idObj)).fetchone()["Count"]<10:
-        curseur.execute("DROP TABLE {0}{1}{2}".format(tableauMois[strftime("%m")],strftime("%y"),idObj))
-    connexion.commit()
+    connexionGL,curseurGL=connectSQL(user,option,"Focus","GL","")
+    connexionMois,curseurMois=connectSQL(user,option,"Focus",strftime("%m"),strftime("%y"))
+    connexionTO,curseurTO=connectSQL(user,option,"Focus","TO",strftime("%y"))
 
-    connexion,curseur=connectSQL(guild.id,nom,option,"TO",strftime("%y"))
-    compteurSQL(curseur,"to"+strftime("%y")+str(idObj),id,(0,id,idObj,"TO",strftime("%y"),count),count,(strftime("%d"),strftime("%m"),strftime("%y")),("TO",strftime("%y")),obj,False,2,curseurGL)
-    if nom in ("Emotes","Reactions") and curseur.execute("SELECT Count FROM to{0} WHERE ID={1}".format(strftime("%y"),idObj)).fetchone()["Count"]<25:
-        curseur.execute("DROP TABLE to{0}{1}".format(strftime("%y"),idObj))
-    connexion.commit()
+    for i in range(heureStart,heureStop+1):
+        if heureStart==heureStop:
+            count=(minStop-minStart)*60+(secStop-secStart)
+        elif i==heureStart:
+            count=3600-minStart*60-secStart
+        elif i==heureStop:
+            count=minStop*60+secStop
+        else:
+            count=3600
 
-    compteurSQL(curseurGL,"glob"+str(idObj),id,(0,id,idObj,"TO","GL",count),count,(strftime("%d"),strftime("%m"),strftime("%y")),("TO","GL"),obj,False,2,curseurGL)
-    if nom in ("Emotes","Reactions"):
-        if curseurGL.execute("SELECT Count FROM glob WHERE ID={0}".format(idObj)).fetchone()["Count"]<50:
-            curseurGL.execute("DROP TABLE glob{0}".format(idObj))
+        compteurSQL(curseurMois,"freq"+id+tableauMois[strftime("%m")]+strftime("%y"),i,(0,i,strftime("%m"),strftime("%y"),count,0),count,None,None,None,False,1,curseurGL)
+        compteurSQL(curseurTO,"freq"+id+"to"+strftime("%y"),i,(0,i,"TO",strftime("%y"),count,0),count,None,None,None,False,1,curseurGL)
+        compteurSQL(curseurGL,"freq"+id+"glob",i,(0,i,"TO","GL",count,0),count,None,None,None,False,1,curseurGL)
+
     connexionGL.commit()
-
-    rapportsSQL(guild,"objs",idObj,id,count,(0,id,idObj,strftime("%d"),strftime("%m"),strftime("%y"),dateID,count,nom),strftime("%d"),strftime("%m"),strftime("%y"),nom)
-
-def exeJeuxSQL(id,idObj,state,guild,curseurGuild,option,tours):
-    dictCount={"W":2,"L":-1}
-    dictW={"W":1,"L":0}
-    dictL={"W":0,"L":1}
-    connexionGL,curseurGL=connectSQL(guild,option,"Jeux","GL","")
-
-    connexion,curseur=connectSQL(guild,option,"Jeux",strftime("%m"),strftime("%y"))
-    compteurJeuxSQL(curseur,tableauMois[strftime("%m")]+strftime("%y"),id,(0,id,strftime("%m"),strftime("%y"),dictW[state],dictL[state],dictCount[state],0),dictCount[state],(strftime("%d"),strftime("%m"),strftime("%y")),(strftime("%m"),strftime("%y")),False,state,4,curseurGL)
-    if idObj!=None:
-        compteurJeuxSQL(curseur,tableauMois[strftime("%m")]+strftime("%y")+str(idObj),id,(0,id,idObj,strftime("%m"),strftime("%y"),dictW[state],dictL[state],dictCount[state],0),dictCount[state],(strftime("%d"),strftime("%m"),strftime("%y")),(strftime("%m"),strftime("%y")),True,state,5,curseurGL)
-    connexion.commit()
-
-    connexion,curseur=connectSQL(guild,option,"Jeux","TO",strftime("%y"))
-    compteurJeuxSQL(curseur,"to"+strftime("%y"),id,(0,id,"TO",strftime("%y"),dictW[state],dictL[state],dictCount[state],0),dictCount[state],(strftime("%d"),strftime("%m"),strftime("%y")),("TO",strftime("%y")),False,state,4,curseurGL)
-    if idObj!=None:
-        compteurJeuxSQL(curseur,"to"+strftime("%y")+str(idObj),id,(0,id,idObj,"TO",strftime("%y"),dictW[state],dictL[state],dictCount[state],0),dictCount[state],(strftime("%d"),strftime("%m"),strftime("%y")),("TO",strftime("%y")),True,state,5,curseurGL)
-    connexion.commit()
-
-    compteurJeuxSQL(curseurGL,"glob",id,(0,id,"TO","GL",dictW[state],dictL[state],dictCount[state],0),dictCount[state],(strftime("%d"),strftime("%m"),strftime("%y")),("TO","GL"),False,state,4,curseurGL)
-    if idObj!=None:
-        compteurJeuxSQL(curseurGL,"glob"+str(idObj),id,(0,id,idObj,"TO","GL",dictW[state],dictL[state],dictCount[state],0),dictCount[state],(strftime("%d"),strftime("%m"),strftime("%y")),("TO","GL"),True,state,5,curseurGL)
-        histoSQLJeux(curseurGL,id,tours,strftime("%d")+"/"+strftime("%m")+"/"+strftime("%y"),idObj,state)
-    if guild=="OT" and state=="W":
-        countW=curseurGL.execute("SELECT W FROM glob WHERE ID= {0}".format(id)).fetchone()["W"]
-        if countW in (5,10):
-            titresJeux(countW,option,id)
-    connexionGL.commit()
-
-    dailySQL(int(strftime("%y")+strftime("%m")+strftime("%d")),(strftime("%d"),strftime("%m"),strftime("%y")),option,curseurGuild,guild,"Jeux")
-
-    if "countW" in locals():
-        return countW
+    connexionMois.commit()
+    connexionTO.commit()"""
+    

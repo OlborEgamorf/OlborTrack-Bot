@@ -1,13 +1,11 @@
-from time import strftime,time
+from time import time
 
 import discord
-
 from Core.OTGuild import OTGuild
+from Stats.SQL.Execution import executeStatsFreq
 from Stats.SQL.ConnectSQL import connectSQL
-from Stats.SQL.Execution import exeClassic, exeObj
-from Stats.SQL.Historique import histoSQL
+from Stats.SQL.Execution import executeStats
 from Stats.SQL.Verification import verifExecSQL
-from Stats.Tracker.Divers import exeDiversSQL
 
 listeCo={}
 dictMois={1:31,2:28,3:31,4:30,5:31,6:30,7:31,8:31,9:30,10:31,11:30,12:31}
@@ -38,24 +36,36 @@ class Voice:
         if self.channelid in guild.voiceephem:
             self.channelid=0
         if count!=0:
-            connexionGuild,curseurGuild=connectSQL(guild.id,"Guild","Guild",None,None)
-            exeClassic(count,self.userid,"Voice",curseurGuild,guild)
+            connexion,curseur=connectSQL(guild.id)
+            executeStats("voice",self.userid,self.channelid,count,curseur)
 
-            connexion,curseur=connectSQL(guild.id,"Voice","Stats","GL","")
-            histoSQL(curseur,count,self.userid,strftime("%y")+strftime("%m")+strftime("%d"),self.channelid)
+            import datetime
+            dateStart=datetime.datetime.fromtimestamp(self.time)
+            dateStop=datetime.datetime.fromtimestamp(time())
+            heureStart,minStart,secStart=int(dateStart.strftime("%H")),int(dateStart.strftime("%M")),int(dateStart.strftime("%S"))
+            heureStop,minStop,secStop=int(dateStop.strftime("%H")),int(dateStop.strftime("%M")),int(dateStop.strftime("%S"))
+
+            if heureStop<heureStart:
+                heureStop+=24
+
+            for i in range(heureStart,heureStop+1):
+                if heureStart==heureStop:
+                    count=(minStop-minStart)*60+(secStop-secStart)
+                elif i==heureStart:
+                    count=3600-minStart*60-secStart
+                elif i==(heureStop):
+                    count=minStop*60+secStop
+                else:
+                    count=3600
+                
+                executeStatsFreq("voice",self.userid,self.channelid,i%24,count,curseur)
+
             connexion.commit()
 
-            if bool(guild.mstats[0]["Statut"])==True:
-                exeClassic(count,self.channelid,"Voicechan",curseurGuild,guild)
-                exeObj(count,self.channelid,self.userid,True,guild,"Voicechan")
-            
-            exeDiversSQL(self.userid,{"Vocal":count},"+",guild,connexionGuild,curseurGuild)
-
-            connexionGuild.commit()
 
 
 async def voiceConnect(member,before,after,guild):
-    if member.bot==False and guild.mstats[5]["Statut"]==True and guild.stats:
+    if member.bot==False and guild.mstats[1]["Statut"]==True and guild.stats:
         if before.channel!=None:
             if verifExecSQL(guild,before.channel,member) and member.id in listeCo:
                 listeCo[member.id].exeStat(guild)

@@ -1,78 +1,51 @@
-import os
+from Core.Fonctions.Phrase import createPhrase
 from Stats.SQL.ConnectSQL import connectSQL
 
-def graphSQL(guild):
-    connexion,curseur = connectSQL(guild.id,"Guild")
-    curseur.execute("CREATE TABLE IF NOT EXISTS graphs (MessageID BIGINT, Graph1 TEXT, Graph2 TEXT, Graph3 TEXT, Graph4 TEXT, Graph5 TEXT, Graph6 TEXT, Graph7 TEXT, Page INT, PageMax INT)")
-    connexion.commit()
-
-
 def createDirSQL(guild):
-    if not os.path.exists("SQL/{0}".format(guild.id)):
-        os.makedirs("SQL/{0}".format(guild.id))
-    connexion,curseur = connectSQL(guild.id,"Guild","Guild",None,None)
-
+    connexion,curseur = connectSQL(guild.id)
     
-    curseur.execute("CREATE TABLE IF NOT EXISTS modulesStats (Module TEXT PRIMARY KEY, Statut BOOL)")
-    listeN=["Salons","Moyennes","Freq","Reactions","Mentions","Voice","Mots","Roles","Emotes","Messages","Divers"]
+    curseur.execute("CREATE TABLE IF NOT EXISTS etatStats (`Module` varchar(50) PRIMARY KEY, `Active` BOOLEAN)")
+    listeN=["Messages","Voice","Emotes","Reactions","Divers"]
     for i in listeN:
         try:
-            curseur.execute("INSERT INTO modulesStats VALUES('{0}',True)".format(i))
+            curseur.execute("INSERT INTO etatStats VALUES('{0}',True)".format(i))
         except:
             pass
 
-    
-    curseur.execute("CREATE TABLE IF NOT EXISTS modulesCMD (Module TEXT PRIMARY KEY, Statut BOOL)")
-    listeC=["Stats","Sondages","Outils","Savezvous","Jeux"]
+    curseur.execute("CREATE TABLE IF NOT EXISTS etatModules (`Module` varchar(50) PRIMARY KEY, `Active` BOOLEAN, `Count` INT, `Count2` INT, `Salon` BIGINT)")
+    listeC=["BV","AD","DynIcon","Stats","Polls","Twitch","Twitter","YouTube","Tableaux","VoiceEphem","CMDAuto","SavezVous","Jeux","Anniv","Timeline","RoleSelector","CMDCustom"]
+    listeC.sort()
     for i in listeC:
         try:
-            curseur.execute("INSERT INTO modulesCMD VALUES('{0}',{1})".format(i,True))
-        except:
-            pass
-
-    curseur.execute("CREATE TABLE IF NOT EXISTS sbmessages (IDMess BIGINT, IDStar BIGINT, Nombre INT, PRIMARY KEY(IDMess,IDStar))")
-    curseur.execute("CREATE TABLE IF NOT EXISTS savezvous (Texte TEXT, ID BIGINT, Image TEXT, Count INT, Source TEXT)")
-    curseur.execute("CREATE TABLE IF NOT EXISTS svcomment (Count INT, ID INT, Texte TEXT, Date TEXT)")
-    curseur.execute("CREATE TABLE IF NOT EXISTS sb (Nombre INT, Salon BIGINT, Emote TEXT, ID BIGINT, Count INT, PRIMARY KEY(Salon, Emote))")
-    curseur.execute("CREATE TABLE IF NOT EXISTS twitch (Nombre INT, Salon BIGINT, Stream TEXT, Descip TEXT, Sent BOOL, PRIMARY KEY(Salon, Stream))")
-    curseur.execute("CREATE TABLE IF NOT EXISTS youtube (Nombre INT, Salon BIGINT, Chaine TEXT, Descip TEXT, LastID TEXT, Nom TEXT, PRIMARY KEY(Salon, Chaine))")
-    curseur.execute("CREATE TABLE IF NOT EXISTS twitter (Nombre INT, Salon BIGINT, Compte INT, Descip TEXT, LastID INT, Nom TEXT, PRIMARY KEY(Salon, Compte))")
-
-    curseur.execute("CREATE TABLE IF NOT EXISTS etatBVAD (Type TEXT PRIMARY KEY, Statut BOOL, Salon INT)")
-    curseur.execute("CREATE TABLE IF NOT EXISTS imagesBV (Nombre INT, Path TEXT, Message TEXT, Couleur TEXT, Taille INT, Mode TEXT)")
-    curseur.execute("CREATE TABLE IF NOT EXISTS messagesBV (Nombre INT, Message TEXT)")
-
-    curseur.execute("CREATE TABLE IF NOT EXISTS imagesAD (Nombre INT, Path TEXT, Message TEXT, Couleur TEXT, Taille INT, Mode TEXT, Filtre BOOL)")
-    curseur.execute("CREATE TABLE IF NOT EXISTS messagesAD (Nombre INT, Message TEXT)")
-
-    curseur.execute("CREATE TABLE IF NOT EXISTS etatAnniv (Statut BOOL, Salon INT, Message TEXT)")
-
-    curseur.execute("CREATE TABLE IF NOT EXISTS etatPP (Statut BOOL, Salon INT)")
-    curseur.execute("INSERT INTO etatPP VALUES (False,0)")
-    curseur.execute("CREATE TABLE IF NOT EXISTS icons (Nombre INT, Path TEXT, Description TEXT, Membres TEXT, Auteur INT, Rotation BOOL, PRIMARY KEY(Nombre))")
-
-    for i in ("BV","AD"):
-        try:
-            curseur.execute("INSERT INTO etatBVAD VALUES('{0}',0,0)".format(i))
+            curseur.execute("INSERT INTO etatModules VALUES('{0}',True,0,0,NULL)".format(i))
         except:
             pass
     
-    if curseur.execute("SELECT * FROM etatAnniv").fetchone()==None:
-        curseur.execute("INSERT INTO etatAnniv VALUES(False,0,'None')")
+    curseur.execute("CREATE TABLE IF NOT EXISTS polls_petitions (`ID` BIGINT, `Petition` INT, `Nb` INT, Final INT, Active INT, Debut INT, Fin INT, Auteur BIGINT, Channel BIGINT, Description varchar(300))")
+    curseur.execute("CREATE TABLE IF NOT EXISTS polls_giveaways (`ID` BIGINT, `Lot` INT, `Gagnants` INT, `Winner` varchar(500), `Participants` varchar(15000), `Active` INT, `Debut` INT, `Fin` INT, `Auteur` BIGINT, `Channel` BIGINT, `Description` varchar(300))")
+    curseur.execute("CREATE TABLE IF NOT EXISTS polls_polls (`ID` BIGINT, `Question` varchar(300), `Propositions` varchar(1000), `Results` varchar(200), `Active` BOOLEAN, `Multiple` BOOLEAN, `Total` INT, `Start` BIGINT, `End` BIGINT, `Auteur` BIGINT, `Channel` BIGINT)")
 
-    curseur.execute("CREATE TABLE IF NOT EXISTS wikinsfw (Active BOOL)")
-    try:
-        curseur.execute("INSERT INTO wikinsfw VALUES(True)")
-    except:
-        pass
+    curseur.execute("CREATE TABLE IF NOT EXISTS tab_messages (`Nombre` INT, `IDMess` BIGINT, `IDStar` BIGINT, PRIMARY KEY(IDMess,IDStar))")
+    curseur.execute("CREATE TABLE IF NOT EXISTS tab_tableaux (`Nombre` INT, `Salon` BIGINT, `Emote` varchar(100), `ID` BIGINT, `Count` INT, `Active` BOOLEAN, PRIMARY KEY(Salon, Emote))")
+    
+    curseur.execute("CREATE TABLE IF NOT EXISTS sv_savezvous (`Nombre` INT, `Texte` varchar(2000), `ID` BIGINT, `Image` varchar(300), Source varchar(2000))")
+    curseur.execute("CREATE TABLE IF NOT EXISTS sv_comment (`Nombre` INT, `ID` BIGINT, `Texte` varchar(300), `Date` varchar(10))")
+    
+    curseur.execute("CREATE TABLE IF NOT EXISTS al_twitch (`Nombre` INT, `Salon` BIGINT, `Stream` varchar(50), `Descip` varchar(300), `Sent` BOOLEAN, `Active` BOOLEAN, PRIMARY KEY(Salon, Stream))")
+    curseur.execute("CREATE TABLE IF NOT EXISTS al_youtube (`Nombre` INT, `Salon` BIGINT, `Chaine` varchar(50), `Descip` varchar(300), `LastID` varchar(50), `Nom` varchar(50), `Active` BOOLEAN, PRIMARY KEY(Salon, Chaine))")
+    curseur.execute("CREATE TABLE IF NOT EXISTS al_twitter (`Nombre` INT, `Salon` BIGINT, `Compte` BIGINT, `Descip` varchar(300), `LastID` BIGINT, `Nom` varchar(50), `Active` BOOLEAN, PRIMARY KEY(Salon, Compte))")
 
-    curseur.execute("CREATE TABLE IF NOT EXISTS stats (Active BOOL PRIMARY KEY)")
-    try:
-        curseur.execute("INSERT INTO stats VALUES(True)")
-    except:
-        pass
+    curseur.execute("CREATE TABLE IF NOT EXISTS bv_images (`Nombre` INT, `Path` varchar(300), `Message` varchar(500), `Couleur` varchar(7), `Taille` INT, `Mode` varchar(4), `Active` BOOLEAN)")
+    curseur.execute("CREATE TABLE IF NOT EXISTS bv_messages (`Nombre` INT, `Message` varchar(500), `Active` BOOLEAN)")
 
-    curseur.execute("CREATE TABLE IF NOT EXISTS chans (ID BIGINT PRIMARY KEY, Hide BOOL, Blind BOOL, Mute BOOL, Tab BOOL)")
+    curseur.execute("CREATE TABLE IF NOT EXISTS ad_images (`Nombre` INT, `Path` varchar(300), `Message` varchar(500), `Couleur` varchar(7), `Taille` INT, `Mode` varchar(4), `Filtre` BOOLEAN, `Active` BOOLEAN)")
+    curseur.execute("CREATE TABLE IF NOT EXISTS ad_messages (`Nombre` INT, `Message` varchar(500), `Active` BOOLEAN)")
+
+    curseur.execute("CREATE TABLE IF NOT EXISTS dyn_icons (`Nombre` INT PRIMARY KEY, `Path` varchar(300), `Description` varchar(500), `Membres` varchar(1800), `Auteur` BIGINT, `Rotation` BOOLEAN, `Active` BOOLEAN)")
+
+    curseur.execute("CREATE TABLE IF NOT EXISTS anniv (`Message` varchar(500))")
+
+    curseur.execute("CREATE TABLE IF NOT EXISTS chans (`ID` BIGINT PRIMARY KEY, `Hide` BOOLEAN, `Blind` BOOLEAN, `Mute` BOOLEAN, `Tab` BOOLEAN)")
     for i in guild.text_channels:
         if curseur.execute("SELECT * FROM chans WHERE ID={0}".format(i.id)).fetchone()==None:
             curseur.execute("INSERT INTO chans VALUES({0},{1},{2},{3},{4})".format(i.id,False,False,False,False))
@@ -80,64 +53,106 @@ def createDirSQL(guild):
         if curseur.execute("SELECT * FROM chans WHERE ID={0}".format(i.id)).fetchone()==None:
             curseur.execute("INSERT INTO chans VALUES({0},{1},{2},{3},{4})".format(i.id,False,False,False,False))
     
-    curseur.execute("CREATE TABLE IF NOT EXISTS users (ID BIGINT PRIMARY KEY, Hide BOOL, Blind BOOL, Leave BOOL)")
+    curseur.execute("CREATE TABLE IF NOT EXISTS users (`ID` BIGINT PRIMARY KEY, `Hide` BOOLEAN, `Blind` BOOLEAN, `Leave` BOOLEAN)")
     for i in guild.members:
         if not i.bot:
             if curseur.execute("SELECT * FROM users WHERE ID={0}".format(i.id)).fetchone()==None:
                 curseur.execute("INSERT INTO users VALUES({0},{1},{2},{3})".format(i.id,False,False,False))
     
-    curseur.execute("CREATE TABLE IF NOT EXISTS auto (Commande TEXT PRIMARY KEY, Salon BIGINT, Active BOOL)")
+    curseur.execute("CREATE TABLE IF NOT EXISTS cmd_auto (`Commande` varchar(50) PRIMARY KEY, `Salon` BIGINT, `Active` BOOLEAN)")
     listeA=["savezvous","nasaphoto","jour","mois","annee","events"]
     for i in listeA:
         try:
-            curseur.execute("INSERT INTO auto VALUES('{0}',False,0)".format(i))
+            curseur.execute("INSERT INTO cmd_auto VALUES('{0}',False,0)".format(i))
         except:
             pass
 
-    curseur.execute("CREATE TABLE IF NOT EXISTS alertesot (Type TEXT PRIMARY KEY, Webhook BIGINT, Salon BIGINT, Active BOOL)")
-    listeA=["github","updates","cross"]
-    for i in listeA:
-        try:
-            curseur.execute("INSERT INTO auto VALUES('{0}',0,0,False)".format(i))
-        except:
-            pass
+    curseur.execute("CREATE TABLE IF NOT EXISTS cmd_custom (`Nom` varchar(50) PRIMARY KEY, `Description` varchar(1000), `Embed` BOOLEAN, `Title` varchar(200), `Author` varchar(25), `Color` varchar(7), `Footer` varchar(100), `Image` varchar(100), `Miniature` varchar(100))")
 
-    connexion.commit()
+    curseur.execute("CREATE TABLE IF NOT EXISTS commandes (`MessageID` BIGINT, `AuthorID` BIGINT, `Commande` varchar(50), `Option` varchar(50), `Args1` varchar(50), `Args2` varchar(50), `Args3` varchar(50), `Args4` varchar(50), `Page` INT, `PageMax` INT, `Tri` varchar(50), `Mobile` BOOLEAN)")
+    curseur.execute("CREATE TABLE IF NOT EXISTS graphs (`MessageID` BIGINT, `Graph1` varchar(50), `Graph2` varchar(50), `Graph3` varchar(50), `Graph4` varchar(50), `Graph5` varchar(50), `Graph6` varchar(50), `Graph7` varchar(50), `Page` INT, `PageMax` INT)")
 
-    connexion,curseur = connectSQL(guild.id,"CustomCMD","Guild",None,None)
-    curseur.execute("CREATE TABLE IF NOT EXISTS help (Nom TEXT PRIMARY KEY, Description TEXT)")
-    curseur.execute("CREATE TABLE IF NOT EXISTS custom (Nom TEXT PRIMARY KEY, Description TEXT, Embed BOOL, Title TEXT, Author TEXT, Color TEXT, Footer TEXT, Image TEXT, Miniature TEXT)")
-    connexion.commit()
-
-    connexion,curseur = connectSQL(guild.id,"Giveaway","Guild",None,None)
-    curseur.execute("CREATE TABLE IF NOT EXISTS liste (Nombre INT PRIMARY KEY, IDMess BIGINT, IDChan INT, Lot TEXT)")
-    connexion.commit()
-
-    connexion,curseur = connectSQL(guild.id,"Commandes","Guild",None,None)
-    curseur.execute("CREATE TABLE IF NOT EXISTS commandes (MessageID BIGINT, AuthorID BIGINT, Commande TEXT, Option TEXT, Args1 TEXT, Args2 TEXT, Args3 TEXT, Args4 TEXT, Page INT, PageMax INT, Tri TEXT, Mobile BOOL)")
-    curseur.execute("CREATE TABLE IF NOT EXISTS graphs (MessageID BIGINT, Graph1 TEXT, Graph2 TEXT, Graph3 TEXT, Graph4 TEXT, Graph5 TEXT, Graph6 TEXT, Graph7 TEXT, Page INT, PageMax INT)")
-    connexion.commit()
-
-    connexion,curseur = connectSQL(guild.id,"VoiceEphem","Guild",None,None)
-    curseur.execute("CREATE TABLE IF NOT EXISTS hub (Nombre INT PRIMARY KEY, ID INT, Limite INT, Pattern TEXT)")
-    curseur.execute("CREATE TABLE IF NOT EXISTS salons (IDHub INT, IDChannel INT, IDOwner INT, Lock BOOL)")
-    for i in range(1,51):
-        try:
-            curseur.execute("INSERT INTO salons VALUES({0},'Salon {0}',0)".format(i))
-        except:
-            pass
+    curseur.execute("CREATE TABLE IF NOT EXISTS vep_hub (`Nombre` INT PRIMARY KEY, `ID` BIGINT, `Limite` INT, `Pattern` varchar(200), `Active` BOOLEAN)")
+    curseur.execute("CREATE TABLE IF NOT EXISTS vep_salons (`IDHub` BIGINT, `IDChannel` BIGINT, `IDOwner` BIGINT, `Lock` BOOLEAN)")
+    
     connexion.commit()
 
 
-def alterHBM(bot):
+def backGuild(bot):
     for i in bot.guilds:
-        connexion,curseur = connectSQL(i.id,"VoiceEphem","Guild",None,None)
-        try:
-            curseur.execute("ALTER TABLE hub ADD COLUMN Pattern TEXT")
-            curseur.execute("UPDATE hub SET Pattern='default'")
-            curseur.execute("DROP TABLE salons")
-            curseur.execute("CREATE TABLE salons (IDHub INT, IDChannel INT, IDOwner INT, Lock BOOL)")
-        except:
-            pass
-        #curseur.execute("DELETE FROM modulesCMD WHERE Module='{0}' OR Module='{1}' OR Module='{2}' OR Module='{3}'".format("MAL","Wiki","Spotify","Geo"))
-        connexion.commit()
+        print(i.id)
+        createDirSQL(i)
+        connexion,curseur=connectSQL(i.id,"Guild","Guild",None,None)
+        connexionMY,curseurMY=connectSQL(i.id)
+
+        for i in curseur.execute("SELECT * FROM auto").fetchall():
+            if i["Active"]==True:
+                curseurMY.execute("UPDATE cmd_auto SET Salon={0}, Active=True WHERE Commande='{1}'".format(i["Salon"],i["Commande"]))
+
+        for i in curseur.execute("SELECT * FROM chans").fetchall():
+            curseurMY.execute("UPDATE chans SET Hide={0}, Blind={1}, Mute={2}, Tab={3} WHERE ID={4}".format(i["Hide"],i["Blind"],i["Mute"],i["Tab"],i["ID"])) 
+
+        anniv=curseur.execute("SELECT * FROM etatAnniv").fetchone()
+        if anniv["Statut"]==True:
+            curseurMY.execute("UPDATE etatModules Set Active=True, Salon={0} WHERE Module='Anniv'".format(anniv["Salon"]))
+            curseurMY.execute("INSERT INTO anniv VALUES ('{0}')".format(anniv["Message"]))
+
+        bv=curseur.execute("SELECT * FROM etatBVAD WHERE Type='BV'").fetchone()
+        if bv["Statut"]==True:
+            curseurMY.execute("UPDATE etatModules Set Active=True, Salon={0} WHERE Module='BV'".format(bv["Salon"]))
+        
+        ad=curseur.execute("SELECT * FROM etatBVAD WHERE Type='AD'").fetchone()
+        if ad["Statut"]==True:
+            curseurMY.execute("UPDATE etatModules Set Active=True, Salon={0} WHERE Module='AD'".format(ad["Salon"]))
+
+        dyn=curseur.execute("SELECT * FROM etatPP").fetchone()
+        if dyn["Statut"]==True:
+            curseurMY.execute("UPDATE etatModules Set Active=True, Salon={0} WHERE Module='DynIcon'".format(dyn["Salon"]))
+
+        for i in curseur.execute("SELECT * FROM icons").fetchall():
+            curseurMY.execute("INSERT INTO dyn_icons VALUES ({0},'{1}','{2}','{3}',{4},{5},True)".format(i["Nombre"],i["Path"],createPhrase(i["Description"]),i["Membres"],i["Auteur"],i["Rotation"]))
+            curseurMY.execute("UPDATE etatModules SET Count=Count+1 WHERE Module='DynIcon'")
+
+        for i in curseur.execute("SELECT * FROM imagesAD").fetchall():
+            curseurMY.execute("INSERT INTO ad_images VALUES ({0},'{1}','{2}','{3}',{4},'{5}',{6},True)".format(i["Nombre"],i["Path"],i["Message"],i["Couleur"],i["Taille"],i["Mode"],i["Filtre"]))
+            curseurMY.execute("UPDATE etatModules SET Count2=Count2+1 WHERE Module='AD'")
+
+        for i in curseur.execute("SELECT * FROM imagesBV").fetchall():
+            curseurMY.execute("INSERT INTO bv_images VALUES ({0},'{1}','{2}','{3}',{4},'{5}',True)".format(i["Nombre"],i["Path"],i["Message"],i["Couleur"],i["Taille"],i["Mode"]))
+            curseurMY.execute("UPDATE etatModules SET Count2=Count2+1 WHERE Module='BV'")
+        
+        for i in curseur.execute("SELECT * FROM messagesAD").fetchall():
+            curseurMY.execute("INSERT INTO ad_messages VALUES ({0},'{1}',True)".format(i["Nombre"],i["Message"]))
+            curseurMY.execute("UPDATE etatModules SET Count=Count+1 WHERE Module='AD'")
+        
+        for i in curseur.execute("SELECT * FROM messagesBV").fetchall():
+            curseurMY.execute("INSERT INTO bv_messages VALUES ({0},'{1}',True)".format(i["Nombre"],i["Message"]))
+            curseurMY.execute("UPDATE etatModules SET Count=Count+1 WHERE Module='BV'")
+
+        for i in curseur.execute("SELECT * FROM savezvous").fetchall():
+            curseurMY.execute("INSERT INTO sv_savezvous VALUES ({0},'{1}',{2},'{3}','{4}')".format(i["Count"],i["Texte"],i["ID"],i["Image"],i["Source"]))
+            curseurMY.execute("UPDATE etatModules SET Count=Count+1 WHERE Module='Savezvous'")
+
+        for i in curseur.execute("SELECT * FROM sb").fetchall():
+            curseurMY.execute("INSERT INTO tab_tableaux VALUES ({0},{1},'{2}',{3},{4},True)".format(i["Nombre"],i["Salon"],i["Emote"],i["ID"],i["Count"]))
+            curseurMY.execute("UPDATE etatModules SET Count=Count+1 WHERE Module='Tableaux'")
+
+        for i in curseur.execute("SELECT * FROM sbmessages").fetchall():
+            curseurMY.execute("INSERT INTO tab_messages VALUES ({0},{1},{2})".format(i["Nombre"],i["IDMess"],i["IDStar"]))
+
+        for i in curseur.execute("SELECT * FROM svcomment").fetchall():
+            curseurMY.execute("INSERT INTO sv_comment VALUES ({0},{1},'{2}','{3}')".format(i["Count"],i["ID"],i["Texte"],i["Date"]))
+
+        for i in curseur.execute("SELECT * FROM twitch").fetchall():
+            curseurMY.execute("INSERT INTO al_twitch VALUES ({0},{1},'{2}','{3}',{4},True)".format(i["Nombre"],i["Salon"],i["Stream"],i["Descip"],i["Sent"]))
+            curseurMY.execute("UPDATE etatModules SET Count=Count+1 WHERE Module='Twitch'")
+
+        for i in curseur.execute("SELECT * FROM twitter").fetchall():
+            curseurMY.execute("INSERT INTO al_twitter VALUES ({0},{1},{2},'{3}',{4},'{5}',True)".format(i["Nombre"],i["Salon"],i["Compte"],i["Descip"],i["LastID"],i["Nom"]))
+            curseurMY.execute("UPDATE etatModules SET Count=Count+1 WHERE Module='Twitter'")
+
+        for i in curseur.execute("SELECT * FROM youtube").fetchall():
+            curseurMY.execute("INSERT INTO al_youtube VALUES ({0},{1},'{2}','{3}','{4}','{5}',True)".format(i["Nombre"],i["Salon"],i["Chaine"],i["Descip"],i["LastID"],i["Nom"]))
+            curseurMY.execute("UPDATE etatModules SET Count=Count+1 WHERE Module='Youtube'")
+
+        connexionMY.commit()

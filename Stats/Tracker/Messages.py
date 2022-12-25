@@ -1,10 +1,11 @@
 from time import strftime, time
 
 from Core.Fonctions.Convertisseurs import inverse
+from Stats.SQL.Execution import executeStatsFreq
+from Stats.SQL.ConnectSQL import connectSQL, connectSQLOLD
+from Stats.SQL.Execution import executeStats, executeStatsObj
 from Stats.SQL.ConnectSQL import connectSQL
 from Stats.SQL.EmoteDetector import emoteDetector
-from Stats.SQL.Execution import exeClassic, exeObj
-from Stats.SQL.Moyennes import moySQL
 from Stats.SQL.Verification import verifExecSQL
 from Stats.Tracker.Divers import exeDiversSQL
 
@@ -14,59 +15,42 @@ async def exeMessageClient(option,message,client,guild):
     if verifExecSQL(guild,message.channel,message.author)==False:
         return
     
-    if bool(guild.mstats[10]["Statut"])==True:
-        count=0
-        dictType={"Images":0,"GIFs":0,"Fichiers":0,"Liens":0,"Réponse":0,"Stickers":0}
+    dictDivers={"Images":0,"GIFs":0,"Fichiers":0,"Liens":0,"Réponse":0,"Stickers":0,"Mots":0}
+    if guild.mstats[4]["Statut"]==True:
         for i in message.attachments:
-            count+=1
             lien=i.url
             if lien[len(lien)-4:len(lien)].lower() in (".png",".jpg"):
-                dictType["Images"]+=1
+                dictDivers["Images"]+=1
             elif lien[len(lien)-4:len(lien)].lower()==".gif":
-                dictType["GIFs"]+=1
+                dictDivers["GIFs"]+=1
             else:
-                dictType["Fichiers"]+=1
+                dictDivers["Fichiers"]+=1
         if message.content.startswith("https://tenor.com/view/"):
-            count+=1
-            dictType["GIFs"]+=1
+            dictDivers["GIFs"]+=1
         for i in message.embeds:
-            count+=1
-            dictType["Liens"]+=1
+            dictDivers["Liens"]+=1
         if message.reference!=None:
-            count+=1
-            dictType["Réponse"]+=1
+            dictDivers["Réponse"]+=1
         for i in message.stickers:
-            count+=1
-            dictType["Stickers"]+=1
-        if count!=0:
-            exeDiversSQL(message.author.id,dictType,option,guild,None,None)
+            dictDivers["Stickers"]+=1
+        if message.content!=None:
+            dictDivers["Mots"]+=len(message.content.split(" "))
 
-    listeMots=message.content.split(" ")
-    temps=exeStatsSQL(message.author.id,guild,message.channel.id,len(listeMots),option,message.content)
+    temps=exeStatsSQL(message.author.id,guild,message.channel.id,option,message.content,dictDivers)
     if temps>2:
         await client.get_channel(804783800080400394).send("{0} dans {1}".format(temps,message.guild.name))
     return
 
-def exeStatsSQL(id,guild,chan,mots,option,content):
+def exeStatsSQL(user,guild,chan,option,content,dictDivers):
     temps=time()
-    dictDivers={}
-    connexionGuild,curseurGuild=connectSQL(guild.id,"Guild","Guild",None,None)
     count=inverse(option,1)
-    mots=inverse(option,mots)
 
-    if guild.mstats[9]["Statut"]==True: 
-        exeClassic(count,id,"Messages",curseurGuild,guild)
-        dictDivers["Messages"]=count
-    if guild.mstats[6]["Statut"]==True:
-        exeClassic(mots,id,"Mots",curseurGuild,guild)
-        dictDivers["Mots"]=mots
-    if guild.mstats[2]["Statut"]==True:
-        exeClassic(count,int(strftime("%H")),"Freq",curseurGuild,guild)
-        exeObj(count,int(strftime("%H")),id,True,guild,"Freq")
+    connexion,curseur=connectSQL(guild.id)
+
     if guild.mstats[0]["Statut"]==True:
-        exeClassic(count,chan,"Salons",curseurGuild,guild)
-        exeObj(count,chan,id,True,guild,"Salons")
-    if guild.mstats[8]["Statut"]==True:
+        executeStats("messages",user,chan,count,curseur)
+        executeStatsFreq("messages",user,chan,strftime("%H"),count,curseur)
+    if guild.mstats[2]["Statut"]==True:
         listeEmotes=emoteDetector(content)
         if listeEmotes!=[]:
             dictDivers["Emotes"]=len(listeEmotes)
@@ -77,17 +61,38 @@ def exeStatsSQL(id,guild,chan,mots,option,content):
                 dictEmotes[i]+=1
             for i in dictEmotes:
                 dictEmotes[i]=inverse(option,dictEmotes[i])
-                exeClassic(dictEmotes[i],i,"Emotes",curseurGuild,guild)
-                exeObj(dictEmotes[i],i,id,True,guild,"Emotes")
-    if guild.mstats[1]["Statut"]==True:
-        connexion,curseur=connectSQL(guild.id,"Moyennes","Stats","GL","")
-        moySQL(curseur,"Heure",int(strftime("%y")+strftime("%m")+strftime("%d")+strftime("%H")),(strftime("%m"),strftime("%y")),count,id)
-        moySQL(curseur,"Jour",int(strftime("%y")+strftime("%m")+strftime("%d")),(strftime("%m"),strftime("%y")),count,id)
-        moySQL(curseur,"Mois",int(strftime("%y")+strftime("%m")),("TO",strftime("%y")),count,id)
-        moySQL(curseur,"Annee",int(strftime("%y")),("TO","GL"),count,id)
-        connexion.commit()
-        
-    exeDiversSQL(id,dictDivers,option,guild,connexionGuild,curseurGuild)
+                executeStatsObj("emotes",user,chan,i,dictEmotes[i],curseur)
+    
+    if guild.mstats[4]["Statut"]==True:
+        exeDiversSQL(user,chan,dictDivers,option,curseur)
 
-    connexionGuild.commit()
+    connexion.commit()
     return time()-temps
+
+def backup(guilds):
+    for i in guilds:
+        print(i)
+        connexionMY,curseurMY=connectSQL(i)
+        connexion,curseur=connectSQLOLD(i,"Rapports","Stats","GL","")
+        dictNoms={"Voicechan":"voice","Salons":"messages"}
+        for j in ["Salons"]:
+            curseurMY.execute("CREATE TABLE IF NOT EXISTS {0}_ranks (`Jour` varchar(2), `Mois` varchar(2), `Annee` varchar(2), `DateID` INT, `User` BIGINT, `Salon` BIGINT,`Count` INT, PRIMARY KEY (`DateID`, `User`, `Salon`))".format(dictNoms[j]))
+            for ligne in curseur.execute("SELECT * FROM objs WHERE Type='{0}' ORDER BY DateID ASC".format(j)):
+                if j=="Voicechan" and ligne["Count"]>86400:
+                    continue
+                try:
+                    curseurMY.execute("INSERT INTO {0}_ranks VALUES ('{1}','{2}','{3}',{4},{5},{6},{7})".format(dictNoms[j],ligne["Jour"],ligne["Mois"],ligne["Annee"],ligne["DateID"],ligne["ID"],ligne["IDComp"],ligne["Count"]))
+                except:
+                    print("KEK OBJ {0} {1} {2}".format(ligne["DateID"],ligne["ID"],ligne["IDComp"]))
+        connexionMY.commit()
+
+if __name__ == "__main__":
+    liste=[259685687693934592,309322474045308928,316645543541735425,338625530654097408,362146596634492931,385122874362429440,388665221457379329,392319161143132163,421362275958521857,427104615008436235,440236071704592384,452787910421381120,457097249109835788,573239894038806529,759690251521622016,776417488698212383,859836724939194398,458975673000656896,461853697442316288,463463107705044992,468712834121859082,474580888496111617,474923606426517504,477457918543921152,478130349218725910,486617815671898112,487300159206719508,489406935645290506,499234356175437834,522844395968659457,529274957532889089,543639914785275914,553305127067320321,553315045136662548,555484186798981141,637695709738434576,642072477576462338,646104868767006754,650171651744595968,661948174339932200,662415289798885416,663346107341996070,664529373633708063,689479522436776029,689889623832264721,702493774068318258,702646625792688148,703989521339121685,717281280596770816,718399050763993138,726589936039624715,729705223647395950,730037058558754886,732271161315950614,736021850660012045,756182725559582731,759688015676309525,776395914495524865,776417458386763778,783942625685536788,795812483964731392,804092767973670998,826735011410608159,826833126860521502,828662970165755955,844634155018879026,857033624854200360,860799462175014912,801947410984730634,872062349752807485,689057123287564303,846316927168151572,685233397584625670,871417613291507722,825055572083998720,110373943822540800,532694443187503124,616349834156310617,874298476605882379,872448647760052267,779142978752217099,840795973550735372,879494583178907658,831642385556832277,785516390396329984,713505648863608862,876439176474664991,831519062365569043,696548231110459412,909163592866234418,887692954297335808,885133255895044127,351412140005130250,831575906845720586,909119976932253797,857698139746205756,756517991285260339,909657107224232017,143774211796762624,872560100483682304,891648137381441566,918092501280227349,913938391056396338,897264582123470939,922439076714532884,914255791148634223,805432501337587712,922824199888842753,333949691962195969,703126131167068250,709045923694641212,859410126935031810,871339070612209676,718453381059969096,759027013213749308,775704634551042059,788153387027267634,831639274855596072,877097577034694656,878052570227171359,881989273044254781,890181504678887444,910817361127407637,876569225152593951,925861784655659058,928415341107871795,933846016384466995,637292415090294784,744263702567714907,935519144319782962,914469624127557652,929094971435401240,927847015629615145,934740560131018824,931254450767687690,937650288846831627,935224868377595924,943442217501085716,927239260820611082,932048464534200331,926927807681019926,926135130890862592,711579544720506891,805884326487130143,821460548893278288,836680843660492820,939344865328779345,934919932750233641,952679526180208640,797077308681748511,808561723245592597,861582342426853377,952713431625117787,959830766710296636,964579813312577556,931094771538206770,534500686457602058,209751118736130048]
+
+    old=[110373943822540800, 316645543541735425, 333949691962195969, 385122874362429440, 388665221457379329, 392319161143132163, 452787910421381120, 474580888496111617, 474923606426517504, 487300159206719508, 553315045136662548, 555484186798981141, 573239894038806529, 642072477576462338, 646104868767006754, 689479522436776029, 702646625792688148, 703126131167068250, 709045923694641212, 711579544720506891, 718453381059969096, 729705223647395950, 732271161315950614, 759027013213749308, 759688015676309525, 759690251521622016, 775704634551042059, 776417458386763778, 776417488698212383, 779142978752217099, 788153387027267634, 808561723245592597, 821460548893278288, 825055572083998720, 831519062365569043, 831639274855596072, 836680843660492820, 840795973550735372, 859410126935031810, 860799462175014912, 871339070612209676, 871417613291507722, 874298476605882379, 876439176474664991, 876569225152593951, 877097577034694656, 878052570227171359, 879494583178907658, 881989273044254781, 890181504678887444, 897264582123470939, 910817361127407637, 913938391056396338, 922439076714532884, 925861784655659058, 926135130890862592, 926927807681019926, 927239260820611082, 927847015629615145, 928415341107871795, 932048464534200331, 934919932750233641, 935224868377595924, 935519144319782962, 937650288846831627, 939344865328779345, 943442217501085716, 952713431625117787, 959830766710296636]
+
+    final=list(filter(lambda x:x not in old,liste))
+
+    backup([457097249109835788])
+
+    #print(exeStatsSQL(309032693499297802,457097249109835788,457097249109835790,"+","kekl"))
