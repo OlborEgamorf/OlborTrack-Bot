@@ -1,6 +1,7 @@
 import sqlite3
 import sys
 import traceback
+from typing import Tuple
 
 import discord
 from Core.Fonctions.AuteurIcon import auteur
@@ -19,6 +20,8 @@ def defEvol(ligne:dict,evol:bool) -> str:
         l'emote ou alors une chaine de charactères vide"""
     if evol:
         rank=ligne["Evol"]
+        if rank == "N":
+            return "**N**"
         if rank>0 and rank<=3:
             return "<:otEvolU1:791683643600666624>"
         elif rank>3 and rank<=6:
@@ -35,7 +38,7 @@ def defEvol(ligne:dict,evol:bool) -> str:
     return ""
 
 
-def addtoFields(field1:str,field2:str,field3:str,mobile:bool,rank:str,nom:str,count:str) -> (str, str, str):
+def addtoFields(field1:str,field2:str,field3:str,mobile:bool,rank:str,nom:str,count:str) -> Tuple[str, str, str]:
     """Ajoute aux textes de champs d'un embed les infos concernant le rang, le nom et le compteur d'une personne. Si l'embed doit avoir un affichage mobile, la mise en forme est différente.
     Entrées :
         field1, field2, field3 : les textes des trois champs de l'embed

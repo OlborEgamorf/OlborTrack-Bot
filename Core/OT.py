@@ -69,10 +69,10 @@ class OlborTrack(commands.Bot):
 
         for i in self.guilds:
             try:
-                self.dictGuilds[i.id]=OTGuildCMD(i.id,True)
+                self.dictGuilds[i.id]=OTGuildCMD(i.id,False)
             except:
                 createDirSQL(i)
-                self.dictGuilds[i.id]=OTGuildCMD(i.id,True)
+                self.dictGuilds[i.id]=OTGuildCMD(i.id,False)
 
         await self.get_channel(712753819447984248).send("TrackOS Commandes : Executé ")
         await disconnect(self)

@@ -27,8 +27,8 @@ async def rotation(guild,channel):
             embed.description=img["Description"]
         else:
             embed.description="*Cette icone n'a pas encore de description !*"
-        embed.set_image(url="https://cdn.discordapp.com/icons/{0}/{1}.png?size=600".format(guild.id,guild.icon))
-        embed.set_author(icon_url="https://cdn.discordapp.com/icons/{0}/{1}.png".format(guild.id,guild.icon),name=guild.name)
+        embed.set_image(url="https://cdn.discordapp.com/icons/{0}/{1}.png?size=600".format(guild.id,guild.icon.url))
+        embed.set_author(icon_url="https://cdn.discordapp.com/icons/{0}/{1}.png".format(guild.id,guild.icon.url),name=guild.name)
         embed.set_footer(text="OT!dynicon")
         embed.add_field(name="Ajouté par",value="<@{0}>".format(img["Auteur"]),inline=True)
         if img["Membres"]!="None":

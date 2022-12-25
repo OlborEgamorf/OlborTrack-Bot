@@ -5,8 +5,8 @@ import discord
 from Core.Decorator import OTCommand
 from Core.Fonctions.Embeds import createEmbed
 from discord.ext import commands
-from Stats.SQL.Compteur import compteurSQL, compteurTrivialS
 from Stats.SQL.ConnectSQL import connectSQL
+from Stats.SQL.Execution import executeStatsTrivial, executeTrivialStreak
 from Titres.Outils import gainCoins, titresTrivial
 
 from Jeux.Outils.AttenteTrivial import attenteParty
@@ -37,7 +37,7 @@ class Question:
         self.temps=20
 
     def newQuestion(self):
-        connexion,curseur=connectSQL("OT","trivial","Trivial",None,None)
+        connexion,curseur=connectSQL("OT")
         table=curseur.execute("SELECT * FROM français WHERE Type='{0}' AND Difficulté='{1}' ORDER BY RANDOM()".format(self.arg,self.diff)).fetchone()
         tableENG=curseur.execute("SELECT * FROM anglais WHERE ID={0}".format(table["ID"])).fetchone()
         choix=[1,2,3,4]
@@ -66,20 +66,22 @@ class Question:
         self.auteur=table["Auteur"]
 
     def setUser(self):
-        connexion,curseur=connectSQL("OT",self.author.id,"Trivial",None,None)
-        curseur.execute("CREATE TABLE IF NOT EXISTS trivial{0} (ID BIGINT, IDCateg INT, Categ TEXT, Exp INT, Niveau INT, Next INT, Multi INT)".format(self.author.id))
-        user=curseur.execute("SELECT * FROM trivial{0}".format(self.author.id)).fetchall()
-        if user==[]:
-            user=[{"ID":self.author.id,"IDCateg":i,"Categ":listeNoms[i],"Exp":0,"Niveau":1,"Next":30,"Multi":0} for i in range(len(listeNoms))]
-            many=[tuple(i.values()) for i in user]
-            curseur.executemany("INSERT INTO trivial{0} VALUES (?,?,?,?,?,?,?)".format(self.author.id),many)
+        connexion,curseur = connectSQL("OT")
+        curseur.execute("CREATE TABLE IF NOT EXISTS trivial_multi (`User` BIGINT PRIMARY KEY, `Multi` INT)")
+        user = curseur.execute("SELECT * FROM trivial_multi WHERE User={0}".format(self.author.id)).fetchone()
+        
+        if user == None:
+            multi = 0
+            curseur.execute("INSERT INTO trivial_multi VALUES ({0},0)".format(self.author.id))
             connexion.commit()
-        self.user=user
-        multi=round(1+user[12]["Multi"]*0.05+user[self.categ]["Multi"]*0.02,2)
-        if multi>3:
-            self.multi=3
         else:
-            self.multi=multi
+            multi = user["Multi"]
+
+        self.user = user
+        if multi > 20:
+            self.multi = 3
+        else:
+            self.multi = 1+multi*0.1
     
     def setCateg(self,categorie):
         dictNomsVal={"culture":9,"divertissement":choice([10,11,12,13,14,15,16,29,31,32]),"sciences":choice([17,18,19,30]),"mythologie":20,"sport":21,"géographie":22,"histoire":23,"politique":24,"art":25,"célébrités":26,"animaux":27,"véhicules":28,"livres":10,"films":11,"musique":12,"anime":31,"manga":31}
@@ -141,44 +143,40 @@ class Question:
         points={"easy":10,"medium":15,"hard":25}
         niveaux=[30, 60, 100, 150, 200, 400, 600, 1000, 1500, 2000, 3000, 4000, 5000, 7500, 10000, 20000, 30000, 40000, 50000, 100000, 1000000]
         gainCoins(author,points[diff]*multi)
-        connexion,curseur=connectSQL("OT",author,"Trivial",None,None)
-        table=curseur.execute("SELECT * FROM trivial{0}".format(author)).fetchall()
+        connexion,curseur=connectSQL("OT")
+
         if victoire:
-            curseur.execute("UPDATE trivial{0} SET Multi={1} WHERE IDCateg={2}".format(author,table[categ]["Multi"]+1,categ))
-            curseur.execute("UPDATE trivial{0} SET Multi={1} WHERE IDCateg=12".format(author,table[12]["Multi"]+1))
+            curseur.execute("UPDATE trivial_multi SET Multi=Multi+1 WHERE User={0}".format(author))
+            totalCateg = curseur.execute("SELECT SUM(Count) AS Final FROM trivial_ranks WHERE User={0} AND Categ={1}".format(author,categ)).fetchone()
+            totalGlob = curseur.execute("SELECT SUM(Count) AS Final FROM trivial_ranks WHERE User={0}".format(author)).fetchone()
 
-            curseur.execute("UPDATE trivial{0} SET Exp={1} WHERE IDCateg={2}".format(author,table[categ]["Exp"]+points[diff]*multi,categ))
-            curseur.execute("UPDATE trivial{0} SET Exp={1} WHERE IDCateg=12".format(author,table[12]["Exp"]+points[diff]*multi))
+            if totalCateg!=None:
+                totalCateg = totalCateg["Final"]
+                i=0
+                flag=True
+                while i<len(niveaux) and flag:
+                    if niveaux[i] < totalCateg:
+                        i+=1
+                    else:
+                        if niveaux[i+1] <= totalCateg and i+1 in (5,10):
+                            titresTrivial(i+1,categ,author,connexion,curseur)
+                        flag = False
+            
+            if totalGlob!=None:
+                totalGlob = totalGlob["Final"]
+                i=0
+                flag=True
+                while i<len(niveaux) and flag:
+                    if niveaux[i] < totalGlob:
+                        i+=1
+                    else:
+                        if niveaux[i+1] <= totalGlob and i+1 in (5,10):
+                            titresTrivial(i+1,12,author,connexion,curseur)
+                        flag = False
 
-            count=0
-            while curseur.execute("SELECT Exp FROM trivial{0} WHERE IDCateg={1}".format(author,categ)).fetchone()["Exp"]>=curseur.execute("SELECT Next FROM trivial{0} WHERE IDCateg={1}".format(author,categ)).fetchone()["Next"]:
-                count+=1
-                curseur.execute("UPDATE trivial{0} SET Next={1} WHERE IDCateg={2}".format(author,niveaux[table[categ]["Niveau"]+count-1],categ))
-                curseur.execute("UPDATE trivial{0} SET Niveau={1} WHERE IDCateg={2}".format(author,table[categ]["Niveau"]+count,categ))
-                if table[categ]["Niveau"]+count in (5,10):
-                    try:
-                        titresTrivial(table[categ]["Niveau"]+count,categ,author)
-                    except:
-                        pass
-
-            count=0
-            while curseur.execute("SELECT Exp FROM trivial{0} WHERE IDCateg=12".format(author)).fetchone()["Exp"]>=curseur.execute("SELECT Next FROM trivial{0} WHERE IDCateg=12".format(author)).fetchone()["Next"]:
-                count+=1
-                curseur.execute("UPDATE trivial{0} SET Next={1} WHERE IDCateg=12".format(author,niveaux[table[12]["Niveau"]+count-1]))
-                curseur.execute("UPDATE trivial{0} SET Niveau={1} WHERE IDCateg=12".format(author,table[12]["Niveau"]+count))
-                if table[12]["Niveau"]+count in (5,10):
-                    try:
-                        titresTrivial(table[12]["Niveau"]+count,12,author)
-                    except:
-                        pass
-            connexion.commit()
-
-            connexion,curseur=connectSQL("OT","ranks","Trivial",None,None)
-            compteurSQL(curseur,"trivial{0}".format(categ),author,(0,author,categ,"TO","GL",points[diff]*multi),points[diff]*multi,None,None,None,None,2,None)
-            compteurSQL(curseur,"trivial12",author,(0,author,12,"TO","GL",points[diff]*multi),points[diff]*multi,None,None,None,None,2,None)
+            executeStatsTrivial(author,categ,self.author.guild.id,points[diff]*multi,curseur)
         else:
-            curseur.execute("UPDATE trivial{0} SET Multi=0 WHERE IDCateg={1}".format(author,categ))
-            curseur.execute("UPDATE trivial{0} SET Multi=0 WHERE IDCateg=12".format(author))
+            curseur.execute("UPDATE trivial_multi SET Multi=0 WHERE User={0}".format(author))
 
         connexion.commit()
 
@@ -230,7 +228,7 @@ class Streak(TrivialSolo):
             self.temps-=1
        
     def getRecord(self):
-        connexion,curseur=connectSQL("OT","ranks","Trivial",None,None)
+        connexion,curseur=connectSQL("OT")
         curseur.execute("CREATE TABLE IF NOT EXISTS trivialStreak (Rank INT, ID BIGINT PRIMARY KEY, IDComp BIGINT, Mois TEXT, Annee TEXT, Count INT)")
         etat=curseur.execute("SELECT * FROM trivialStreak WHERE ID={0}".format(self.author.id)).fetchone()
         if etat==None:
@@ -293,9 +291,11 @@ async def embedTrivial(interaction:discord.Interaction,bot:commands.Bot,categori
             message.embeds[0].description=question.affichageLose(emoji)
             question.gestionMulti(False)
             if question.option=="streak":
-                results=compteurTrivialS(question.author.id,(0,question.author.id,13,"TO","GL",question.serie),question.serie)
+                connexion,curseur=connectSQL(interaction.guild_id)
+                results=executeTrivialStreak(question.author.id,question.serie,curseur)
+                connexion.commit()
                 if results[0]:
-                    await interaction.followup.send("Bravo ! Vous avez battu votre record de série avec **{0}** bonnes réponses ! Votre ancien score était **{1}** bonnes réponses.".format(results[1],results[2]))
+                    await interaction.followup.send("Bravo ! Vous avez battu votre record de série avec **{0}** bonnes réponses ! Votre ancien score était **{1}** bonnes réponses.".format(question.serie,results[1]))
 
         await message.edit(embed=message.embeds[0],view=None)
 
