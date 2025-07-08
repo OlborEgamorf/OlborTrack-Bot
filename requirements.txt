@@ -8,7 +8,7 @@ emoji==1.2.0
 ffmpeg==1.4
 geopandas==0.9.0
 imageio==2.9.0
-mysql-connector-python==8.0.29
+mysql-connector-python==9.1.0
 pandas==2.0.3
 pillow
 matplotlib
